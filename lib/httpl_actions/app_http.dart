@@ -12,10 +12,20 @@ class HttpActions {
   String endPoint = Constants.of().endpoint;
 
   Future<dynamic> postMethod(String url,
-      {dynamic data, Map<String, String>? headers}) async {
+      {dynamic data, Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = await getSessionData(headers ?? {});
-      http.Response response = await http.post(Uri.parse(endPoint + url),
+       String finalUrl =endPoint + url;
+      if(queryParams != null){
+        queryParams.forEach((key, value) {
+          if(key == queryParams.keys.first){
+            finalUrl = "$finalUrl?$key=$value";
+          }else{
+            finalUrl = "$finalUrl&$key=$value";
+          }
+        });
+      }
+      http.Response response = await http.post(Uri.parse(finalUrl),
           body: data, headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
@@ -23,11 +33,23 @@ class HttpActions {
     }
   }
 
-  Future<dynamic> getMethod(String url, {Map<String, String>? headers}) async {
+  Future<dynamic> getMethod(String url, {Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = await getSessionData(headers ?? {});
+
+      String finalUrl =endPoint + url;
+      if(queryParams != null){
+        queryParams.forEach((key, value) {
+          if(key == queryParams.keys.first){
+            finalUrl = "$finalUrl?$key=$value";
+          }else{
+            finalUrl = "$finalUrl&$key=$value";
+          }
+        });
+      }
+      print("URl -- $finalUrl");
       http.Response response =
-          await http.get(Uri.parse(endPoint + url), headers: headers);
+          await http.get(Uri.parse(finalUrl), headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);

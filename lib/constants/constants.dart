@@ -15,7 +15,7 @@ class Constants {
 
   factory Constants._prd() {
     return const Constants(
-      endpoint: 'http://122.170.107.160/nssg/login_webservice.php',
+      endpoint: 'http://122.170.107.160/nssg/',
       apiKey: '', //for use in future
     );
   }
@@ -32,5 +32,5 @@ class ResponseStatus {
 }
 
 class ApiEndPoint {
-  //static const String getCountries = "getCountries";
+  static const String loginApi = "login_webservice.php";
 }

@@ -7,17 +7,16 @@ import '../../../../httpl_actions/handle_api_error.dart';
 
 class LoginRepository {
 
-
   LoginRepository({
     required LoginDataSource authDataSource,
   }) : _authDataSource = authDataSource;
 
   final LoginDataSource _authDataSource;
 
-  Future<ApiResult<UserData>> loginUser() async {
-    try {
+  Future<ApiResult<UserData>> loginUser(Map<String, dynamic> paraMeters) async {
+
       final result =
-      await _authDataSource.loginUser();
+      await _authDataSource.loginUser(paraMeters);
 
       UserData userData = UserData.fromJson(result);
 
@@ -26,9 +25,6 @@ class LoginRepository {
       } else {
         return ApiResult.failure(error: userData.msg.toString());
       }
-    } catch (e) {
-      final message = HandleAPI.handleAPIError(e);
-      return ApiResult.failure(error: message);
-    }
+
   }
 }

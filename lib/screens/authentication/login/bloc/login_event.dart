@@ -5,7 +5,7 @@ abstract class LoginEvent {}
 
 // ignore: must_be_immutable
 class LoginUserEvent extends LoginEvent {
-  Map<String, String> queryParameters;
+  Map<String, dynamic> queryParameters;
 
   LoginUserEvent(this.queryParameters);
 

@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           child: MaterialApp(
             title: 'National Security System ',
             theme: ThemeData(primarySwatch: Colors.indigo),
-            home: const LoginScreen(),
+            home: LoginScreen(),
           ),
         ),
       );

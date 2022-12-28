@@ -20,10 +20,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
   }
 
-  loginUserEvent(event, emit) async {
+  loginUserEvent(LoginUserEvent event, emit) async {
     emit(LoginLoading(true));
 
-    final response = await loginRepository.loginUser();
+    final response = await loginRepository.loginUser(event.queryParameters);
 
     response.when(success: (success) {
       emit(LoginLoading(false));
