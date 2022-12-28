@@ -1,15 +1,13 @@
+import 'package:nssg/screens/authentication/login/models/request_login_model.dart';
 
 import '../../../httpl_actions/app_http.dart';
-import 'bloc/login_bloc.dart';
 
 class LoginDataSource extends HttpActions {
-  LoginDataSource(super.context);
-
 
   Future<dynamic> loginUser() async {
-    LoginUserEvent? loginUserEvent;
-    final response = await postMethodQueryParams(endPoint,
-        queryParameters: loginUserEvent?.queryParameters);
+
+
+    final response = await postMethodQueryParams();
     print("login $response");
     return response;
   }

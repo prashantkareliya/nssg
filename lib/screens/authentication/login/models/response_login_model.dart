@@ -7,10 +7,11 @@ class UserData {
   UserData({this.success, this.result, this.status, this.msg});
 
   UserData.fromJson(Map<String, dynamic> json) {
-    success = json['success'] ?? "";
-    result = json['result'] ?? "";
-    status = json['status'] ?? "";
-    msg = json['msg'] ?? "";
+    success = json['success'];
+    result =
+    json['result'] != null ? Result.fromJson(json['result']) : null;
+    status = json['status'];
+    msg = json['msg'];
   }
 
   Map<String, dynamic> toJson() {

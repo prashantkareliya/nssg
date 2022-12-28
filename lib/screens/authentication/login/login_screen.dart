@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
@@ -59,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   LoginBloc loginBloc =
-      LoginBloc(LoginRepository());
+      LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
 
   @override
   Widget build(BuildContext context) {
@@ -209,22 +213,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   //login button validation for email login
-  validateAndDoLogin() {
+  validateAndDoLogin() async {
     if (loginFormKey.currentState?.validate() == true) {
       if (userNameController.text.toString().isValidEmail) {
-        Map<String, String> queryParameters = {
-          'username': 'dn@nssg.co.uk',
-          'password': 'dave@12345',
+        /* Map<String, String> queryParameters = {
+          'username': userNameController.text.trim(),
+          'password': passwordController.text.trim(),
           'accesskey': 'S8QzomH4Q4QYxaFb',
         };
-        loginBloc.add(LoginUserEvent(queryParameters));
-
+        loginBloc.add(LoginUserEvent(queryParameters));*/
         //moveToNextScreen();
       } else {
         Helpers.showSnackBar(context, ErrorString.emailNotValid, isError: true);
       }
     }
-  }
 
   //Pin number for login with pin
   Widget buildPinNumber() {

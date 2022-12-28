@@ -21,32 +21,6 @@ class ContactScreen extends StatefulWidget {
 class _ContactScreenState extends State<ContactScreen> {
   TextEditingController textController = TextEditingController();
 
-  /*List<bool> showQty = [];
-
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < 12; i++) {
-      showQty.add(false);
-    }
-  }
-
-  void showHide(int i) {
-    setState(() {
-      showQty[i] = !showQty[i];
-    });
-    //  Provider.of<WidgetChange>(context, listen: true).isVisibleText;
-  }
-*/
-
-  /*@override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < 12; i++) {
-      Provider.of<WidgetChange>(context, listen: false).showQty.add(false);
-    }
-  }*/
-
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -74,25 +48,17 @@ class _ContactScreenState extends State<ContactScreen> {
       itemBuilder: (context, index) {
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
-          child: GestureDetector(
-            onTap: () {
-              //showHide(index);
-              Provider.of<WidgetChange>(context, listen: false)
-                  .buttonVisibility(index);
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              elevation: 5,
-              child: Container(
-                width: query.width,
-                decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(12.0))),
-                child: buildTileTextFields(index),
-              ),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: 5,
+            child: Container(
+              width: query.width,
+              decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: const BorderRadius.all(Radius.circular(12.0))),
+              child: buildTileTextFields(index),
             ),
           ),
         );
@@ -124,9 +90,9 @@ class _ContactScreenState extends State<ContactScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 1.5.h),
+        SizedBox(height: 1.0.h),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
+          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 3.sp),
           child: Row(
             children: [
               Expanded(
@@ -137,11 +103,24 @@ class _ContactScreenState extends State<ContactScreen> {
                 child:
                     Text("Prashant Kareliya", style: CustomTextStyle.labelText),
               ),
+              Container(
+                height: 3.h,
+                width: 6.w,
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(80.0)),
+                    border: Border.all(width: 1, color: AppColors.redColor)),
+                child: Center(
+                    child: Icon(
+                  Icons.delete_rounded,
+                  size: 12.sp,
+                  color: AppColors.redColor,
+                )),
+              ),
             ],
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
+          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 3.sp),
           child: Row(
             children: [
               Expanded(
@@ -151,11 +130,24 @@ class _ContactScreenState extends State<ContactScreen> {
               Expanded(
                 child: Text("IIH-Global", style: CustomTextStyle.labelText),
               ),
+              Container(
+                height: 3.h,
+                width: 6.w,
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(80.0)),
+                    border: Border.all(width: 1, color: AppColors.blackColor)),
+                child: Center(
+                    child: Icon(
+                  Icons.edit_rounded,
+                  size: 12.sp,
+                  color: AppColors.blackColor,
+                )),
+              ),
             ],
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
+          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 3.sp),
           child: Row(
             children: [
               Expanded(
@@ -166,11 +158,12 @@ class _ContactScreenState extends State<ContactScreen> {
                 child:
                     Text("+91 00000 00000", style: CustomTextStyle.labelText),
               ),
+              SizedBox(height: 3.h, width: 6.w)
             ],
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
+          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 3.sp),
           child: Row(
             children: [
               Expanded(
@@ -180,62 +173,12 @@ class _ContactScreenState extends State<ContactScreen> {
               Expanded(
                 child: Text("abcd@gmail.com", style: CustomTextStyle.labelText),
               ),
+              SizedBox(height: 3.h, width: 6.w)
             ],
           ),
         ),
-        SizedBox(height: 1.h),
-        buildAnimatedOpacity(index),
+        SizedBox(height: 1.0.h),
       ],
-    );
-  }
-
-  AnimatedOpacity buildAnimatedOpacity(int index) {
-    return AnimatedOpacity(
-      opacity: Provider.of<WidgetChange>(context, listen: false).showQty[index]
-          ? 1
-          : 0,
-      duration: const Duration(milliseconds: 500),
-      child: Visibility(
-        visible:
-            Provider.of<WidgetChange>(context, listen: true).showQty[index],
-        child: Row(
-          children: [
-            Expanded(
-                child: Container(
-              height: 5.5.h,
-              decoration: BoxDecoration(
-                  color: AppColors.primaryColor,
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(12.0))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.edit, color: AppColors.whiteColor),
-                  SizedBox(width: 1.w),
-                  Text(ButtonString.btnEdit, style: CustomTextStyle.buttonText),
-                ],
-              ),
-            )),
-            Expanded(
-                child: Container(
-              height: 5.5.h,
-              decoration: BoxDecoration(
-                  color: AppColors.redColor,
-                  borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(12.0))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.delete, color: AppColors.whiteColor),
-                  SizedBox(width: 1.w),
-                  Text(ButtonString.btnDelete,
-                      style: CustomTextStyle.buttonText),
-                ],
-              ),
-            )),
-          ],
-        ),
-      ),
     );
   }
 

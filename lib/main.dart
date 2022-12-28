@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
           providers: [ChangeNotifierProvider.value(value: WidgetChange())],
           child: MaterialApp(
             title: 'National Security System ',
-            theme: ThemeData(primarySwatch: Colors.indigo, fontFamily: "'Sen'"),
+            theme: ThemeData(primarySwatch: Colors.indigo),
             home: const LoginScreen(),
           ),
         ),

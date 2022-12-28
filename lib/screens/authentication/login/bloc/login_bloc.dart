@@ -15,7 +15,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc(this.loginRepository) : super(LoginInitial()) {
     on<LoginEvent>((event, emit) {});
 
-    on<LoginUserEvent>((event, emit) => loginUserEvent(event, emit));
+    on<LoginUserEvent>((event, emit) {
+      return loginUserEvent(event, emit);
+    });
   }
 
   loginUserEvent(event, emit) async {
