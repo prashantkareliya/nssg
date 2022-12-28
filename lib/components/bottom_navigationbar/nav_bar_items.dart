@@ -1,0 +1,1 @@
+enum NavbarItem { contacts, quotes }
