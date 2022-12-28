@@ -227,6 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Helpers.showSnackBar(context, ErrorString.emailNotValid, isError: true);
       }
     }
+  }
 
   //Pin number for login with pin
   Widget buildPinNumber() {

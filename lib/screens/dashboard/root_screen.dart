@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nssg/components/custom_text_styles.dart';
+import 'package:nssg/utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 import '../../components/bottom_navigationbar/nav_bar_items.dart';
 import '../../components/bottom_navigationbar/navigation_cubit.dart';
@@ -22,7 +23,7 @@ class RootScreenState extends State<RootScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: AppColors.backWhiteColor,
       bottomNavigationBar: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
           return Container(
