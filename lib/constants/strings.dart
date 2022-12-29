@@ -15,6 +15,8 @@ class LabelString{
   static const String nssg = "NSSG";
   static const String yes = "Yes";
   static const String no = "No";
+  static const String noRecordFound = "No Record Found" ;
+  static const String selectField = "Select" ;
 
   static const String lblEmailAddress = "Email address";
   static const String lblPoweredBy = "Powered by NSSG CRM";
@@ -90,4 +92,10 @@ class ImageString{
   static const String icImageVisible = "assets/images/ic_password_visible.png";
   static const String icSearch = "assets/images/ic_search.png";
   static const String icCopy = "assets/images/ic_copy.png";
+}
+
+class PreferenceString {
+  static const String userId = "userId";
+  static const String sessionName = "sessionName";
+  static const String userName = "Username";
 }

@@ -20,7 +20,8 @@ class CustomTextField extends StatelessWidget {
       this.isRequired,
       required this.obscureText,
       this.suffixWidget,
-      this.copyWidget})
+      this.copyWidget,
+      this.prefixIcon})
       : super(key: key);
 
   final String? hint;
@@ -37,6 +38,7 @@ class CustomTextField extends StatelessWidget {
   final bool? isRequired;
   final Widget? suffixWidget;
   final Widget? copyWidget;
+  final Widget? prefixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +75,7 @@ class CustomTextField extends StatelessWidget {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: suffixWidget,
+              prefixIcon: prefixIcon,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
@@ -85,10 +88,6 @@ class CustomTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),
-              /*errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-            ),*/
               filled: true,
               fillColor: Colors.white,
               contentPadding: EdgeInsets.only(left: 12.sp),

@@ -1,12 +1,10 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:nssg/screens/authentication/login/models/login_repository.dart';
 
-import '../models/request_login_model.dart';
+import '../login_data_dir/login_repository.dart';
 
 part 'login_event.dart';
+
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -28,11 +26,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     response.when(success: (success) {
       emit(LoginLoading(false));
       emit(LoginLoaded(
-          userData: success.result.toString(),
-          ));
+          sessionName: success.result!.sessionName.toString(),
+          userId: success.result!.userId.toString(),
+          Username: success.result!.username.toString(),
+          msg: success.msg.toString()));
     }, failure: (failure) {
       emit(LoginLoading(false));
-      emit(LoginLoadFailure(failure.toString()));
+      emit(LoginLoadFailure(error: failure.toString()));
     });
   }
 }

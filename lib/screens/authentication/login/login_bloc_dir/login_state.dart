@@ -12,15 +12,18 @@ class LoginLoading extends LoginState {
 }
 
 class LoginLoaded extends LoginState {
-  String? userData;
+  String? sessionName;
+  String? userId;
+  String? Username;
+  String? msg;
 
-  LoginLoaded({this.userData});
+  LoginLoaded({this.sessionName, this.userId, this.Username, this.msg});
 }
 
 class LoginLoadFailure extends LoginState {
-  final String error;
+  final String? error;
 
-  LoginLoadFailure(this.error);
+  LoginLoadFailure({this.error});
 }
 
 class HomepageError extends LoginState {}

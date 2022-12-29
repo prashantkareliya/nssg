@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nssg/components/custom_appbar.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/utils/app_colors.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_button.dart';
@@ -9,6 +10,7 @@ import '../../components/custom_textfield.dart';
 import '../../components/cutom_rounded_container.dart';
 import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
+import '../../utils/widgetChange.dart';
 import 'add_contact_address_information.dart';
 
 class AddContactBasicInformationPage extends StatefulWidget {
@@ -99,14 +101,50 @@ class _AddContactBasicInformationPageState
                     padding: EdgeInsets.symmetric(horizontal: 10.sp),
                     shrinkWrap: true,
                     children: [
-                      CustomTextField(
-                        keyboardType: TextInputType.name,
-                        readOnly: false,
-                        controller: firstNameController,
-                        obscureText: false,
-                        hint: LabelString.lblFirstName,
-                        titleText: LabelString.lblFirstName,
-                        isRequired: true,
+                      Consumer<WidgetChange>(
+                        builder: (context, value, child) => CustomTextField(
+                          keyboardType: TextInputType.name,
+                          readOnly: false,
+                          controller: firstNameController,
+                          obscureText: false,
+                          hint: LabelString.lblFirstName,
+                          titleText: LabelString.lblFirstName,
+                          isRequired: true,
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.all(4.sp),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.backWhiteColor,
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                height: 5,
+                                child: DropdownButton<String>(
+                                  value: value.selectItem,
+                                  elevation: 0,
+                                  hint: Text(LabelString.selectField,
+                                      style: CustomTextStyle.labelFontHintText),
+                                  style: CustomTextStyle.labelText,
+                                  underline: Container(
+                                      height: 0, color: Colors.transparent),
+                                  onChanged: (String? v) {
+                                    value.selectItemValue(v);
+                                  },
+                                  items: value.items
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 5.sp),
+                                        child: Text(
+                                          value,
+                                          style: CustomTextStyle.labelText,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              )),
+                        ),
                       ),
                       CustomTextField(
                         keyboardType: TextInputType.name,
@@ -193,8 +231,8 @@ class _AddContactBasicInformationPageState
             height: query.height * 0.06,
             child: CustomButton(
               buttonColor: AppColors.primaryColor,
-              onClick: () => callNextScreen(
-                  context, const AddContactAddressInfoPage()),
+              onClick: () =>
+                  callNextScreen(context, const AddContactAddressInfoPage()),
               title: ButtonString.btnNext,
             ),
           )

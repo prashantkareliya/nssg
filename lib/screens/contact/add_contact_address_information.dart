@@ -1,5 +1,6 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
@@ -35,7 +36,10 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
   TextEditingController installationPostalCodeController =
       TextEditingController();
 
-  String pasteValue = '';
+  String pasteAddress = "";
+  String pasteCity = "";
+  String pasteCountry = "";
+  String pastePostalCode = "";
 
   @override
   Widget build(BuildContext context) {
@@ -59,175 +63,9 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Column(
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        RoundedContainer(
-                            containerText: "1",
-                            stepText: "1",
-                            isEnable: false,
-                            isDone: true),
-                        RoundedContainer(
-                            containerText: "2",
-                            stepText: "2",
-                            isEnable: true,
-                            isDone: false)
-                      ]),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(LabelString.lblAddressInformation,
-                            style: CustomTextStyle.labelBoldFontTextSmall),
-                        Row(
-                          children: [
-                            Text(LabelString.lblStep,
-                                style: CustomTextStyle.commonText),
-                            Text(" 2/2", style: CustomTextStyle.commonTextBlue),
-                          ],
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+              buildStepper(),
               SizedBox(height: 1.0.h),
-              Expanded(
-                child: ListView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                  shrinkWrap: true,
-                  children: [
-                    Center(
-                      child: Text(LabelString.lblInvoiceAddressDetails,
-                          style: CustomTextStyle.labelBoldFontTextBlue),
-                    ),
-                    SizedBox(height: 2.0.h),
-                    CustomTextField(
-                      /* copyWidget: InkWell(
-                        onTap: () {},
-                        child: Image.asset(ImageString.icCopy),
-                      ),*/
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: invoiceSearchController,
-                      obscureText: false,
-                      hint: LabelString.lblTypeToSearch,
-                      titleText: LabelString.lblAddressSearch,
-                      isRequired: false,
-                      suffixWidget:
-                          Icon(Icons.search, color: AppColors.blackColor),
-                    ),
-                    MultiLineTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: invoiceAddressController,
-                      obscureText: false,
-                      hint: LabelString.lblTypeAddress,
-                      titleText: LabelString.lblInvoiceAddress,
-                      isRequired: true,
-                    ),
-                    CustomTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: invoiceCityController,
-                      obscureText: false,
-                      hint: LabelString.lblInvoiceCity,
-                      titleText: LabelString.lblInvoiceCity,
-                      isRequired: true,
-                    ),
-                    CustomTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: invoiceCountryController,
-                      obscureText: false,
-                      hint: LabelString.lblInvoiceCountry,
-                      titleText: LabelString.lblInvoiceCountry,
-                      isRequired: true,
-                    ),
-                    CustomTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: invoicePostalCodeController,
-                      obscureText: false,
-                      hint: LabelString.lblInvoicePostalCode,
-                      titleText: LabelString.lblInvoicePostalCode,
-                      isRequired: true,
-                    ),
-                    SizedBox(height: 1.0.h),
-                    Center(
-                      child: Text(LabelString.lblInstallationAddressDetails,
-                          style: CustomTextStyle.labelBoldFontTextBlue),
-                    ),
-                    SizedBox(height: 2.0.h),
-                    CustomTextField(
-                      copyWidget: InkWell(
-                        onTap: () {
-                          FlutterClipboard.copy(
-                            invoiceAddressController.text.trim(),
-                          ).then((value) {
-                            FlutterClipboard.paste().then((value) {
-                              installationAddressController.text = value;
-                              pasteValue = value;
-                            });
-                          });
-                        },
-                        child: Image.asset(ImageString.icCopy),
-                      ),
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: installationSearchController,
-                      obscureText: false,
-                      hint: LabelString.lblTypeToSearch,
-                      titleText: LabelString.lblAddressSearch,
-                      isRequired: true,
-                      suffixWidget:
-                          Icon(Icons.search, color: AppColors.blackColor),
-                    ),
-                    MultiLineTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: installationAddressController,
-                      obscureText: false,
-                      hint: LabelString.lblTypeAddress,
-                      titleText: LabelString.lblInstallationAddress,
-                      isRequired: true,
-                    ),
-                    CustomTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: installationCityController,
-                      obscureText: false,
-                      hint: LabelString.lblInstallationCity,
-                      titleText: LabelString.lblInstallationCity,
-                      isRequired: true,
-                    ),
-                    CustomTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: installationCountryController,
-                      obscureText: false,
-                      hint: LabelString.lblInstallationCountry,
-                      titleText: LabelString.lblInstallationCountry,
-                      isRequired: true,
-                    ),
-                    CustomTextField(
-                      keyboardType: TextInputType.name,
-                      readOnly: false,
-                      controller: installationPostalCodeController,
-                      obscureText: false,
-                      hint: LabelString.lblInstallationPostalCode,
-                      titleText: LabelString.lblInstallationPostalCode,
-                      isRequired: true,
-                    ),
-                    buildButtons(query),
-                  ],
-                ),
-              )
+              textFiledForAddAddress(query)
             ],
           ),
         ),
@@ -235,6 +73,159 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
     );
   }
 
+  //Design custom stepper for progress
+  Column buildStepper() {
+    return Column(
+      children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          RoundedContainer(
+              containerText: "1", stepText: "1", isEnable: false, isDone: true),
+          RoundedContainer(
+              containerText: "2", stepText: "2", isEnable: true, isDone: false)
+        ]),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(LabelString.lblAddressInformation,
+                  style: CustomTextStyle.labelBoldFontTextSmall),
+              Row(
+                children: [
+                  Text(LabelString.lblStep, style: CustomTextStyle.commonText),
+                  Text(" 2/2", style: CustomTextStyle.commonTextBlue),
+                ],
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  //Add address's TextFields for create new contact
+  Expanded textFiledForAddAddress(Size query) {
+    return Expanded(
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 10.sp),
+        shrinkWrap: true,
+        children: [
+          Center(
+              child: Text(LabelString.lblInvoiceAddressDetails,
+                  style: CustomTextStyle.labelBoldFontTextBlue)),
+          SizedBox(height: 2.0.h),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: invoiceSearchController,
+            obscureText: false,
+            hint: LabelString.lblTypeToSearch,
+            titleText: LabelString.lblAddressSearch,
+            isRequired: false,
+            suffixWidget: Icon(Icons.search, color: AppColors.blackColor),
+          ),
+          MultiLineTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: invoiceAddressController,
+            obscureText: false,
+            hint: LabelString.lblTypeAddress,
+            titleText: LabelString.lblInvoiceAddress,
+            isRequired: true,
+          ),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: invoiceCityController,
+            obscureText: false,
+            hint: LabelString.lblInvoiceCity,
+            titleText: LabelString.lblInvoiceCity,
+            isRequired: true,
+          ),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: invoiceCountryController,
+            obscureText: false,
+            hint: LabelString.lblInvoiceCountry,
+            titleText: LabelString.lblInvoiceCountry,
+            isRequired: true,
+          ),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: invoicePostalCodeController,
+            obscureText: false,
+            hint: LabelString.lblInvoicePostalCode,
+            titleText: LabelString.lblInvoicePostalCode,
+            isRequired: true,
+          ),
+          SizedBox(height: 1.0.h),
+          Center(
+            child: Text(LabelString.lblInstallationAddressDetails,
+                style: CustomTextStyle.labelBoldFontTextBlue),
+          ),
+          SizedBox(height: 2.0.h),
+          CustomTextField(
+            copyWidget: InkWell(
+              onTap: () {
+                copyAddressFields();
+              },
+              child: Image.asset(ImageString.icCopy),
+            ),
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: installationSearchController,
+            obscureText: false,
+            hint: LabelString.lblTypeToSearch,
+            titleText: LabelString.lblAddressSearch,
+            isRequired: true,
+            suffixWidget: Icon(Icons.search, color: AppColors.blackColor),
+          ),
+          MultiLineTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: installationAddressController,
+            obscureText: false,
+            hint: LabelString.lblTypeAddress,
+            titleText: LabelString.lblInstallationAddress,
+            isRequired: true,
+          ),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: installationCityController,
+            obscureText: false,
+            hint: LabelString.lblInstallationCity,
+            titleText: LabelString.lblInstallationCity,
+            isRequired: true,
+          ),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: installationCountryController,
+            obscureText: false,
+            hint: LabelString.lblInstallationCountry,
+            titleText: LabelString.lblInstallationCountry,
+            isRequired: true,
+          ),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: installationPostalCodeController,
+            obscureText: false,
+            hint: LabelString.lblInstallationPostalCode,
+            titleText: LabelString.lblInstallationPostalCode,
+            isRequired: true,
+          ),
+          buildButtons(query),
+        ],
+      ),
+    );
+  }
+
+  //Bottom buttons
   Padding buildButtons(Size query) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.0.sp),
@@ -285,24 +276,40 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
     );
   }
 
-  void _copyText(String textAddress, String textCity, String textCountry,
-      String textPostalCode) {
-    FlutterClipboard.copy(
-      invoiceAddressController.text.trim(),
-    ).then((value) {
-      FlutterClipboard.paste().then((value) {
-        installationAddressController.text = value;
-        pasteValue = value;
-      });
-    });
+  //Method for copy - paste address fields
+  void copyAddressFields() {
+    Clipboard.setData(ClipboardData(text: invoiceAddressController.text))
+        .then((value) => Clipboard.getData(Clipboard.kTextPlain).then(
+              (value) {
+                installationAddressController.text =
+                    invoiceAddressController.text;
+              },
+            ));
 
-    FlutterClipboard.copy(
-      invoiceCityController.text.trim(),
-    ).then((value) {
-      FlutterClipboard.paste().then((value) {
-        installationCityController.text = value;
-        pasteValue = value;
-      });
-    });
+    Clipboard.setData(ClipboardData(text: invoiceCityController.text)).then(
+      (value) => Clipboard.getData(Clipboard.kTextPlain).then(
+        (value) {
+          installationCityController.text = invoiceCityController.text;
+        },
+      ),
+    );
+
+    Clipboard.setData(ClipboardData(text: invoiceCountryController.text)).then(
+      (value) => Clipboard.getData(Clipboard.kTextPlain).then(
+        (value) {
+          installationCountryController.text = invoiceCountryController.text;
+        },
+      ),
+    );
+
+    Clipboard.setData(ClipboardData(text: invoicePostalCodeController.text))
+        .then(
+      (value) => Clipboard.getData(Clipboard.kTextPlain).then(
+        (value) {
+          installationPostalCodeController.text =
+              invoicePostalCodeController.text;
+        },
+      ),
+    );
   }
 }
