@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class WidgetChange extends ChangeNotifier {
   bool isVisibleText = true;
   bool isAppbarShow = true;
+  bool isReminderCheck = false;
 
   //list for dropdown
   var items = ['None', 'Mr.', 'Mrs.', 'Miss'];
@@ -14,15 +15,21 @@ class WidgetChange extends ChangeNotifier {
     notifyListeners();
   }
 
-  //Appbar and search show - hide
+  //Appbar and search show - hide method
   void appbarVisibility() {
     isAppbarShow = !isAppbarShow;
     notifyListeners();
   }
 
-  //Dropdown change
+  //Dropdown Value change method
   selectItemValue(value) {
     selectItem = value;
+    notifyListeners();
+  }
+
+  //Method for remind email on add quote screen
+  void isReminder() {
+    isReminderCheck = !isReminderCheck;
     notifyListeners();
   }
 }

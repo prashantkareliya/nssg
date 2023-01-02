@@ -9,6 +9,7 @@ class ErrorString {
 
 class Message{
   static const String createQoute = "Do you want to create new quote now?";
+  static const String deleteContact = "Do you want to delete this contact?";
 }
 //Label Strings
 class LabelString{
@@ -35,6 +36,7 @@ class LabelString{
   static const String lblSearch = "Search....";
 
   static const String lblAddNewContact = "Add New Contact";
+  static const String lblEditContact = "Edit Contact";
   static const String lblBasicInformation = "Basic Information";
   static const String lblFirstName = "First Name";
   static const String lblLastName = "Last Name";
@@ -67,6 +69,10 @@ class LabelString{
 
   static const String lblAddNewQuote = "Add New Quote";
   static const String lblQuoteDetails = "Quote Details";
+  static const String lblViewContacts = "View Contacts";
+  static const String lblContactName = "Contact Name";
+  static const String lblInstallationHours = "Installation (Hours)";
+  static const String lblQuoteEmailReminder = "Quote Email Reminder?";
 
 }
 

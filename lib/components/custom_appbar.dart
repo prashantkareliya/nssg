@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
@@ -20,7 +19,8 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.isBack,
       this.backgroundColor,
       this.searchWidget,
-      this.titleTextStyle, this.elevation = 0});
+      this.titleTextStyle,
+      this.elevation = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [searchWidget!],
       leading: isBack!
           ? IconButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.of(context).pop(),
               icon: Icon(
                 Icons.arrow_back_ios_outlined,
                 color: AppColors.blackColor,

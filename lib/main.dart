@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:nssg/components/bottom_navigationbar/navigation_cubit.dart';
 import 'package:nssg/constants/navigation.dart';
+import 'package:nssg/screens/qoute/add_quote.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +17,7 @@ void main() {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
-      .then((value) => runApp(MyApp()));
+      .then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
           child: MaterialApp(
             title: 'National Security System ',
             theme: ThemeData(primarySwatch: Colors.indigo),
-            home: const CheckingScreen(),
+            home: AddQuotePage(true),
           ),
         ),
       );
@@ -58,7 +59,7 @@ class _CheckingScreenState extends State<CheckingScreen> {
 
   //method for remove native splash screen
   void initialization() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1  ));
     FlutterNativeSplash.remove();
   }
 
@@ -67,10 +68,13 @@ class _CheckingScreenState extends State<CheckingScreen> {
     return const Scaffold();
   }
 
-  //checking sessionName null or not
   void getPreference() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    moveNextScreen(preferences);
+  }
 
+  //checking sessionName null or not
+  void moveNextScreen(SharedPreferences preferences) {
     if (preferences.getString(PreferenceString.sessionName) != null) {
       callNextScreen(context, LoginScreen("isLogin"));
     } else {

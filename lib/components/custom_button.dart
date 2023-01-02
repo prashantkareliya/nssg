@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/utils/app_colors.dart';
-import 'package:sizer/sizer.dart';
 
 class CustomButton extends StatelessWidget {
   final String title;
@@ -21,7 +20,7 @@ class CustomButton extends StatelessWidget {
       onPressed: onClick,
       clipBehavior: Clip.hardEdge,
       style: ElevatedButton.styleFrom(
-        primary: buttonColor ?? AppColors.primaryColor,
+        backgroundColor: buttonColor ?? AppColors.primaryColor,
         splashFactory: NoSplash.splashFactory,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0))),

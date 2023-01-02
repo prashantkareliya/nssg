@@ -2,20 +2,18 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:nssg/components/custom_text_styles.dart';
-import 'package:nssg/screens/qoute/quotes_screen.dart';
 import 'package:sizer/sizer.dart';
 
-import '../constants/navigation.dart';
 import '../constants/strings.dart';
-import '../screens/dashboard/root_screen.dart';
 import 'custom_button.dart';
 
 // ignore: must_be_immutable
 class ValidationDialog extends StatelessWidget {
   String msg;
   Function() onClickNo;
+  Function() onClickYes;
 
-  ValidationDialog(this.msg, this.onClickNo, {super.key});
+  ValidationDialog(this.msg, this.onClickNo, this.onClickYes, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +55,16 @@ class ValidationDialog extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CustomButton(title: LabelString.yes, onClick: onClickNo!),
+                      CustomButton(title: LabelString.yes, onClick: onClickNo),
                       CustomButton(
-                          title: LabelString.no,
-                          onClick: () => Navigator.of(context)
+                        title: LabelString.no,
+                        onClick: onClickYes,
+                        /* onClick: () => Navigator.of(context)
                               .pushAndRemoveUntil(
                                   MaterialPageRoute(
                                       builder: (c) => const RootScreen()),
-                                  (route) => false))
+                                  (route) => false)*/
+                      )
                     ],
                   ),
                 ),

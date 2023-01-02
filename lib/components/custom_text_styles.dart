@@ -40,6 +40,7 @@ class CustomTextStyle {
           color: AppColors.fontColor,
           fontWeight: FontWeight.bold));
 
+
   static TextStyle labelFontHintText = GoogleFonts.sen(
       textStyle: TextStyle(
     fontSize: 12.sp,

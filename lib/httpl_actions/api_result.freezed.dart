@@ -88,8 +88,8 @@ abstract class $SuccessCopyWith<T, $Res> {
 /// @nodoc
 class _$SuccessCopyWithImpl<T, $Res> extends _$ApiResultCopyWithImpl<T, $Res>
     implements $SuccessCopyWith<T, $Res> {
-  _$SuccessCopyWithImpl(Success<T> _value, $Res Function(Success<T>) _then)
-      : super(_value, (v) => _then(v as Success<T>));
+  _$SuccessCopyWithImpl(Success<T> value, $Res Function(Success<T>) then)
+      : super(value, (v) => then(v as Success<T>));
 
   @override
   Success<T> get _value => super._value as Success<T>;
@@ -200,8 +200,8 @@ abstract class $FailureCopyWith<T, $Res> {
 /// @nodoc
 class _$FailureCopyWithImpl<T, $Res> extends _$ApiResultCopyWithImpl<T, $Res>
     implements $FailureCopyWith<T, $Res> {
-  _$FailureCopyWithImpl(Failure<T> _value, $Res Function(Failure<T>) _then)
-      : super(_value, (v) => _then(v as Failure<T>));
+  _$FailureCopyWithImpl(Failure<T> value, $Res Function(Failure<T>) then)
+      : super(value, (v) => then(v as Failure<T>));
 
   @override
   Failure<T> get _value => super._value as Failure<T>;

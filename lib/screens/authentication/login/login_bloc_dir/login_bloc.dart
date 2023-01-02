@@ -28,7 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoaded(
           sessionName: success.result!.sessionName.toString(),
           userId: success.result!.userId.toString(),
-          Username: success.result!.username.toString(),
+          userName: success.result!.username.toString(),
           msg: success.msg.toString()));
     }, failure: (failure) {
       emit(LoginLoading(false));

@@ -1,13 +1,8 @@
-import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/custom_text_styles.dart';
-import 'package:nssg/screens/contact/add_contact_basic_information.dart';
-import 'package:nssg/screens/contact/contact_bloc_dir/get_contact_bloc.dart';
-import 'package:nssg/screens/contact/contact_data_dir/contact_datasource.dart';
-import 'package:nssg/screens/contact/contact_data_dir/contact_repository.dart';
-import 'package:nssg/screens/contact/contact_model_dir/contact_response_model.dart';
+import 'package:nssg/screens/contact/contact_datasource.dart';
+import 'package:nssg/screens/contact/contact_repository.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:nssg/utils/widgets.dart';
 import 'package:provider/provider.dart';
@@ -15,11 +10,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
+import '../../components/custom_dialog.dart';
 import '../../constants/constants.dart';
 import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
 import '../../utils/helpers.dart';
 import '../../utils/widgetChange.dart';
+import 'add_contact/add_contact_basic_information.dart';
+import 'get_contact/contact_bloc_dir/get_contact_bloc.dart';
+import 'get_contact/contact_model_dir/contact_response_model.dart';
 
 class ContactScreen extends StatefulWidget {
   const ContactScreen({Key? key}) : super(key: key);
@@ -119,16 +118,18 @@ class _ContactScreenState extends State<ContactScreen> {
                         setState(() {
                           searchKey = value;
                           searchItemList = [];
-                        });
-                        for (var element in contactItems!) {
-                          if (element.contactName!.contains(searchKey)) {
-                            searchItemList!.add(element);
-                          } else if (element.contactCompany!
-                              .contains(searchKey)) {
-                            searchItemList!.add(element);
+
+                          for (var element in contactItems!) {
+                            if (element.contactName!.contains(searchKey)) {
+                              searchItemList!.add(element);
+                            } else if (element.contactCompany!
+                                .contains(searchKey)) {
+                              searchItemList!.add(element);
+                            }
                           }
-                        }
+                        });
                       },
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                           hintText: LabelString.lblSearch,
                           suffixIcon: Container(
@@ -173,6 +174,10 @@ class _ContactScreenState extends State<ContactScreen> {
         if (state is ContactsLoaded) {
           contactItems = state.contactList;
         }
+        if (state is DeleteContact) {
+          getContact();
+          Helpers.showSnackBar(context, state.message.toString());
+        }
       },
       child: BlocBuilder<GetContactBloc, GetContactState>(
         bloc: contactBloc,
@@ -186,10 +191,11 @@ class _ContactScreenState extends State<ContactScreen> {
           if (state is ContactLoadFail) {
             isLoading = false;
           }
+
           return Expanded(
             child: isLoading
                 ? loadingView()
-                : ListView.builder(
+                : ListView.separated(
                     physics: const BouncingScrollPhysics(),
                     itemCount: searchKey.isNotEmpty
                         ? searchItemList!.length
@@ -197,7 +203,7 @@ class _ContactScreenState extends State<ContactScreen> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 14.sp, vertical: 6.sp),
+                            horizontal: 14.sp, vertical: 0.sp),
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
@@ -230,22 +236,44 @@ class _ContactScreenState extends State<ContactScreen> {
                                             "${searchKey.isNotEmpty ? searchItemList![index].contactName : contactItems![index].contactName}",
                                             style: CustomTextStyle.labelText),
                                       ),
-                                      Container(
-                                        height: 3.h,
-                                        width: 6.w,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(80.0)),
-                                            border: Border.all(
-                                                width: 1,
-                                                color: AppColors.redColor)),
-                                        child: Center(
-                                            child: Icon(
-                                          Icons.delete_rounded,
-                                          size: 12.sp,
-                                          color: AppColors.redColor,
-                                        )),
+                                      InkWell(
+                                        onTap: () {
+                                          //Dialog to confirm delete contact or not
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (ctx) => ValidationDialog(
+                                              Message.deleteContact,
+                                              //Yes button
+                                              () {
+                                                Navigator.pop(context);
+                                                deleteContact(
+                                                    contactItems![index]
+                                                        .id
+                                                        .toString());
+                                              },
+                                              () => Navigator.pop(
+                                                  context), //No button
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 3.h,
+                                          width: 6.w,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(80.0)),
+                                              border: Border.all(
+                                                  width: 1,
+                                                  color: AppColors.redColor)),
+                                          child: Center(
+                                              child: Icon(
+                                            Icons.delete_rounded,
+                                            size: 12.sp,
+                                            color: AppColors.redColor,
+                                          )),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -266,20 +294,24 @@ class _ContactScreenState extends State<ContactScreen> {
                                             "${searchKey.isNotEmpty ? searchItemList![index].contactCompany : contactItems![index].contactCompany}",
                                             style: CustomTextStyle.labelText),
                                       ),
-                                      Container(
-                                        height: 3.h,
-                                        width: 6.w,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(80.0)),
-                                            border: Border.all(
-                                                width: 1,
-                                                color: AppColors.blackColor)),
-                                        child: Center(
-                                            child: Icon(Icons.edit_rounded,
-                                                size: 12.sp,
-                                                color: AppColors.blackColor)),
+                                      InkWell(
+                                        onTap: () => callNextScreen(context,
+                                            const AddContactBasicInformationPage()),
+                                        child: Container(
+                                          height: 3.h,
+                                          width: 6.w,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(80.0)),
+                                              border: Border.all(
+                                                  width: 1,
+                                                  color: AppColors.blackColor)),
+                                          child: Center(
+                                              child: Icon(Icons.edit_rounded,
+                                                  size: 12.sp,
+                                                  color: AppColors.blackColor)),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -335,6 +367,9 @@ class _ContactScreenState extends State<ContactScreen> {
                         ),
                       );
                     },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(height: 10.sp);
+                    },
                   ),
           );
         },
@@ -366,9 +401,17 @@ class _ContactScreenState extends State<ContactScreen> {
     };
     contactBloc.add(GetContactListEvent(queryParameters));
   }
+
+  //Method for delete contact
+  deleteContact(String contactId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': 'delete',
+      'sessionName': preferences.getString(PreferenceString.sessionName),
+      'id': contactId, //2017
+      'appversion': Constants.of().appversion,
+    };
+    contactBloc.add(DeleteContactEvent(queryParameters));
+  }
 }
-
-/*
-
-
- */

@@ -21,7 +21,8 @@ class CustomTextField extends StatelessWidget {
       required this.obscureText,
       this.suffixWidget,
       this.copyWidget,
-      this.prefixIcon})
+      this.prefixIcon,
+      this.maxLength})
       : super(key: key);
 
   final String? hint;
@@ -39,6 +40,7 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixWidget;
   final Widget? copyWidget;
   final Widget? prefixIcon;
+  final int? maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class CustomTextField extends StatelessWidget {
           children: [
             if (titleText != null) ...[
               Text(
-                titleText ?? "",
+                titleText ?? "",style: CustomTextStyle.labelFontText,
               ),
             ],
             copyWidget ?? Container(),
@@ -67,6 +69,7 @@ class CustomTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           textInputAction: TextInputAction.next,
           maxLines: 1,
+          maxLength: maxLength,
           readOnly: readOnly,
           onTap: onTap,
           obscureText: obscureText,
@@ -151,12 +154,8 @@ class MultiLineTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (titleText != null) ...[
-          Text(
-            titleText ?? "",
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+          Text(titleText ?? ""),
+          const SizedBox(height: 10),
         ],
         TextFormField(
           controller: controller,

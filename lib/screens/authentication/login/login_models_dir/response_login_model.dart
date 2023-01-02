@@ -15,13 +15,13 @@ class UserData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.result != null) {
-      data['result'] = this.result!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    if (result != null) {
+      data['result'] = result!.toJson();
     }
-    data['status'] = this.status;
-    data['msg'] = this.msg;
+    data['status'] = status;
+    data['msg'] = msg;
     return data;
   }
 }
@@ -55,14 +55,14 @@ class Result {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sessionName'] = this.sessionName;
-    data['userId'] = this.userId;
-    data['Username'] = this.username;
-    data['Firstname'] = this.firstname;
-    data['Lastname'] = this.lastname;
-    data['version'] = this.version;
-    data['vtigerVersion'] = this.vtigerVersion;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sessionName'] = sessionName;
+    data['userId'] = userId;
+    data['Username'] = username;
+    data['Firstname'] = firstname;
+    data['Lastname'] = lastname;
+    data['version'] = version;
+    data['vtigerVersion'] = vtigerVersion;
     return data;
   }
 }

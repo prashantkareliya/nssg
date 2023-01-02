@@ -49,8 +49,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
         },
         boxShadow: false,
         color: AppColors.backWhiteColor,
-        onSubmitted: (String) {
-          print(String);
+        onSubmitted: (string) {
+          debugPrint(string);
         },
         style: CustomTextStyle.commonText,
       ),
@@ -62,7 +62,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
       padding: EdgeInsets.only(right: 10.sp, bottom: 8.sp),
       child: FloatingActionButton(
           onPressed: () {
-            callNextScreen(context, const AddQuotePage());
+            callNextScreen(context, AddQuotePage(false));
           },
           child: const Icon(Icons.add)),
     );

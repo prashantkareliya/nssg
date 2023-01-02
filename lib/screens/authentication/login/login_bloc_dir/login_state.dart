@@ -11,13 +11,14 @@ class LoginLoading extends LoginState {
   LoginLoading(this.isBusy);
 }
 
+// ignore: must_be_immutable
 class LoginLoaded extends LoginState {
   String? sessionName;
   String? userId;
-  String? Username;
+  String? userName;
   String? msg;
 
-  LoginLoaded({this.sessionName, this.userId, this.Username, this.msg});
+  LoginLoaded({this.sessionName, this.userId, this.userName, this.msg});
 }
 
 class LoginLoadFailure extends LoginState {
@@ -25,5 +26,3 @@ class LoginLoadFailure extends LoginState {
 
   LoginLoadFailure({this.error});
 }
-
-class HomepageError extends LoginState {}

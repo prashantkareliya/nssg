@@ -4,7 +4,7 @@ class HandleAPI {
   static String handleAPIError(e) {
     try {
       if (e.toString().contains(
-          "(OS Error: No address associated with hostname, errno = 7)")) {
+          "type 'Null' is not a subtype of type 'Map<String, dynamic>'")) {
         return ErrorString.noInternet;
       }
       return e.toString();

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nssg/constants/strings.dart';
 
@@ -45,7 +46,7 @@ class HttpActions {
           }
         });
       }
-      print("URl -- $finalUrl");
+      debugPrint("URl -- $finalUrl");
       http.Response response =
           await http.get(Uri.parse(finalUrl), headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));

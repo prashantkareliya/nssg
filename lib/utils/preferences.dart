@@ -6,10 +6,6 @@ Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 Preferences preferences = Preferences();
 
 class Preferences {
-  Future<String> _getApplicationSavedInformation(String name) async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getString(_storageKey + name) ?? '';
-  }
 
   Future<bool> _setApplicationSavedInformation(
       String name, String value) async {
@@ -43,6 +39,7 @@ class Preferences {
     } else if (value is List<String>) {
       return prefs.setStringList(_storageKey + name, value);
     }
+    return null;
   }
 
   Future<dynamic> getPreference(String name, dynamic defaultValues) async {

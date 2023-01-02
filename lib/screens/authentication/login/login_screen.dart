@@ -20,8 +20,9 @@ import 'login_bloc_dir/login_bloc.dart';
 import 'login_data_dir/login_datasource.dart';
 import 'login_data_dir/login_repository.dart';
 
+// ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
-  var isLogin;
+  String isLogin;
 
   LoginScreen(this.isLogin, {Key? key}) : super(key: key);
 
@@ -37,15 +38,18 @@ class _LoginScreenState extends State<LoginScreen> {
       TextEditingController(text: "dn@nssg.co.uk");
   TextEditingController passwordController =
       TextEditingController(text: "dave@12345");
+
   final loginFormKey = GlobalKey<FormState>();
 
   //controller for pin number fields
   TextEditingController newTextEditingController = TextEditingController();
   FocusNode focusNode = FocusNode();
 
+  //Variable for login with pin screen's username
+  String? userName = "xxxx@gmail.com";
+
   @override
   void dispose() {
-    newTextEditingController.dispose();
     focusNode.dispose();
     super.dispose();
   }
@@ -70,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
             preferences.setPreference(
                 PreferenceString.sessionName, state.sessionName);
             preferences.setPreference(
-                PreferenceString.userName, state.Username);
+                PreferenceString.userName, state.userName);
             Helpers.showSnackBar(context, state.msg.toString());
             moveToNextScreen();
           }
@@ -149,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           visible: widget.isLogin == "isLogin" ? true : false,
                           child: Column(
                             children: [
-                              Text("abcd@gmail.com",
+                              Text(userName!,
                                   style: CustomTextStyle.labelFontHintText),
                               SizedBox(height: 3.h),
                               Text(LabelString.lblEnterPinNumber,
@@ -166,11 +170,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 7.h,
                           child: isLoading
                               ? loadingView()
-                              : CustomButton(
-                                  title: ButtonString.btnLogin.toUpperCase(),
-                                  onClick: () {
-                                    validateAndDoLogin();
-                                  },
+                              : Visibility(
+                                  visible: widget.isLogin == "isLogin"
+                                      ? false
+                                      : true,
+                                  child: CustomButton(
+                                    title: ButtonString.btnLogin.toUpperCase(),
+                                    onClick: () => validateAndDoLogin(),
+                                  ),
                                 ),
                         ),
                         buildPowerLabel(),
@@ -221,7 +228,8 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.only(right: 2.sp),
               child: IconButton(
                 onPressed: () {
-                  Provider.of<WidgetChange>(context, listen: false).textVisibility();
+                  Provider.of<WidgetChange>(context, listen: false)
+                      .textVisibility();
                 },
                 icon: Provider.of<WidgetChange>(context, listen: true)
                         .isVisibleText
@@ -272,19 +280,18 @@ class _LoginScreenState extends State<LoginScreen> {
         switchOutAnimationCurve: Curves.easeOut,
         onComplete: (result) async {
           // Your logic with code
-          print(result);
+          debugPrint(result);
 
           SharedPreferences preferences = await SharedPreferences.getInstance();
-
+          userName =
+              preferences.getString(PreferenceString.userName).toString();
           Map<String, dynamic> queryParameters = {
-            'username':
-                preferences.getString(PreferenceString.userName).toString(),
+            'username': userName.toString(),
+            //preferences.getString(PreferenceString.userName).toString(),
             'loginpin': result.toString(), //2017
             'accesskey': 'S8QzomH4Q4QYxaFb',
           };
           loginBloc.add(LoginUserEvent(queryParameters));
-
-
         },
       ),
     );
