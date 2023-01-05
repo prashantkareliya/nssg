@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           child: MaterialApp(
             title: 'National Security System ',
             theme: ThemeData(primarySwatch: Colors.indigo),
-            home: AddQuotePage(true),
+            home: const CheckingScreen(),
           ),
         ),
       );
@@ -59,7 +59,7 @@ class _CheckingScreenState extends State<CheckingScreen> {
 
   //method for remove native splash screen
   void initialization() async {
-    await Future.delayed(const Duration(seconds: 1  ));
+    await Future.delayed(const Duration(seconds: 1));
     FlutterNativeSplash.remove();
   }
 

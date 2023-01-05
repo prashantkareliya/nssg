@@ -166,20 +166,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         //Login Button
                         SizedBox(
-                          width: query.width,
-                          height: 7.h,
-                          child: isLoading
-                              ? loadingView()
-                              : Visibility(
-                                  visible: widget.isLogin == "isLogin"
-                                      ? false
-                                      : true,
-                                  child: CustomButton(
-                                    title: ButtonString.btnLogin.toUpperCase(),
-                                    onClick: () => validateAndDoLogin(),
-                                  ),
-                                ),
-                        ),
+                            width: query.width,
+                            height: 7.h,
+                            child: isLoading
+                                ? loadingView()
+                                : widget.isLogin == "isLogin"
+                                    ? CustomButton(
+                                        title: ButtonString
+                                            .btnLoginWithOtherAccount
+                                            .toUpperCase(),
+                                        onClick: () {})
+                                    : CustomButton(
+                                        title:
+                                            ButtonString.btnLogin.toUpperCase(),
+                                        onClick: () => validateAndDoLogin(),
+                                      )),
                         buildPowerLabel(),
                         SizedBox(height: query.height * 0.001)
                       ],
@@ -299,6 +300,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   //Move to root screen where write code for the bottom tab
   void moveToNextScreen() {
-    callNextScreen(context, const RootScreen());
+    removeAndCallNextScreen(context, const RootScreen());
   }
 }

@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,6 +71,7 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
   AddContactBloc addContactBloc =
       AddContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
   bool isLoading = false;
+  List addressList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -169,16 +170,16 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
               child: Text(LabelString.lblInvoiceAddressDetails,
                   style: CustomTextStyle.labelBoldFontTextBlue)),
           SizedBox(height: 2.0.h),
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: invoiceSearchController,
-            obscureText: false,
-            hint: LabelString.lblTypeToSearch,
-            titleText: LabelString.lblAddressSearch,
-            isRequired: false,
-            suffixWidget: Icon(Icons.search, color: AppColors.blackColor),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(LabelString.lblAddressSearch,
+                  style: CustomTextStyle.labelFontText),
+              SizedBox(height: 1.h),
+              autoComplete("invoice"),
+            ],
           ),
+          SizedBox(height: 2.h),
           MultiLineTextField(
             keyboardType: TextInputType.name,
             readOnly: false,
@@ -221,7 +222,7 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
                 style: CustomTextStyle.labelBoldFontTextBlue),
           ),
           SizedBox(height: 2.0.h),
-          CustomTextField(
+          /*CustomTextField(
             copyWidget: InkWell(
               onTap: () {
                 copyAddressFields();
@@ -236,6 +237,110 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
             titleText: LabelString.lblAddressSearch,
             isRequired: true,
             suffixWidget: Icon(Icons.search, color: AppColors.blackColor),
+          ),*/
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(LabelString.lblAddressSearch,
+                      style: CustomTextStyle.labelFontText),
+                  InkWell(
+                    onTap: () {
+                      copyAddressFields();
+                    },
+                    child: Image.asset(ImageString.icCopy, height: 2.8.h),
+                  ),
+                ],
+              ),
+              SizedBox(height: 1.h),
+              /* Autocomplete(
+                fieldViewBuilder: (BuildContext context,
+                    TextEditingController textEditingControllerInstallation,
+                    FocusNode focusNode,
+                    VoidCallback onFieldSubmitted) {
+                  return TextField(
+                    style: TextStyle(color: AppColors.blackColor),
+                    textCapitalization: TextCapitalization.none,
+                    textInputAction: TextInputAction.next,
+                    maxLines: 1,
+                    cursorColor: AppColors.blackColor,
+                    decoration: InputDecoration(
+                        suffixIcon:
+                            Icon(Icons.search, color: AppColors.blackColor),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                                width: 2, color: AppColors.primaryColor)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                                width: 2, color: AppColors.primaryColor)),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                                width: 2, color: AppColors.primaryColor)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: EdgeInsets.only(left: 12.sp),
+                        hintText: LabelString.lblTypeToSearch,
+                        hintStyle: CustomTextStyle.labelFontHintText,
+                        counterText: ""),
+                    controller: textEditingControllerInstallation,
+                    focusNode: focusNode,
+                    onSubmitted: (String value) {
+                      textEditingControllerInstallation.clear();
+                    },
+
+
+                  );
+                },
+                optionsBuilder: (TextEditingValue textEditingValue) async {
+
+                  if (textEditingValue.text.length <= 3) {
+                    return const Iterable<String>.empty();
+                  } else {
+                    var url =
+                        "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=S9VYw_n6IE6VlQkZktafRA37641";
+
+                    final response = await http.get(Uri.parse(url),
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8'
+                        });
+                    final responseJson = json.decode(response.body);
+                    addressList = responseJson["suggestions"];
+                    List<String> matchesAddress = <String>[];
+                    matchesAddress.addAll(
+                        addressList.map((e) => e["address"].toString()));
+                    return matchesAddress;
+                  }
+                },
+                onSelected: (selection) async {
+
+                  for (int i = 0; i < addressList.length; i++) {
+                    if (addressList[i]["address"] == selection) {
+                      String addressId = addressList[i]["id"].toString();
+                      var url =
+                          "https://api.getAddress.io/get/$addressId?api-key=S9VYw_n6IE6VlQkZktafRA37641";
+
+                      final response = await http.get(Uri.parse(url));
+                      final responseJson = json.decode(response.body);
+
+                      installationAddressController.text =
+                          "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                      installationCityController.text =
+                          "${responseJson["town_or_city"]}";
+                      installationCountryController.text =
+                          "${responseJson["county"]}";
+                      installationPostalController.text =
+                          "${responseJson["postcode"]}";
+                    }
+                  }
+                },
+              ),*/
+              autoComplete("installation"),
+              SizedBox(height: 2.h),
+            ],
           ),
           MultiLineTextField(
             keyboardType: TextInputType.name,
@@ -383,9 +488,11 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
     );
   }
 
+  //Call create new contact api
   void createContactApiCall() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
+    //for create data in json format
     ContactDetailData contactDetailData = ContactDetailData(
         widget.firstName.toString(),
         widget.lastName.toString(),
@@ -417,4 +524,110 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
 
     addContactBloc.add(AddContactDetailEvent(queryParameters));
   }
+
+  //For Address autofill
+  Widget autoComplete(String autoCompleteType) {
+    return Autocomplete(
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return TextField(
+          style: TextStyle(color: AppColors.blackColor),
+          textCapitalization: TextCapitalization.none,
+          textInputAction: TextInputAction.next,
+          maxLines: 1,
+          cursorColor: AppColors.blackColor,
+          decoration: InputDecoration(
+              suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide:
+                      BorderSide(width: 2, color: AppColors.primaryColor)),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide:
+                      BorderSide(width: 2, color: AppColors.primaryColor)),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide:
+                      BorderSide(width: 2, color: AppColors.primaryColor)),
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: EdgeInsets.only(left: 12.sp),
+              hintText: LabelString.lblTypeToSearch,
+              hintStyle: CustomTextStyle.labelFontHintText,
+              counterText: ""),
+          controller: textEditingController,
+          focusNode: focusNode,
+          onEditingComplete: () {
+            textEditingController.clear();
+          },
+          onSubmitted: (String value) {},
+        );
+      },
+      optionsBuilder: (TextEditingValue textEditingValue) async {
+        if (textEditingValue.text.length <= 3) {
+          return const Iterable<String>.empty();
+        } else {
+          //API call for get ID
+          var url =
+              "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=S9VYw_n6IE6VlQkZktafRA37641";
+
+          final response = await http.get(Uri.parse(url),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8'
+              });
+          final responseJson = json.decode(response.body);
+          addressList = responseJson["suggestions"];
+          List<String> matchesAddress = <String>[];
+          matchesAddress
+              .addAll(addressList.map((e) => e["address"].toString()));
+          return matchesAddress;
+        }
+      },
+      onSelected: (selection) async {
+        //For get address ID
+        for (int i = 0; i < addressList.length; i++) {
+          if (addressList[i]["address"] == selection) {
+            String addressId = addressList[i]["id"].toString();
+            //Call API for get address detail
+            var url =
+                "https://api.getAddress.io/get/$addressId?api-key=S9VYw_n6IE6VlQkZktafRA37641";
+
+            final response = await http.get(Uri.parse(url));
+            final responseJson = json.decode(response.body);
+
+            //set address detail in field
+            if (autoCompleteType == "invoice") {
+              invoiceAddressController.text =
+                  "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+              invoiceCityController.text = "${responseJson["town_or_city"]}";
+              invoiceCountryController.text = "${responseJson["county"]}";
+              invoicePostalController.text = "${responseJson["postcode"]}";
+            } else {
+              installationAddressController.text =
+                  "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+              installationCityController.text =
+                  "${responseJson["town_or_city"]}";
+              installationCountryController.text = "${responseJson["county"]}";
+              installationPostalController.text = "${responseJson["postcode"]}";
+            }
+          }
+        }
+      },
+    );
+  }
 }
+
+/*
+1st call - https://api.getAddress.io/autocomplete/KT1 3EG?api-key=S9VYw_n6IE6VlQkZktafRA37641
+ {
+            "address": "2 Hawks Road, Kingston upon Thames, Surrey",
+            "url": "/get/MTY1MGFiMTMzNjJlY2IyIDIyNTYxNTUwIGQwYTQ1MjFiNjhlMzA2YQ==",
+            "id": "MTY1MGFiMTMzNjJlY2IyIDIyNTYxNTUwIGQwYTQ1MjFiNjhlMzA2YQ=="
+        },
+
+then call - https://api.getAddress.io/get/MTY1MGFiMTMzNjJlY2IyIDIyNTYxNTUwIGQwYTQ1MjFiNjhlMzA2YQ==?api-key=S9VYw_n6IE6VlQkZktafRA37641
+
+* */

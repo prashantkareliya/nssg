@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nssg/components/custom_appbar.dart';
 import 'package:nssg/components/custom_text_styles.dart';
+import 'package:nssg/screens/contact/get_contact/contact_model_dir/contact_response_model.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,10 @@ import '../../../utils/widgetChange.dart';
 import 'add_contact_address_information.dart';
 
 class AddContactBasicInformationPage extends StatefulWidget {
-  const AddContactBasicInformationPage({Key? key}) : super(key: key);
+  Result contactDetail;
+
+  AddContactBasicInformationPage({Key? key, required this.contactDetail})
+      : super(key: key);
 
   @override
   State<AddContactBasicInformationPage> createState() =>
@@ -29,13 +33,31 @@ class _AddContactBasicInformationPageState
   int selectedStep = 1;
   final contactBasicDetailFormKey = GlobalKey<FormState>();
 
-  TextEditingController firstNameController = TextEditingController();
+  TextEditingController firstNameController =
+      TextEditingController(text: "test");
   TextEditingController lastNameController = TextEditingController();
   TextEditingController companyNameController = TextEditingController();
   TextEditingController officePhoneController = TextEditingController();
   TextEditingController mobilePhoneController = TextEditingController();
-  TextEditingController primaryEmailController = TextEditingController();
+  TextEditingController primaryEmailController =
+      TextEditingController(text: "test@gmail.com");
   TextEditingController secondaryEmailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint(widget.contactDetail.id);
+
+    if (widget.contactDetail.id != null) {
+      firstNameController.text = widget.contactDetail.firstname.toString();
+      lastNameController.text = widget.contactDetail.lastname.toString();
+      companyNameController.text = widget.contactDetail.contactCompany.toString();
+      officePhoneController.text = widget.contactDetail.phone.toString();
+      mobilePhoneController.text = widget.contactDetail.mobile.toString();
+      primaryEmailController.text = widget.contactDetail.email.toString();
+      secondaryEmailController.text = widget.contactDetail.email.toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +67,9 @@ class _AddContactBasicInformationPageState
         appBar: BaseAppBar(
           appBar: AppBar(),
           elevation: 1,
-          title: LabelString.lblAddNewContact,
+          title: widget.contactDetail.id == null
+              ? LabelString.lblAddNewContact
+              : LabelString.lblEditContact,
           titleTextStyle: CustomTextStyle.labelBoldFontText,
           isBack: true,
           searchWidget: Container(),

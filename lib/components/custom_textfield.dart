@@ -53,15 +53,14 @@ class CustomTextField extends StatelessWidget {
           children: [
             if (titleText != null) ...[
               Text(
-                titleText ?? "",style: CustomTextStyle.labelFontText,
+                titleText ?? "",
+                style: CustomTextStyle.labelFontText,
               ),
             ],
             copyWidget ?? Container(),
           ],
         ),
-        const SizedBox(
-          height: 10,
-        ),
+        SizedBox(height: 1.h),
         TextFormField(
           controller: controller,
           style: TextStyle(color: AppColors.blackColor),
@@ -154,7 +153,7 @@ class MultiLineTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (titleText != null) ...[
-          Text(titleText ?? ""),
+          Text(titleText ?? "", style: CustomTextStyle.labelFontText),
           const SizedBox(height: 10),
         ],
         TextFormField(

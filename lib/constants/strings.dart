@@ -36,6 +36,7 @@ class LabelString{
   static const String lblSearch = "Search....";
 
   static const String lblAddNewContact = "Add New Contact";
+  static const String lblContactDetail = "Contact Detail";
   static const String lblEditContact = "Edit Contact";
   static const String lblBasicInformation = "Basic Information";
   static const String lblFirstName = "First Name";
@@ -49,6 +50,7 @@ class LabelString{
   static const String lblStep = "Step";
 
   static const String lblAddressInformation = "Address Information";
+  static const String lblAddress = "Address";
   static const String lblInvoiceAddressDetails = "Invoice address details";
 
   static const String lblAddressSearch = "Address Search";
@@ -65,6 +67,11 @@ class LabelString{
   static const String lblInvoiceCountry = "Invoice Country";
   static const String lblInvoicePostalCode = "Invoice Postal Code";
 
+  static const String lblCity = "City";
+  static const String lblCountry = "Country";
+  static const String lblPostalCode = "Postal Code";
+
+
   static const String lblInstallationAddressDetails = "Installation address details";
 
   static const String lblAddNewQuote = "Add New Quote";
@@ -80,6 +87,7 @@ class LabelString{
 //Button Strings
 class ButtonString{
   static const String btnLogin = "Log in";
+  static const String btnLoginWithOtherAccount = "Login with other account";
   static const String btnEdit = "Edit";
   static const String btnDelete = "Delete";
   static const String btnCancel = "Cancel";

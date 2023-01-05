@@ -14,6 +14,8 @@ import '../../components/custom_dialog.dart';
 import '../../constants/constants.dart';
 import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
+import '../../httpl_actions/app_http.dart';
+import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/helpers.dart';
 import '../../utils/widgetChange.dart';
 import 'add_contact/add_contact_basic_information.dart';
@@ -209,12 +211,30 @@ class _ContactScreenState extends State<ContactScreen> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           elevation: 5,
-                          child: Container(
-                            width: query.width,
-                            decoration: BoxDecoration(
-                                color: AppColors.whiteColor,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(12.0))),
+                          child: InkWell(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      elevation: 0,
+                                      insetPadding: EdgeInsets.symmetric(
+                                          horizontal: 15.sp),
+                                      child: SizedBox(
+                                        height: 80.h,
+                                        child: ContactDetail(
+                                            contactItems![index].id),
+                                      ));
+                                },
+                              ).then((value) {
+                                if (value == "deleteSuccess") {
+                                  getContact();
+                                }
+                              });
+                            },
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,8 +315,11 @@ class _ContactScreenState extends State<ContactScreen> {
                                             style: CustomTextStyle.labelText),
                                       ),
                                       InkWell(
-                                        onTap: () => callNextScreen(context,
-                                            const AddContactBasicInformationPage()),
+                                        onTap: () => callNextScreen(
+                                            context,
+                                            AddContactBasicInformationPage(
+                                                contactDetail:
+                                                    contactItems![index])),
                                         child: Container(
                                           height: 3.h,
                                           width: 6.w,
@@ -382,8 +405,8 @@ class _ContactScreenState extends State<ContactScreen> {
     return Padding(
       padding: EdgeInsets.only(right: 10.sp, bottom: 8.sp),
       child: FloatingActionButton(
-          onPressed: () =>
-              callNextScreen(context, const AddContactBasicInformationPage()),
+          onPressed: () => callNextScreen(
+              context, AddContactBasicInformationPage(contactDetail: Result())),
           child: const Icon(Icons.add)),
     );
   }
@@ -413,5 +436,243 @@ class _ContactScreenState extends State<ContactScreen> {
       'appversion': Constants.of().appversion,
     };
     contactBloc.add(DeleteContactEvent(queryParameters));
+  }
+}
+
+class ContactDetail extends StatefulWidget {
+  var contactId;
+
+  ContactDetail(this.contactId, {Key? key}) : super(key: key);
+
+  @override
+  State<ContactDetail> createState() => _ContactDetailState();
+}
+
+class _ContactDetailState extends State<ContactDetail> {
+  Future<dynamic>? futureContactDetail;
+
+  GetContactBloc contactBloc =
+      GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    futureContactDetail = getContactDetail();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      appBar: BaseAppBar(
+        appBar: AppBar(),
+        elevation: 0,
+        title: LabelString.lblContactDetail,
+        titleTextStyle: CustomTextStyle.labelBoldFontText,
+        isBack: false,
+        searchWidget: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(Icons.cancel_outlined, color: AppColors.blackColor)),
+        backgroundColor: AppColors.whiteColor,
+      ),
+      body: BlocListener<GetContactBloc, GetContactState>(
+        bloc: contactBloc,
+        listener: (context, state) {
+          if (state is ContactLoadFail) {
+            Helpers.showSnackBar(context, state.error.toString());
+          }
+
+          if (state is DeleteContact) {
+            Navigator.pop(context);
+            Navigator.pop(context,"deleteSuccess");
+            Helpers.showSnackBar(context, state.message.toString());
+          }
+        },
+        child: BlocBuilder<GetContactBloc, GetContactState>(
+          bloc: contactBloc,
+          builder: (context, state) {
+            if (state is ContactLoadingState) {
+              isLoading = state.isBusy;
+            }
+            if (state is ContactLoadFail) {
+              isLoading = false;
+            }
+            return FutureBuilder<dynamic>(
+              future: futureContactDetail,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(height: 1.0.h),
+                        ContactTileField(
+                            LabelString.lblFullName,
+                            snapshot.data["result"]["firstname"] +
+                                " " +
+                                snapshot.data["result"]["lastname"],
+                            true,
+                            iconWidget: InkWell(
+                              onTap: () {
+                                //Dialog to confirm delete contact or not
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (ctx) => ValidationDialog(
+                                    Message.deleteContact,
+                                    //Yes button
+                                    () {
+                                      deleteContact(
+                                          snapshot.data["result"]["id"]);
+                                    },
+                                    () {
+                                      Navigator.pop(context);
+                                    }, //No button
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                height: 3.h,
+                                width: 6.w,
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(80.0)),
+                                    border: Border.all(
+                                        width: 1, color: AppColors.redColor)),
+                                child: Center(
+                                    child: Icon(
+                                  Icons.delete_rounded,
+                                  size: 12.sp,
+                                  color: AppColors.redColor,
+                                )),
+                              ),
+                            )),
+                        ContactTileField(LabelString.lblCompany,
+                            snapshot.data["result"]["contact_company"], true,
+                            iconWidget: Container(
+                              height: 3.h,
+                              width: 6.w,
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(80.0)),
+                                  border: Border.all(
+                                      width: 1, color: AppColors.blackColor)),
+                              child: Center(
+                                  child: Icon(Icons.edit_rounded,
+                                      size: 12.sp,
+                                      color: AppColors.blackColor)),
+                            )),
+                        ContactTileField(LabelString.lblOfficePhone,
+                            snapshot.data["result"]["phone"], false),
+                        ContactTileField(LabelString.lblMobilePhone,
+                            snapshot.data["result"]["mobile"], false),
+                        ContactTileField(LabelString.lblPrimaryEmail,
+                            snapshot.data["result"]["email"], false),
+                        ContactTileField(LabelString.lblSecondaryEmail,
+                            snapshot.data["result"]["secondaryemail"], false),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.sp),
+                          child: Text(LabelString.lblInstallationAddressDetails,
+                              style: CustomTextStyle.labelBoldFontTextBlue),
+                        ),
+                        ContactTileField(LabelString.lblAddress,
+                            snapshot.data["result"]["mailingstreet"], false),
+                        ContactTileField(LabelString.lblCity,
+                            snapshot.data["result"]["mailingcity"], false),
+                        ContactTileField(LabelString.lblCountry,
+                            snapshot.data["result"]["mailingcountry"], false),
+                        ContactTileField(LabelString.lblPostalCode,
+                            snapshot.data["result"]["mailingzip"], false),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.sp),
+                          child: Text(LabelString.lblInvoiceAddressDetails,
+                              style: CustomTextStyle.labelBoldFontTextBlue),
+                        ),
+                        ContactTileField(LabelString.lblAddress,
+                            snapshot.data["result"]["otherstreet"], false),
+                        ContactTileField(LabelString.lblCity,
+                            snapshot.data["result"]["othercity"], false),
+                        ContactTileField(LabelString.lblCountry,
+                            snapshot.data["result"]["othercountry"], false),
+                        ContactTileField(LabelString.lblPostalCode,
+                            snapshot.data["result"]["otherzip"], false),
+                        SizedBox(height: 2.0.h),
+                      ],
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  final message = HandleAPI.handleAPIError(snapshot.error);
+                  return Text(message);
+                }
+                return SizedBox(height: 80.h, child: loadingView());
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<dynamic> getContactDetail() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': "retrieve",
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
+      'id': widget.contactId.toString()
+    };
+    final response = await HttpActions()
+        .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
+
+    debugPrint("getContactDetailApi --- $response");
+    return response;
+  }
+
+  deleteContact(String contactId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': 'delete',
+      'sessionName': preferences.getString(PreferenceString.sessionName),
+      'id': contactId, //2017
+      'appversion': Constants.of().appversion,
+    };
+    contactBloc.add(DeleteContactEvent(queryParameters));
+  }
+}
+
+// ignore: must_be_immutable
+class ContactTileField extends StatelessWidget {
+  String? field;
+  String? fieldDetail;
+  Widget? iconWidget;
+  bool isWidget;
+
+  ContactTileField(this.field, this.fieldDetail, this.isWidget,
+      {super.key, this.iconWidget});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 3.sp),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text("$field :", style: CustomTextStyle.labelFontHintText),
+          ),
+          Expanded(
+            child: Text(fieldDetail!, style: CustomTextStyle.labelText),
+          ),
+          isWidget ? iconWidget! : SizedBox(height: 3.h, width: 6.w)
+        ],
+      ),
+    );
   }
 }
