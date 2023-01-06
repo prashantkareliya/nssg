@@ -22,3 +22,9 @@ class FailAddContact extends AddContactState {
 
   FailAddContact({this.error});
 }
+
+class UpdatedContactData extends AddContactState{
+  final String? updateContactDetail;
+
+  UpdatedContactData({this.updateContactDetail});
+}

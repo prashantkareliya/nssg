@@ -1,11 +1,11 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../contact_repository.dart';
-import '../contact_model_dir/contact_response_model.dart';
+import '../contact_model_dir/get_contact_response_model.dart';
 
 part 'get_contact_event.dart';
+
 part 'get_contact_state.dart';
 
 class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
@@ -22,8 +22,12 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
       return deleteContactEvent(event, emit);
     });
 
+    on<RetrieveContactEvent>((event, emit) {
+      return retrieveContactEvent(event, emit);
+    });
   }
 
+  //get contact list bloc method
   getContactListEvent(
       GetContactListEvent event, Emitter<GetContactState> emit) async {
     emit(ContactLoadingState(true));
@@ -39,15 +43,35 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
     });
   }
 
-   deleteContactEvent(DeleteContactEvent event, Emitter<GetContactState> emit) async {
-     final response = await contactRepository.contactDelete(event.queryParameters);
+  //delete contact bloc method
+  deleteContactEvent(
+      DeleteContactEvent event, Emitter<GetContactState> emit) async {
+    emit(ContactLoadingState(true));
+    final response =
+        await contactRepository.contactDelete(event.queryParameters);
 
-     response.when(success: (success) {
-       emit(ContactLoadingState(false));
-       emit(DeleteContact(message: success.result!.status.toString()));
-     }, failure: (failure) {
-       emit(ContactLoadingState(false));
-       emit(ContactLoadFail(error: failure.toString()));
-     });
-   }
+    response.when(success: (success) {
+      emit(ContactLoadingState(false));
+      emit(DeleteContact(message: success.result!.status.toString()));
+    }, failure: (failure) {
+      emit(ContactLoadingState(false));
+      emit(ContactLoadFail(error: failure.toString()));
+    });
+  }
+
+  //retrieve single contact detail bloc method
+  retrieveContactEvent(
+      RetrieveContactEvent event, Emitter<GetContactState> emit) async {
+    emit(ContactLoadingState(true));
+    final response =
+        await contactRepository.retrieveContact(event.queryParameters);
+
+    response.when(success: (success) {
+      emit(ContactLoadingState(false));
+      emit(RetrieveContact(contactGet: success.result));
+    }, failure: (failure) {
+      emit(ContactLoadingState(false));
+      emit(ContactLoadFail(error: failure.toString()));
+    });
+  }
 }

@@ -1,282 +1,214 @@
 class ContactDetail {
   bool? success;
-  ContactsDetail? contactsDetail;
+  ContactDetailResult? result;
 
-  ContactDetail({this.success, this.contactsDetail});
+  ContactDetail({this.success, this.result});
 
   ContactDetail.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    contactsDetail =
-    json['result'] != null ? ContactsDetail.fromJson(json['result']) : null;
+    result =
+    json['result'] != null ? new ContactDetailResult.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['success'] = success;
-    if (contactsDetail != null) {
-      data['result'] = contactsDetail!.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['success'] = this.success;
+    if (this.result != null) {
+      data['result'] = this.result!.toJson();
     }
     return data;
   }
 }
 
-class ContactsDetail {
-  String? userName;
-  String? isAdmin;
-  String? userPassword;
-  String? confirmPassword;
-  String? firstName;
-  String? lastName;
-  String? roleid;
-  String? email1;
-  String? status;
-  String? activityView;
-  String? leadView;
-  String? hourFormat;
-  String? endHour;
-  String? startHour;
+class ContactDetailResult {
+  String? salutationtype;
+  String? firstname;
+  String? contactNo;
+  String? phone;
+  String? lastname;
+  String? mobile;
+  String? accountId;
+  String? homephone;
+  String? leadsource;
+  String? otherphone;
   String? title;
-  String? phoneWork;
+  String? fax;
   String? department;
-  String? phoneMobile;
-  String? reportsToId;
-  String? phoneOther;
-  String? email2;
-  String? phoneFax;
+  String? birthday;
+  String? email;
+  String? contactId;
+  String? assistant;
   String? secondaryemail;
-  String? phoneHome;
-  String? dateFormat;
-  String? signature;
+  String? assistantphone;
+  String? donotcall;
+  String? emailoptout;
+  String? assignedUserId;
+  String? reference;
+  String? notifyOwner;
+  String? createdtime;
+  String? modifiedtime;
+  String? modifiedby;
+  String? isconvertedfromlead;
+  String? contactCompany;
+  String? mailingstreet;
+  String? mailingcity;
+  String? mailingstate;
+  String? otherstate;
+  String? mailingzip;
+  String? mailingcountry;
+  String? mailingpobox;
+  String? otherpobox;
   String? description;
-  String? addressStreet;
-  String? addressCity;
-  String? addressState;
-  String? addressPostalcode;
-  String? addressCountry;
-  String? accesskey;
-  String? timeZone;
-  String? currencyId;
-  String? currencyGroupingPattern;
-  String? currencyDecimalSeparator;
-  String? currencyGroupingSeparator;
-  String? currencySymbolPlacement;
   String? imagename;
-  String? internalMailer;
-  String? theme;
-  String? language;
-  String? reminderInterval;
-  String? phoneCrmExtension;
-  String? noOfCurrencyDecimals;
-  String? truncateTrailingZeros;
-  String? dayoftheweek;
-  String? callduration;
-  String? othereventduration;
-  String? calendarsharedtype;
-  String? defaultRecordView;
-  String? leftpanelhide;
-  String? rowheight;
-  String? defaulteventstatus;
-  String? defaultactivitytype;
-  String? hidecompletedevents;
-  String? isOwner;
-  String? vtigerUserSystemtype;
-  String? vtigerUserMultiSystemtype;
-  String? vtigerUserLoginPin;
+  String? otherstreet;
+  String? othercity;
+  String? otherzip;
+  String? othercountry;
   String? id;
+  String? assignedUserName;
 
-  ContactsDetail(
-      {this.userName,
-        this.isAdmin,
-        this.userPassword,
-        this.confirmPassword,
-        this.firstName,
-        this.lastName,
-        this.roleid,
-        this.email1,
-        this.status,
-        this.activityView,
-        this.leadView,
-        this.hourFormat,
-        this.endHour,
-        this.startHour,
+  ContactDetailResult(
+      {this.salutationtype,
+        this.firstname,
+        this.contactNo,
+        this.phone,
+        this.lastname,
+        this.mobile,
+        this.accountId,
+        this.homephone,
+        this.leadsource,
+        this.otherphone,
         this.title,
-        this.phoneWork,
+        this.fax,
         this.department,
-        this.phoneMobile,
-        this.reportsToId,
-        this.phoneOther,
-        this.email2,
-        this.phoneFax,
+        this.birthday,
+        this.email,
+        this.contactId,
+        this.assistant,
         this.secondaryemail,
-        this.phoneHome,
-        this.dateFormat,
-        this.signature,
+        this.assistantphone,
+        this.donotcall,
+        this.emailoptout,
+        this.assignedUserId,
+        this.reference,
+        this.notifyOwner,
+        this.createdtime,
+        this.modifiedtime,
+        this.modifiedby,
+        this.isconvertedfromlead,
+        this.contactCompany,
+        this.mailingstreet,
+        this.mailingcity,
+        this.mailingstate,
+        this.otherstate,
+        this.mailingzip,
+        this.mailingcountry,
+        this.mailingpobox,
+        this.otherpobox,
         this.description,
-        this.addressStreet,
-        this.addressCity,
-        this.addressState,
-        this.addressPostalcode,
-        this.addressCountry,
-        this.accesskey,
-        this.timeZone,
-        this.currencyId,
-        this.currencyGroupingPattern,
-        this.currencyDecimalSeparator,
-        this.currencyGroupingSeparator,
-        this.currencySymbolPlacement,
         this.imagename,
-        this.internalMailer,
-        this.theme,
-        this.language,
-        this.reminderInterval,
-        this.phoneCrmExtension,
-        this.noOfCurrencyDecimals,
-        this.truncateTrailingZeros,
-        this.dayoftheweek,
-        this.callduration,
-        this.othereventduration,
-        this.calendarsharedtype,
-        this.defaultRecordView,
-        this.leftpanelhide,
-        this.rowheight,
-        this.defaulteventstatus,
-        this.defaultactivitytype,
-        this.hidecompletedevents,
-        this.isOwner,
-        this.vtigerUserSystemtype,
-        this.vtigerUserMultiSystemtype,
-        this.vtigerUserLoginPin,
-        this.id});
+        this.otherstreet,
+        this.othercity,
+        this.otherzip,
+        this.othercountry,
+        this.id,
+        this.assignedUserName});
 
-  ContactsDetail.fromJson(Map<String, dynamic> json) {
-    userName = json['user_name'];
-    isAdmin = json['is_admin'];
-    userPassword = json['user_password'];
-    confirmPassword = json['confirm_password'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    roleid = json['roleid'];
-    email1 = json['email1'];
-    status = json['status'];
-    activityView = json['activity_view'];
-    leadView = json['lead_view'];
-    hourFormat = json['hour_format'];
-    endHour = json['end_hour'];
-    startHour = json['start_hour'];
+  ContactDetailResult.fromJson(Map<String, dynamic> json) {
+    salutationtype = json['salutationtype'];
+    firstname = json['firstname'];
+    contactNo = json['contact_no'];
+    phone = json['phone'];
+    lastname = json['lastname'];
+    mobile = json['mobile'];
+    accountId = json['account_id'];
+    homephone = json['homephone'];
+    leadsource = json['leadsource'];
+    otherphone = json['otherphone'];
     title = json['title'];
-    phoneWork = json['phone_work'];
+    fax = json['fax'];
     department = json['department'];
-    phoneMobile = json['phone_mobile'];
-    reportsToId = json['reports_to_id'];
-    phoneOther = json['phone_other'];
-    email2 = json['email2'];
-    phoneFax = json['phone_fax'];
+    birthday = json['birthday'];
+    email = json['email'];
+    contactId = json['contact_id'];
+    assistant = json['assistant'];
     secondaryemail = json['secondaryemail'];
-    phoneHome = json['phone_home'];
-    dateFormat = json['date_format'];
-    signature = json['signature'];
+    assistantphone = json['assistantphone'];
+    donotcall = json['donotcall'];
+    emailoptout = json['emailoptout'];
+    assignedUserId = json['assigned_user_id'];
+    reference = json['reference'];
+    notifyOwner = json['notify_owner'];
+    createdtime = json['createdtime'];
+    modifiedtime = json['modifiedtime'];
+    modifiedby = json['modifiedby'];
+    isconvertedfromlead = json['isconvertedfromlead'];
+    contactCompany = json['contact_company'];
+    mailingstreet = json['mailingstreet'];
+    mailingcity = json['mailingcity'];
+    mailingstate = json['mailingstate'];
+    otherstate = json['otherstate'];
+    mailingzip = json['mailingzip'];
+    mailingcountry = json['mailingcountry'];
+    mailingpobox = json['mailingpobox'];
+    otherpobox = json['otherpobox'];
     description = json['description'];
-    addressStreet = json['address_street'];
-    addressCity = json['address_city'];
-    addressState = json['address_state'];
-    addressPostalcode = json['address_postalcode'];
-    addressCountry = json['address_country'];
-    accesskey = json['accesskey'];
-    timeZone = json['time_zone'];
-    currencyId = json['currency_id'];
-    currencyGroupingPattern = json['currency_grouping_pattern'];
-    currencyDecimalSeparator = json['currency_decimal_separator'];
-    currencyGroupingSeparator = json['currency_grouping_separator'];
-    currencySymbolPlacement = json['currency_symbol_placement'];
     imagename = json['imagename'];
-    internalMailer = json['internal_mailer'];
-    theme = json['theme'];
-    language = json['language'];
-    reminderInterval = json['reminder_interval'];
-    phoneCrmExtension = json['phone_crm_extension'];
-    noOfCurrencyDecimals = json['no_of_currency_decimals'];
-    truncateTrailingZeros = json['truncate_trailing_zeros'];
-    dayoftheweek = json['dayoftheweek'];
-    callduration = json['callduration'];
-    othereventduration = json['othereventduration'];
-    calendarsharedtype = json['calendarsharedtype'];
-    defaultRecordView = json['default_record_view'];
-    leftpanelhide = json['leftpanelhide'];
-    rowheight = json['rowheight'];
-    defaulteventstatus = json['defaulteventstatus'];
-    defaultactivitytype = json['defaultactivitytype'];
-    hidecompletedevents = json['hidecompletedevents'];
-    isOwner = json['is_owner'];
-    vtigerUserSystemtype = json['vtiger_user_systemtype'];
-    vtigerUserMultiSystemtype = json['vtiger_user_multi_systemtype'];
-    vtigerUserLoginPin = json['vtiger_user_login_pin'];
+    otherstreet = json['otherstreet'];
+    othercity = json['othercity'];
+    otherzip = json['otherzip'];
+    othercountry = json['othercountry'];
     id = json['id'];
+    assignedUserName = json['assigned_user_name'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['user_name'] = userName;
-    data['is_admin'] = isAdmin;
-    data['user_password'] = userPassword;
-    data['confirm_password'] = confirmPassword;
-    data['first_name'] = firstName;
-    data['last_name'] = lastName;
-    data['roleid'] = roleid;
-    data['email1'] = email1;
-    data['status'] = status;
-    data['activity_view'] = activityView;
-    data['lead_view'] = leadView;
-    data['hour_format'] = hourFormat;
-    data['end_hour'] = endHour;
-    data['start_hour'] = startHour;
-    data['title'] = title;
-    data['phone_work'] = phoneWork;
-    data['department'] = department;
-    data['phone_mobile'] = phoneMobile;
-    data['reports_to_id'] = reportsToId;
-    data['phone_other'] = phoneOther;
-    data['email2'] = email2;
-    data['phone_fax'] = phoneFax;
-    data['secondaryemail'] = secondaryemail;
-    data['phone_home'] = phoneHome;
-    data['date_format'] = dateFormat;
-    data['signature'] = signature;
-    data['description'] = description;
-    data['address_street'] = addressStreet;
-    data['address_city'] = addressCity;
-    data['address_state'] = addressState;
-    data['address_postalcode'] = addressPostalcode;
-    data['address_country'] = addressCountry;
-    data['accesskey'] = accesskey;
-    data['time_zone'] = timeZone;
-    data['currency_id'] = currencyId;
-    data['currency_grouping_pattern'] = currencyGroupingPattern;
-    data['currency_decimal_separator'] = currencyDecimalSeparator;
-    data['currency_grouping_separator'] = currencyGroupingSeparator;
-    data['currency_symbol_placement'] = currencySymbolPlacement;
-    data['imagename'] = imagename;
-    data['internal_mailer'] = internalMailer;
-    data['theme'] = theme;
-    data['language'] = language;
-    data['reminder_interval'] = reminderInterval;
-    data['phone_crm_extension'] = phoneCrmExtension;
-    data['no_of_currency_decimals'] = noOfCurrencyDecimals;
-    data['truncate_trailing_zeros'] = truncateTrailingZeros;
-    data['dayoftheweek'] = dayoftheweek;
-    data['callduration'] = callduration;
-    data['othereventduration'] = othereventduration;
-    data['calendarsharedtype'] = calendarsharedtype;
-    data['default_record_view'] = defaultRecordView;
-    data['leftpanelhide'] = leftpanelhide;
-    data['rowheight'] = rowheight;
-    data['defaulteventstatus'] = defaulteventstatus;
-    data['defaultactivitytype'] = defaultactivitytype;
-    data['hidecompletedevents'] = hidecompletedevents;
-    data['is_owner'] = isOwner;
-    data['vtiger_user_systemtype'] = vtigerUserSystemtype;
-    data['vtiger_user_multi_systemtype'] = vtigerUserMultiSystemtype;
-    data['vtiger_user_login_pin'] = vtigerUserLoginPin;
-    data['id'] = id;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['salutationtype'] = this.salutationtype;
+    data['firstname'] = this.firstname;
+    data['contact_no'] = this.contactNo;
+    data['phone'] = this.phone;
+    data['lastname'] = this.lastname;
+    data['mobile'] = this.mobile;
+    data['account_id'] = this.accountId;
+    data['homephone'] = this.homephone;
+    data['leadsource'] = this.leadsource;
+    data['otherphone'] = this.otherphone;
+    data['title'] = this.title;
+    data['fax'] = this.fax;
+    data['department'] = this.department;
+    data['birthday'] = this.birthday;
+    data['email'] = this.email;
+    data['contact_id'] = this.contactId;
+    data['assistant'] = this.assistant;
+    data['secondaryemail'] = this.secondaryemail;
+    data['assistantphone'] = this.assistantphone;
+    data['donotcall'] = this.donotcall;
+    data['emailoptout'] = this.emailoptout;
+    data['assigned_user_id'] = this.assignedUserId;
+    data['reference'] = this.reference;
+    data['notify_owner'] = this.notifyOwner;
+    data['createdtime'] = this.createdtime;
+    data['modifiedtime'] = this.modifiedtime;
+    data['modifiedby'] = this.modifiedby;
+    data['isconvertedfromlead'] = this.isconvertedfromlead;
+    data['contact_company'] = this.contactCompany;
+    data['mailingstreet'] = this.mailingstreet;
+    data['mailingcity'] = this.mailingcity;
+    data['mailingstate'] = this.mailingstate;
+    data['otherstate'] = this.otherstate;
+    data['mailingzip'] = this.mailingzip;
+    data['mailingcountry'] = this.mailingcountry;
+    data['mailingpobox'] = this.mailingpobox;
+    data['otherpobox'] = this.otherpobox;
+    data['description'] = this.description;
+    data['imagename'] = this.imagename;
+    data['otherstreet'] = this.otherstreet;
+    data['othercity'] = this.othercity;
+    data['otherzip'] = this.otherzip;
+    data['othercountry'] = this.othercountry;
+    data['id'] = this.id;
+    data['assigned_user_name'] = this.assignedUserName;
     return data;
   }
 }

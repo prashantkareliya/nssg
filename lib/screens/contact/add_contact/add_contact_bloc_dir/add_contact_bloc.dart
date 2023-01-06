@@ -15,6 +15,10 @@ class AddContactBloc extends Bloc<AddContactEvent, AddContactState> {
     on<AddContactDetailEvent>((event, emit) {
       return addContactDetail(event, emit);
     });
+
+    on<UpdateContactDetailEvent>((event, emit) {
+      return updateContactDetail(event, emit);
+    });
   }
 
   addContactDetail(
@@ -26,6 +30,20 @@ class AddContactBloc extends Bloc<AddContactEvent, AddContactState> {
     response.when(success: (success) {
       emit(LoadingAddContact(false));
       emit(LoadedAddContact(contactDetail: success.result.toString()));
+    }, failure: (failure) {
+      emit(LoadingAddContact(false));
+      emit(FailAddContact(error: failure.toString()));
+    });
+  }
+
+  updateContactDetail(UpdateContactDetailEvent event, Emitter<AddContactState> emit) async {
+    emit(LoadingAddContact(true));
+
+    final response = await contactRepository.updateContact(event.queryParameters);
+
+    response.when(success: (success) {
+      emit(LoadingAddContact(false));
+      emit(UpdatedContactData(updateContactDetail: success.result.toString()));
     }, failure: (failure) {
       emit(LoadingAddContact(false));
       emit(FailAddContact(error: failure.toString()));

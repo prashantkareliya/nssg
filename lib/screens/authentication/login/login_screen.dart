@@ -48,15 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
   //Variable for login with pin screen's username
   String? userName = "xxxx@gmail.com";
 
-  @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
-
   LoginBloc loginBloc =
       LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isLogin == "isLogin") {
+      getUserName();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -279,16 +281,9 @@ class _LoginScreenState extends State<LoginScreen> {
         animationCurve: Curves.easeInOut,
         switchInAnimationCurve: Curves.easeIn,
         switchOutAnimationCurve: Curves.easeOut,
-        onComplete: (result) async {
-          // Your logic with code
-          debugPrint(result);
-
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          userName =
-              preferences.getString(PreferenceString.userName).toString();
+        onComplete: (result) {
           Map<String, dynamic> queryParameters = {
             'username': userName.toString(),
-            //preferences.getString(PreferenceString.userName).toString(),
             'loginpin': result.toString(), //2017
             'accesskey': 'S8QzomH4Q4QYxaFb',
           };
@@ -301,5 +296,11 @@ class _LoginScreenState extends State<LoginScreen> {
   //Move to root screen where write code for the bottom tab
   void moveToNextScreen() {
     removeAndCallNextScreen(context, const RootScreen());
+  }
+
+  Future<void> getUserName() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    userName = preferences.getString(PreferenceString.userName).toString();
   }
 }

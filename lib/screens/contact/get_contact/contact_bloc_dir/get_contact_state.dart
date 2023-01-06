@@ -24,3 +24,8 @@ class DeleteContact extends GetContactState{
   final String? message;
   DeleteContact({this.message});
 }
+
+class RetrieveContact extends GetContactState{
+  final dynamic contactGet;
+  RetrieveContact({this.contactGet});
+}

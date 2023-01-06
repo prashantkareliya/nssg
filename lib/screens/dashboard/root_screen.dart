@@ -27,7 +27,7 @@ class RootScreenState extends State<RootScreen> {
       bottomNavigationBar: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
           return Container(
-            height: 8.h,
+            height: 9.5.h,
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(

@@ -94,6 +94,7 @@ class ButtonString{
   static const String btnNext = "Next";
   static const String btnPrevious = "Previous";
   static const String btnSubmit = "Submit";
+  static const String btnUpdate = "Update";
 }
 
 

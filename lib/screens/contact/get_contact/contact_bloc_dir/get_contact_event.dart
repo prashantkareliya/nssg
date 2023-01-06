@@ -16,3 +16,10 @@ class DeleteContactEvent extends GetContactEvent {
 
   DeleteContactEvent(this.queryParameters);
 }
+
+// ignore: must_be_immutable
+class RetrieveContactEvent extends GetContactEvent {
+  Map<String, dynamic> queryParameters;
+
+  RetrieveContactEvent(this.queryParameters);
+}
