@@ -370,8 +370,9 @@ class _ContactScreenState extends State<ContactScreen> {
     return Padding(
       padding: EdgeInsets.only(right: 10.sp, bottom: 8.sp),
       child: FloatingActionButton(
-          onPressed: () =>
-              callNextScreen(context, AddContactBasicInformationPage("NoId")),
+          onPressed: () {
+            callNextScreen(context, AddContactBasicInformationPage("NoId"));
+          },
           child: const Icon(Icons.add)),
     );
   }

@@ -1,31 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:nssg/components/custom_text_styles.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:nssg/screens/contact/contact_screen.dart';
+import 'package:nssg/screens/qoute/quotes_screen.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
-import '../../components/bottom_navigationbar/nav_bar_items.dart';
-import '../../components/bottom_navigationbar/navigation_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../../components/custom_text_styles.dart';
 import '../../constants/strings.dart';
-import '../contact/contact_screen.dart';
-import '../qoute/quotes_screen.dart';
+import 'bottom_navbar_bloc.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
 
   @override
-  RootScreenState createState() => RootScreenState();
+  createState() => _RootScreenState();
 }
 
-class RootScreenState extends State<RootScreen> {
-  Color? backColor;
+class _RootScreenState extends State<RootScreen> {
+  BottomNavBarBloc? bottomNavBarBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    initialization();
+    bottomNavBarBloc = BottomNavBarBloc();
+  }
+
+//method for remove native splash screen
+  void initialization() async {
+    await Future.delayed(const Duration(seconds: 1));
+    FlutterNativeSplash.remove();
+  }
+
+  @override
+  void dispose() {
+    bottomNavBarBloc?.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backWhiteColor,
-      bottomNavigationBar: BlocBuilder<NavigationCubit, NavigationState>(
-        builder: (context, state) {
+      body: StreamBuilder<NavBarItem>(
+        stream: bottomNavBarBloc?.itemStream,
+        initialData: bottomNavBarBloc?.defaultItem,
+        builder: (BuildContext context, AsyncSnapshot<NavBarItem> snapshot) {
+          switch (snapshot.data!) {
+            case NavBarItem.contact:
+              return const ContactScreen();
+
+            case NavBarItem.quote:
+              return const QuoteScreen();
+          }
+        },
+      ),
+      bottomNavigationBar: StreamBuilder(
+        stream: bottomNavBarBloc?.itemStream,
+        initialData: bottomNavBarBloc?.defaultItem,
+        builder: (BuildContext context, AsyncSnapshot<NavBarItem> snapshot) {
           return Container(
             height: 9.5.h,
             decoration: const BoxDecoration(
@@ -35,42 +66,27 @@ class RootScreenState extends State<RootScreen> {
                   topRight: (Radius.circular(20.0))),
             ),
             child: BottomNavigationBar(
-              currentIndex: state.index,
+              currentIndex: snapshot.data!.index,
               backgroundColor: Colors.transparent,
               showUnselectedLabels: true,
               elevation: 0,
               iconSize: 20.sp,
               selectedLabelStyle: CustomTextStyle.commonText,
               unselectedLabelStyle: CustomTextStyle.commonText,
+              onTap: bottomNavBarBloc?.pickItem,
+              type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.group), label: LabelString.lblContact),
+                    icon: Icon(Icons.group_rounded),
+                    label: LabelString.lblContact),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.access_time_filled),
+                    icon: Icon(Icons.help_rounded),
                     label: LabelString.lblQuotes),
               ],
-              onTap: (index) {
-                if (index == 0) {
-                  BlocProvider.of<NavigationCubit>(context)
-                      .getNavBarItem(NavbarItem.contacts);
-                } else if (index == 1) {
-                  BlocProvider.of<NavigationCubit>(context)
-                      .getNavBarItem(NavbarItem.quotes);
-                }
-              },
             ),
           );
         },
       ),
-      body: BlocBuilder<NavigationCubit, NavigationState>(
-          builder: (context, state) {
-        if (state.navbarItem == NavbarItem.contacts) {
-          return const ContactScreen();
-        } else if (state.navbarItem == NavbarItem.quotes) {
-          return const QuoteScreen();
-        }
-        return Container();
-      }),
     );
   }
 }

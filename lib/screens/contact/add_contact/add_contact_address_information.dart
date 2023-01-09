@@ -12,6 +12,7 @@ import '../../../constants/constants.dart';
 import '../../../constants/navigation.dart';
 import '../../../utils/helpers.dart';
 import '../../dashboard/root_screen.dart';
+import '../../dashboard/root_screen.dart';
 import '../../qoute/add_quote.dart';
 import '../contact_datasource.dart';
 import '../contact_repository.dart';
@@ -123,7 +124,7 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
             if (state is FailAddContact) {
               isLoading = false;
             }
-            if(state is UpdatedContactData){
+            if (state is UpdatedContactData) {
               isLoading = false;
             }
             return SizedBox(
@@ -163,7 +164,8 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
                           children: <Widget>[
                             buildStepper(),
                             SizedBox(height: 1.0.h),
-                            textFiledForAddAddress(query,snapshot.data["result"])
+                            textFiledForAddAddress(
+                                query, snapshot.data["result"])
                           ],
                         );
                       } else if (snapshot.hasError) {}
@@ -208,7 +210,7 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
   }
 
   //Add address's TextFields for create new contact
-  Expanded textFiledForAddAddress(Size query, data ) {
+  Expanded textFiledForAddAddress(Size query, data) {
     return Expanded(
       child: ListView(
         physics: const BouncingScrollPhysics(),
@@ -327,7 +329,7 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
             titleText: LabelString.lblInstallationPostalCode,
             isRequired: true,
           ),
-          buildButtons(query, data ),
+          buildButtons(query, data),
         ],
       ),
     );
@@ -389,7 +391,7 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
                                     Navigator.pop(context);
                                     Navigator.of(context).pushAndRemoveUntil(
                                         MaterialPageRoute(
-                                            builder: (c) => const RootScreen()),
+                                            builder: (c) => RootScreen()),
                                         (route) => false);
                                   },
                                 ),
@@ -403,8 +405,8 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
                               Navigator.pop(context);
                               Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
-                                      builder: (c) => const RootScreen()),
-                                      (route) => false);
+                                      builder: (c) => RootScreen()),
+                                  (route) => false);
                             },
                             buttonColor: AppColors.primaryColor,
                           ))
@@ -591,51 +593,48 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
 
     //for create data in json format
     UpdateContactData updateContactData = UpdateContactData(
-        widget.firstName.toString(),
-        data["contact_no"].toString(),
-        widget.officePhone.toString(),
-        widget.lastName.toString(),
-        widget.mobilePhone.toString(),
-        data["account_id"].toString(),
-        data["homephone"].toString(),
-        data["leadsource"].toString(),
-        data["otherphone"].toString(),
-        data["title"].toString(),
-        data["fax"].toString(),
-        data["department"].toString(),
-        data["birthday"].toString(),
-        widget.primaryEmail.toString(),
-        data["contact_id"].toString(),
-        data["assistant"].toString(),
-        widget.secondaryEmail.toString(),
-        data["assistantphone"].toString(),
-        data["donotcall"].toString(),
-        data["emailoptout"].toString(),
-        data["assigned_user_id"].toString(),
-        data["reference"].toString(),
-        data["notify_owner"].toString(),
-
-        data["modifiedby"].toString(),
-
-        data["isconvertedfromlead"].toString(),
-        widget.companyName.toString(),
-        invoiceAddressController.text.trim(),
-        invoiceCityController.text.trim(),
-        data["mailingstate"].toString(),
-        data["otherstate"].toString(),
-        invoicePostalController.text.trim(),
-        invoiceCountryController.text.trim(),
-        data["mailingpobox"].toString(),
-        data["otherpobox"].toString(),
-        data["description"].toString(),
-        data["imagename"].toString(),
-        installationAddressController.text.trim(),
-        installationCityController.text.trim(),
-        installationPostalController.text.trim(),
-        installationCountryController.text.trim(),
-        widget.contactId.toString(),
-        data["assigned_user_name"].toString(),
-
+      widget.firstName.toString(),
+      data["contact_no"].toString(),
+      widget.officePhone.toString(),
+      widget.lastName.toString(),
+      widget.mobilePhone.toString(),
+      data["account_id"].toString(),
+      data["homephone"].toString(),
+      data["leadsource"].toString(),
+      data["otherphone"].toString(),
+      data["title"].toString(),
+      data["fax"].toString(),
+      data["department"].toString(),
+      data["birthday"].toString(),
+      widget.primaryEmail.toString(),
+      data["contact_id"].toString(),
+      data["assistant"].toString(),
+      widget.secondaryEmail.toString(),
+      data["assistantphone"].toString(),
+      data["donotcall"].toString(),
+      data["emailoptout"].toString(),
+      data["assigned_user_id"].toString(),
+      data["reference"].toString(),
+      data["notify_owner"].toString(),
+      data["modifiedby"].toString(),
+      data["isconvertedfromlead"].toString(),
+      widget.companyName.toString(),
+      invoiceAddressController.text.trim(),
+      invoiceCityController.text.trim(),
+      data["mailingstate"].toString(),
+      data["otherstate"].toString(),
+      invoicePostalController.text.trim(),
+      invoiceCountryController.text.trim(),
+      data["mailingpobox"].toString(),
+      data["otherpobox"].toString(),
+      data["description"].toString(),
+      data["imagename"].toString(),
+      installationAddressController.text.trim(),
+      installationCityController.text.trim(),
+      installationPostalController.text.trim(),
+      installationCountryController.text.trim(),
+      widget.contactId.toString(),
+      data["assigned_user_name"].toString(),
     );
     String jsonUpdateContactDetail = jsonEncode(updateContactData);
 
@@ -644,7 +643,7 @@ class _AddContactAddressInfoPageState extends State<AddContactAddressInfoPage> {
     Map<String, dynamic> queryParameters = {
       'operation': "update",
       'sessionName':
-      preferences.getString(PreferenceString.sessionName).toString(),
+          preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonUpdateContactDetail,
       'appversion': Constants.of().appversion,
     };

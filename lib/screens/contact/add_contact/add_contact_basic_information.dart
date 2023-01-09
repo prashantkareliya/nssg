@@ -81,8 +81,7 @@ class _AddContactBasicInformationPageState
               if(count == 0){
                 firstNameController.text = snapshot.data["result"]["firstname"];
                 lastNameController.text = snapshot.data["result"]["lastname"];
-                companyNameController.text =
-                snapshot.data["result"]["contact_company"];
+                companyNameController.text = snapshot.data["result"]["contact_company"];
                 officePhoneController.text = snapshot.data["result"]["phone"];
                 mobilePhoneController.text = snapshot.data["result"]["mobile"];
                 primaryEmailController.text = snapshot.data["result"]["email"];
