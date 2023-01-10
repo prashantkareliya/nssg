@@ -24,20 +24,21 @@ class AddQuotePage extends StatefulWidget {
 }
 
 class _AddQuotePageState extends State<AddQuotePage> {
-  int currentStep = 0;
-
   PageController pageController = PageController();
-
   StreamController<int> streamController = StreamController<int>.broadcast();
 
   @override
   void initState() {
     super.initState();
-
     sampleData.add(RadioModel(false, '2 hr'));
     sampleData.add(RadioModel(false, '4 hr'));
     sampleData.add(RadioModel(false, '6 hr'));
     sampleData.add(RadioModel(false, '8 hr'));
+    sampleData.add(RadioModel(false, '1 Day'));
+    sampleData.add(RadioModel(false, '2 Day'));
+    sampleData.add(RadioModel(false, '3 Day'));
+    sampleData.add(RadioModel(false, '4 Day'));
+    sampleData.add(RadioModel(false, '5 Day'));
   }
 
   functionCallback(BuildContext context) {
@@ -129,12 +130,12 @@ class _AddQuotePageState extends State<AddQuotePage> {
               },
               children: [
                 buildStepOne(context, query),
-                Center(child: Container(child: Text("data 1"))),
-                Center(child: Container(child: Text("data 2"))),
-                Center(child: Container(child: Text("data 3"))),
-                Center(child: Container(child: Text("data 4"))),
-                Center(child: Container(child: Text("data 5"))),
-                Center(child: Container(child: Text("data 6"))),
+                buildStepOne(context, query),
+                buildStepOne(context, query),
+                buildStepOne(context, query),
+                buildStepOne(context, query),
+                buildStepOne(context, query),
+                buildStepOne(context, query),
               ],
             ),
           ),
@@ -248,7 +249,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         buttonColor: AppColors.primaryColor,
                         onClick: () {
                           pageController.nextPage(
-                              duration: Duration(milliseconds: 500),
+                              duration: const Duration(milliseconds: 500),
                               curve: Curves.decelerate);
                         },
                         title: ButtonString.btnNext,
@@ -275,7 +276,7 @@ class RadioModel {
 class RadioItem extends StatelessWidget {
   final RadioModel item;
 
-  const RadioItem(this.item);
+  const RadioItem(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {

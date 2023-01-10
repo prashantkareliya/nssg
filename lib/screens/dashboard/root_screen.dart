@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:nssg/screens/contact/contact_screen.dart';
 import 'package:nssg/screens/qoute/quotes_screen.dart';
-import 'package:nssg/utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 import '../../components/custom_text_styles.dart';
 import '../../constants/strings.dart';

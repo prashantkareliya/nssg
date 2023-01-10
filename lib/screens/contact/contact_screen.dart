@@ -14,14 +14,11 @@ import '../../components/custom_dialog.dart';
 import '../../constants/constants.dart';
 import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
-import '../../httpl_actions/app_http.dart';
 import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/helpers.dart';
 import '../../utils/widgetChange.dart';
-import 'add_contact/add_contact_basic_information.dart';
-import 'add_contact/add_contact_model_dir/fill_contact_data_model.dart';
+import 'add_contact/add_contact_screen.dart';
 import 'get_contact/contact_bloc_dir/get_contact_bloc.dart';
-import 'get_contact/contact_model_dir/contact_detail_response.dart';
 import 'get_contact/contact_model_dir/get_contact_response_model.dart';
 
 class ContactScreen extends StatefulWidget {
@@ -182,7 +179,6 @@ class _ContactScreenState extends State<ContactScreen> {
           getContact();
           Helpers.showSnackBar(context, state.message.toString());
         }
-
       },
       child: BlocBuilder<GetContactBloc, GetContactState>(
         bloc: contactBloc,
@@ -226,7 +222,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                       elevation: 0,
                                       insetPadding: EdgeInsets.symmetric(
                                           horizontal: 15.sp),
-                                      child: Container(
+                                      child: SizedBox(
                                         height: 70.h,
                                         child: ContactDetails(
                                             contactItems![index].id),
@@ -283,10 +279,9 @@ class _ContactScreenState extends State<ContactScreen> {
                                       InkWell(
                                         onTap: () => callNextScreen(
                                             context,
-                                            AddContactBasicInformationPage(
-                                                contactItems![index]
-                                                    .id
-                                                    .toString())),
+                                            AddContactPage(contactItems![index]
+                                                .id
+                                                .toString())),
                                         child: Container(
                                           height: 3.h,
                                           width: 6.w,
@@ -371,7 +366,8 @@ class _ContactScreenState extends State<ContactScreen> {
       padding: EdgeInsets.only(right: 10.sp, bottom: 8.sp),
       child: FloatingActionButton(
           onPressed: () {
-            callNextScreen(context, AddContactBasicInformationPage("NoId"));
+            // callNextScreen(context, AddContactBasicInformationPage("NoId"));
+            callNextScreen(context, AddContactPage("NoId"));
           },
           child: const Icon(Icons.add)),
     );
@@ -405,6 +401,7 @@ class _ContactScreenState extends State<ContactScreen> {
   }
 }
 
+// ignore: must_be_immutable
 class ContactDetails extends StatefulWidget {
   var contactId;
 
@@ -439,6 +436,8 @@ class _ContactDetailsState extends State<ContactDetails> {
             style: CustomTextStyle.labelBoldFontText),
         actions: [
           IconButton(
+            highlightColor: AppColors.transparent,
+              splashColor: AppColors.transparent,
               onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.close_rounded, color: AppColors.primaryColor))
         ],

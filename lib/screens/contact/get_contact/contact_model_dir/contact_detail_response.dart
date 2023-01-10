@@ -7,14 +7,14 @@ class ContactDetail {
   ContactDetail.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     result =
-    json['result'] != null ? new ContactDetailResult.fromJson(json['result']) : null;
+    json['result'] != null ? ContactDetailResult.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.result != null) {
-      data['result'] = this.result!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    if (result != null) {
+      data['result'] = result!.toJson();
     }
     return data;
   }
@@ -163,52 +163,52 @@ class ContactDetailResult {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['salutationtype'] = this.salutationtype;
-    data['firstname'] = this.firstname;
-    data['contact_no'] = this.contactNo;
-    data['phone'] = this.phone;
-    data['lastname'] = this.lastname;
-    data['mobile'] = this.mobile;
-    data['account_id'] = this.accountId;
-    data['homephone'] = this.homephone;
-    data['leadsource'] = this.leadsource;
-    data['otherphone'] = this.otherphone;
-    data['title'] = this.title;
-    data['fax'] = this.fax;
-    data['department'] = this.department;
-    data['birthday'] = this.birthday;
-    data['email'] = this.email;
-    data['contact_id'] = this.contactId;
-    data['assistant'] = this.assistant;
-    data['secondaryemail'] = this.secondaryemail;
-    data['assistantphone'] = this.assistantphone;
-    data['donotcall'] = this.donotcall;
-    data['emailoptout'] = this.emailoptout;
-    data['assigned_user_id'] = this.assignedUserId;
-    data['reference'] = this.reference;
-    data['notify_owner'] = this.notifyOwner;
-    data['createdtime'] = this.createdtime;
-    data['modifiedtime'] = this.modifiedtime;
-    data['modifiedby'] = this.modifiedby;
-    data['isconvertedfromlead'] = this.isconvertedfromlead;
-    data['contact_company'] = this.contactCompany;
-    data['mailingstreet'] = this.mailingstreet;
-    data['mailingcity'] = this.mailingcity;
-    data['mailingstate'] = this.mailingstate;
-    data['otherstate'] = this.otherstate;
-    data['mailingzip'] = this.mailingzip;
-    data['mailingcountry'] = this.mailingcountry;
-    data['mailingpobox'] = this.mailingpobox;
-    data['otherpobox'] = this.otherpobox;
-    data['description'] = this.description;
-    data['imagename'] = this.imagename;
-    data['otherstreet'] = this.otherstreet;
-    data['othercity'] = this.othercity;
-    data['otherzip'] = this.otherzip;
-    data['othercountry'] = this.othercountry;
-    data['id'] = this.id;
-    data['assigned_user_name'] = this.assignedUserName;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['salutationtype'] = salutationtype;
+    data['firstname'] = firstname;
+    data['contact_no'] = contactNo;
+    data['phone'] = phone;
+    data['lastname'] = lastname;
+    data['mobile'] = mobile;
+    data['account_id'] = accountId;
+    data['homephone'] = homephone;
+    data['leadsource'] = leadsource;
+    data['otherphone'] = otherphone;
+    data['title'] = title;
+    data['fax'] = fax;
+    data['department'] = department;
+    data['birthday'] = birthday;
+    data['email'] = email;
+    data['contact_id'] = contactId;
+    data['assistant'] = assistant;
+    data['secondaryemail'] = secondaryemail;
+    data['assistantphone'] = assistantphone;
+    data['donotcall'] = donotcall;
+    data['emailoptout'] = emailoptout;
+    data['assigned_user_id'] = assignedUserId;
+    data['reference'] = reference;
+    data['notify_owner'] = notifyOwner;
+    data['createdtime'] = createdtime;
+    data['modifiedtime'] = modifiedtime;
+    data['modifiedby'] = modifiedby;
+    data['isconvertedfromlead'] = isconvertedfromlead;
+    data['contact_company'] = contactCompany;
+    data['mailingstreet'] = mailingstreet;
+    data['mailingcity'] = mailingcity;
+    data['mailingstate'] = mailingstate;
+    data['otherstate'] = otherstate;
+    data['mailingzip'] = mailingzip;
+    data['mailingcountry'] = mailingcountry;
+    data['mailingpobox'] = mailingpobox;
+    data['otherpobox'] = otherpobox;
+    data['description'] = description;
+    data['imagename'] = imagename;
+    data['otherstreet'] = otherstreet;
+    data['othercity'] = othercity;
+    data['otherzip'] = otherzip;
+    data['othercountry'] = othercountry;
+    data['id'] = id;
+    data['assigned_user_name'] = assignedUserName;
     return data;
   }
 }

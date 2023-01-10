@@ -16,7 +16,6 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/preferences.dart';
 import '../../../utils/widgets.dart';
-import '../../dashboard/root_screen.dart';
 import 'login_bloc_dir/login_bloc.dart';
 import 'login_data_dir/login_datasource.dart';
 import 'login_data_dir/login_repository.dart';
@@ -296,7 +295,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   //Move to root screen where write code for the bottom tab
   void moveToNextScreen() {
-    removeAndCallNextScreen(context, RootScreen());
+    removeAndCallNextScreen(context, const RootScreen());
   }
 
   Future<void> getUserName() async {
