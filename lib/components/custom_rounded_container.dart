@@ -44,23 +44,3 @@ class RoundedContainer extends StatelessWidget {
     );
   }
 }
-
-// ignore: must_be_immutable
-class LoaderContainer extends StatelessWidget {
-  Color? lineColor;
-
-   LoaderContainer({super.key, this.lineColor = Colors.transparent});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 0.3.h,
-      width: MediaQuery.of(context).size.width / 10,
-      decoration: BoxDecoration(
-          color: lineColor,
-          borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(20.0),
-              bottomRight: Radius.circular(20.0))),
-    );
-  }
-}

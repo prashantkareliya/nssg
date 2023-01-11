@@ -31,8 +31,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool isVisibleText = false;
-
   //controller for email | password fields
   TextEditingController userNameController =
       TextEditingController(text: "dn@nssg.co.uk");
@@ -58,6 +56,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (widget.isLogin == "isLogin") {
       getUserName();
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    isLoading = false;
   }
 
   @override
@@ -87,9 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (state is LoginLoading) {
               isLoading = state.isBusy;
             }
-            if (state is LoginLoaded) {
-              isLoading = false;
-            }
+
             if (state is LoginLoadFailure) {
               isLoading = false;
             }
@@ -126,8 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding:
                     EdgeInsets.symmetric(vertical: 80.sp, horizontal: 20.sp),
                 child: Container(
-                  /*width: query.width,
-                height: query.height * 0.74,*/
                   decoration: BoxDecoration(
                       color: AppColors.whiteColor,
                       borderRadius:
@@ -177,7 +177,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                         title: ButtonString
                                             .btnLoginWithOtherAccount
                                             .toUpperCase(),
-                                        onClick: () {})
+                                        onClick: () {
+                                          setState(() {
+                                            widget.isLogin = "isNotLogin";
+                                            preferences.removeKeyFromPreference(
+                                                PreferenceString.sessionName);
+                                          });
+                                        })
                                     : CustomButton(
                                         title:
                                             ButtonString.btnLogin.toUpperCase(),
@@ -300,7 +306,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> getUserName() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
     userName = preferences.getString(PreferenceString.userName).toString();
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,9 +69,15 @@ class _CheckingScreenState extends State<CheckingScreen> {
   //checking sessionName null or not
   void moveNextScreen(SharedPreferences preferences) {
     if (preferences.getString(PreferenceString.sessionName) != null) {
-      callNextScreen(context, LoginScreen("isLogin"));
+      //callNextScreen(context, LoginScreen("isLogin"));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (c) => LoginScreen("isLogin")),
+          (route) => false);
     } else {
-      callNextScreen(context, LoginScreen("isNotLogin"));
+      // callNextScreen(context, LoginScreen("isNotLogin"));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (c) => LoginScreen("isNotLogin")),
+          (route) => false);
     }
   }
 }

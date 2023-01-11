@@ -4,20 +4,21 @@ class ErrorString {
   static const String somethingWentWrong = "Something Went Wrong";
   static const String mandatoryField = "Field can't be empty";
   static const String emailNotValid = "Email address is not valid";
-
 }
 
-class Message{
+class Message {
   static const String createQoute = "Do you want to create new quote now?";
   static const String deleteContact = "Do you want to delete this contact?";
 }
+
 //Label Strings
-class LabelString{
+class LabelString {
   static const String nssg = "NSSG";
   static const String yes = "Yes";
   static const String no = "No";
-  static const String noRecordFound = "No Record Found" ;
-  static const String selectField = "Select" ;
+  static const String noRecordFound = "No Record Found";
+
+  static const String selectField = "Select";
 
   static const String lblEmailAddress = "Email address";
   static const String lblPoweredBy = "Powered by NSSG CRM";
@@ -71,8 +72,8 @@ class LabelString{
   static const String lblCountry = "Country";
   static const String lblPostalCode = "Postal Code";
 
-
-  static const String lblInstallationAddressDetails = "Installation address details";
+  static const String lblInstallationAddressDetails =
+      "Installation address details";
 
   static const String lblAddNewQuote = "Add New Quote";
   static const String lblQuoteDetails = "Quote Details";
@@ -80,12 +81,16 @@ class LabelString{
   static const String lblContactName = "Contact Name";
   static const String lblInstallationHours = "Installation";
   static const String lblQuoteEmailReminder = "Quote Email Reminder?";
-
+  static const String lblPremisesType = "Premises Type";
+  static const String lblSystemType = "System Type";
+  static const String lblGradeNumber = "Grade Number";
+  static const String lblSignallingType = "Signalling Type";
+  static const String lblQuotePayment = "Quote Payment";
+  static const String lblTerms = "Terms";
 }
 
-
 //Button Strings
-class ButtonString{
+class ButtonString {
   static const String btnLogin = "Log in";
   static const String btnLoginWithOtherAccount = "Login with other account";
   static const String btnEdit = "Edit";
@@ -97,13 +102,13 @@ class ButtonString{
   static const String btnUpdate = "Update";
 }
 
-
 //Image path Strings
-class ImageString{
+class ImageString {
   static const String imgLogo = "assets/images/logo.png";
   static const String imgLogoSplash = "assets/images/logo_splash.png";
   static const String imgBack = "assets/images/background_grad.png";
-  static const String icImageInVisible = "assets/images/ic_password_invisible.png";
+  static const String icImageInVisible =
+      "assets/images/ic_password_invisible.png";
   static const String icImageVisible = "assets/images/ic_password_visible.png";
   static const String icSearch = "assets/images/ic_search.png";
   static const String icCopy = "assets/images/ic_copy.png";

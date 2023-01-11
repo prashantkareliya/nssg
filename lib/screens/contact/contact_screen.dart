@@ -203,13 +203,12 @@ class _ContactScreenState extends State<ContactScreen> {
                         : contactItems!.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 14.sp, vertical: 0.sp),
+                        padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                         child: Card(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                            borderRadius: BorderRadius.circular(12.sp),
                           ),
-                          elevation: 5,
+                          elevation: 3,
                           child: InkWell(
                             onTap: () {
                               showDialog(
@@ -221,12 +220,9 @@ class _ContactScreenState extends State<ContactScreen> {
                                               BorderRadius.circular(10)),
                                       elevation: 0,
                                       insetPadding: EdgeInsets.symmetric(
-                                          horizontal: 15.sp),
-                                      child: SizedBox(
-                                        height: 70.h,
-                                        child: ContactDetails(
-                                            contactItems![index].id),
-                                      ));
+                                          horizontal: 12.sp),
+                                      child: ContactDetails(
+                                          contactItems![index].id));
                                 },
                               ).then((value) {
                                 if (value == "deleteSuccess") {
@@ -237,7 +233,8 @@ class _ContactScreenState extends State<ContactScreen> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
+                                Flexible(
+                                  flex: 1,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
@@ -268,38 +265,43 @@ class _ContactScreenState extends State<ContactScreen> {
                                           contactItems![index]
                                               .email
                                               .toString()),
-                                      SizedBox(height: 1.0.h),
+                                      SizedBox(height: 2.0.h),
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                Flexible(
+                                  flex: 0,
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       InkWell(
+                                        highlightColor: AppColors.transparent,
+                                        splashColor: AppColors.transparent,
                                         onTap: () => callNextScreen(
                                             context,
                                             AddContactPage(contactItems![index]
                                                 .id
                                                 .toString())),
-                                        child: Container(
-                                          height: 3.h,
-                                          width: 6.w,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(80.0)),
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: AppColors.blackColor)),
-                                          child: Center(
-                                              child: Icon(Icons.edit_rounded,
-                                                  size: 12.sp,
-                                                  color: AppColors.blackColor)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.sp),
+                                          child: Container(
+                                            height: 3.h,
+                                            width: 6.w,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(80.0),
+                                                border: Border.all(width: 1.5)),
+                                            child: Center(
+                                                child: Icon(Icons.edit_rounded,
+                                                    size: 12.sp,
+                                                    color:
+                                                        AppColors.blackColor)),
+                                          ),
                                         ),
                                       ),
-                                      SizedBox(height: 0.8.h),
                                       InkWell(
+                                        highlightColor: AppColors.transparent,
+                                        splashColor: AppColors.transparent,
                                         onTap: () {
                                           //Dialog to confirm delete contact or not
                                           showDialog(
@@ -328,16 +330,13 @@ class _ContactScreenState extends State<ContactScreen> {
                                           width: 6.w,
                                           decoration: BoxDecoration(
                                               borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(80.0)),
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: AppColors.redColor)),
+                                                  BorderRadius.circular(80.0),
+                                              border: Border.all(width: 1.5)),
                                           child: Center(
                                               child: Icon(
                                             Icons.delete_rounded,
-                                            size: 12.sp,
                                             color: AppColors.redColor,
+                                            size: 12.sp,
                                           )),
                                         ),
                                       )
@@ -363,7 +362,7 @@ class _ContactScreenState extends State<ContactScreen> {
   //Add contact button
   Padding buildAddContactButton(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(right: 10.sp, bottom: 8.sp),
+      padding: EdgeInsets.only(right: 12.sp, bottom: 8.sp),
       child: FloatingActionButton(
           onPressed: () {
             // callNextScreen(context, AddContactBasicInformationPage("NoId"));
@@ -425,92 +424,97 @@ class _ContactDetailsState extends State<ContactDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.whiteColor,
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text(LabelString.lblContactDetail,
-            style: CustomTextStyle.labelBoldFontText),
-        actions: [
-          IconButton(
-            highlightColor: AppColors.transparent,
-              splashColor: AppColors.transparent,
-              onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.close_rounded, color: AppColors.primaryColor))
-        ],
-      ),
-      body: FutureBuilder<dynamic>(
-        future: getDetail,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(height: 1.0.h),
-                      ContactTileField(
-                        LabelString.lblFullName,
-                        snapshot.data["result"]["firstname"] +
-                            " " +
-                            snapshot.data["result"]["lastname"],
-                      ),
-                      ContactTileField(LabelString.lblCompany,
-                          snapshot.data["result"]["contact_company"]),
-                      ContactTileField(LabelString.lblOfficePhone,
-                          snapshot.data["result"]["phone"]),
-                      ContactTileField(LabelString.lblMobilePhone,
-                          snapshot.data["result"]["mobile"]),
-                      ContactTileField(LabelString.lblPrimaryEmail,
-                          snapshot.data["result"]["email"]),
-                      ContactTileField(LabelString.lblSecondaryEmail,
-                          snapshot.data["result"]["secondaryemail"]),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp),
-                        child: Text(LabelString.lblInstallationAddressDetails,
-                            style: CustomTextStyle.labelBoldFontTextBlue),
-                      ),
-                      ContactTileField(LabelString.lblAddress,
-                          snapshot.data["result"]["mailingstreet"]),
-                      ContactTileField(LabelString.lblCity,
-                          snapshot.data["result"]["mailingcity"]),
-                      ContactTileField(LabelString.lblCountry,
-                          snapshot.data["result"]["mailingcountry"]),
-                      ContactTileField(LabelString.lblPostalCode,
-                          snapshot.data["result"]["mailingzip"]),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp),
-                        child: Text(LabelString.lblInvoiceAddressDetails,
-                            style: CustomTextStyle.labelBoldFontTextBlue),
-                      ),
-                      ContactTileField(LabelString.lblAddress,
-                          snapshot.data["result"]["otherstreet"]),
-                      ContactTileField(LabelString.lblCity,
-                          snapshot.data["result"]["othercity"]),
-                      ContactTileField(LabelString.lblCountry,
-                          snapshot.data["result"]["othercountry"]),
-                      ContactTileField(LabelString.lblPostalCode,
-                          snapshot.data["result"]["otherzip"]),
-                      SizedBox(height: 2.0.h),
-                    ],
+    return FutureBuilder<dynamic>(
+      future: getDetail,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Container(
+            height: 70.h,
+            decoration:
+                BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        onPressed: null,
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: AppColors.transparent,
+                        )),
+                    Text(LabelString.lblContactDetail,
+                        style: CustomTextStyle.labelBoldFontText),
+                    IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.close_rounded,
+                            color: AppColors.blackColor),
+                        highlightColor: AppColors.transparent,
+                        splashColor: AppColors.transparent)
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        ContactTileField(
+                          LabelString.lblFullName,
+                          snapshot.data["result"]["firstname"] +
+                              " " +
+                              snapshot.data["result"]["lastname"],
+                        ),
+                        ContactTileField(LabelString.lblCompany,
+                            snapshot.data["result"]["contact_company"]),
+                        ContactTileField(LabelString.lblOfficePhone,
+                            snapshot.data["result"]["phone"]),
+                        ContactTileField(LabelString.lblMobilePhone,
+                            snapshot.data["result"]["mobile"]),
+                        ContactTileField(LabelString.lblPrimaryEmail,
+                            snapshot.data["result"]["email"]),
+                        ContactTileField(LabelString.lblSecondaryEmail,
+                            snapshot.data["result"]["secondaryemail"]),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.sp),
+                          child: Text(LabelString.lblInstallationAddressDetails,
+                              style: CustomTextStyle.labelBoldFontTextBlue),
+                        ),
+                        ContactTileField(LabelString.lblAddress,
+                            snapshot.data["result"]["mailingstreet"]),
+                        ContactTileField(LabelString.lblCity,
+                            snapshot.data["result"]["mailingcity"]),
+                        ContactTileField(LabelString.lblCountry,
+                            snapshot.data["result"]["mailingcountry"]),
+                        ContactTileField(LabelString.lblPostalCode,
+                            snapshot.data["result"]["mailingzip"]),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.sp),
+                          child: Text(LabelString.lblInvoiceAddressDetails,
+                              style: CustomTextStyle.labelBoldFontTextBlue),
+                        ),
+                        ContactTileField(LabelString.lblAddress,
+                            snapshot.data["result"]["otherstreet"]),
+                        ContactTileField(LabelString.lblCity,
+                            snapshot.data["result"]["othercity"]),
+                        ContactTileField(LabelString.lblCountry,
+                            snapshot.data["result"]["othercountry"]),
+                        ContactTileField(LabelString.lblPostalCode,
+                            snapshot.data["result"]["otherzip"]),
+                        SizedBox(height: 1.5.h),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            );
-          } else if (snapshot.hasError) {
-            final message = HandleAPI.handleAPIError(snapshot.error);
-            return Text(message);
-          }
-          return SizedBox(height: 70.h, child: loadingView());
-        },
-      ),
+                ),
+              ],
+            ),
+          );
+        } else if (snapshot.hasError) {
+          final message = HandleAPI.handleAPIError(snapshot.error);
+          return Text(message);
+        }
+        return SizedBox(height: 70.h, child: loadingView());
+      },
     );
   }
 
@@ -537,7 +541,7 @@ class ContactTileField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 12.sp, top: 8.sp),
+      padding: EdgeInsets.only(left: 10.sp, top: 8.sp),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -546,7 +550,6 @@ class ContactTileField extends StatelessWidget {
             child: Text("$field :", style: CustomTextStyle.labelFontHintText),
           ),
           Expanded(child: Text(fieldDetail!, style: CustomTextStyle.labelText)),
-          Container(width: 8.w)
         ],
       ),
     );

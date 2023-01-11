@@ -33,12 +33,11 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [searchWidget!],
       leading: isBack!
           ? IconButton(
+              highlightColor: AppColors.transparent,
+              splashColor: AppColors.transparent,
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(
-                Icons.arrow_back_ios_outlined,
-                color: AppColors.blackColor,
-                size: 14.sp,
-              ),
+              icon: Icon(Icons.arrow_back_ios_outlined,
+                  color: AppColors.blackColor, size: 14.sp),
             )
           : Container(),
     );

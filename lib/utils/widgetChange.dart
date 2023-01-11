@@ -4,6 +4,8 @@ class WidgetChange extends ChangeNotifier {
   bool isVisibleText = true;
   bool isAppbarShow = true;
   bool isReminderCheck = false;
+  bool isSetTime = false;
+  bool isSetPremises = false;
 
   //list for dropdown
   var items = ['None', 'Mr.', 'Mrs.', 'Miss'];
@@ -30,6 +32,16 @@ class WidgetChange extends ChangeNotifier {
   //Method for remind email on add quote screen
   void isReminder() {
     isReminderCheck = !isReminderCheck;
+    notifyListeners();
+  }
+
+  void isSelectTime() {
+    isSetTime = !isSetTime;
+    notifyListeners();
+  }
+
+  void isSelectPremisesType() {
+    isSetPremises = !isSetPremises;
     notifyListeners();
   }
 }
