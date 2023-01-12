@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:nssg/utils/app_colors.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +27,10 @@ class MyApp extends StatelessWidget {
         providers: [ChangeNotifierProvider.value(value: WidgetChange())],
         child: MaterialApp(
           title: 'National Security System ',
-          theme: ThemeData(primarySwatch: Colors.indigo),
+          theme: ThemeData(
+              colorScheme: ColorScheme.fromSwatch().copyWith(
+                  primary: AppColors.primaryColor,
+                  secondary: AppColors.primaryColor)),
           home: const CheckingScreen(),
         ),
       );

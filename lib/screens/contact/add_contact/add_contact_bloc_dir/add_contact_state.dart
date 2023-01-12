@@ -28,3 +28,9 @@ class UpdatedContactData extends AddContactState{
 
   UpdatedContactData({this.updateContactDetail});
 }
+
+class GetContactData extends AddContactState{
+  var contactData;
+
+  GetContactData({this.contactData});
+}

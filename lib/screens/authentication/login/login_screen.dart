@@ -114,85 +114,73 @@ class _LoginScreenState extends State<LoginScreen> {
                 fit: BoxFit.cover,
               ),
             ),
-            child: Container(
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.fromRGBO(40, 89, 155, 1),
-                  Color.fromRGBO(42, 39, 96, 1)
-                ],
-              )),
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(vertical: 80.sp, horizontal: 20.sp),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: AppColors.whiteColor,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0))),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Image.asset(ImageString.imgLogoSplash),
-                        //email | password field visibility
-                        Visibility(
-                          visible: widget.isLogin == "isLogin" ? false : true,
-                          child: Column(
-                            children: [
-                              buildEmailInput(),
-                              SizedBox(height: 3.h),
-                              buildPasswordInput(),
-                            ],
-                          ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: query.height * 0.12,
+                  horizontal: query.width * 0.05),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(10.0))),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: query.width * 0.07),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Image.asset(ImageString.imgLogoSplash),
+                      //email | password field visibility
+                      Visibility(
+                        visible: widget.isLogin == "isLogin" ? false : true,
+                        child: Column(
+                          children: [
+                            buildEmailInput(),
+                            buildPasswordInput(),
+                          ],
                         ),
-                        //pin number fields visibility
-                        Visibility(
-                          visible: widget.isLogin == "isLogin" ? true : false,
-                          child: Column(
-                            children: [
-                              Text(userName!,
-                                  style: CustomTextStyle.labelFontHintText),
-                              SizedBox(height: 3.h),
-                              Text(LabelString.lblEnterPinNumber,
-                                  style: CustomTextStyle.labelText),
-                              SizedBox(height: 3.h),
-                              buildPinNumber(),
-                            ],
-                          ),
+                      ),
+                      //pin number fields visibility
+                      Visibility(
+                        visible: widget.isLogin == "isLogin" ? true : false,
+                        child: Column(
+                          children: [
+                            Text(userName!,
+                                style: CustomTextStyle.labelFontHintText),
+                            SizedBox(height: 3.h),
+                            Text(LabelString.lblEnterPinNumber,
+                                style: CustomTextStyle.labelText),
+                            SizedBox(height: 3.h),
+                            buildPinNumber(),
+                          ],
                         ),
-
-                        //Login Button
-                        SizedBox(
-                            width: query.width,
-                            height: 7.h,
-                            child: isLoading
-                                ? loadingView()
-                                : widget.isLogin == "isLogin"
-                                    ? CustomButton(
-                                        title: ButtonString
-                                            .btnLoginWithOtherAccount
-                                            .toUpperCase(),
-                                        onClick: () {
-                                          setState(() {
-                                            widget.isLogin = "isNotLogin";
-                                            preferences.removeKeyFromPreference(
-                                                PreferenceString.sessionName);
-                                          });
-                                        })
-                                    : CustomButton(
-                                        title:
-                                            ButtonString.btnLogin.toUpperCase(),
-                                        onClick: () => validateAndDoLogin(),
-                                      )),
-                        buildPowerLabel(),
-                        SizedBox(height: query.height * 0.001)
-                      ],
-                    ),
+                      ),
+                      //Login Button
+                      SizedBox(
+                          width: query.width,
+                          height: 7.h,
+                          child: isLoading
+                              ? loadingView()
+                              : widget.isLogin == "isLogin"
+                                  ? CustomButton(
+                                      title: ButtonString
+                                          .btnLoginWithOtherAccount
+                                          .toUpperCase(),
+                                      onClick: () {
+                                        setState(() {
+                                          widget.isLogin = "isNotLogin";
+                                          preferences.removeKeyFromPreference(
+                                              PreferenceString.sessionName);
+                                        });
+                                      })
+                                  : CustomButton(
+                                      title:
+                                          ButtonString.btnLogin.toUpperCase(),
+                                      onClick: () => validateAndDoLogin(),
+                                    )),
+                      buildPowerLabel(),
+                      SizedBox(height: query.height * 0.001)
+                    ],
                   ),
                 ),
               ),

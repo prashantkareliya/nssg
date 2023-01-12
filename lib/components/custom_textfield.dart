@@ -22,7 +22,8 @@ class CustomTextField extends StatelessWidget {
       this.suffixWidget,
       this.copyWidget,
       this.prefixIcon,
-      this.maxLength})
+      this.maxLength,
+      this.star})
       : super(key: key);
 
   final String? hint;
@@ -41,6 +42,7 @@ class CustomTextField extends StatelessWidget {
   final Widget? copyWidget;
   final Widget? prefixIcon;
   final int? maxLength;
+  final String? star;
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +54,17 @@ class CustomTextField extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (titleText != null) ...[
-              Text(
-                titleText ?? "",
-                style: CustomTextStyle.labelFontText,
+              Row(
+                children: [
+                  Text(
+                    titleText ?? "",
+                    style: CustomTextStyle.labelFontText,
+                  ),
+                  Text(
+                    star ?? "",
+                    style: TextStyle(color: AppColors.redColor),
+                  )
+                ],
               ),
             ],
             copyWidget ?? Container(),

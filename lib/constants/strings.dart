@@ -87,6 +87,28 @@ class LabelString {
   static const String lblSignallingType = "Signalling Type";
   static const String lblQuotePayment = "Quote Payment";
   static const String lblTerms = "Terms";
+  static const String lblItemDetail = "Item Detail";
+  static const String lblShowAmount = "Show Amount";
+  static const String lblHideAmount = "Hide Amount";
+  static const String lblTemplateOptions = "Template Options";
+  static const String lblHideProductPrice = "Hide Product Price";
+  static const String lblHideProduct = "Hide Product";
+  static const String lblNone = "None";
+  static const String lblCategory = "Category";
+  static const String lblSubCategory = "Sub - Category";
+  static const String lblAttachmentDocument = "Attachment Document";
+  static const String lblSelectLocation = "Select Location";
+  static const String lblCostPrice  = "Cost Price : ";
+  static const String lblSellingPrice  = "Selling Price : ";
+  static const String lblDiscPrice = "Disc. Price : ";
+  static const String lblAmount = "Amount : ";
+  static const String lblProfit = "profit: ";
+
+
+
+
+
+
 }
 
 //Button Strings
@@ -112,6 +134,8 @@ class ImageString {
   static const String icImageVisible = "assets/images/ic_password_visible.png";
   static const String icSearch = "assets/images/ic_search.png";
   static const String icCopy = "assets/images/ic_copy.png";
+  static const String icShowAmount = "assets/images/ic_show_amount.png";
+  static const String icHideAmount = "assets/images/ic_hide_amount.png";
 }
 
 class PreferenceString {

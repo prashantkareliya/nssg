@@ -27,6 +27,7 @@ import '../../dashboard/root_screen.dart';
 import '../../qoute/add_quote.dart';
 import '../contact_datasource.dart';
 import '../contact_repository.dart';
+import '../get_contact/contact_bloc_dir/get_contact_bloc.dart';
 import 'add_contact_bloc_dir/add_contact_bloc.dart';
 import 'add_contact_model_dir/fill_contact_data_model.dart';
 import 'add_contact_model_dir/fill_update_contact_data_model.dart';
@@ -51,25 +52,21 @@ class _AddContactPageState extends State<AddContactPage> {
   final contactBasicDetailFormKey = GlobalKey<FormState>();
 
   //Basic information's textField controllers
-  TextEditingController firstNameController =
-      TextEditingController(text: "test");
+  TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController companyNameController = TextEditingController();
   TextEditingController officePhoneController = TextEditingController();
   TextEditingController mobilePhoneController = TextEditingController();
-  TextEditingController primaryEmailController =
-      TextEditingController(text: "test@gmail.com");
+  TextEditingController primaryEmailController = TextEditingController();
   TextEditingController secondaryEmailController = TextEditingController();
 
   //Address information's textField controllers(invoice Address)
-  TextEditingController invoiceSearchController = TextEditingController();
   TextEditingController invoiceAddressController = TextEditingController();
   TextEditingController invoiceCityController = TextEditingController();
   TextEditingController invoiceCountryController = TextEditingController();
   TextEditingController invoicePostalController = TextEditingController();
 
   //Address information's textField controllers(installation Address)
-  TextEditingController installationSearchController = TextEditingController();
   TextEditingController installationAddressController = TextEditingController();
   TextEditingController installationCityController = TextEditingController();
   TextEditingController installationCountryController = TextEditingController();
@@ -84,20 +81,19 @@ class _AddContactPageState extends State<AddContactPage> {
   //For Contact API
   AddContactBloc addContactBloc =
       AddContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
+
   bool isLoading = false;
   List addressList = [];
 
-  //for call contact detail api
-  Future<dynamic>? getDetail;
+  var contactDetailData;
 
   @override
   void initState() {
     super.initState();
-    //for call contact detail api
-    getDetail = getContactDetail(widget.contactId);
+    if (widget.contactId != "NoId") {
+      getContactDetailApi();
+    }
   }
-
-  int count = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +187,40 @@ class _AddContactPageState extends State<AddContactPage> {
               if (state is FailAddContact) {
                 Helpers.showSnackBar(context, state.error.toString());
               }
+              if (state is GetContactData) {
+                contactDetailData = state.contactData;
+
+                firstNameController.text =
+                    state.contactData.firstname.toString();
+                lastNameController.text = state.contactData.lastname.toString();
+                companyNameController.text =
+                    state.contactData.contactCompany.toString();
+                officePhoneController.text = state.contactData.phone.toString();
+                mobilePhoneController.text =
+                    state.contactData.mobile.toString();
+                primaryEmailController.text =
+                    state.contactData.email.toString();
+                secondaryEmailController.text =
+                    state.contactData.secondaryemail.toString();
+
+                invoiceAddressController.text =
+                    state.contactData.mailingstreet.toString();
+                invoiceCityController.text =
+                    state.contactData.mailingcity.toString();
+                invoiceCountryController.text =
+                    state.contactData.mailingcountry.toString();
+                invoicePostalController.text =
+                    state.contactData.mailingzip.toString();
+
+                installationAddressController.text =
+                    state.contactData.otherstreet.toString();
+                installationCityController.text =
+                    state.contactData.othercity.toString();
+                installationCountryController.text =
+                    state.contactData.othercountry.toString();
+                installationPostalController.text =
+                    state.contactData.otherzip.toString();
+              }
             },
             child: BlocBuilder<AddContactBloc, AddContactState>(
               bloc: addContactBloc,
@@ -207,70 +237,24 @@ class _AddContactPageState extends State<AddContactPage> {
                 if (state is UpdatedContactData) {
                   isLoading = false;
                 }
+                if (state is GetContactData) {
+                  isLoading = false;
+                }
                 //FutureBuilder for get single contact detail and set data in textField controller
-                return FutureBuilder(
-                    future: getDetail,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (count == 0) {
-                          firstNameController.text =
-                              snapshot.data["result"]["firstname"];
-                          lastNameController.text =
-                              snapshot.data["result"]["lastname"];
-                          companyNameController.text =
-                              snapshot.data["result"]["contact_company"];
-                          officePhoneController.text =
-                              snapshot.data["result"]["phone"];
-                          mobilePhoneController.text =
-                              snapshot.data["result"]["mobile"];
-                          primaryEmailController.text =
-                              snapshot.data["result"]["email"];
-                          secondaryEmailController.text =
-                              snapshot.data["result"]["secondaryemail"];
-
-                          invoiceAddressController.text =
-                              snapshot.data["result"]["mailingstreet"];
-                          invoiceCityController.text =
-                              snapshot.data["result"]["mailingcity"];
-                          invoiceCountryController.text =
-                              snapshot.data["result"]["mailingcountry"];
-                          invoicePostalController.text =
-                              snapshot.data["result"]["mailingzip"];
-
-                          installationAddressController.text =
-                              snapshot.data["result"]["otherstreet"];
-                          installationCityController.text =
-                              snapshot.data["result"]["othercity"];
-                          installationCountryController.text =
-                              snapshot.data["result"]["othercountry"];
-                          installationPostalController.text =
-                              snapshot.data["result"]["otherzip"];
-                          count = 1;
-                        } else {}
-                        return Expanded(
-                          //view for add - update field
-                          child: PageView(
-                            scrollDirection: Axis.horizontal,
-                            pageSnapping: true,
-                            physics: const BouncingScrollPhysics(),
-                            controller: pageController,
-                            onPageChanged: (number) {
-                              streamController.add(number);
-                            },
-                            children: [
-                              buildStepOne(query, snapshot.data["result"]),
-                              buildStepTwo(query, snapshot.data["result"])
-                            ],
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        Helpers.showSnackBar(
-                            context, ErrorString.somethingWentWrong);
-                      }
-
-                      return SizedBox(
-                          height: query.height / 1.5, child: loadingView());
-                    });
+                return Expanded(
+                  child: isLoading
+                      ? loadingView()
+                      : PageView(
+                          scrollDirection: Axis.horizontal,
+                          pageSnapping: true,
+                          physics: const BouncingScrollPhysics(),
+                          controller: pageController,
+                          onPageChanged: (number) {
+                            streamController.add(number);
+                          },
+                          children: [buildStepOne(query), buildStepTwo(query)],
+                        ),
+                );
               },
             ),
           ),
@@ -280,12 +264,12 @@ class _AddContactPageState extends State<AddContactPage> {
   }
 
   //stepOne design
-  Column buildStepOne(Size query, data) {
-    return Column(
-      children: [
-        SizedBox(height: 0.0.h),
-        Expanded(
-          child: Form(
+  SingleChildScrollView buildStepOne(Size query) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 0.0.h),
+          Form(
             key: contactBasicDetailFormKey,
             child: ListView(
               physics: const BouncingScrollPhysics(),
@@ -300,6 +284,7 @@ class _AddContactPageState extends State<AddContactPage> {
                     obscureText: false,
                     hint: LabelString.lblFirstName,
                     titleText: LabelString.lblFirstName,
+                    star: "*",
                     isRequired: true,
                     /*prefixIcon: Padding(
                                 padding: EdgeInsets.all(4.sp),
@@ -358,20 +343,20 @@ class _AddContactPageState extends State<AddContactPage> {
                 CustomTextField(
                     keyboardType: TextInputType.number,
                     readOnly: false,
-                    controller: officePhoneController,
-                    obscureText: false,
-                    hint: LabelString.lblOfficePhone,
-                    maxLength: 10,
-                    titleText: LabelString.lblOfficePhone,
-                    isRequired: false),
-                CustomTextField(
-                    keyboardType: TextInputType.number,
-                    readOnly: false,
                     controller: mobilePhoneController,
                     obscureText: false,
                     hint: LabelString.lblMobilePhone,
                     maxLength: 10,
                     titleText: LabelString.lblMobilePhone,
+                    isRequired: false),
+                CustomTextField(
+                    keyboardType: TextInputType.number,
+                    readOnly: false,
+                    controller: officePhoneController,
+                    obscureText: false,
+                    hint: LabelString.lblOfficePhone,
+                    maxLength: 10,
+                    titleText: LabelString.lblOfficePhone,
                     isRequired: false),
                 CustomTextField(
                     keyboardType: TextInputType.emailAddress,
@@ -380,6 +365,7 @@ class _AddContactPageState extends State<AddContactPage> {
                     obscureText: false,
                     hint: LabelString.lblPrimaryEmail,
                     titleText: LabelString.lblPrimaryEmail,
+                    star: "*",
                     isRequired: true),
                 CustomTextField(
                     keyboardType: TextInputType.emailAddress,
@@ -415,9 +401,7 @@ class _AddContactPageState extends State<AddContactPage> {
                             if (contactBasicDetailFormKey.currentState
                                     ?.validate() ==
                                 true) {
-                              if (primaryEmailController.text
-                                  .toString()
-                                  .isValidEmail) {
+                              if (primaryEmailController.text.isValidEmail) {
                                 pageController.nextPage(
                                     duration: const Duration(milliseconds: 500),
                                     curve: Curves.decelerate);
@@ -436,140 +420,138 @@ class _AddContactPageState extends State<AddContactPage> {
                 )
               ],
             ),
-          ),
-        )
-      ],
-    );
-  }
-
-  //stepTwo design
-  Expanded buildStepTwo(Size query, data) {
-    return Expanded(
-      child: ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 10.sp),
-        shrinkWrap: true,
-        children: [
-          Center(
-              child: Text(LabelString.lblInvoiceAddressDetails,
-                  style: CustomTextStyle.labelBoldFontTextBlue)),
-          SizedBox(height: 2.0.h),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(LabelString.lblAddressSearch,
-                  style: CustomTextStyle.labelFontText),
-              SizedBox(height: 1.h),
-              autoComplete("invoice"),
-            ],
-          ),
-          SizedBox(height: 2.h),
-          MultiLineTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: invoiceAddressController,
-            obscureText: false,
-            hint: LabelString.lblTypeAddress,
-            titleText: LabelString.lblInvoiceAddress,
-            isRequired: true,
-          ),
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: invoiceCityController,
-            obscureText: false,
-            hint: LabelString.lblInvoiceCity,
-            titleText: LabelString.lblInvoiceCity,
-            isRequired: true,
-          ),
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: invoiceCountryController,
-            obscureText: false,
-            hint: LabelString.lblInvoiceCountry,
-            titleText: LabelString.lblInvoiceCountry,
-            isRequired: true,
-          ),
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: invoicePostalController,
-            obscureText: false,
-            hint: LabelString.lblInvoicePostalCode,
-            titleText: LabelString.lblInvoicePostalCode,
-            isRequired: true,
-          ),
-          SizedBox(height: 1.0.h),
-          Center(
-            child: Text(LabelString.lblInstallationAddressDetails,
-                style: CustomTextStyle.labelBoldFontTextBlue),
-          ),
-          SizedBox(height: 2.0.h),
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(LabelString.lblAddressSearch,
-                      style: CustomTextStyle.labelFontText),
-                  InkWell(
-                    onTap: () {
-                      copyAddressFields();
-                    },
-                    child: Image.asset(ImageString.icCopy, height: 2.8.h),
-                  ),
-                ],
-              ),
-              SizedBox(height: 1.h),
-              autoComplete("installation"),
-              SizedBox(height: 2.h),
-            ],
-          ),
-          MultiLineTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: installationAddressController,
-            obscureText: false,
-            hint: LabelString.lblTypeAddress,
-            titleText: LabelString.lblInstallationAddress,
-            isRequired: true,
-          ),
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: installationCityController,
-            obscureText: false,
-            hint: LabelString.lblInstallationCity,
-            titleText: LabelString.lblInstallationCity,
-            isRequired: true,
-          ),
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: installationCountryController,
-            obscureText: false,
-            hint: LabelString.lblInstallationCountry,
-            titleText: LabelString.lblInstallationCountry,
-            isRequired: true,
-          ),
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: installationPostalController,
-            obscureText: false,
-            hint: LabelString.lblInstallationPostalCode,
-            titleText: LabelString.lblInstallationPostalCode,
-            isRequired: true,
-          ),
-          buildButtons(query, data),
+          )
         ],
       ),
     );
   }
 
+  //stepTwo design
+  buildStepTwo(Size query) {
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: 10.sp),
+      shrinkWrap: true,
+      children: [
+        Center(
+            child: Text(LabelString.lblInvoiceAddressDetails,
+                style: CustomTextStyle.labelBoldFontTextBlue)),
+        SizedBox(height: 2.0.h),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(LabelString.lblAddressSearch,
+                style: CustomTextStyle.labelFontText),
+            SizedBox(height: 1.h),
+            autoComplete("invoice"),
+          ],
+        ),
+        SizedBox(height: 2.h),
+        MultiLineTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: invoiceAddressController,
+          obscureText: false,
+          hint: LabelString.lblTypeAddress,
+          titleText: LabelString.lblInvoiceAddress,
+          isRequired: true,
+        ),
+        CustomTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: invoiceCityController,
+          obscureText: false,
+          hint: LabelString.lblInvoiceCity,
+          titleText: LabelString.lblInvoiceCity,
+          isRequired: true,
+        ),
+        CustomTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: invoiceCountryController,
+          obscureText: false,
+          hint: LabelString.lblInvoiceCountry,
+          titleText: LabelString.lblInvoiceCountry,
+          isRequired: true,
+        ),
+        CustomTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: invoicePostalController,
+          obscureText: false,
+          hint: LabelString.lblInvoicePostalCode,
+          titleText: LabelString.lblInvoicePostalCode,
+          isRequired: true,
+        ),
+        SizedBox(height: 1.0.h),
+        Center(
+          child: Text(LabelString.lblInstallationAddressDetails,
+              style: CustomTextStyle.labelBoldFontTextBlue),
+        ),
+        SizedBox(height: 2.0.h),
+        Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(LabelString.lblAddressSearch,
+                    style: CustomTextStyle.labelFontText),
+                InkWell(
+                  onTap: () {
+                    copyAddressFields();
+                  },
+                  child: Image.asset(ImageString.icCopy, height: 2.8.h),
+                ),
+              ],
+            ),
+            SizedBox(height: 1.h),
+            autoComplete("installation"),
+            SizedBox(height: 2.h),
+          ],
+        ),
+        MultiLineTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: installationAddressController,
+          obscureText: false,
+          hint: LabelString.lblTypeAddress,
+          titleText: LabelString.lblInstallationAddress,
+          isRequired: true,
+        ),
+        CustomTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: installationCityController,
+          obscureText: false,
+          hint: LabelString.lblInstallationCity,
+          titleText: LabelString.lblInstallationCity,
+          isRequired: true,
+        ),
+        CustomTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: installationCountryController,
+          obscureText: false,
+          hint: LabelString.lblInstallationCountry,
+          titleText: LabelString.lblInstallationCountry,
+          isRequired: true,
+        ),
+        CustomTextField(
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: installationPostalController,
+          obscureText: false,
+          hint: LabelString.lblInstallationPostalCode,
+          titleText: LabelString.lblInstallationPostalCode,
+          isRequired: true,
+        ),
+        buildButtons(query),
+      ],
+    );
+  }
+
   //previous and submit button
-  Padding buildButtons(Size query, data) {
+  Padding buildButtons(Size query) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.0.sp),
       child: Row(
@@ -599,53 +581,52 @@ class _AddContactPageState extends State<AddContactPage> {
           ),
           //submit or update button
           SizedBox(
-              width: query.width * 0.4,
-              height: query.height * 0.06,
-              child: widget.contactId == "NoId"
-                  ? CustomButton(
-                      buttonColor: AppColors.primaryColor,
-                      onClick: () {
-                        //opening dialog for ask to add quote or not?
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (ctx) => ValidationDialog(
-                            Message.createQoute,
+            width: query.width * 0.4,
+            height: query.height * 0.06,
+            child: widget.contactId == "NoId"
+                ? CustomButton(
+                    buttonColor: AppColors.primaryColor,
+                    onClick: () {
+                      //opening dialog for ask to add quote or not?
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (ctx) => ValidationDialog(
+                          Message.createQoute,
 
-                            //Yes button//
-                            () {
-                              createContactApiCall();
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              callNextScreen(context, AddQuotePage(true));
-                            },
+                          //Yes button//
+                          () {
+                            createContactApiCall();
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            callNextScreen(context, AddQuotePage(true));
+                          },
 
-                            //No button//
-                            () {
-                              createContactApiCall();
-                              Navigator.pop(context);
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (c) => const RootScreen()),
-                                  (route) => false);
-                            },
-                          ),
-                        );
-                      },
-                      title: ButtonString.btnSubmit)
-                  : CustomButton(
-                      //update button
-                      title: ButtonString.btnUpdate,
-                      onClick: () {
-                        updateContact(data);
-                        Navigator.pop(context);
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (c) => const RootScreen()),
-                            (route) => false);
-                      },
-                      buttonColor: AppColors.primaryColor,
-                    ))
+                          //No button//
+                          () {
+                            createContactApiCall();
+                            Navigator.pop(context);
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (c) => const RootScreen()),
+                                (route) => false);
+                          },
+                        ),
+                      );
+                    },
+                    title: ButtonString.btnSubmit)
+                : CustomButton(
+                    //update button
+                    title: ButtonString.btnUpdate,
+                    onClick: () {
+                      updateContact();
+                      Navigator.pop(context);
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (c) => const RootScreen()),
+                          (route) => false);
+                    },
+                    buttonColor: AppColors.primaryColor),
+          )
         ],
       ),
     );
@@ -654,9 +635,7 @@ class _AddContactPageState extends State<AddContactPage> {
   //Autocomplete textField for fill address fields
   Widget autoComplete(String autoCompleteType) {
     return Autocomplete(
-      fieldViewBuilder: (BuildContext context,
-          TextEditingController textEditingController,
-          FocusNode focusNode,
+      fieldViewBuilder: (context, textEditingController, focusNode,
           VoidCallback onFieldSubmitted) {
         return TextField(
           style: TextStyle(color: AppColors.blackColor),
@@ -686,12 +665,37 @@ class _AddContactPageState extends State<AddContactPage> {
               counterText: ""),
           controller: textEditingController,
           focusNode: focusNode,
-          onEditingComplete: () {
-            textEditingController.clear();
-          },
+          onEditingComplete: () => textEditingController.clear(),
           onSubmitted: (String value) {},
         );
       },
+      /*optionsViewBuilder: (context, onSelected, options) {
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Material(
+            elevation: 4.0,
+            child: SizedBox(
+              height: 200.0,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(8.0),
+                itemCount: addressList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final option = options.elementAt(index);
+                  return GestureDetector(
+                    onTap: () {
+                      onSelected(option);
+                    },
+                    child: ListTile(
+                      title: Text(option),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },*/
+
       optionsBuilder: (TextEditingValue textEditingValue) async {
         if (textEditingValue.text.length <= 3) {
           return const Iterable<String>.empty();
@@ -823,54 +827,66 @@ class _AddContactPageState extends State<AddContactPage> {
     addContactBloc.add(AddContactDetailEvent(queryParameters));
   }
 
-  //Calling update contact API
-  void updateContact(data) async {
+  Future<void> getContactDetailApi() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': "retrieve",
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
+      'id': widget.contactId.toString(),
+    };
+
+    addContactBloc.add(GetContactDetailEvent(queryParameters));
+  }
+
+  Future<void> updateContact() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     //for create data in json format
     UpdateContactData updateContactData = UpdateContactData(
       firstNameController.text.trim(),
-      data["contact_no"].toString(),
+      contactDetailData.contactNo.toString(),
       officePhoneController.text.trim(),
       lastNameController.text.trim(),
       mobilePhoneController.text.trim(),
-      data["account_id"].toString(),
-      data["homephone"].toString(),
-      data["leadsource"].toString(),
-      data["otherphone"].toString(),
-      data["title"].toString(),
-      data["fax"].toString(),
-      data["department"].toString(),
-      data["birthday"].toString(),
+      contactDetailData.accountId.toString(),
+      contactDetailData.homephone.toString(),
+      contactDetailData.leadsource.toString(),
+      contactDetailData.otherphone.toString(),
+      contactDetailData.title.toString(),
+      contactDetailData.fax.toString(),
+      contactDetailData.department.toString(),
+      contactDetailData.birthday.toString(),
       primaryEmailController.text.trim(),
-      data["contact_id"].toString(),
-      data["assistant"].toString(),
+      contactDetailData.contactId.toString(),
+      contactDetailData.assistant.toString(),
       secondaryEmailController.text.trim(),
-      data["assistantphone"].toString(),
-      data["donotcall"].toString(),
-      data["emailoptout"].toString(),
-      data["assigned_user_id"].toString(),
-      data["reference"].toString(),
-      data["notify_owner"].toString(),
-      data["modifiedby"].toString(),
-      data["isconvertedfromlead"].toString(),
+      contactDetailData.assistantphone.toString(),
+      contactDetailData.donotcall.toString(),
+      contactDetailData.emailoptout.toString(),
+      contactDetailData.assignedUserId.toString(),
+      contactDetailData.reference.toString(),
+      contactDetailData.notifyOwner.toString(),
+      contactDetailData.modifiedby.toString(),
+      contactDetailData.isconvertedfromlead.toString(),
       companyNameController.text.trim(),
       invoiceAddressController.text.trim(),
       invoiceCityController.text.trim(),
-      data["mailingstate"].toString(),
-      data["otherstate"].toString(),
+      contactDetailData.mailingstate.toString(),
+      contactDetailData.otherstate.toString(),
       invoicePostalController.text.trim(),
       invoiceCountryController.text.trim(),
-      data["mailingpobox"].toString(),
-      data["otherpobox"].toString(),
-      data["description"].toString(),
-      data["imagename"].toString(),
+      contactDetailData.mailingpobox.toString(),
+      contactDetailData.otherpobox.toString(),
+      contactDetailData.description.toString(),
+      contactDetailData.imagename.toString(),
       installationAddressController.text.trim(),
       installationCityController.text.trim(),
       installationPostalController.text.trim(),
       installationCountryController.text.trim(),
       widget.contactId.toString(),
-      data["assigned_user_name"].toString(),
+      contactDetailData.assignedUserName.toString(),
     );
     String jsonUpdateContactDetail = jsonEncode(updateContactData);
 

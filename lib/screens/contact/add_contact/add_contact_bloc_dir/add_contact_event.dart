@@ -17,3 +17,12 @@ class UpdateContactDetailEvent extends AddContactEvent {
 
   UpdateContactDetailEvent(this.queryParameters);
 }
+
+
+
+// ignore: must_be_immutable
+class GetContactDetailEvent extends AddContactEvent {
+  Map<String, dynamic> queryParameters;
+
+  GetContactDetailEvent(this.queryParameters);
+}

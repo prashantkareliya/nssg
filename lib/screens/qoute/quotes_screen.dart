@@ -57,14 +57,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
     );
   }
 
-  Padding buildAddContactButton(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(right: 10.sp, bottom: 8.sp),
-      child: FloatingActionButton(
-          onPressed: () {
-            callNextScreen(context, AddQuotePage(false));
-          },
-          child: const Icon(Icons.add)),
-    );
+  FloatingActionButton buildAddContactButton(BuildContext context) {
+    return FloatingActionButton(
+        onPressed: () {
+          callNextScreen(context, AddQuotePage(false));
+        },
+        child: const Icon(Icons.add));
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ import '../../components/custom_rounded_container.dart';
 import '../../components/custom_text_styles.dart';
 import '../../components/custom_textfield.dart';
 import '../../utils/app_colors.dart';
+import 'item_detail.dart';
 
 class AddQuotePage extends StatefulWidget {
   bool isBack;
@@ -183,76 +185,74 @@ class _AddQuotePageState extends State<AddQuotePage> {
   Padding buildStepOne(BuildContext context, Size query) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
         children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            CustomTextField(
-              keyboardType: TextInputType.name,
-              readOnly: false,
-              controller: invoiceSearchController,
-              obscureText: false,
-              hint: LabelString.lblTypeToSearch,
-              titleText: LabelString.lblContactName,
-              isRequired: false,
-              suffixWidget: Icon(Icons.search, color: AppColors.blackColor),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: invoiceSearchController,
+            obscureText: false,
+            hint: LabelString.lblTypeToSearch,
+            titleText: LabelString.lblContactName,
+            isRequired: false,
+            suffixWidget: Icon(Icons.search, color: AppColors.blackColor),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Text(LabelString.lblViewContacts,
+                style: CustomTextStyle.commonTextBlue),
+          ),
+          SizedBox(height: 3.h),
+          Text(LabelString.lblInstallationHours,
+              style: CustomTextStyle.labelFontText),
+          SizedBox(height: 1.5.h),
+          Wrap(
+            spacing: 5,
+            children: List.generate(
+              sampleDataForStepOne.length,
+              (index) {
+                return SizedBox(
+                  height: 6.h,
+                  width: sampleDataForStepOne[index].buttonText.endsWith("Day")
+                      ? 17.w
+                      : 18.w,
+                  child: InkWell(
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in sampleDataForStepOne) {
+                        element.isSelected = false;
+                      }
+                      //setState(() {});
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSelectTime();
+                      sampleDataForStepOne[index].isSelected = true;
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSetTime;
+                    },
+                    child: RadioItem(sampleDataForStepOne[index]),
+                  ),
+                );
+              },
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Text(LabelString.lblViewContacts,
-                  style: CustomTextStyle.commonTextBlue),
-            ),
-            SizedBox(height: 3.h),
-            Text(LabelString.lblInstallationHours,
-                style: CustomTextStyle.labelFontText),
-            SizedBox(height: 1.5.h),
-            Wrap(
-              spacing: 5,
-              children: List.generate(
-                sampleDataForStepOne.length,
-                (index) {
-                  return SizedBox(
-                    height: 6.h,
-                    width:
-                        sampleDataForStepOne[index].buttonText.endsWith("Day")
-                            ? 17.w
-                            : 18.w,
-                    child: InkWell(
-                      splashColor: AppColors.transparent,
-                      highlightColor: AppColors.transparent,
-                      onTap: () {
-                        for (var element in sampleDataForStepOne) {
-                          element.isSelected = false;
-                        }
-                        //setState(() {});
-                        Provider.of<WidgetChange>(context, listen: false)
-                            .isSelectTime();
-                        sampleDataForStepOne[index].isSelected = true;
-                        Provider.of<WidgetChange>(context, listen: false)
-                            .isSetTime;
-                      },
-                      child: RadioItem(sampleDataForStepOne[index]),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Row(
-              children: [
-                Checkbox(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0)),
-                    activeColor: AppColors.primaryColor,
-                    onChanged: (value) =>
-                        Provider.of<WidgetChange>(context, listen: false)
-                            .isReminder(),
-                    value: Provider.of<WidgetChange>(context, listen: true)
-                        .isReminderCheck),
-                Text(LabelString.lblQuoteEmailReminder,
-                    style: CustomTextStyle.labelFontText)
-              ],
-            )
-          ]),
+          ),
+          Row(
+            children: [
+              Checkbox(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0)),
+                  activeColor: AppColors.primaryColor,
+                  onChanged: (value) =>
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isReminder(),
+                  value: Provider.of<WidgetChange>(context, listen: true)
+                      .isReminderCheck),
+              Text(LabelString.lblQuoteEmailReminder,
+                  style: CustomTextStyle.labelFontText)
+            ],
+          ),
+          SizedBox(height: query.height * 0.21),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.sp),
             child: BottomButton(pageController, "Cancel"),
@@ -702,9 +702,16 @@ class BottomButton extends StatelessWidget {
               child: CustomButton(
                   //update button
                   title: ButtonString.btnNext,
-                  onClick: () => pageController.nextPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.decelerate),
+                  onClick: () {
+                    print(pageController.page.toString());
+                    if (pageController.page == 5.0) {
+                      callNextScreen(context, const BuildItemDetail());
+                    } else {
+                      return pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.decelerate);
+                    }
+                  },
                   buttonColor: AppColors.primaryColor))
         ]);
   }

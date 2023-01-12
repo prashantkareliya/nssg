@@ -22,9 +22,6 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
       return deleteContactEvent(event, emit);
     });
 
-    on<RetrieveContactEvent>((event, emit) {
-      return retrieveContactEvent(event, emit);
-    });
   }
 
   //get contact list bloc method
@@ -59,19 +56,4 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
     });
   }
 
-  //retrieve single contact detail bloc method
-  retrieveContactEvent(
-      RetrieveContactEvent event, Emitter<GetContactState> emit) async {
-    emit(ContactLoadingState(true));
-    final response =
-        await contactRepository.retrieveContact(event.queryParameters);
-
-    response.when(success: (success) {
-      emit(ContactLoadingState(false));
-      emit(RetrieveContact(contactGet: success.result));
-    }, failure: (failure) {
-      emit(ContactLoadingState(false));
-      emit(ContactLoadFail(error: failure.toString()));
-    });
-  }
 }

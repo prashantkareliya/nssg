@@ -35,6 +35,7 @@ class CustomTextStyle {
           fontStyle: FontStyle.normal,
           color: AppColors.primaryColor));
 
+
   static TextStyle labelBoldFontTextSmall = GoogleFonts.sen(
       textStyle: TextStyle(
           fontSize: 12.sp,
