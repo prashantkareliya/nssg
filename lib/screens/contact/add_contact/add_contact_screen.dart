@@ -24,10 +24,9 @@ import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
 import '../../../utils/widgets.dart';
 import '../../dashboard/root_screen.dart';
-import '../../qoute/add_quote.dart';
+import '../../qoute/add_quote/add_quote_screen.dart';
 import '../contact_datasource.dart';
 import '../contact_repository.dart';
-import '../get_contact/contact_bloc_dir/get_contact_bloc.dart';
 import 'add_contact_bloc_dir/add_contact_bloc.dart';
 import 'add_contact_model_dir/fill_contact_data_model.dart';
 import 'add_contact_model_dir/fill_update_contact_data_model.dart';
@@ -245,9 +244,13 @@ class _AddContactPageState extends State<AddContactPage> {
                   child: isLoading
                       ? loadingView()
                       : PageView(
-                          scrollDirection: Axis.horizontal,
                           pageSnapping: true,
-                          physics: const BouncingScrollPhysics(),
+                          physics: contactBasicDetailFormKey.currentState
+                                          ?.validate() ==
+                                      true ||
+                                  widget.contactId != "NoId"
+                              ? const BouncingScrollPhysics()
+                              : const NeverScrollableScrollPhysics(),
                           controller: pageController,
                           onPageChanged: (number) {
                             streamController.add(number);
@@ -264,289 +267,288 @@ class _AddContactPageState extends State<AddContactPage> {
   }
 
   //stepOne design
-  SingleChildScrollView buildStepOne(Size query) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 0.0.h),
-          Form(
-            key: contactBasicDetailFormKey,
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 10.sp),
-              shrinkWrap: true,
-              children: [
-                Consumer<WidgetChange>(
-                  builder: (context, value, child) => CustomTextField(
-                    keyboardType: TextInputType.name,
-                    readOnly: false,
-                    controller: firstNameController,
-                    obscureText: false,
-                    hint: LabelString.lblFirstName,
-                    titleText: LabelString.lblFirstName,
-                    star: "*",
-                    isRequired: true,
-                    /*prefixIcon: Padding(
-                                padding: EdgeInsets.all(4.sp),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: AppColors.backWhiteColor,
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  height: 4.8.h,
-                                  child: DropdownButton<String>(
-                                    value: value.selectItem,
-                                    elevation: 0,
-                                    hint: Padding(
-                                      padding: EdgeInsets.only(left: 5.sp),
-                                      child: Text(LabelString.selectField,
-                                          style: CustomTextStyle
-                                              .labelFontHintText),
-                                    ),
-                                    style: CustomTextStyle.labelText,
-                                    underline: Container(
-                                        height: 0, color: Colors.transparent),
-                                    onChanged: (String? v) {
-                                      value.selectItemValue(v);
-                                    },
-                                    items: value.items
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 8.sp),
-                                          child: Text(value,
-                                              style: CustomTextStyle.labelText),
-                                        ),
-                                      );
-                                    }).toList(),
+  Padding buildStepOne(Size query) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.sp),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Form(
+          key: contactBasicDetailFormKey,
+          child: Column(
+            children: [
+              Consumer<WidgetChange>(
+                builder: (context, value, child) => CustomTextField(
+                  keyboardType: TextInputType.name,
+                  readOnly: false,
+                  controller: firstNameController,
+                  obscureText: false,
+                  hint: LabelString.lblFirstName,
+                  titleText: LabelString.lblFirstName,
+                  star: "*",
+                  isRequired: true,
+                  /*prefixIcon: Padding(
+                              padding: EdgeInsets.all(4.sp),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.backWhiteColor,
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                height: 4.8.h,
+                                child: DropdownButton<String>(
+                                  value: value.selectItem,
+                                  elevation: 0,
+                                  hint: Padding(
+                                    padding: EdgeInsets.only(left: 5.sp),
+                                    child: Text(LabelString.selectField,
+                                        style: CustomTextStyle
+                                            .labelFontHintText),
                                   ),
-                                )),*/
-                  ),
+                                  style: CustomTextStyle.labelText,
+                                  underline: Container(
+                                      height: 0, color: Colors.transparent),
+                                  onChanged: (String? v) {
+                                    value.selectItemValue(v);
+                                  },
+                                  items: value.items
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 8.sp),
+                                        child: Text(value,
+                                            style: CustomTextStyle.labelText),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              )),*/
                 ),
-                CustomTextField(
-                    keyboardType: TextInputType.name,
-                    readOnly: false,
-                    controller: lastNameController,
-                    obscureText: false,
-                    hint: LabelString.lblLastName,
-                    titleText: LabelString.lblLastName,
-                    isRequired: false),
-                CustomTextField(
-                    keyboardType: TextInputType.name,
-                    readOnly: false,
-                    controller: companyNameController,
-                    obscureText: false,
-                    hint: LabelString.lblCompanyName,
-                    titleText: LabelString.lblCompanyName,
-                    isRequired: false),
-                CustomTextField(
-                    keyboardType: TextInputType.number,
-                    readOnly: false,
-                    controller: mobilePhoneController,
-                    obscureText: false,
-                    hint: LabelString.lblMobilePhone,
-                    maxLength: 10,
-                    titleText: LabelString.lblMobilePhone,
-                    isRequired: false),
-                CustomTextField(
-                    keyboardType: TextInputType.number,
-                    readOnly: false,
-                    controller: officePhoneController,
-                    obscureText: false,
-                    hint: LabelString.lblOfficePhone,
-                    maxLength: 10,
-                    titleText: LabelString.lblOfficePhone,
-                    isRequired: false),
-                CustomTextField(
-                    keyboardType: TextInputType.emailAddress,
-                    readOnly: false,
-                    controller: primaryEmailController,
-                    obscureText: false,
-                    hint: LabelString.lblPrimaryEmail,
-                    titleText: LabelString.lblPrimaryEmail,
-                    star: "*",
-                    isRequired: true),
-                CustomTextField(
-                    keyboardType: TextInputType.emailAddress,
-                    readOnly: false,
-                    controller: secondaryEmailController,
-                    obscureText: false,
-                    hint: LabelString.lblSecondaryEmail,
-                    titleText: LabelString.lblSecondaryEmail,
-                    isRequired: false),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      //cancel button
-                      SizedBox(
-                        width: query.width * 0.4,
-                        height: query.height * 0.06,
-                        child: CustomButton(
-                            buttonColor: AppColors.redColor,
-                            onClick: () => Navigator.pop(context),
-                            title: ButtonString.btnCancel),
-                      ),
-                      //next button
-                      SizedBox(
-                        width: query.width * 0.4,
-                        height: query.height * 0.06,
-                        child: CustomButton(
-                          buttonColor: AppColors.primaryColor,
-                          onClick: () {
-                            if (contactBasicDetailFormKey.currentState
-                                    ?.validate() ==
-                                true) {
-                              if (primaryEmailController.text.isValidEmail) {
-                                pageController.nextPage(
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Curves.decelerate);
-                              } else {
-                                Helpers.showSnackBar(
-                                    context, ErrorString.emailNotValid,
-                                    isError: true);
-                              }
+              ),
+              CustomTextField(
+                  keyboardType: TextInputType.name,
+                  readOnly: false,
+                  controller: lastNameController,
+                  obscureText: false,
+                  hint: LabelString.lblLastName,
+                  titleText: LabelString.lblLastName,
+                  isRequired: false),
+              CustomTextField(
+                  keyboardType: TextInputType.name,
+                  readOnly: false,
+                  controller: companyNameController,
+                  obscureText: false,
+                  hint: LabelString.lblCompanyName,
+                  titleText: LabelString.lblCompanyName,
+                  isRequired: false),
+              CustomTextField(
+                  keyboardType: TextInputType.number,
+                  readOnly: false,
+                  controller: mobilePhoneController,
+                  obscureText: false,
+                  hint: LabelString.lblMobilePhone,
+                  maxLength: 10,
+                  titleText: LabelString.lblMobilePhone,
+                  isRequired: false),
+              CustomTextField(
+                  keyboardType: TextInputType.number,
+                  readOnly: false,
+                  controller: officePhoneController,
+                  obscureText: false,
+                  hint: LabelString.lblOfficePhone,
+                  maxLength: 10,
+                  titleText: LabelString.lblOfficePhone,
+                  isRequired: false),
+              CustomTextField(
+                  keyboardType: TextInputType.emailAddress,
+                  readOnly: false,
+                  controller: primaryEmailController,
+                  obscureText: false,
+                  hint: LabelString.lblPrimaryEmail,
+                  titleText: LabelString.lblPrimaryEmail,
+                  star: "*",
+                  isRequired: true),
+              CustomTextField(
+                  keyboardType: TextInputType.emailAddress,
+                  readOnly: false,
+                  controller: secondaryEmailController,
+                  obscureText: false,
+                  hint: LabelString.lblSecondaryEmail,
+                  titleText: LabelString.lblSecondaryEmail,
+                  isRequired: false),
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    //cancel button
+                    SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: CustomButton(
+                          buttonColor: AppColors.redColor,
+                          onClick: () => Navigator.pop(context),
+                          title: ButtonString.btnCancel),
+                    ),
+                    //next button
+                    SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: CustomButton(
+                        buttonColor: AppColors.primaryColor,
+                        onClick: () {
+                          if (contactBasicDetailFormKey.currentState
+                                  ?.validate() ==
+                              true) {
+                            if (primaryEmailController.text.isValidEmail) {
+                              pageController.nextPage(
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.decelerate);
+                            } else {
+                              Helpers.showSnackBar(
+                                  context, ErrorString.emailNotValid,
+                                  isError: true);
                             }
-                          },
-                          title: ButtonString.btnNext,
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
+                          }
+                        },
+                        title: ButtonString.btnNext,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
 
   //stepTwo design
   buildStepTwo(Size query) {
-    return ListView(
-      physics: const BouncingScrollPhysics(),
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.sp),
-      shrinkWrap: true,
-      children: [
-        Center(
-            child: Text(LabelString.lblInvoiceAddressDetails,
-                style: CustomTextStyle.labelBoldFontTextBlue)),
-        SizedBox(height: 2.0.h),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
           children: [
-            Text(LabelString.lblAddressSearch,
-                style: CustomTextStyle.labelFontText),
-            SizedBox(height: 1.h),
-            autoComplete("invoice"),
-          ],
-        ),
-        SizedBox(height: 2.h),
-        MultiLineTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: invoiceAddressController,
-          obscureText: false,
-          hint: LabelString.lblTypeAddress,
-          titleText: LabelString.lblInvoiceAddress,
-          isRequired: true,
-        ),
-        CustomTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: invoiceCityController,
-          obscureText: false,
-          hint: LabelString.lblInvoiceCity,
-          titleText: LabelString.lblInvoiceCity,
-          isRequired: true,
-        ),
-        CustomTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: invoiceCountryController,
-          obscureText: false,
-          hint: LabelString.lblInvoiceCountry,
-          titleText: LabelString.lblInvoiceCountry,
-          isRequired: true,
-        ),
-        CustomTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: invoicePostalController,
-          obscureText: false,
-          hint: LabelString.lblInvoicePostalCode,
-          titleText: LabelString.lblInvoicePostalCode,
-          isRequired: true,
-        ),
-        SizedBox(height: 1.0.h),
-        Center(
-          child: Text(LabelString.lblInstallationAddressDetails,
-              style: CustomTextStyle.labelBoldFontTextBlue),
-        ),
-        SizedBox(height: 2.0.h),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Center(
+                child: Text(LabelString.lblInvoiceAddressDetails,
+                    style: CustomTextStyle.labelBoldFontTextBlue)),
+            SizedBox(height: 2.0.h),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(LabelString.lblAddressSearch,
                     style: CustomTextStyle.labelFontText),
-                InkWell(
-                  onTap: () {
-                    copyAddressFields();
-                  },
-                  child: Image.asset(ImageString.icCopy, height: 2.8.h),
-                ),
+                SizedBox(height: 1.h),
+                autoComplete("invoice"),
               ],
             ),
-            SizedBox(height: 1.h),
-            autoComplete("installation"),
             SizedBox(height: 2.h),
+            MultiLineTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: invoiceAddressController,
+              obscureText: false,
+              hint: LabelString.lblTypeAddress,
+              titleText: LabelString.lblInvoiceAddress,
+              isRequired: true,
+            ),
+            CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: invoiceCityController,
+              obscureText: false,
+              hint: LabelString.lblInvoiceCity,
+              titleText: LabelString.lblInvoiceCity,
+              isRequired: true,
+            ),
+            CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: invoiceCountryController,
+              obscureText: false,
+              hint: LabelString.lblInvoiceCountry,
+              titleText: LabelString.lblInvoiceCountry,
+              isRequired: true,
+            ),
+            CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: invoicePostalController,
+              obscureText: false,
+              hint: LabelString.lblInvoicePostalCode,
+              titleText: LabelString.lblInvoicePostalCode,
+              isRequired: true,
+            ),
+            SizedBox(height: 1.0.h),
+            Center(
+              child: Text(LabelString.lblInstallationAddressDetails,
+                  style: CustomTextStyle.labelBoldFontTextBlue),
+            ),
+            SizedBox(height: 2.0.h),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(LabelString.lblAddressSearch,
+                        style: CustomTextStyle.labelFontText),
+                    InkWell(
+                      onTap: () {
+                        copyAddressFields();
+                      },
+                      child: Image.asset(ImageString.icCopy, height: 2.8.h),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 1.h),
+                autoComplete("installation"),
+                SizedBox(height: 2.h),
+              ],
+            ),
+            MultiLineTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: installationAddressController,
+              obscureText: false,
+              hint: LabelString.lblTypeAddress,
+              titleText: LabelString.lblInstallationAddress,
+              isRequired: true,
+            ),
+            CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: installationCityController,
+              obscureText: false,
+              hint: LabelString.lblInstallationCity,
+              titleText: LabelString.lblInstallationCity,
+              isRequired: true,
+            ),
+            CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: installationCountryController,
+              obscureText: false,
+              hint: LabelString.lblInstallationCountry,
+              titleText: LabelString.lblInstallationCountry,
+              isRequired: true,
+            ),
+            CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: installationPostalController,
+              obscureText: false,
+              hint: LabelString.lblInstallationPostalCode,
+              titleText: LabelString.lblInstallationPostalCode,
+              isRequired: true,
+            ),
+            buildButtons(query),
           ],
         ),
-        MultiLineTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: installationAddressController,
-          obscureText: false,
-          hint: LabelString.lblTypeAddress,
-          titleText: LabelString.lblInstallationAddress,
-          isRequired: true,
-        ),
-        CustomTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: installationCityController,
-          obscureText: false,
-          hint: LabelString.lblInstallationCity,
-          titleText: LabelString.lblInstallationCity,
-          isRequired: true,
-        ),
-        CustomTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: installationCountryController,
-          obscureText: false,
-          hint: LabelString.lblInstallationCountry,
-          titleText: LabelString.lblInstallationCountry,
-          isRequired: true,
-        ),
-        CustomTextField(
-          keyboardType: TextInputType.name,
-          readOnly: false,
-          controller: installationPostalController,
-          obscureText: false,
-          hint: LabelString.lblInstallationPostalCode,
-          titleText: LabelString.lblInstallationPostalCode,
-          isRequired: true,
-        ),
-        buildButtons(query),
-      ],
+      ),
     );
   }
 
@@ -560,25 +562,13 @@ class _AddContactPageState extends State<AddContactPage> {
         children: <Widget>[
           //previous button
           SizedBox(
-            width: query.width * 0.4,
-            height: query.height * 0.06,
-            child: TextButton(
-                style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(
-                        AppColors.primaryColor),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            side: BorderSide(
-                                color: AppColors.primaryColor, width: 2)))),
-                onPressed: () {
-                  pageController.previousPage(
+              width: query.width * 0.4,
+              height: query.height * 0.06,
+              child: BorderButton(
+                  btnString: ButtonString.btnPrevious,
+                  onClick: () => pageController.previousPage(
                       duration: const Duration(milliseconds: 500),
-                      curve: Curves.decelerate);
-                },
-                child: Text(ButtonString.btnPrevious,
-                    style: CustomTextStyle.commonTextBlue)),
-          ),
+                      curve: Curves.decelerate))),
           //submit or update button
           SizedBox(
             width: query.width * 0.4,
@@ -669,33 +659,6 @@ class _AddContactPageState extends State<AddContactPage> {
           onSubmitted: (String value) {},
         );
       },
-      /*optionsViewBuilder: (context, onSelected, options) {
-        return Align(
-          alignment: Alignment.topLeft,
-          child: Material(
-            elevation: 4.0,
-            child: SizedBox(
-              height: 200.0,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                itemCount: addressList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final option = options.elementAt(index);
-                  return GestureDetector(
-                    onTap: () {
-                      onSelected(option);
-                    },
-                    child: ListTile(
-                      title: Text(option),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      },*/
-
       optionsBuilder: (TextEditingValue textEditingValue) async {
         if (textEditingValue.text.length <= 3) {
           return const Iterable<String>.empty();
@@ -711,8 +674,7 @@ class _AddContactPageState extends State<AddContactPage> {
           final responseJson = json.decode(response.body);
           addressList = responseJson["suggestions"];
           List<String> matchesAddress = <String>[];
-          matchesAddress
-              .addAll(addressList.map((e) => e["address"].toString()));
+          matchesAddress.addAll(addressList.map((e) => e["address"].toString()));
           return matchesAddress;
         }
       },
@@ -721,6 +683,7 @@ class _AddContactPageState extends State<AddContactPage> {
         for (int i = 0; i < addressList.length; i++) {
           if (addressList[i]["address"] == selection) {
             String addressId = addressList[i]["id"].toString();
+
             //Call API for get address detail
             var url =
                 "https://api.getAddress.io/get/$addressId?api-key=S9VYw_n6IE6VlQkZktafRA37641";

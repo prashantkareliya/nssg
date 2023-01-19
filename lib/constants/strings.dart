@@ -69,6 +69,7 @@ class LabelString {
   static const String lblInvoicePostalCode = "Invoice Postal Code";
 
   static const String lblCity = "City";
+  static const String lblState = "State";
   static const String lblCountry = "Country";
   static const String lblPostalCode = "Postal Code";
 
@@ -79,6 +80,7 @@ class LabelString {
   static const String lblQuoteDetails = "Quote Details";
   static const String lblViewContacts = "View Contacts";
   static const String lblContactName = "Contact Name";
+  static const String lblNumberOfEngineer = "No. of Engineer";
   static const String lblInstallationHours = "Installation";
   static const String lblQuoteEmailReminder = "Quote Email Reminder?";
   static const String lblPremisesType = "Premises Type";
@@ -97,15 +99,28 @@ class LabelString {
   static const String lblCategory = "Category";
   static const String lblSubCategory = "Sub - Category";
   static const String lblAttachmentDocument = "Attachment Document";
+  static const String lblAttachedDocument = "Attached Document";
   static const String lblSelectLocation = "Select Location";
-  static const String lblCostPrice  = "Cost Price : ";
-  static const String lblSellingPrice  = "Selling Price : ";
-  static const String lblDiscPrice = "Disc. Price : ";
-  static const String lblAmount = "Amount : ";
-  static const String lblProfit = "profit: ";
-
-
-
+  static const String lblViewLocation = "View Location";
+  static const String lblCostPrice = "Cost Price";
+  static const String lblSellingPrice = "Selling Price";
+  static const String lblDiscPrice = "Disc. Price";
+  static const String lblAmount = "Amount";
+  static const String lblProfit = "profit";
+  static const String lblTitle = "Title";
+  static const String lblLocation = "Location";
+  static const String lblItemName = "Item Name : ";
+  static const String lblQuantity = "Quantity";
+  static const String lblDiscount = "Discount : ";
+  static const String lbItemName = "Item Name";
+  static const String lbItemDescription = "Description";
+  static const String lblCostPricePound = "Cost Price(£)";
+  static const String lblSellingPricePound = "Selling Price(£)";
+  static const String lblDiscountPound = "Discount(£)";
+  static const String lblQuantityEdit = "Quantity";
+  static const String lblSubject = "Subject";
+  static const String lblQuoteDetail = "Quote Detail";
+  static const String lblViewAddress = "View Address";
 
 
 
@@ -122,6 +137,8 @@ class ButtonString {
   static const String btnPrevious = "Previous";
   static const String btnSubmit = "Submit";
   static const String btnUpdate = "Update";
+  static const String btnSave = "Save";
+  static const String btnAddProduct = "Add Product";
 }
 
 //Image path Strings
@@ -136,10 +153,12 @@ class ImageString {
   static const String icCopy = "assets/images/ic_copy.png";
   static const String icShowAmount = "assets/images/ic_show_amount.png";
   static const String icHideAmount = "assets/images/ic_hide_amount.png";
+  static const String imgDemo = "assets/images/demo.png";
 }
 
 class PreferenceString {
   static const String userId = "userId";
   static const String sessionName = "sessionName";
   static const String userName = "Username";
+  static const String contactList = "ContactList";
 }

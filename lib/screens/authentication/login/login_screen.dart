@@ -77,10 +77,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (state is LoginLoaded) {
             preferences.setPreference(PreferenceString.userId, state.userId);
-            preferences.setPreference(
-                PreferenceString.sessionName, state.sessionName);
-            preferences.setPreference(
-                PreferenceString.userName, state.userName);
+            preferences.setPreference(PreferenceString.sessionName, state.sessionName);
+            preferences.setPreference(PreferenceString.userName, state.userName);
             Helpers.showSnackBar(context, state.msg.toString());
             moveToNextScreen();
           }
@@ -107,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
         key: loginFormKey,
         child: SingleChildScrollView(
           child: Container(
+            width: buildResponsiveWidth(context),
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -129,7 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Image.asset(ImageString.imgLogoSplash),
+                      SizedBox(height: 3.h),
+                      Image.asset(ImageString.imgLogoSplash,
+                          height: query.height * 0.25),
                       //email | password field visibility
                       Visibility(
                         visible: widget.isLogin == "isLogin" ? false : true,

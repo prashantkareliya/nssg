@@ -60,7 +60,7 @@ dependencies:
   connectivity_plus: ^3.0.2
   equatable: ^2.0.5
   infinite_scroll_pagination: ^3.2.0
-
+  autocomplete_textfield: ^2.0.1
   #State Management
   flutter_bloc: ^8.1.1
   provider: ^6.0.5
@@ -78,11 +78,11 @@ dev_dependencies:
 
 #Native SplashScreen
 flutter_native_splash:
-  image: assets/images/app_logo.jpg
+  image: assets/images/logo_splash.png
   color: "#ffffff"
 
   android_12:
-    image: assets/images/app_logo.jpg
+    image: assets/images/logo_splash.png
     color: '#ffffff'
 
   android: true

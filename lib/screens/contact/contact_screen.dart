@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/screens/contact/contact_datasource.dart';
 import 'package:nssg/screens/contact/contact_repository.dart';
 import 'package:nssg/utils/app_colors.dart';
+import 'package:nssg/utils/preferences.dart';
 import 'package:nssg/utils/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +19,7 @@ import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
 import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/helpers.dart';
+
 import '../../utils/widgetChange.dart';
 import 'add_contact/add_contact_screen.dart';
 import 'get_contact/contact_bloc_dir/get_contact_bloc.dart';
@@ -30,11 +34,9 @@ class ContactScreen extends StatefulWidget {
 
 class _ContactScreenState extends State<ContactScreen> {
   List<Result>? contactItems = [];
+
   List<Result>? searchItemList = [];
   String searchKey = "";
-  Future<dynamic>? getDetail;
-  int _page = 1;
-  ScrollController? controller;
 
   @override
   void initState() {
@@ -69,7 +71,7 @@ class _ContactScreenState extends State<ContactScreen> {
     return AnimatedOpacity(
       opacity:
           Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 0,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 500),
       child: Visibility(
         visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow,
         child: BaseAppBar(
@@ -96,15 +98,16 @@ class _ContactScreenState extends State<ContactScreen> {
     return AnimatedOpacity(
       opacity:
           Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 0 : 1,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 500),
       child: Visibility(
         visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow
             ? false
             : true,
         child: Padding(
-          padding: EdgeInsets.only(right: 24.sp, top: 8.sp, left: 15.sp),
+          padding:
+              EdgeInsets.only(right: 24.sp, top: 8.sp, left: 15.sp, bottom: 0),
           child: Padding(
-            padding: EdgeInsets.only(bottom: 8.sp),
+            padding: EdgeInsets.only(bottom: 0.sp),
             child: Row(
               children: [
                 InkWell(
@@ -177,6 +180,8 @@ class _ContactScreenState extends State<ContactScreen> {
         }
         if (state is ContactsLoaded) {
           contactItems = state.contactList;
+          preferences.setPreference(PreferenceString.contactList, jsonEncode(state.contactList));
+
         }
         if (state is DeleteContact) {
           getContact();
@@ -202,7 +207,7 @@ class _ContactScreenState extends State<ContactScreen> {
                 : RefreshIndicator(
                     onRefresh: () => getContact(),
                     child: ListView.separated(
-                      controller: controller,
+                      padding: EdgeInsets.only(top: 10.sp),
                       physics: const BouncingScrollPhysics(),
                       itemCount: searchKey.isNotEmpty
                           ? searchItemList!.length
@@ -227,7 +232,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                         elevation: 0,
                                         insetPadding: EdgeInsets.symmetric(
                                             horizontal: 12.sp),
-                                        child: contactDetails(
+                                        child: ContactDetail(
                                             contactItems![index].id));
                                   },
                                 );
@@ -369,7 +374,7 @@ class _ContactScreenState extends State<ContactScreen> {
       'operation': 'query',
       'sessionName':
           preferences.getString(PreferenceString.sessionName).toString(),
-      'query': Constants.of().apiKey, //2017
+      'query': Constants.of().apiKeyContact, //2017
       //'page': "1",
       'module_name': 'Contacts',
     };
@@ -387,14 +392,57 @@ class _ContactScreenState extends State<ContactScreen> {
       'appversion': Constants.of().appversion,
     };
     contactBloc.add(DeleteContactEvent(queryParameters));
-  }
+  }}
 
-  contactDetails(String? id) {
-    getDetail = getContactDetail(id);
+// ignore: must_be_immutable
+class ContactTileField extends StatelessWidget {
+  String? field;
+  String? fieldDetail;
+
+  TextAlign? textAlign;
+
+
+    ContactTileField(this.field, this.fieldDetail, {super.key, this.textAlign});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 10.sp, top: 8.sp),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text("$field :", style: CustomTextStyle.labelFontHintText),
+          ),
+          Expanded(child: Text(textAlign: textAlign,
+              fieldDetail!, style: CustomTextStyle.labelText)),
+        ],
+      ),
+    );
+  }
+}
+
+class ContactDetail extends StatefulWidget {
+  var id;
+
+  ContactDetail(this.id, {Key? key}) : super(key: key);
+
+  @override
+  State<ContactDetail> createState() => _ContactDetailState();
+}
+
+class _ContactDetailState extends State<ContactDetail> {
+  Future<dynamic>? getDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    getDetail = getContactDetail(widget.id);
     return FutureBuilder<dynamic>(
       future: getDetail,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          var dataContact = snapshot.data["result"];
           return Container(
             height: 70.h,
             decoration:
@@ -426,48 +474,44 @@ class _ContactScreenState extends State<ContactScreen> {
                     physics: const BouncingScrollPhysics(),
                     child: Column(
                       children: [
-                        ContactTileField(
-                          LabelString.lblFullName,
-                          snapshot.data["result"]["firstname"] +
-                              " " +
-                              snapshot.data["result"]["lastname"],
-                        ),
+                        ContactTileField(LabelString.lblFullName,
+                            "${dataContact["firstname"]} ${dataContact["lastname"]}"),
                         ContactTileField(LabelString.lblCompany,
-                            snapshot.data["result"]["contact_company"]),
-                        ContactTileField(LabelString.lblOfficePhone,
-                            snapshot.data["result"]["phone"]),
-                        ContactTileField(LabelString.lblMobilePhone,
-                            snapshot.data["result"]["mobile"]),
-                        ContactTileField(LabelString.lblPrimaryEmail,
-                            snapshot.data["result"]["email"]),
+                            dataContact["contact_company"]),
+                        ContactTileField(
+                            LabelString.lblOfficePhone, dataContact["phone"]),
+                        ContactTileField(
+                            LabelString.lblMobilePhone, dataContact["mobile"]),
+                        ContactTileField(
+                            LabelString.lblPrimaryEmail, dataContact["email"]),
                         ContactTileField(LabelString.lblSecondaryEmail,
-                            snapshot.data["result"]["secondaryemail"]),
+                            dataContact["secondaryemail"]),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 8.sp),
                           child: Text(LabelString.lblInstallationAddressDetails,
                               style: CustomTextStyle.labelBoldFontTextBlue),
                         ),
                         ContactTileField(LabelString.lblAddress,
-                            snapshot.data["result"]["mailingstreet"]),
-                        ContactTileField(LabelString.lblCity,
-                            snapshot.data["result"]["mailingcity"]),
+                            dataContact["mailingstreet"]),
+                        ContactTileField(
+                            LabelString.lblCity, dataContact["mailingcity"]),
                         ContactTileField(LabelString.lblCountry,
-                            snapshot.data["result"]["mailingcountry"]),
+                            dataContact["mailingcountry"]),
                         ContactTileField(LabelString.lblPostalCode,
-                            snapshot.data["result"]["mailingzip"]),
+                            dataContact["mailingzip"]),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 8.sp),
                           child: Text(LabelString.lblInvoiceAddressDetails,
                               style: CustomTextStyle.labelBoldFontTextBlue),
                         ),
-                        ContactTileField(LabelString.lblAddress,
-                            snapshot.data["result"]["otherstreet"]),
-                        ContactTileField(LabelString.lblCity,
-                            snapshot.data["result"]["othercity"]),
+                        ContactTileField(
+                            LabelString.lblAddress, dataContact["otherstreet"]),
+                        ContactTileField(
+                            LabelString.lblCity, dataContact["othercity"]),
                         ContactTileField(LabelString.lblCountry,
-                            snapshot.data["result"]["othercountry"]),
-                        ContactTileField(LabelString.lblPostalCode,
-                            snapshot.data["result"]["otherzip"]),
+                            dataContact["othercountry"]),
+                        ContactTileField(
+                            LabelString.lblPostalCode, dataContact["otherzip"]),
                         SizedBox(height: 1.5.h),
                       ],
                     ),
@@ -482,31 +526,6 @@ class _ContactScreenState extends State<ContactScreen> {
         }
         return SizedBox(height: 70.h, child: loadingView());
       },
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class ContactTileField extends StatelessWidget {
-  String? field;
-  String? fieldDetail;
-
-  ContactTileField(this.field, this.fieldDetail, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 10.sp, top: 8.sp),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Text("$field :", style: CustomTextStyle.labelFontHintText),
-          ),
-          Expanded(child: Text(fieldDetail!, style: CustomTextStyle.labelText)),
-        ],
-      ),
     );
   }
 }

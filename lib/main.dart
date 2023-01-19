@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
               colorScheme: ColorScheme.fromSwatch().copyWith(
                   primary: AppColors.primaryColor,
-                  secondary: AppColors.primaryColor)),
+                  secondary: AppColors.primaryColor),
+          ),
           home: const CheckingScreen(),
         ),
       );

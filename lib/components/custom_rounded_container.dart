@@ -25,17 +25,20 @@ class RoundedContainer extends StatelessWidget {
     return Row(
       children: [
         Container(
-          height: 4.h,
-          width: 8.w,
           decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: isEnable!
                   ? AppColors.primaryColor
-                  : AppColors.primaryColor.withOpacity(0.5),
-              borderRadius: const BorderRadius.all(Radius.circular(80.0))),
-          child: Center(
-              child: isDone!
-                  ? Icon(Icons.done, color: AppColors.whiteColor)
-                  : Text(containerText!, style: CustomTextStyle.buttonText)),
+                  : AppColors.primaryColor.withOpacity(0.5)),
+          child: isDone!
+              ? Padding(
+                padding: EdgeInsets.all(4.sp),
+                child: Icon(Icons.done, color: AppColors.whiteColor),
+              )
+              : Padding(
+                padding: EdgeInsets.all(10.sp),
+                child: Text(containerText!, style: CustomTextStyle.buttonText),
+              ),
         ),
         SizedBox(width: 1.5.w),
         Text("${LabelString.lblStep} ${stepText!}",

@@ -6,6 +6,7 @@ class WidgetChange extends ChangeNotifier {
   bool isReminderCheck = false;
   bool isSetTime = false;
   bool isSetPremises = false;
+  bool isSetEngineer = false;
 
   //list for dropdown
   var items = ['None', 'Mr.', 'Mrs.', 'Miss'];
@@ -42,6 +43,11 @@ class WidgetChange extends ChangeNotifier {
 
   void isSelectPremisesType() {
     isSetPremises = !isSetPremises;
+    notifyListeners();
+  }
+
+  void isSelectEngineers() {
+    isSetEngineer = !isSetEngineer;
     notifyListeners();
   }
 }

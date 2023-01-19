@@ -1,20 +1,26 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
+import 'package:nssg/utils/preferences.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
-import '../../components/custom_appbar.dart';
-import '../../components/custom_button.dart';
-import '../../components/custom_rounded_container.dart';
-import '../../components/custom_text_styles.dart';
-import '../../components/custom_textfield.dart';
-import '../../utils/app_colors.dart';
-import 'item_detail.dart';
+import '../../../components/custom_appbar.dart';
+import '../../../components/custom_button.dart';
+import '../../../components/custom_rounded_container.dart';
+import '../../../components/custom_text_styles.dart';
+import '../../../components/custom_textfield.dart';
+import '../../../constants/constants.dart';
+import '../../../utils/app_colors.dart';
+import '../../contact/add_contact/add_contact_model_dir/add_contact_response_model.dart';
+import '../item_detail.dart';
 
 class AddQuotePage extends StatefulWidget {
   bool isBack;
@@ -28,12 +34,22 @@ class AddQuotePage extends StatefulWidget {
 class _AddQuotePageState extends State<AddQuotePage> {
   PageController pageController = PageController();
   StreamController<int> streamController = StreamController<int>.broadcast();
+  List contactData = [];
 
   @override
   void initState() {
     super.initState();
     addInstallationTime();
     addPremisesType();
+    addNumberOfEngineer();
+    getList();
+  }
+
+  getList() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? contact = preferences.getString(PreferenceString.contactList);
+    contactData = jsonDecode(contact!);
+    print("contactData $contactData");
   }
 
   //Add data for step one
@@ -49,6 +65,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
     sampleDataForStepOne.add(RadioModel(false, '5 Day'));
   }
 
+  //Add data for step one
+  addNumberOfEngineer() {
+    numbersOfEng.add(RadioModel(false, '1'));
+    numbersOfEng.add(RadioModel(false, '2'));
+    numbersOfEng.add(RadioModel(false, '3'));
+    numbersOfEng.add(RadioModel(false, '4'));
+    numbersOfEng.add(RadioModel(false, '5'));
+  }
+
   //Add data for step two
   addPremisesType() {
     sampleDataForStepTwo.add(RadioModel(false, "Banking"));
@@ -62,6 +87,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
   List<RadioModel> sampleDataForStepOne = <RadioModel>[];
   List<RadioModel> sampleDataForStepTwo = <RadioModel>[];
+  List<RadioModel> numbersOfEng = <RadioModel>[];
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +97,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
       appBar: BaseAppBar(
         appBar: AppBar(),
         title: LabelString.lblAddNewQuote,
-        isBack: true,
+        isBack: widget.isBack,
         elevation: 1,
         backgroundColor: AppColors.whiteColor,
         searchWidget: Container(),
@@ -188,22 +214,103 @@ class _AddQuotePageState extends State<AddQuotePage> {
       child: ListView(
         physics: const BouncingScrollPhysics(),
         children: [
-          CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: invoiceSearchController,
-            obscureText: false,
-            hint: LabelString.lblTypeToSearch,
-            titleText: LabelString.lblContactName,
-            isRequired: false,
-            suffixWidget: Icon(Icons.search, color: AppColors.blackColor),
+          Autocomplete(
+            fieldViewBuilder: (context, textEditingController, focusNode,
+                VoidCallback onFieldSubmitted) {
+              return TextField(
+                style: TextStyle(color: AppColors.blackColor),
+                textCapitalization: TextCapitalization.none,
+                textInputAction: TextInputAction.next,
+                maxLines: 1,
+                cursorColor: AppColors.blackColor,
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                            width: 2, color: AppColors.primaryColor)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                            width: 2, color: AppColors.primaryColor)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                            width: 2, color: AppColors.primaryColor)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.only(left: 12.sp),
+                    hintText: LabelString.lblTypeToSearch,
+                    hintStyle: CustomTextStyle.labelFontHintText,
+                    counterText: ""),
+                controller: textEditingController,
+                focusNode: focusNode,
+                onEditingComplete: () => textEditingController.clear(),
+                onSubmitted: (String value) {},
+              );
+            },
+            optionsBuilder: (TextEditingValue textEditingValue) async {
+              if (textEditingValue.text.length <= 3) {
+                return const Iterable<String>.empty();
+              } else {
+                List<String> matchesContact = <String>[];
+
+                /*attachmentList.removeAt(attachmentList
+                    .indexWhere((element) => element.id == deletedId));*/
+
+                matchesContact
+                    .addAll(contactData.map((e) => e["firstname"].toString()));
+
+                return matchesContact;
+              }
+            },
+            onSelected: (selection) async {
+              print(selection);
+            },
           ),
+
+          //View Contact Button
           Align(
             alignment: Alignment.topRight,
-            child: Text(LabelString.lblViewContacts,
-                style: CustomTextStyle.commonTextBlue),
+            child: InkWell(
+              onTap: () {},
+              child: Text(LabelString.lblViewContacts,
+                  style: CustomTextStyle.commonTextBlue),
+            ),
           ),
           SizedBox(height: 3.h),
+          Text(LabelString.lblNumberOfEngineer,
+              style: CustomTextStyle.labelFontText),
+          SizedBox(height: 1.5.h),
+          Wrap(
+            spacing: 5,
+            children: List.generate(
+              numbersOfEng.length,
+              (index) {
+                return SizedBox(
+                  height: 6.h,
+                  width: 12.w,
+                  child: InkWell(
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in numbersOfEng) {
+                        element.isSelected = false;
+                      }
+
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSelectEngineers();
+                      numbersOfEng[index].isSelected = true;
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSetEngineer;
+                    },
+                    child: RadioItem(numbersOfEng[index]),
+                  ),
+                );
+              },
+            ),
+          ),
+          SizedBox(height: 2.h),
           Text(LabelString.lblInstallationHours,
               style: CustomTextStyle.labelFontText),
           SizedBox(height: 1.5.h),
@@ -252,7 +359,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   style: CustomTextStyle.labelFontText)
             ],
           ),
-          SizedBox(height: query.height * 0.21),
+          SizedBox(height: query.height * 0.075),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.sp),
             child: BottomButton(pageController, "Cancel"),
@@ -678,23 +785,11 @@ class BottomButton extends StatelessWidget {
               : SizedBox(
                   width: query.width * 0.4,
                   height: query.height * 0.06,
-                  child: TextButton(
-                      style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.primaryColor),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      side: BorderSide(
-                                          color: AppColors.primaryColor,
-                                          width: 2)))),
-                      onPressed: () => pageController.previousPage(
+                  child: BorderButton(
+                      btnString: ButtonString.btnPrevious,
+                      onClick: () => pageController.previousPage(
                           duration: const Duration(milliseconds: 500),
-                          curve: Curves.decelerate),
-                      child: Text(ButtonString.btnPrevious,
-                          style: CustomTextStyle.commonTextBlue)),
-                ),
+                          curve: Curves.decelerate))),
           //submit or update button
           SizedBox(
               width: query.width * 0.4,
@@ -703,7 +798,7 @@ class BottomButton extends StatelessWidget {
                   //update button
                   title: ButtonString.btnNext,
                   onClick: () {
-                    print(pageController.page.toString());
+                    debugPrint(pageController.page.toString());
                     if (pageController.page == 5.0) {
                       callNextScreen(context, const BuildItemDetail());
                     } else {

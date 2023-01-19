@@ -30,3 +30,33 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
+
+class BorderButton extends StatelessWidget {
+
+  final String btnString;
+  final Function()? onClick;
+
+
+  const BorderButton(
+      {Key? key,
+        required this.btnString,
+        this.onClick})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+        style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(
+                AppColors.primaryColor),
+            shape:
+            MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: BorderSide(
+                        color: AppColors.primaryColor,
+                        width: 2)))),
+        onPressed: onClick,
+        child: Text(btnString,
+            style: CustomTextStyle.commonTextBlue));
+  }
+}

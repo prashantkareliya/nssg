@@ -18,11 +18,10 @@ class ValidationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      elevation: 0.0,
-      insetPadding: const EdgeInsets.only(left: 15, right: 15),
-      backgroundColor: Colors.transparent,
-      child: dialogContent(context),
-    );
+        elevation: 0.0,
+        insetPadding: const EdgeInsets.only(left: 15, right: 15),
+        backgroundColor: Colors.transparent,
+        child: dialogContent(context));
   }
 
   Widget dialogContent(BuildContext context) {
