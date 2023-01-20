@@ -437,6 +437,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
         controller: pageController,
         onPageChanged: (number) {},
         children: [
+          buildStepZero(query), // category view
           buildStepOne(query), // category view
           buildStepTwo(query), //Sub-category view
           buildStepThree(query) // Item listing view
@@ -445,6 +446,50 @@ class _AddItemDetailState extends State<AddItemDetail> {
     );
   }
 
+  Column buildStepZero(Size query) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.sp),
+          child: Text(LabelString.lblManufacturing,
+              style: CustomTextStyle.labelBoldFontText),
+        ),
+        Wrap(
+          spacing: 15.sp,
+          direction: Axis.horizontal,
+          alignment: WrapAlignment.center,
+          runSpacing: 14.sp,
+          children: List.generate(
+            2,
+                (index) {
+              return Container(
+                height: 16.h,
+                width: query.width / 1.13,
+                decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.borderColor, width: 2),
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: InkWell(
+                  splashColor: AppColors.transparent,
+                  highlightColor: AppColors.transparent,
+                  onTap: () {},
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.lock_outline,
+                            color: AppColors.primaryColor, size: 30.sp),
+                        SizedBox(height: 1.h),
+                        Text("Ajax",
+                            textAlign: TextAlign.center,
+                            style: CustomTextStyle.labelFontText)
+                      ]),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
   // Design category view
   Column buildStepOne(Size query) {
     return Column(

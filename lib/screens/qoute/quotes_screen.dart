@@ -538,6 +538,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: itemList.length,
                           itemBuilder: (context, index) {
+                            final key = GlobalKey<State<Tooltip>>();
+
                             return Card(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.sp),
@@ -564,11 +566,31 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 10.0),
-                                                child: Text(
-                                                    itemList[index]
-                                                        ["prod_name"],
-                                                    style: CustomTextStyle
-                                                        .labelBoldFontText),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                          itemList[index]["prod_name"],
+                                                          style: CustomTextStyle
+                                                              .labelBoldFontText)
+                                                    ),
+                                                    Tooltip(
+                                                      key:key,
+                                                      message: itemList[index]["comment"] ?? "",
+                                                      textStyle: CustomTextStyle.buttonText,
+                                                      preferBelow: true,
+                                                      padding: EdgeInsets.all(10.sp),
+                                                      child: InkWell(
+                                                          onTap: () {
+                                                            final dynamic tooltip = key.currentState;
+                                                            tooltip.ensureTooltipVisible();
+                                                          },
+                                                          child: Icon(
+                                                              Icons.info_outline,
+                                                              color: AppColors.blackColor)),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
                                               ContactTileField(
                                                   LabelString.lblCostPrice,

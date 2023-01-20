@@ -98,6 +98,7 @@ class LabelString {
   static const String lblHideProduct = "Hide Product";
   static const String lblNone = "None";
   static const String lblCategory = "Category";
+  static const String lblManufacturing = "Manufacturing";
   static const String lblSubCategory = "Sub - Category";
   static const String lblAttachmentDocument = "Attachment Document";
   static const String lblAttachedDocument = "Attached Document";
