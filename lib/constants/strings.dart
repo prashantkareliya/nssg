@@ -4,6 +4,7 @@ class ErrorString {
   static const String somethingWentWrong = "Something Went Wrong";
   static const String mandatoryField = "Field can't be empty";
   static const String emailNotValid = "Email address is not valid";
+  static const String selectOneContact = "Select at least one contact";
 }
 
 class Message {

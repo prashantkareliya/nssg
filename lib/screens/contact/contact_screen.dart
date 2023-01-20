@@ -11,7 +11,6 @@ import 'package:nssg/utils/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../components/custom_appbar.dart';
 import '../../components/custom_dialog.dart';
 import '../../constants/constants.dart';
@@ -34,7 +33,6 @@ class ContactScreen extends StatefulWidget {
 
 class _ContactScreenState extends State<ContactScreen> {
   List<Result>? contactItems = [];
-
   List<Result>? searchItemList = [];
   String searchKey = "";
 
@@ -111,11 +109,7 @@ class _ContactScreenState extends State<ContactScreen> {
             child: Row(
               children: [
                 InkWell(
-                    onTap: () {
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .appbarVisibility();
-                      searchKey = "";
-                    },
+                    onTap: () => closeSearchBar(searchKey, context),
                     child: Icon(Icons.arrow_back_ios_rounded,
                         color: AppColors.blackColor)),
                 SizedBox(width: 5.w),
@@ -180,8 +174,8 @@ class _ContactScreenState extends State<ContactScreen> {
         }
         if (state is ContactsLoaded) {
           contactItems = state.contactList;
-          preferences.setPreference(PreferenceString.contactList, jsonEncode(state.contactList));
-
+          preferences.setPreference(
+              PreferenceString.contactList, jsonEncode(state.contactList));
         }
         if (state is DeleteContact) {
           getContact();
@@ -392,17 +386,21 @@ class _ContactScreenState extends State<ContactScreen> {
       'appversion': Constants.of().appversion,
     };
     contactBloc.add(DeleteContactEvent(queryParameters));
-  }}
+  }
+}
 
-// ignore: must_be_immutable
+void closeSearchBar(String searchKey, BuildContext context) {
+  Provider.of<WidgetChange>(context, listen: false).appbarVisibility();
+  searchKey = "";
+}
+
 class ContactTileField extends StatelessWidget {
   String? field;
   String? fieldDetail;
 
   TextAlign? textAlign;
 
-
-    ContactTileField(this.field, this.fieldDetail, {super.key, this.textAlign});
+  ContactTileField(this.field, this.fieldDetail, {super.key, this.textAlign});
 
   @override
   Widget build(BuildContext context) {
@@ -415,29 +413,27 @@ class ContactTileField extends StatelessWidget {
           Expanded(
             child: Text("$field :", style: CustomTextStyle.labelFontHintText),
           ),
-          Expanded(child: Text(textAlign: textAlign,
-              fieldDetail!, style: CustomTextStyle.labelText)),
+          Expanded(
+              child: Text(
+                  textAlign: textAlign,
+                  fieldDetail!,
+                  style: CustomTextStyle.labelText)),
         ],
       ),
     );
   }
 }
 
-class ContactDetail extends StatefulWidget {
+class ContactDetail extends StatelessWidget {
   var id;
 
   ContactDetail(this.id, {Key? key}) : super(key: key);
 
-  @override
-  State<ContactDetail> createState() => _ContactDetailState();
-}
-
-class _ContactDetailState extends State<ContactDetail> {
   Future<dynamic>? getDetail;
 
   @override
   Widget build(BuildContext context) {
-    getDetail = getContactDetail(widget.id);
+    getDetail = getContactDetail(id);
     return FutureBuilder<dynamic>(
       future: getDetail,
       builder: (context, snapshot) {
@@ -529,3 +525,18 @@ class _ContactDetailState extends State<ContactDetail> {
     );
   }
 }
+
+/*
+class ContactDetail extends StatefulWidget {
+  var id;
+
+  ContactDetail(this.id, {Key? key}) : super(key: key);
+
+  @override
+  State<ContactDetail> createState() => _ContactDetailState();
+}
+
+class _ContactDetailState extends State<ContactDetail> {
+
+}
+*/

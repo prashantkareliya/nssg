@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
+import 'package:nssg/httpl_actions/handle_api_error.dart';
+import 'package:nssg/screens/contact/contact_screen.dart';
 import 'package:nssg/utils/preferences.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +21,7 @@ import '../../../components/custom_text_styles.dart';
 import '../../../components/custom_textfield.dart';
 import '../../../constants/constants.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/helpers.dart';
 import '../../contact/add_contact/add_contact_model_dir/add_contact_response_model.dart';
 import '../item_detail.dart';
 
@@ -35,6 +38,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
   PageController pageController = PageController();
   StreamController<int> streamController = StreamController<int>.broadcast();
   List contactData = [];
+
+  String? contactId;
 
   @override
   void initState() {
@@ -245,27 +250,33 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     counterText: ""),
                 controller: textEditingController,
                 focusNode: focusNode,
-                onEditingComplete: () => textEditingController.clear(),
+                onEditingComplete: () {},
                 onSubmitted: (String value) {},
               );
             },
             optionsBuilder: (TextEditingValue textEditingValue) async {
-              if (textEditingValue.text.length <= 3) {
+              if (textEditingValue.text.length <= 2) {
                 return const Iterable<String>.empty();
               } else {
                 List<String> matchesContact = <String>[];
 
-                /*attachmentList.removeAt(attachmentList
-                    .indexWhere((element) => element.id == deletedId));*/
+                matchesContact.addAll(contactData.map((e) {
+                  return "${e["firstname"]} ${e["lastname"]}";
+                }));
 
-                matchesContact
-                    .addAll(contactData.map((e) => e["firstname"].toString()));
-
+                matchesContact = matchesContact
+                    .where((element) => element.contains(textEditingValue.text))
+                    .toList();
                 return matchesContact;
               }
             },
             onSelected: (selection) async {
-              print(selection);
+              for (int i = 0; i < contactData.length; i++) {
+                if (selection ==
+                    "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
+                  contactId = contactData[i]["id"];
+                }
+              }
             },
           ),
 
@@ -273,9 +284,31 @@ class _AddQuotePageState extends State<AddQuotePage> {
           Align(
             alignment: Alignment.topRight,
             child: InkWell(
-              onTap: () {},
-              child: Text(LabelString.lblViewContacts,
-                  style: CustomTextStyle.commonTextBlue),
+              highlightColor: AppColors.transparent,
+              splashColor: AppColors.transparent,
+              onTap: () {
+                if (contactId != null) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          elevation: 0,
+                          insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                          child: ContactDetail(contactId));
+                    },
+                  );
+                } else {
+                  Helpers.showSnackBar(context, ErrorString.selectOneContact,
+                      isError: true);
+                }
+              },
+              child: Padding(
+                padding: EdgeInsets.only(top: 10.sp),
+                child: Text(LabelString.lblViewContacts,
+                    style: CustomTextStyle.commonTextBlue),
+              ),
             ),
           ),
           SizedBox(height: 3.h),

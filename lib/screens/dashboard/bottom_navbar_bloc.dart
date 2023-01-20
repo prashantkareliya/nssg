@@ -1,10 +1,10 @@
-
 import 'dart:async';
 
 enum NavBarItem { contact, quote }
 
 class BottomNavBarBloc {
-  final StreamController<NavBarItem> _navBarController = StreamController<NavBarItem>.broadcast();
+  final StreamController<NavBarItem> _navBarController =
+      StreamController<NavBarItem>.broadcast();
 
   NavBarItem defaultItem = NavBarItem.contact;
 

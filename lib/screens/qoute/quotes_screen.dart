@@ -111,11 +111,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
             child: Row(
               children: [
                 InkWell(
-                    onTap: () {
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .appbarVisibility();
-                      searchKey = "";
-                    },
+                    onTap: () => closeSearchBar(searchKey, context),
                     child: Icon(Icons.arrow_back_ios_rounded,
                         color: AppColors.blackColor)),
                 SizedBox(width: 5.w),
@@ -265,10 +261,10 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Visibility(
-                                          visible: quoteItem.quotestage ==
-                                                  "Processed"
-                                              ? true
-                                              : false,
+                                          visible:
+                                              quoteItem.quotestage != "accepted"
+                                                  ? true
+                                                  : false,
                                           child: InkWell(
                                             highlightColor:
                                                 AppColors.transparent,
@@ -390,6 +386,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
   Widget build(BuildContext context) {
     getDetail = getContactDetail(widget.id);
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: BaseAppBar(
         appBar: AppBar(),
         title: LabelString.lblQuoteDetail,
@@ -558,7 +555,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                       ),
                                       Expanded(
                                         child: Padding(
-                                          padding:  EdgeInsets.only(right: 30.sp),
+                                          padding:
+                                              EdgeInsets.only(right: 30.sp),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -567,7 +565,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                 padding: const EdgeInsets.only(
                                                     left: 10.0),
                                                 child: Text(
-                                                    itemList[index]["prod_name"],
+                                                    itemList[index]
+                                                        ["prod_name"],
                                                     style: CustomTextStyle
                                                         .labelBoldFontText),
                                               ),
@@ -595,11 +594,14 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                               //(listPrice * quantity)- discount
                                               ContactTileField(
                                                   LabelString.lblAmount,
-                                                  ((double.parse(itemList[index][
+                                                  ((double.parse(itemList[index]
+                                                                  [
                                                                   "listprice"])) *
-                                                              (double.parse(itemList[
-                                                                      index]
-                                                                  ["quantity"])) -
+                                                              (double.parse(
+                                                                  itemList[
+                                                                          index]
+                                                                      [
+                                                                      "quantity"])) -
                                                           (double.parse(itemList[
                                                                   index][
                                                               "discount_amount"])))
@@ -611,7 +613,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                               ContactTileField(
                                                   LabelString.lblProfit,
                                                   ((double.parse(itemList[index]
-                                                                  ["listprice"]) -
+                                                                  [
+                                                                  "listprice"]) -
                                                               double.parse(itemList[
                                                                       index][
                                                                   "costprice"])) *

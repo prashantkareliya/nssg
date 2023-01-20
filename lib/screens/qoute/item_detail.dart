@@ -220,7 +220,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                 Expanded(
                                   child: RichText(
                                     text: TextSpan(
-                                        text: "${LabelString.lblAmount} : " ,
+                                        text: "${LabelString.lblAmount} : ",
                                         style:
                                             CustomTextStyle.labelFontHintText,
                                         children: [

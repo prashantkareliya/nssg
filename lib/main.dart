@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'National Security System ',
           theme: ThemeData(
-              colorScheme: ColorScheme.fromSwatch().copyWith(
-                  primary: AppColors.primaryColor,
-                  secondary: AppColors.primaryColor),
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+                primary: AppColors.primaryColor,
+                secondary: AppColors.primaryColor),
           ),
           home: const CheckingScreen(),
         ),
