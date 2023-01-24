@@ -7,6 +7,12 @@ class WidgetChange extends ChangeNotifier {
   bool isSetTime = false;
   bool isSetPremises = false;
   bool isSetEngineer = false;
+  bool isSetSystem = false;
+  bool isSetGrade = false;
+  bool isSetSignallingType = false;
+  bool isQuotePayment = false;
+  bool isTerms = false;
+
 
   //list for dropdown
   var items = ['None', 'Mr.', 'Mrs.', 'Miss'];
@@ -48,6 +54,29 @@ class WidgetChange extends ChangeNotifier {
 
   void isSelectEngineers() {
     isSetEngineer = !isSetEngineer;
+    notifyListeners();
+  }
+  void isSelectSystemType() {
+    isSetSystem = !isSetSystem;
+    notifyListeners();
+  }
+
+  void isSelectGrade() {
+    isSetGrade = !isSetGrade;
+    notifyListeners();
+  }
+  void isSelectSignallingType() {
+    isSetSignallingType = !isSetSignallingType;
+    notifyListeners();
+  }
+
+  void isSelectQuotePayment() {
+    isQuotePayment = !isQuotePayment;
+    notifyListeners();
+  }
+
+  void isSelectTerms() {
+    isTerms = !isTerms;
     notifyListeners();
   }
 }

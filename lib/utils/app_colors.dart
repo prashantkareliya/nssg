@@ -10,6 +10,7 @@ class AppColors {
   static Color borderColor = const Color(0xFFD9D9D9);
 
   static Color primaryColor = const Color(0xFF1E5CA4);
+  static Color primaryColorLawOpacity = const Color(0xFF1E5CA4).withOpacity(0.10);
   static Color fontColor = const Color(0xFF333333);
   static Color redColor = const Color(0xFFA41E1E);
 

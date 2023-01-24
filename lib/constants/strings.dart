@@ -81,8 +81,8 @@ class LabelString {
   static const String lblQuoteDetails = "Quote Details";
   static const String lblViewContacts = "View Contacts";
   static const String lblContactName = "Contact Name";
-  static const String lblNumberOfEngineer = "No. of Engineer";
-  static const String lblInstallationHours = "Installation";
+  static const String lblNumberOfEngineer = "Number of Engineer";
+  static const String lblInstallationHours = "Installation Time Required";
   static const String lblQuoteEmailReminder = "Quote Email Reminder?";
   static const String lblPremisesType = "Premises Type";
   static const String lblSystemType = "System Type";
