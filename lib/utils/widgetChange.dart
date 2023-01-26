@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class WidgetChange extends ChangeNotifier {
   bool isVisibleText = true;
   bool isAppbarShow = true;
-  bool isReminderCheck = false;
+  bool isReminderCheck = true;
   bool isSetTime = false;
   bool isSetPremises = false;
   bool isSetEngineer = false;
@@ -12,6 +12,7 @@ class WidgetChange extends ChangeNotifier {
   bool isSetSignallingType = false;
   bool isQuotePayment = false;
   bool isTerms = false;
+  bool isSelectTemplateOption = false;
 
 
   //list for dropdown
@@ -77,6 +78,10 @@ class WidgetChange extends ChangeNotifier {
 
   void isSelectTerms() {
     isTerms = !isTerms;
+    notifyListeners();
+  }
+  void isTemplateOption() {
+    isSelectTemplateOption = !isSelectTemplateOption;
     notifyListeners();
   }
 }

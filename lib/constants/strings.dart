@@ -10,6 +10,7 @@ class ErrorString {
 class Message {
   static const String createQoute = "Do you want to create new quote now?";
   static const String deleteContact = "Do you want to delete this contact?";
+  static const String quoteExit = "Do you want to exit from this module?";
 }
 
 //Label Strings
@@ -36,6 +37,7 @@ class LabelString {
   static const String lblMobilePhone = "Mobile Phone";
   static const String lblPrimaryEmail = "Primary Email";
   static const String lblSearch = "Search....";
+  static const String lblViewMore = "View More";
 
   static const String lblAddNewContact = "Add New Contact";
   static const String lblContactDetail = "Contact Detail";
@@ -87,6 +89,7 @@ class LabelString {
   static const String lblPremisesType = "Premises Type";
   static const String lblSystemType = "System Type";
   static const String lblGradeNumber = "Grade Number";
+  static const String lblFireSystem = "Fire System";
   static const String lblSignallingType = "Signalling Type";
   static const String lblQuotePayment = "Quote Payment";
   static const String lblTerms = "Terms";
@@ -123,9 +126,7 @@ class LabelString {
   static const String lblSubject = "Subject";
   static const String lblQuoteDetail = "Quote Detail";
   static const String lblViewAddress = "View Address";
-
-
-
+  static const String lblEstimationAmount = "Estimated Installation amount";
 }
 
 //Button Strings
@@ -155,7 +156,11 @@ class ImageString {
   static const String icCopy = "assets/images/ic_copy.png";
   static const String icShowAmount = "assets/images/ic_show_amount.png";
   static const String icHideAmount = "assets/images/ic_hide_amount.png";
+  static const String icEdit = "assets/images/ic_edit.png";
+  static const String icDelete = "assets/images/ic_delete.png";
   static const String imgDemo = "assets/images/demo.png";
+  static const String imgPlaceHolder = "assets/images/placeholder.svg";
+  static const String imgViewMore = "assets/images/viewMore.png";
 }
 
 class PreferenceString {

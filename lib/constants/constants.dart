@@ -6,6 +6,7 @@ class Constants {
     required this.endpoint,
     required this.apiKeyContact,
     required this.apiKeyQuote,
+    required this.apiKeyProduct,
     this.appversion,
   });
 
@@ -24,6 +25,8 @@ class Constants {
         //for use in future
         apiKeyQuote:
             'VmxSQ1YxUldTbFpVYkZaS1UwVlplRmxxVGxOaVJtZDVUbGhhVFZORk5IaFhWekYzWWtacmVsVllUbXBYUmxveVdrVmtWMlZzWjNsV2JsSmFWako0ZWxSRmFFZE5WMGw2VlcxNFdVMXFSakpYVnpGell6RndWMDlZVm10V2VrWndWMnhvU21NeVRsbFdibHByVWpGYU5scEZaRWRpYkhCVVpVZHdhVTFxVlhkWFZtUlBUVVpuZVdKSGRFMVRSVFF4V1hwT1UySkhTbGRQVkVKc1YwVktjMVJGYUVkTlYwbDZWVzE0YWsxVWJIRlpha2w0WkRGc1dFNVVWazFUUlRWMldWWm9RMXB0VFhwVmJteGhWakZaZDFSRmFFOWlNa1paVVcxYVdrMXRkM2RhVms0MFpXMUdTR0pJWkZsTmF6VXlXa1pqTVUxSFRuVmhNMDVxVFcxb2Qxa3dXVFZoYlVsNVZXMTRTbEpXY0ZSV1JFRjNXakZXV1ZadVdtdFNNVm8yVTFWYWExTldTbGRUYTFwS1UwVlplRmxxVGxOaVIwMTZWVzFvWVUxc1ZUVlRha1pEWlZkSmVWUnRlR3BOTURWelYydE9hazUzUFQwPQ==',
+        apiKeyProduct:
+            'VmxSQ1YxUldTbFpVYkZaS1VUSTVibFZ0ZUV0VlJsSlVVV3hHYW1KVWJISmFSbVJQVFVkT05tTjZNRDA9',
         //for use in future
         appversion: "2.0" //Application version
         );
@@ -34,6 +37,7 @@ class Constants {
   final String endpoint;
   final String apiKeyContact;
   final String apiKeyQuote;
+  final String apiKeyProduct;
   final String? appversion;
 }
 
@@ -46,9 +50,11 @@ class ApiEndPoint {
   static const String loginApi = "login_webservice.php";
   static const String getContactListApi = "webservice.php";
   static const String getQuoteListApi = "webservice.php";
+  static const String getProductListApi = "webservice.php";
 }
 
+//class for image/icon base url
 class ImageBaseUrl {
-  static const String imageBase =
+  static const String imageBaseUrl =
       "https://nssgdata.ams3.digitaloceanspaces.com/NSSG-App-icon/";
 }

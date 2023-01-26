@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
+import '../constants/strings.dart';
+import 'custom_dialog.dart';
+
 // ignore: must_be_immutable
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   Color? backgroundColor;
@@ -35,7 +38,23 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? IconButton(
               highlightColor: AppColors.transparent,
               splashColor: AppColors.transparent,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctx) => ValidationDialog(
+                    Message.quoteExit,
+
+                    //Yes button
+                    () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    //No   button
+                    () => Navigator.pop(context), //No button
+                  ),
+                );
+              },
               icon: Icon(Icons.arrow_back_ios_outlined,
                   color: AppColors.blackColor, size: 14.sp),
             )

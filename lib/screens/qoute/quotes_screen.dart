@@ -12,6 +12,7 @@ import 'package:sizer/sizer.dart';
 import '../../components/custom_appbar.dart';
 import '../../components/custom_dialog.dart';
 import '../../components/custom_text_styles.dart';
+import '../../components/global_api_call.dart';
 import '../../constants/constants.dart';
 import '../../constants/strings.dart';
 import '../../httpl_actions/handle_api_error.dart';
@@ -19,7 +20,6 @@ import '../../utils/app_colors.dart';
 import '../../utils/helpers.dart';
 import '../../utils/widgetChange.dart';
 import '../../utils/widgets.dart';
-import '../contact/add_contact/add_contact_screen.dart';
 import '../contact/contact_screen.dart';
 import 'get_quote/quote_bloc_dir/get_quote_bloc.dart';
 import 'get_quote/quote_model_dir/get_quote_response_model.dart';
@@ -111,7 +111,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
             child: Row(
               children: [
                 InkWell(
-                    onTap: () => closeSearchBar(searchKey, context),
+                    onTap: () => closeSearchBar(),
                     child: Icon(Icons.arrow_back_ios_rounded,
                         color: AppColors.blackColor)),
                 SizedBox(width: 5.w),
@@ -122,15 +122,13 @@ class _QuoteScreenState extends State<QuoteScreen> {
                           searchKey = value;
                           searchItemList = [];
                           for (var element in quoteItems!) {
-                            if (element.subject!.contains(searchKey)) {
+                            if (element.subject!.toLowerCase().contains(searchKey)) {
                               searchItemList!.add(element);
-                            } else if (element.quotesCompany!
-                                .contains(searchKey)) {
+                            } else if (element.quotesCompany!.toLowerCase().contains(searchKey)) {
                               searchItemList!.add(element);
-                            } else if (element.shipStreet!
-                                .contains(searchKey)) {
+                            } else if (element.shipStreet!.toLowerCase().contains(searchKey)) {
                               searchItemList!.add(element);
-                            } else if (element.shipCode!.contains(searchKey)) {
+                            } else if (element.shipCode!.toLowerCase().contains(searchKey)) {
                               searchItemList!.add(element);
                             }
                           }
@@ -273,11 +271,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                             child: Padding(
                                                 padding: EdgeInsets.all(8.sp),
                                                 child: Center(
-                                                    child: Icon(
-                                                        Icons.edit_rounded,
-                                                        size: 14.sp,
-                                                        color: AppColors
-                                                            .blackColor))),
+                                                    child: Image.asset(
+                                                        ImageString.icEdit,
+                                                        height: 2.5.h))),
                                           ),
                                         ),
                                         InkWell(
@@ -301,11 +297,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                             );
                                           },
                                           child: Center(
-                                              child: Icon(
-                                            Icons.delete_rounded,
-                                            color: AppColors.redColor,
-                                            size: 14.sp,
-                                          )),
+                                              child: Image.asset(
+                                                  ImageString.icDelete,
+                                                  height: 2.5.h)),
                                         )
                                       ],
                                     ),
@@ -367,6 +361,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
           preferences.getString(PreferenceString.userId).toString(),
     };
     quoteBloc.add(GetQuoteListEvent(queryParameters));
+  }
+
+  void closeSearchBar() {
+    Provider.of<WidgetChange>(context, listen: false).appbarVisibility();
+    searchKey = "";
   }
 }
 
@@ -569,25 +568,34 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                 child: Row(
                                                   children: [
                                                     Expanded(
-                                                      child: Text(
-                                                          itemList[index]["prod_name"],
-                                                          style: CustomTextStyle
-                                                              .labelBoldFontText)
-                                                    ),
+                                                        child: Text(
+                                                            itemList[index]
+                                                                ["prod_name"],
+                                                            style: CustomTextStyle
+                                                                .labelBoldFontText)),
                                                     Tooltip(
-                                                      key:key,
-                                                      message: itemList[index]["comment"] ?? "",
-                                                      textStyle: CustomTextStyle.buttonText,
+                                                      key: key,
+                                                      message: itemList[index]
+                                                              ["comment"] ??
+                                                          "",
+                                                      textStyle: CustomTextStyle
+                                                          .buttonText,
                                                       preferBelow: true,
-                                                      padding: EdgeInsets.all(10.sp),
+                                                      padding:
+                                                          EdgeInsets.all(10.sp),
                                                       child: InkWell(
                                                           onTap: () {
-                                                            final dynamic tooltip = key.currentState;
-                                                            tooltip.ensureTooltipVisible();
+                                                            final dynamic
+                                                                tooltip =
+                                                                key.currentState;
+                                                            tooltip
+                                                                .ensureTooltipVisible();
                                                           },
                                                           child: Icon(
-                                                              Icons.info_outline,
-                                                              color: AppColors.blackColor)),
+                                                              Icons
+                                                                  .info_outline,
+                                                              color: AppColors
+                                                                  .blackColor)),
                                                     )
                                                   ],
                                                 ),

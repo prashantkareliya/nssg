@@ -43,7 +43,7 @@ class ValidationDialog extends StatelessWidget {
                     style: CustomTextStyle.labelBoldFontTextBlue),
                 SizedBox(height: 2.h),
                 Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
                     child: Text(msg,
                         textAlign: TextAlign.center,
                         style: CustomTextStyle.labelBoldFontText)),
@@ -52,18 +52,18 @@ class ValidationDialog extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       CustomButton(title: LabelString.yes, onClick: onClickNo),
                       CustomButton(
                         title: LabelString.no,
                         onClick: onClickYes,
                         /* onClick: () => Navigator.of(context)
-                              .pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (c) => const RootScreen()),
-                                  (route) => false)*/
-                      )
+                                .pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (c) => const RootScreen()),
+                                    (route) => false)*/
+                      ),
                     ],
                   ),
                 ),

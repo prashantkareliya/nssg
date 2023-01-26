@@ -2,21 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:nssg/components/custom_textfield.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/custom_appbar.dart';
 import '../../components/custom_button.dart';
+import '../../components/custom_radio_button.dart';
 import '../../components/custom_text_styles.dart';
 import '../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../utils/widgetChange.dart';
+
 class BuildItemDetail extends StatefulWidget {
-  const BuildItemDetail({Key? key}) : super(key: key);
+  const BuildItemDetail({super.key});
 
   @override
   State<BuildItemDetail> createState() => _BuildItemDetailState();
 }
 
 class _BuildItemDetailState extends State<BuildItemDetail> {
+
+
+  List templateOptionList = [LabelString.lblHideProductPrice, LabelString.lblHideProduct, LabelString.lblNone];
+  List<RadioModel> templateOption = <RadioModel>[]; //step 1
+
+
   TextEditingController sellingPriceController = TextEditingController();
   TextEditingController discountPriceController = TextEditingController();
 
@@ -43,47 +53,37 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
             Text(LabelString.lblTemplateOptions,
                 style: CustomTextStyle.labelText),
             SizedBox(height: 1.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomButton(
-                  title: LabelString.lblHideProductPrice,
-                  buttonColor: AppColors.primaryColor,
-                  onClick: () {},
+            Padding(
+              padding: EdgeInsets.only(left: 12.sp),
+              child: Wrap(
+                spacing: 3,
+                direction: Axis.horizontal,
+
+                children: List.generate(
+                  growable: false,
+                  templateOptionList.length,
+                      (index) {
+                        templateOption.add(RadioModel(false, templateOptionList[index]));
+                    return SizedBox(
+                      height: 6.h,
+                      child: InkWell(
+                        splashColor: AppColors.transparent,
+                        highlightColor: AppColors.transparent,
+                        onTap: () {
+                          for (var element in templateOption) {
+                            element.isSelected = false;
+                          }
+                        // Provider.of<WidgetChange>(context, listen: false).isTemplateOption();
+                          templateOption[index].isSelected = true;
+                      //Provider.of<WidgetChange>(context, listen: false).isSelectTemplateOption;
+                          setState(() {});
+                        },
+                        child: RadioItem(templateOption[index]),
+                      ),
+                    );
+                  },
                 ),
-                SizedBox(
-                  child: TextButton(
-                      style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.primaryColor),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      side: BorderSide(
-                                          color: AppColors.primaryColor,
-                                          width: 2)))),
-                      onPressed: () {},
-                      child: Text(LabelString.lblHideProduct,
-                          style: CustomTextStyle.labelFontText)),
-                ),
-                SizedBox(
-                  child: TextButton(
-                      style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.primaryColor),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      side: BorderSide(
-                                          color: AppColors.primaryColor,
-                                          width: 2)))),
-                      onPressed: () {},
-                      child: Text(LabelString.lblNone,
-                          style: CustomTextStyle.labelFontText)),
-                ),
-              ],
+              ),
             ),
             SizedBox(
               height: query.height / 1.65,

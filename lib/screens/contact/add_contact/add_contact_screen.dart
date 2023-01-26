@@ -18,7 +18,6 @@ import '../../../components/custom_textfield.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/navigation.dart';
 import '../../../constants/strings.dart';
-import '../../../httpl_actions/app_http.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
@@ -398,6 +397,7 @@ class _AddContactPageState extends State<AddContactPage> {
                       child: CustomButton(
                         buttonColor: AppColors.primaryColor,
                         onClick: () {
+                          FocusScope.of(context).unfocus();
                           if (contactBasicDetailFormKey.currentState
                                   ?.validate() ==
                               true) {
@@ -437,7 +437,7 @@ class _AddContactPageState extends State<AddContactPage> {
                 child: Text(LabelString.lblInvoiceAddressDetails,
                     style: CustomTextStyle.labelBoldFontTextBlue)),
             SizedBox(height: 2.0.h),
-            Column(
+            /*Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(LabelString.lblAddressSearch,
@@ -445,7 +445,8 @@ class _AddContactPageState extends State<AddContactPage> {
                 SizedBox(height: 1.h),
                 autoComplete("invoice"),
               ],
-            ),
+            ),*/
+            autoComplete("invoice"),
             SizedBox(height: 2.h),
             MultiLineTextField(
               keyboardType: TextInputType.name,
@@ -490,8 +491,9 @@ class _AddContactPageState extends State<AddContactPage> {
             ),
             SizedBox(height: 2.0.h),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Row(
+                /* Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(LabelString.lblAddressSearch,
@@ -503,6 +505,13 @@ class _AddContactPageState extends State<AddContactPage> {
                       child: Image.asset(ImageString.icCopy, height: 2.8.h),
                     ),
                   ],
+                ),*/
+                Padding(
+                  padding: EdgeInsets.only(right: 8.sp),
+                  child: InkWell(
+                    onTap: () => copyAddressFields(),
+                    child: Image.asset(ImageString.icCopy, height: 3.h),
+                  ),
                 ),
                 SizedBox(height: 1.h),
                 autoComplete("installation"),
@@ -635,7 +644,7 @@ class _AddContactPageState extends State<AddContactPage> {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-              border: OutlineInputBorder(
+              /*border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide:
                       BorderSide(width: 2, color: AppColors.primaryColor)),
@@ -646,16 +655,30 @@ class _AddContactPageState extends State<AddContactPage> {
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),
+                      BorderSide(width: 2, color: AppColors.primaryColor)),*/
+              border: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
               filled: true,
               fillColor: Colors.white,
-              contentPadding: EdgeInsets.only(left: 12.sp),
+              contentPadding: EdgeInsets.only(left: 12.sp, top: 12.sp,bottom: 12),
               hintText: LabelString.lblTypeToSearch,
               hintStyle: CustomTextStyle.labelFontHintText,
-              counterText: ""),
+              counterText: "",
+              labelStyle: CustomTextStyle.labelFontHintText,
+              labelText: LabelString.lblAddressSearch),
           controller: textEditingController,
           focusNode: focusNode,
-          onEditingComplete: () => textEditingController.clear(),
+          onEditingComplete: () {
+            textEditingController.clear();
+            FocusScope.of(context).unfocus();
+          },
           onSubmitted: (String value) {},
         );
       },
@@ -674,7 +697,8 @@ class _AddContactPageState extends State<AddContactPage> {
           final responseJson = json.decode(response.body);
           addressList = responseJson["suggestions"];
           List<String> matchesAddress = <String>[];
-          matchesAddress.addAll(addressList.map((e) => e["address"].toString()));
+          matchesAddress
+              .addAll(addressList.map((e) => e["address"].toString()));
           return matchesAddress;
         }
       },
@@ -723,15 +747,19 @@ class _AddContactPageState extends State<AddContactPage> {
     Clipboard.setData(ClipboardData(text: invoiceAddressController.text))
         .then((value) => Clipboard.getData(Clipboard.kTextPlain).then(
               (value) {
-                installationAddressController.text =
-                    invoiceAddressController.text;
+                if (invoiceAddressController.text.isNotEmpty) {
+                  installationAddressController.text =
+                      invoiceAddressController.text;
+                }
               },
             ));
 
     Clipboard.setData(ClipboardData(text: invoiceCityController.text)).then(
       (value) => Clipboard.getData(Clipboard.kTextPlain).then(
         (value) {
-          installationCityController.text = invoiceCityController.text;
+          if (invoiceCityController.text.isNotEmpty) {
+            installationCityController.text = invoiceCityController.text;
+          }
         },
       ),
     );
@@ -739,7 +767,9 @@ class _AddContactPageState extends State<AddContactPage> {
     Clipboard.setData(ClipboardData(text: invoiceCountryController.text)).then(
       (value) => Clipboard.getData(Clipboard.kTextPlain).then(
         (value) {
-          installationCountryController.text = invoiceCountryController.text;
+          if (invoiceCountryController.text.isNotEmpty) {
+            installationCountryController.text = invoiceCountryController.text;
+          }
         },
       ),
     );
@@ -747,7 +777,9 @@ class _AddContactPageState extends State<AddContactPage> {
     Clipboard.setData(ClipboardData(text: invoicePostalController.text)).then(
       (value) => Clipboard.getData(Clipboard.kTextPlain).then(
         (value) {
-          installationPostalController.text = invoicePostalController.text;
+          if (invoicePostalController.text.isNotEmpty) {
+            installationPostalController.text = invoicePostalController.text;
+          }
         },
       ),
     );
@@ -864,21 +896,4 @@ class _AddContactPageState extends State<AddContactPage> {
     };
     addContactBloc.add(UpdateContactDetailEvent(queryParameters));
   }
-}
-
-//Calling API for fetch detail of single contact
-Future<dynamic> getContactDetail(contactId) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-
-  Map<String, dynamic> queryParameters = {
-    'operation': "retrieve",
-    'sessionName':
-        preferences.getString(PreferenceString.sessionName).toString(),
-    'id': contactId.toString()
-  };
-  final response = await HttpActions()
-      .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
-
-  debugPrint("getContactDetailApi --- $response");
-  return response;
 }

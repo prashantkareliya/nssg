@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
             preferences.setPreference(PreferenceString.userId, state.userId);
             preferences.setPreference(PreferenceString.sessionName, state.sessionName);
             preferences.setPreference(PreferenceString.userName, state.userName);
-            Helpers.showSnackBar(context, state.msg.toString());
+            //Helpers.showSnackBar(context, state.msg.toString());
             moveToNextScreen();
           }
         },

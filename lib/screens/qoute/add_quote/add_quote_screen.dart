@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:nssg/components/svg_extension.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
@@ -16,16 +15,16 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
+import '../../../components/custom_radio_button.dart';
 import '../../../components/custom_rounded_container.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../components/custom_textfield.dart';
-import '../../../constants/constants.dart';
+import '../../../components/global_api_call.dart';
 import '../../../httpl_actions/handle_api_error.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/widgets.dart';
 import '../item_detail.dart';
-import 'package:nssg/httpl_actions/app_http.dart';
 import 'package:http/http.dart' as http;
 
 class AddQuotePage extends StatefulWidget {
@@ -44,6 +43,21 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
   String? contactId;
   Future<dynamic>? getFields;
+
+  String? eAmount = "0.0";
+  String? engineerNumbers;
+  String? installationTimeDay;
+  String? installationTimeHour;
+
+  String? timeType;
+
+  String premisesTypeSelect = "";
+  String systemTypeSelect = "";
+  String gradeFireSelect = "";
+  String signallingTypeSelect = "";
+
+  String quotePaymentSelection = "";
+  String termsItemSelection = "";
 
   @override
   void initState() {
@@ -79,8 +93,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   List<RadioModel> installationTiming = <RadioModel>[]; //step 1
   List<RadioModel> premisesType = <RadioModel>[]; //step 2
   List<RadioModel> systemType = <RadioModel>[]; //step 3
-  List<RadioModel> gradeNumber = <RadioModel>[]; //step 4
-  List<RadioModel> fireNumber = <RadioModel>[]; //step 4
+  List<RadioModel> gradeAndFire = <RadioModel>[]; //step 4
   List<RadioModel> signallingType = <RadioModel>[]; //step 4
   List<RadioModel> quotePayment = <RadioModel>[]; //step 5
   List<RadioModel> termsList = <RadioModel>[]; //step 5
@@ -88,7 +101,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
-    getFields = getQuoteFields();
+    getFields = getQuoteFields("Quotes");
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: BaseAppBar(
@@ -186,22 +199,28 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 if (snapshot.hasData) {
                   var fieldsData = snapshot.data["result"];
                   return Expanded(
-                    child: PageView(
-                      scrollDirection: Axis.horizontal,
-                      pageSnapping: true,
-                      physics: const BouncingScrollPhysics(),
-                      controller: pageController,
-                      onPageChanged: (number) {
-                        streamController.add(number);
-                      },
-                      children: [
-                        buildStepOne(context, query, fieldsData),
-                        buildStepTwo(context, query, fieldsData),
-                        buildStepThree(context, query, fieldsData),
-                        buildStepFour(context, query, fieldsData),
-                        buildStepFive(context, query, fieldsData),
-                        buildStepSix(context, query),
-                      ],
+                    child: InkWell(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      highlightColor: AppColors.transparent,
+                      splashColor: AppColors.transparent,
+                      focusColor: AppColors.transparent,
+                      child: PageView(
+                        scrollDirection: Axis.horizontal,
+                        pageSnapping: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        controller: pageController,
+                        onPageChanged: (number) {
+                          streamController.add(number);
+                        },
+                        children: [
+                          buildStepOne(context, query, fieldsData),
+                          buildStepTwo(context, query, fieldsData),
+                          buildStepThree(context, query, fieldsData),
+                          buildStepFour(context, query, fieldsData),
+                          buildStepFive(context, query, fieldsData),
+                          buildStepSix(context, query),
+                        ],
+                      ),
                     ),
                   );
                 } else if (snapshot.hasError) {
@@ -219,207 +238,315 @@ class _AddQuotePageState extends State<AddQuotePage> {
   Padding buildStepOne(BuildContext context, Size query, stepOneData) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
-      child: ListView(
+      child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        children: [
-          Autocomplete(
-            fieldViewBuilder: (context, textEditingController, focusNode,
-                VoidCallback onFieldSubmitted) {
-              return TextField(
-                style: TextStyle(color: AppColors.blackColor),
-                textCapitalization: TextCapitalization.none,
-                textInputAction: TextInputAction.next,
-                maxLines: 1,
-                cursorColor: AppColors.blackColor,
-                decoration: InputDecoration(
-                    suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
-                            width: 2, color: AppColors.primaryColor)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
-                            width: 2, color: AppColors.primaryColor)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
-                            width: 2, color: AppColors.primaryColor)),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.only(left: 12.sp),
-                    hintText: LabelString.lblTypeToSearch,
-                    hintStyle: CustomTextStyle.labelFontHintText,
-                    counterText: ""),
-                controller: textEditingController,
-                focusNode: focusNode,
-                onEditingComplete: () {},
-                onSubmitted: (String value) {},
-              );
-            },
-            optionsBuilder: (TextEditingValue textEditingValue) async {
-              if (textEditingValue.text.length <= 2) {
-                return const Iterable<String>.empty();
-              } else {
-                List<String> matchesContact = <String>[];
-
-                matchesContact.addAll(contactData.map((e) {
-                  return "${e["firstname"]} ${e["lastname"]}";
-                }));
-
-                matchesContact = matchesContact
-                    .where((element) => element.contains(textEditingValue.text))
-                    .toList();
-                return matchesContact;
-              }
-            },
-            onSelected: (selection) async {
-              for (int i = 0; i < contactData.length; i++) {
-                if (selection ==
-                    "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
-                  contactId = contactData[i]["id"];
-
-                  //When select contact, set address in fields
-                  invoiceAddressController.text =
-                      contactData[i]["mailingstreet"];
-                  invoiceCityController.text = contactData[i]["mailingcity"];
-                  invoiceCountryController.text =
-                      contactData[i]["mailingcountry"];
-                  invoicePostalController.text = contactData[i]["mailingzip"];
-
-                  installationAddressController.text =
-                      contactData[i]["otherstreet"];
-                  installationCityController.text = contactData[i]["othercity"];
-                  installationCountryController.text =
-                      contactData[i]["othercountry"];
-                  installationPostalController.text =
-                      contactData[i]["otherzip"];
-                }
-              }
-            },
-          ),
-
-          //View Contact Button
-          Align(
-            alignment: Alignment.topRight,
-            child: InkWell(
-              highlightColor: AppColors.transparent,
-              splashColor: AppColors.transparent,
-              onTap: () {
-                if (contactId != null) {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          elevation: 0,
-                          insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                          child: ContactDetail(contactId));
-                    },
-                  );
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Autocomplete(
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  VoidCallback onFieldSubmitted) {
+                return TextField(
+                  style: TextStyle(color: AppColors.blackColor),
+                  textCapitalization: TextCapitalization.none,
+                  textInputAction: TextInputAction.next,
+                  maxLines: 1,
+                  keyboardType: TextInputType.name,
+                  cursorColor: AppColors.blackColor,
+                  decoration: InputDecoration(
+                      suffixIcon:
+                          Icon(Icons.search, color: AppColors.blackColor),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide(
+                              width: 2, color: AppColors.primaryColor)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide(
+                              width: 2, color: AppColors.primaryColor)),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide(
+                              width: 2, color: AppColors.primaryColor)),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.only(left: 12.sp),
+                      hintText: LabelString.lblTypeToSearch,
+                      hintStyle: CustomTextStyle.labelFontHintText,
+                      counterText: ""),
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  onEditingComplete: () {},
+                  onSubmitted: (String value) {},
+                );
+              },
+              optionsBuilder: (TextEditingValue textEditingValue) async {
+                if (textEditingValue.text.isEmpty) {
+                  return const Iterable<String>.empty();
                 } else {
-                  Helpers.showSnackBar(context, ErrorString.selectOneContact,
-                      isError: true);
+                  List<String> matchesContact = <String>[];
+
+                  matchesContact.addAll(contactData.map((e) {
+                    return "${e["firstname"].toString()} ${e["lastname"].toString()}";
+                  }));
+
+                  matchesContact = matchesContact
+                      .where((element) => element
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase()))
+                      .toList();
+                  return matchesContact;
                 }
               },
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.sp),
-                child: Text(LabelString.lblViewContacts,
-                    style: CustomTextStyle.commonTextBlue),
+              onSelected: (selection) async {
+                FocusScope.of(context).unfocus();
+                for (int i = 0; i < contactData.length; i++) {
+                  if (selection ==
+                      "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
+                    contactId = contactData[i]["id"];
+
+                    //When select contact, set address in fields
+                    invoiceAddressController.text =
+                        contactData[i]["mailingstreet"];
+                    invoiceCityController.text = contactData[i]["mailingcity"];
+                    invoiceCountryController.text =
+                        contactData[i]["mailingcountry"];
+                    invoicePostalController.text = contactData[i]["mailingzip"];
+
+                    installationAddressController.text =
+                        contactData[i]["otherstreet"];
+                    installationCityController.text =
+                        contactData[i]["othercity"];
+                    installationCountryController.text =
+                        contactData[i]["othercountry"];
+                    installationPostalController.text =
+                        contactData[i]["otherzip"];
+                  }
+                }
+              },
+            ),
+
+            //View Contact Button
+            Align(
+              alignment: Alignment.topRight,
+              child: InkWell(
+                highlightColor: AppColors.transparent,
+                splashColor: AppColors.transparent,
+                onTap: () {
+                  if (contactId != null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            elevation: 0,
+                            insetPadding:
+                                EdgeInsets.symmetric(horizontal: 12.sp),
+                            child: ContactDetail(contactId));
+                      },
+                    );
+                  } else {
+                    Helpers.showSnackBar(context, ErrorString.selectOneContact,
+                        isError: true);
+                  }
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.sp),
+                  child: Text(LabelString.lblViewContacts,
+                      style: CustomTextStyle.commonTextBlue),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 3.h),
-          Text(LabelString.lblNumberOfEngineer,
-              style: CustomTextStyle.labelFontText),
-          SizedBox(height: 1.5.h),
-          Wrap(
-            spacing: 5,
-            children: List.generate(
-              stepOneData["quote_no_of_engineer"].length,
-              (index) {
-                numbersOfEng.add(RadioModel(false,
-                    stepOneData["quote_no_of_engineer"][index]["label"]));
-                return SizedBox(
-                  height: 6.h,
-                  width: 12.w,
-                  child: InkWell(
-                    splashColor: AppColors.transparent,
-                    highlightColor: AppColors.transparent,
-                    onTap: () {
-                      for (var element in numbersOfEng) {
-                        element.isSelected = false;
-                      }
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSelectEngineers();
-                      numbersOfEng[index].isSelected = true;
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSetEngineer;
-                    },
-                    child: RadioItem(numbersOfEng[index]),
-                  ),
-                );
-              },
+            SizedBox(height: 3.h),
+            Text(LabelString.lblNumberOfEngineer,
+                style: CustomTextStyle.labelFontText),
+            SizedBox(height: 1.5.h),
+            Wrap(
+              spacing: 5,
+              children: List.generate(
+                stepOneData["quote_no_of_engineer"].length,
+                (index) {
+                  numbersOfEng.add(RadioModel(false,
+                      stepOneData["quote_no_of_engineer"][index]["label"]));
+                  return SizedBox(
+                    height: 6.h,
+                    width: 11.w,
+                    child: InkWell(
+                      splashColor: AppColors.transparent,
+                      highlightColor: AppColors.transparent,
+                      onTap: () {
+                        for (var element in numbersOfEng) {
+                          element.isSelected = false;
+                        }
+                        Provider.of<WidgetChange>(context, listen: false)
+                            .isSelectEngineers();
+                        numbersOfEng[index].isSelected = true;
+                        Provider.of<WidgetChange>(context, listen: false)
+                            .isSetEngineer;
+
+                        engineerNumbers = stepOneData["quote_no_of_engineer"]
+                                [index]["label"]
+                            .toString();
+                        calculation();
+                      },
+                      child: RadioItem(numbersOfEng[index]),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          SizedBox(height: 2.h),
-          Text(LabelString.lblInstallationHours,
-              style: CustomTextStyle.labelFontText),
-          SizedBox(height: 1.5.h),
-          Wrap(
-            spacing: 5,
-            children: List.generate(
-              stepOneData["quote_req_to_complete_work"].length,
-              (index) {
-                installationTiming.add(RadioModel(false,
-                    stepOneData["quote_req_to_complete_work"][index]["label"]));
-                return SizedBox(
-                  height: 6.h,
-                  width: 20.w,
-                  child: InkWell(
-                    splashColor: AppColors.transparent,
-                    highlightColor: AppColors.transparent,
-                    onTap: () {
-                      for (var element in installationTiming) {
-                        element.isSelected = false;
-                      }
-                      print(installationTiming[index].buttonText);
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSelectTime();
-                      installationTiming[index].isSelected = true;
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSetTime;
-                    },
-                    child: RadioItem(installationTiming[index]),
-                  ),
-                );
-              },
+            SizedBox(height: 2.h),
+            Text(LabelString.lblInstallationHours,
+                style: CustomTextStyle.labelFontText),
+            SizedBox(height: 1.5.h),
+            Wrap(
+              spacing: 5,
+              children: List.generate(
+                stepOneData["quote_req_to_complete_work"].length,
+                (index) {
+                  installationTiming.add(RadioModel(
+                      false,
+                      stepOneData["quote_req_to_complete_work"][index]
+                          ["label"]));
+                  return SizedBox(
+                    height: 6.h,
+                    child: InkWell(
+                      splashColor: AppColors.transparent,
+                      highlightColor: AppColors.transparent,
+                      onTap: () {
+                        for (var element in installationTiming) {
+                          element.isSelected = false;
+                        }
+
+                        Provider.of<WidgetChange>(context, listen: false)
+                            .isSelectTime();
+                        installationTiming[index].isSelected = true;
+                        Provider.of<WidgetChange>(context, listen: false)
+                            .isSetTime;
+
+                        if (stepOneData["quote_req_to_complete_work"][index]
+                                ["label"]
+                            .toString()
+                            .endsWith("Hours")) {
+                          timeType = stepOneData["quote_req_to_complete_work"]
+                                  [index]["label"]
+                              .toString();
+                          calculation();
+                        } else {
+                          timeType = stepOneData["quote_req_to_complete_work"]
+                                  [index]["label"]
+                              .toString();
+                          calculation();
+                        }
+                      },
+                      child: RadioItem(installationTiming[index]),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          Row(
-            children: [
-              Checkbox(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0)),
-                  activeColor: AppColors.primaryColor,
-                  onChanged: (value) =>
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isReminder(),
-                  value: Provider.of<WidgetChange>(context, listen: true)
-                      .isReminderCheck),
-              Text(LabelString.lblQuoteEmailReminder,
-                  style: CustomTextStyle.labelFontText)
-            ],
-          ),
-          SizedBox(height: query.height * 0.075),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.sp),
-            child: BottomButton(pageController, "Cancel"),
-          )
-        ],
+            SizedBox(height: 2.5.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  height: 20,
+                  width: 20,
+
+                  child: Checkbox(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0)),
+                      activeColor: AppColors.primaryColor,
+                      onChanged: (value) =>
+                          Provider.of<WidgetChange>(context, listen: false)
+                              .isReminder(),
+                      value: Provider.of<WidgetChange>(context, listen: true)
+                          .isReminderCheck),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10.sp),
+                  child: Text(LabelString.lblQuoteEmailReminder,
+                      style: CustomTextStyle.labelFontText),
+                )
+              ],
+            ),
+            SizedBox(height: 1.5.h),
+            InkWell(
+              onTap: () {},
+              child: RichText(
+                text: TextSpan(
+                    text: "${LabelString.lblEstimationAmount} : ",
+                    style: CustomTextStyle.labelText,
+                    children: [
+                      TextSpan(
+                          text: "£$eAmount",
+                          style: CustomTextStyle.labelBoldFontTextBlue)
+                    ]),
+              ),
+            ),
+            SizedBox(height: query.height * 0.08),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.sp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                        //update button
+                        title: ButtonString.btnCancel,
+                        onClick: () => Navigator.of(context).pop(),
+                        buttonColor: AppColors.redColor),
+                  ),
+                  SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                        //update button
+                        title: ButtonString.btnNext,
+                        onClick: () {
+
+                          if (eAmount != "0.0") {
+                            FocusScope.of(context).unfocus();
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
+                        },
+                        buttonColor: AppColors.primaryColor),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  //Estimated Amount calculation method
+  void calculation() {
+    //Check number of engineers are null or not
+    if (engineerNumbers != null && timeType != null) {
+      if (timeType!.endsWith("Hours")) {
+        var timeCalculate = (int.parse(engineerNumbers!) *
+            int.parse(timeType!.substring(0, 1)) *
+            35);
+        var vatAdd =
+            (int.parse(timeCalculate.toString()) * (0.20)) + timeCalculate;
+        eAmount = vatAdd.toString().replaceAll(".0", ".00");
+      } else {
+        var timeCalculate = (int.parse(engineerNumbers!) *
+            int.parse(timeType!.substring(0, 1)) *
+            280);
+        var vatAdd =
+            (int.parse(timeCalculate.toString()) * (0.20)) + timeCalculate;
+        eAmount = vatAdd.toString().replaceAll(".0", ".00");
+      }
+    }
   }
 
   ///step 2
@@ -451,13 +578,20 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           for (var element in premisesType) {
                             element.isSelected = false;
                           }
-                          print(
-                              "${ImageBaseUrl.imageBase} ${premisesType[index].buttonText.toLowerCase().replaceAll(" ", "")}");
                           Provider.of<WidgetChange>(context, listen: false)
                               .isSelectPremisesType();
                           premisesType[index].isSelected = true;
                           Provider.of<WidgetChange>(context, listen: false)
                               .isSetPremises;
+
+                          premisesTypeSelect =
+                              stepTwoData["premises_type"][index]["label"];
+
+                          if (premisesTypeSelect.isNotEmpty) {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
                         },
                         child: Container(
                           height: 15.h,
@@ -523,7 +657,35 @@ class _AddQuotePageState extends State<AddQuotePage> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 2.sp, vertical: 12.sp),
-            child: BottomButton(pageController, "Previous"),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: BorderButton(
+                          btnString: ButtonString.btnPrevious,
+                          onClick: () {
+                            pageController.previousPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          })),
+                  SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                        //update button
+                        title: ButtonString.btnNext,
+                        onClick: () {
+                          if (premisesTypeSelect.isNotEmpty) {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
+                        },
+                        buttonColor: AppColors.primaryColor),
+                  )
+                ]),
           )
         ],
       ),
@@ -531,470 +693,662 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   ///step 3
-  ListView buildStepThree(BuildContext context, Size query, stepThreeData) {
-    return ListView(
-      children: [
-        SizedBox(height: 1.h),
-        Text(LabelString.lblSystemType,
-            textAlign: TextAlign.center,
-            style: CustomTextStyle.labelBoldFontTextSmall),
-        SizedBox(height: 2.h),
-        Wrap(
-          spacing: 15.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 14.sp,
-          children: List.generate(
-            stepThreeData["system_type"].length - 9,
-            (index) {
-              systemType.add(RadioModel(
-                  false, stepThreeData["system_type"][index]["label"]));
-              return Container(
-                height: 16.h,
-                width: query.width / 1.13,
-                decoration: BoxDecoration(
-                    color: systemType[index].isSelected
-                        ? AppColors.primaryColorLawOpacity
-                        : AppColors.whiteColor,
-                    border: Border.all(
-                        color: systemType[index].isSelected
-                            ? AppColors.primaryColor
-                            : AppColors.borderColor,
-                        width: 1),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {
-                    for (var element in systemType) {
-                      element.isSelected = false;
-                    }
+  SingleChildScrollView buildStepThree(context, Size query, stepThreeData) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          SizedBox(height: 1.h),
+          Text(LabelString.lblSystemType,
+              textAlign: TextAlign.center,
+              style: CustomTextStyle.labelBoldFontTextSmall),
+          SizedBox(height: 2.h),
+          Wrap(
+            spacing: 15.sp,
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.center,
+            runSpacing: 14.sp,
+            children: List.generate(
+              stepThreeData["system_type"].length - 9,
+              (index) {
+                systemType.add(RadioModel(
+                    false, stepThreeData["system_type"][index]["label"]));
+                return Container(
+                  height: 16.h,
+                  width: query.width / 1.13,
+                  decoration: BoxDecoration(
+                      color: systemType[index].isSelected
+                          ? AppColors.primaryColorLawOpacity
+                          : AppColors.whiteColor,
+                      border: Border.all(
+                          color: systemType[index].isSelected
+                              ? AppColors.primaryColor
+                              : AppColors.borderColor,
+                          width: 1),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: InkWell(
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in systemType) {
+                        element.isSelected = false;
+                      }
 
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSelectSystemType();
-                    systemType[index].isSelected = true;
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSetSystem;
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgExtension(
-                                itemName: stepThreeData["system_type"][index]
-                                    ["label"],
-                                iconColor: systemType[index].isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.blackColor),
-                            SizedBox(height: 1.h),
-                            SizedBox(
-                              width: query.width * 0.7,
-                              child: Text(
-                                  stepThreeData["system_type"][index]["label"],
-                                  textAlign: TextAlign.center,
-                                  style: systemType[index].isSelected
-                                      ? CustomTextStyle.commonTextBlue
-                                      : CustomTextStyle.commonText),
-                            )
-                          ]),
-                      Visibility(
-                        visible: systemType[index].isSelected ? true : false,
-                        child: Positioned(
-                          right: 10,
-                          top: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(80.0),
-                                color: AppColors.greenColor),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Icon(Icons.done,
-                                  color: AppColors.whiteColor, size: 14.sp),
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSelectSystemType();
+                      systemType[index].isSelected = true;
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSetSystem;
+
+                      systemTypeSelect =
+                          stepThreeData["system_type"][index]["label"];
+
+                      print(systemTypeSelect);
+
+                      if (systemTypeSelect ==
+                              "CCTV System: BS EN 62676-4:2015" ||
+                          systemTypeSelect == "Access Control: BS EN 50133" ||
+                          systemTypeSelect == "Keyholding Services") {
+                        pageController.jumpToPage(4);
+                      } else {
+                        pageController.nextPage(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.decelerate);
+                      }
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgExtension(
+                                  itemName: stepThreeData["system_type"][index]
+                                      ["label"],
+                                  iconColor: systemType[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.blackColor),
+                              SizedBox(height: 1.h),
+                              SizedBox(
+                                width: query.width * 0.7,
+                                child: Text(
+                                    stepThreeData["system_type"][index]
+                                        ["label"],
+                                    textAlign: TextAlign.center,
+                                    style: systemType[index].isSelected
+                                        ? CustomTextStyle.commonTextBlue
+                                        : CustomTextStyle.commonText),
+                              )
+                            ]),
+                        Visibility(
+                          visible: systemType[index].isSelected ? true : false,
+                          child: Positioned(
+                            right: 10,
+                            top: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(80.0),
+                                  color: AppColors.greenColor),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(Icons.done,
+                                    color: AppColors.whiteColor, size: 14.sp),
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
-          child: BottomButton(pageController, "Previous"),
-        )
-      ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: BorderButton(
+                          btnString: ButtonString.btnPrevious,
+                          onClick: () {
+                            pageController.previousPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          })),
+                  SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                        //update button
+                        title: ButtonString.btnNext,
+                        onClick: () {
+                          if (signallingTypeSelect.isNotEmpty) {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
+
+                          if (systemTypeSelect ==
+                                  "CCTV System: BS EN 62676-4:2015" ||
+                              systemTypeSelect ==
+                                  "Access Control: BS EN 50133" ||
+                              systemTypeSelect == "Keyholding Services") {
+                            pageController.jumpToPage(4);
+                          } else {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
+                        },
+                        buttonColor: AppColors.primaryColor),
+                  )
+                ]),
+          )
+        ],
+      ),
     );
   }
 
   ///step 4
-  ListView buildStepFour(BuildContext context, Size query, stepFourData) {
-    return ListView(
-      children: [
-        SizedBox(height: 1.h),
-        Text(LabelString.lblGradeNumber,
-            textAlign: TextAlign.center,
-            style: CustomTextStyle.labelBoldFontTextSmall),
-        SizedBox(height: 2.h),
-        Wrap(
-          spacing: 10.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 10.sp,
-          children: List.generate(
-            2,
-            (index) {
-              gradeNumber.add(RadioModel(
-                  false, stepFourData["system_type"][index]["label"]));
-              return Container(
-                height: 15.h,
-                width: 42.w,
-                decoration: BoxDecoration(
-                    color: gradeNumber[index].isSelected
-                        ? AppColors.primaryColorLawOpacity
-                        : AppColors.whiteColor,
-                    border: Border.all(
-                        color: gradeNumber[index].isSelected
-                            ? AppColors.primaryColor
-                            : AppColors.borderColor,
-                        width: 1),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {
-                    for (var element in gradeNumber) {
-                      element.isSelected = false;
-                    }
+  SingleChildScrollView buildStepFour(context, Size query, stepFourData) {
+    List dataGrade = stepFourData["grade_number"];
+    //systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+    //^This condition for showing fire or grade data(When use select FIRE system type)
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          SizedBox(height: 1.h),
+          Text(
+              systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+                  ? LabelString.lblFireSystem
+                  : LabelString.lblGradeNumber,
+              textAlign: TextAlign.center,
+              style: CustomTextStyle.labelBoldFontTextSmall),
+          SizedBox(height: 2.h),
+          Wrap(
+            spacing: 10.sp,
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.start,
+            runSpacing: 10.sp,
+            children: List.generate(
+              systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+                  ? dataGrade.getRange(2, 7).toList().length
+                  : 2,
+              (index) {
+                gradeAndFire.add(RadioModel(
+                    false,
+                    systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+                        ? dataGrade.getRange(2, 7).toList()[index]["label"]
+                        : dataGrade[index]["label"]));
+                return Container(
+                  height: 15.h,
+                  width: 42.w,
+                  decoration: BoxDecoration(
+                      color: gradeAndFire[index].isSelected
+                          ? AppColors.primaryColorLawOpacity
+                          : AppColors.whiteColor,
+                      border: Border.all(
+                          color: gradeAndFire[index].isSelected
+                              ? AppColors.primaryColor
+                              : AppColors.borderColor,
+                          width: 1),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: InkWell(
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in gradeAndFire) {
+                        element.isSelected = false;
+                      }
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSelectGrade();
+                      gradeAndFire[index].isSelected = true;
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSetGrade;
 
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSelectGrade();
-                    gradeNumber[index].isSelected = true;
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSetGrade;
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgExtension(
-                                itemName: stepFourData["grade_number"][index]
-                                    ["label"],
-                                iconColor: gradeNumber[index].isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.blackColor),
-                            SizedBox(height: 1.h),
-                            Text(stepFourData["grade_number"][index]["label"],
-                                style: gradeNumber[index].isSelected
-                                    ? CustomTextStyle.commonTextBlue
-                                    : CustomTextStyle.commonText)
-                          ]),
-                      Visibility(
-                        visible: gradeNumber[index].isSelected ? true : false,
-                        child: Positioned(
-                          right: 10,
-                          top: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(80.0),
-                                color: AppColors.greenColor),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Icon(Icons.done,
-                                  color: AppColors.whiteColor, size: 14.sp),
+                      gradeFireSelect = dataGrade[index]["label"];
+
+                      if (signallingTypeSelect.isNotEmpty) {
+                        pageController.nextPage(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.decelerate);
+                      }
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              //Condition for skip grade and signalling type
+                              SvgExtension(
+                                  itemName: systemTypeSelect ==
+                                          "Fire System: BS 5839-1: 2017 + SP203-1"
+                                      ? dataGrade.getRange(2, 7).toList()[index]
+                                          ["label"]
+                                      : dataGrade[index]["label"],
+                                  iconColor: gradeAndFire[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.blackColor),
+                              SizedBox(height: 1.h),
+                              Text(
+                                  systemTypeSelect ==
+                                          "Fire System: BS 5839-1: 2017 + SP203-1"
+                                      ? dataGrade.getRange(2, 7).toList()[index]
+                                          ["label"]
+                                      : dataGrade[index]["label"],
+                                  style: gradeAndFire[index].isSelected
+                                      ? CustomTextStyle.commonTextBlue
+                                      : CustomTextStyle.commonText)
+                            ]),
+                        Visibility(
+                          visible:
+                              gradeAndFire[index].isSelected ? true : false,
+                          child: Positioned(
+                            right: 10,
+                            top: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(80.0),
+                                  color: AppColors.greenColor),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(Icons.done,
+                                    color: AppColors.whiteColor, size: 14.sp),
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        SizedBox(height: 2.h),
-        Text(LabelString.lblSignallingType,
-            textAlign: TextAlign.center,
-            style: CustomTextStyle.labelBoldFontTextSmall),
-        SizedBox(height: 2.h),
-        Wrap(
-          spacing: 15.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 14.sp,
-          children: List.generate(
-            // stepFourData["signalling_type"].length
-            12,
-            (index) {
-              signallingType.add(RadioModel(
-                  false, stepFourData["signalling_type"][index]["label"]));
-              return Container(
-                height: 16.h,
-                width: query.width / 1.13,
-                decoration: BoxDecoration(
-                    color: signallingType[index].isSelected
-                        ? AppColors.primaryColorLawOpacity
-                        : AppColors.whiteColor,
-                    border: Border.all(
-                        color: signallingType[index].isSelected
-                            ? AppColors.primaryColor
-                            : AppColors.borderColor,
-                        width: 1),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {
-                    for (var element in signallingType) {
-                      element.isSelected = false;
-                    }
+          SizedBox(height: 2.h),
+          Text(LabelString.lblSignallingType,
+              textAlign: TextAlign.center,
+              style: CustomTextStyle.labelBoldFontTextSmall),
+          SizedBox(height: 2.h),
+          Wrap(
+            spacing: 15.sp,
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.center,
+            runSpacing: 14.sp,
+            children: List.generate(
+              // stepFourData["signalling_type"].length
+              12,
+              (index) {
+                signallingType.add(RadioModel(
+                    false, stepFourData["signalling_type"][index]["label"]));
+                return Container(
+                  height: 16.h,
+                  width: query.width / 1.13,
+                  decoration: BoxDecoration(
+                      color: signallingType[index].isSelected
+                          ? AppColors.primaryColorLawOpacity
+                          : AppColors.whiteColor,
+                      border: Border.all(
+                          color: signallingType[index].isSelected
+                              ? AppColors.primaryColor
+                              : AppColors.borderColor,
+                          width: 1),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: InkWell(
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in signallingType) {
+                        element.isSelected = false;
+                      }
 
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSelectSignallingType();
-                    signallingType[index].isSelected = true;
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSetSignallingType;
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgExtension(
-                                itemName: stepFourData["signalling_type"][index]
-                                    ["label"],
-                                iconColor: signallingType[index].isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.blackColor),
-                            SizedBox(height: 1.h),
-                            Text(
-                                stepFourData["signalling_type"][index]["label"],
-                                style: signallingType[index].isSelected
-                                    ? CustomTextStyle.commonTextBlue
-                                    : CustomTextStyle.commonText)
-                          ]),
-                      Visibility(
-                        visible:
-                            signallingType[index].isSelected ? true : false,
-                        child: Positioned(
-                          right: 10,
-                          top: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(80.0),
-                                color: AppColors.greenColor),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Icon(Icons.done,
-                                  color: AppColors.whiteColor, size: 14.sp),
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSelectSignallingType();
+                      signallingType[index].isSelected = true;
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSetSignallingType;
+
+                      signallingTypeSelect =
+                          stepFourData["signalling_type"][index]["label"];
+
+                      if (gradeFireSelect.isNotEmpty) {
+                        pageController.nextPage(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.decelerate);
+                      }
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgExtension(
+                                  itemName: stepFourData["signalling_type"]
+                                      [index]["label"],
+                                  iconColor: signallingType[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.blackColor),
+                              SizedBox(height: 1.h),
+                              Text(
+                                  stepFourData["signalling_type"][index]
+                                      ["label"],
+                                  style: signallingType[index].isSelected
+                                      ? CustomTextStyle.commonTextBlue
+                                      : CustomTextStyle.commonText)
+                            ]),
+                        Visibility(
+                          visible:
+                              signallingType[index].isSelected ? true : false,
+                          child: Positioned(
+                            right: 10,
+                            top: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(80.0),
+                                  color: AppColors.greenColor),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(Icons.done,
+                                    color: AppColors.whiteColor, size: 14.sp),
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
-          child: BottomButton(pageController, "Previous"),
-        )
-      ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: BorderButton(
+                          btnString: ButtonString.btnPrevious,
+                          onClick: () {
+                            pageController.previousPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          })),
+                  SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                        //update button
+                        title: ButtonString.btnNext,
+                        onClick: () {
+                          if (gradeFireSelect.isNotEmpty &&
+                              signallingTypeSelect.isNotEmpty) {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
+                        },
+                        buttonColor: AppColors.primaryColor),
+                  )
+                ]),
+          )
+        ],
+      ),
     );
   }
 
   ///step 5
-  ListView buildStepFive(BuildContext context, Size query, stepFiveData) {
-    return ListView(
-      children: [
-        SizedBox(height: 1.h),
-        Text(LabelString.lblQuotePayment,
-            textAlign: TextAlign.center,
-            style: CustomTextStyle.labelBoldFontTextSmall),
-        SizedBox(height: 2.h),
-        Wrap(
-          spacing: 10.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 10.sp,
-          children: List.generate(
-            stepFiveData["quotes_payment"].length,
-            (index) {
-              quotePayment.add(RadioModel(
-                  false, stepFiveData["quotes_payment"][index]["label"]));
-              return Container(
-                height: 15.h,
-                width: 42.w,
-                decoration: BoxDecoration(
-                    color: quotePayment[index].isSelected
-                        ? AppColors.primaryColorLawOpacity
-                        : AppColors.whiteColor,
-                    border: Border.all(
-                        color: quotePayment[index].isSelected
-                            ? AppColors.primaryColor
-                            : AppColors.borderColor,
-                        width: 1),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {
-                    for (var element in quotePayment) {
-                      element.isSelected = false;
-                    }
+  SingleChildScrollView buildStepFive(
+      BuildContext context, Size query, stepFiveData) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          SizedBox(height: 1.h),
+          Text(LabelString.lblQuotePayment,
+              textAlign: TextAlign.center,
+              style: CustomTextStyle.labelBoldFontTextSmall),
+          SizedBox(height: 2.h),
+          Wrap(
+            spacing: 10.sp,
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.center,
+            runSpacing: 10.sp,
+            children: List.generate(
+              stepFiveData["quotes_payment"].length,
+              (index) {
+                quotePayment.add(RadioModel(
+                    false, stepFiveData["quotes_payment"][index]["label"]));
+                return Container(
+                  height: 15.h,
+                  width: 42.w,
+                  decoration: BoxDecoration(
+                      color: quotePayment[index].isSelected
+                          ? AppColors.primaryColorLawOpacity
+                          : AppColors.whiteColor,
+                      border: Border.all(
+                          color: quotePayment[index].isSelected
+                              ? AppColors.primaryColor
+                              : AppColors.borderColor,
+                          width: 1),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: InkWell(
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in quotePayment) {
+                        element.isSelected = false;
+                      }
 
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSelectQuotePayment();
-                    quotePayment[index].isSelected = true;
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isQuotePayment;
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgExtension(
-                                itemName: stepFiveData["quotes_payment"][index]
-                                    ["label"],
-                                iconColor: quotePayment[index].isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.blackColor),
-                            SizedBox(height: 1.h),
-                            Text(stepFiveData["quotes_payment"][index]["label"],
-                                style: quotePayment[index].isSelected
-                                    ? CustomTextStyle.commonTextBlue
-                                    : CustomTextStyle.commonText)
-                          ]),
-                      Visibility(
-                        visible: quotePayment[index].isSelected ? true : false,
-                        child: Positioned(
-                          right: 10,
-                          top: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(80.0),
-                                color: AppColors.greenColor),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Icon(Icons.done,
-                                  color: AppColors.whiteColor, size: 14.sp),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 2.h),
-        Text(LabelString.lblTerms,
-            textAlign: TextAlign.center,
-            style: CustomTextStyle.labelBoldFontTextSmall),
-        SizedBox(height: 2.h),
-        Wrap(
-          spacing: 15.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 14.sp,
-          children: List.generate(
-            stepFiveData["quotes_terms"].length,
-            (index) {
-              termsList.add(RadioModel(
-                  false, stepFiveData["quotes_terms"][index]["label"]));
-              return Container(
-                height: 16.h,
-                width: query.width / 1.13,
-                decoration: BoxDecoration(
-                    color: termsList[index].isSelected
-                        ? AppColors.primaryColorLawOpacity
-                        : AppColors.whiteColor,
-                    border: Border.all(
-                        color: termsList[index].isSelected
-                            ? AppColors.primaryColor
-                            : AppColors.borderColor,
-                        width: 1),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {
-                    for (var element in termsList) {
-                      element.isSelected = false;
-                    }
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSelectQuotePayment();
+                      quotePayment[index].isSelected = true;
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isQuotePayment;
 
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .isSelectTerms();
-                    termsList[index].isSelected = true;
-                    Provider.of<WidgetChange>(context, listen: false).isTerms;
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgExtension(
-                                itemName: stepFiveData["quotes_terms"][index]
-                                    ["label"],
-                                iconColor: termsList[index].isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.blackColor),
-                            SizedBox(height: 1.h),
-                            SizedBox(
-                              width: query.width * 0.7,
-                              child: Text(
-                                  stepFiveData["quotes_terms"][index]["label"],
-                                  style: termsList[index].isSelected
+                      quotePaymentSelection =
+                          stepFiveData["quotes_payment"][index]["label"];
+
+                      if (termsItemSelection.isNotEmpty) {
+                        pageController.nextPage(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.decelerate);
+                      }
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgExtension(
+                                  itemName: stepFiveData["quotes_payment"]
+                                      [index]["label"],
+                                  iconColor: quotePayment[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.blackColor),
+                              SizedBox(height: 1.h),
+                              Text(
+                                  stepFiveData["quotes_payment"][index]
+                                      ["label"],
+                                  style: quotePayment[index].isSelected
                                       ? CustomTextStyle.commonTextBlue
-                                      : CustomTextStyle.commonText,
-                                  textAlign: TextAlign.center),
-                            )
-                          ]),
-                      Visibility(
-                        visible: termsList[index].isSelected ? true : false,
-                        child: Positioned(
-                          right: 10,
-                          top: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(80.0),
-                                color: AppColors.greenColor),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Icon(Icons.done,
-                                  color: AppColors.whiteColor, size: 14.sp),
+                                      : CustomTextStyle.commonText)
+                            ]),
+                        Visibility(
+                          visible:
+                              quotePayment[index].isSelected ? true : false,
+                          child: Positioned(
+                            right: 10,
+                            top: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(80.0),
+                                  color: AppColors.greenColor),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(Icons.done,
+                                    color: AppColors.whiteColor, size: 14.sp),
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
-          child: BottomButton(pageController, "Previous"),
-        )
-      ],
+          SizedBox(height: 2.h),
+          Text(LabelString.lblTerms,
+              textAlign: TextAlign.center,
+              style: CustomTextStyle.labelBoldFontTextSmall),
+          SizedBox(height: 2.h),
+          Wrap(
+            spacing: 15.sp,
+            direction: Axis.horizontal,
+            alignment: WrapAlignment.center,
+            runSpacing: 14.sp,
+            children: List.generate(
+              stepFiveData["quotes_terms"].length,
+              (index) {
+                termsList.add(RadioModel(
+                    false, stepFiveData["quotes_terms"][index]["label"]));
+                return Container(
+                  height: 16.h,
+                  width: query.width / 1.13,
+                  decoration: BoxDecoration(
+                      color: termsList[index].isSelected
+                          ? AppColors.primaryColorLawOpacity
+                          : AppColors.whiteColor,
+                      border: Border.all(
+                          color: termsList[index].isSelected
+                              ? AppColors.primaryColor
+                              : AppColors.borderColor,
+                          width: 1),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: InkWell(
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in termsList) {
+                        element.isSelected = false;
+                      }
+
+                      Provider.of<WidgetChange>(context, listen: false)
+                          .isSelectTerms();
+                      termsList[index].isSelected = true;
+                      Provider.of<WidgetChange>(context, listen: false).isTerms;
+                      termsItemSelection =
+                          stepFiveData["quotes_terms"][index]["label"];
+                      if (quotePaymentSelection.isNotEmpty) {
+                        pageController.nextPage(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.decelerate);
+                      }
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgExtension(
+                                  itemName: stepFiveData["quotes_terms"][index]
+                                      ["label"],
+                                  iconColor: termsList[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.blackColor),
+                              SizedBox(height: 1.h),
+                              SizedBox(
+                                width: query.width * 0.7,
+                                child: Text(
+                                    stepFiveData["quotes_terms"][index]
+                                        ["label"],
+                                    style: termsList[index].isSelected
+                                        ? CustomTextStyle.commonTextBlue
+                                        : CustomTextStyle.commonText,
+                                    textAlign: TextAlign.center),
+                              )
+                            ]),
+                        Visibility(
+                          visible: termsList[index].isSelected ? true : false,
+                          child: Positioned(
+                            right: 10,
+                            top: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(80.0),
+                                  color: AppColors.greenColor),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(Icons.done,
+                                    color: AppColors.whiteColor, size: 14.sp),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: BorderButton(
+                        btnString: ButtonString.btnPrevious,
+                        onClick: () {
+                          if (systemTypeSelect ==
+                                  "CCTV System: BS EN 62676-4:2015" ||
+                              systemTypeSelect ==
+                                  "Access Control: BS EN 50133" ||
+                              systemTypeSelect == "Keyholding Services") {
+                            pageController.jumpToPage(2);
+                          } else {
+                            pageController.previousPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
+                        })),
+                SizedBox(
+                  width: query.width * 0.4,
+                  height: query.height * 0.06,
+                  child: CustomButton(
+                      //update button
+                      title: ButtonString.btnNext,
+                      onClick: () {
+                        if (quotePaymentSelection.isNotEmpty &&
+                            termsItemSelection.isNotEmpty) {
+                          pageController.nextPage(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.decelerate);
+                        }
+                      },
+                      buttonColor: AppColors.primaryColor),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -1120,7 +1474,30 @@ class _AddQuotePageState extends State<AddQuotePage> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15.sp),
-              child: BottomButton(pageController, "Previous"),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: BorderButton(
+                          btnString: ButtonString.btnPrevious,
+                          onClick: () {
+                            pageController.previousPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          })),
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: CustomButton(
+                          //update button
+                          title: ButtonString.btnNext,
+                          onClick: () =>
+                              callNextScreen(context, const BuildItemDetail()),
+                          buttonColor: AppColors.primaryColor))
+                ],
+              ),
             )
           ],
         ),
@@ -1141,7 +1518,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-              border: OutlineInputBorder(
+              /*border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide:
                       BorderSide(width: 2, color: AppColors.primaryColor)),
@@ -1152,13 +1529,24 @@ class _AddQuotePageState extends State<AddQuotePage> {
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),
+                      BorderSide(width: 2, color: AppColors.primaryColor)),*/
+              border: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
               filled: true,
               fillColor: Colors.white,
               contentPadding: EdgeInsets.only(left: 12.sp),
               hintText: LabelString.lblTypeToSearch,
               hintStyle: CustomTextStyle.labelFontHintText,
-              counterText: ""),
+              counterText: "",
+              labelStyle: CustomTextStyle.labelFontHintText,
+              labelText: LabelString.lblAddressSearch),
           controller: textEditingController,
           focusNode: focusNode,
           onEditingComplete: () => textEditingController.clear(),
@@ -1225,20 +1613,24 @@ class _AddQuotePageState extends State<AddQuotePage> {
     );
   }
 
-  //Method for copy - paste address fields
+//Method for copy - paste address fields
   void copyAddressFields() {
     Clipboard.setData(ClipboardData(text: invoiceAddressController.text))
         .then((value) => Clipboard.getData(Clipboard.kTextPlain).then(
               (value) {
-                installationAddressController.text =
-                    invoiceAddressController.text;
+                if (invoiceAddressController.text.isNotEmpty) {
+                  installationAddressController.text =
+                      invoiceAddressController.text;
+                }
               },
             ));
 
     Clipboard.setData(ClipboardData(text: invoiceCityController.text)).then(
       (value) => Clipboard.getData(Clipboard.kTextPlain).then(
         (value) {
-          installationCityController.text = invoiceCityController.text;
+          if (invoiceCityController.text.isNotEmpty) {
+            installationCityController.text = invoiceCityController.text;
+          }
         },
       ),
     );
@@ -1246,7 +1638,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
     Clipboard.setData(ClipboardData(text: invoiceCountryController.text)).then(
       (value) => Clipboard.getData(Clipboard.kTextPlain).then(
         (value) {
-          installationCountryController.text = invoiceCountryController.text;
+          if (invoiceCountryController.text.isNotEmpty) {
+            installationCountryController.text = invoiceCountryController.text;
+          }
         },
       ),
     );
@@ -1254,112 +1648,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
     Clipboard.setData(ClipboardData(text: invoicePostalController.text)).then(
       (value) => Clipboard.getData(Clipboard.kTextPlain).then(
         (value) {
-          installationPostalController.text = invoicePostalController.text;
+          if (invoicePostalController.text.isNotEmpty) {
+            installationPostalController.text = invoicePostalController.text;
+          }
         },
       ),
     );
   }
-}
-
-class RadioModel {
-  bool isSelected;
-  final String buttonText;
-
-  RadioModel(this.isSelected, this.buttonText);
-}
-
-class RadioItem extends StatelessWidget {
-  final RadioModel item;
-
-  const RadioItem(this.item, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 4.sp, bottom: 4.sp, right: 6.sp),
-      width: MediaQuery.of(context).size.width * 0.16,
-      decoration: BoxDecoration(
-          color:
-              item.isSelected ? AppColors.primaryColor : AppColors.transparent,
-          border: Border.all(width: 1.0, color: AppColors.primaryColor),
-          borderRadius: BorderRadius.all(Radius.circular(5.sp))),
-      child: Center(
-          child: Text(item.buttonText,
-              style: item.isSelected
-                  ? CustomTextStyle.buttonText
-                  : CustomTextStyle.labelFontText)),
-    );
-  }
-}
-
-class BottomButton extends StatelessWidget {
-  PageController pageController;
-  String buttonString;
-
-  BottomButton(this.pageController, this.buttonString, {Key? key})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var query = MediaQuery.of(context).size;
-    return Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          //previous button
-          buttonString == "Cancel"
-              ? SizedBox(
-                  width: query.width * 0.4,
-                  height: query.height * 0.06,
-                  child: CustomButton(
-                      //update button
-                      title: ButtonString.btnCancel,
-                      onClick: () => Navigator.of(context).pop(),
-                      buttonColor: AppColors.redColor),
-                )
-              : SizedBox(
-                  width: query.width * 0.4,
-                  height: query.height * 0.06,
-                  child: BorderButton(
-                      btnString: ButtonString.btnPrevious,
-                      onClick: () => pageController.previousPage(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.decelerate))),
-          //submit or update button
-          SizedBox(
-              width: query.width * 0.4,
-              height: query.height * 0.06,
-              child: CustomButton(
-                  //update button
-                  title: ButtonString.btnNext,
-                  onClick: () {
-                    debugPrint(pageController.page.toString());
-                    if (pageController.page == 5.0) {
-                      callNextScreen(context, const BuildItemDetail());
-                    } else {
-                      return pageController.nextPage(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.decelerate);
-                    }
-                  },
-                  buttonColor: AppColors.primaryColor))
-        ]);
-  }
-}
-
-//Calling API for fetch detail of single contact
-Future<dynamic> getQuoteFields() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-
-  Map<String, dynamic> queryParameters = {
-    'operation': "describe",
-    'sessionName':
-        preferences.getString(PreferenceString.sessionName).toString(),
-    'elementType': "Quotes",
-    'appversion': Constants.of().appversion
-  };
-  final response = await HttpActions()
-      .getMethod(ApiEndPoint.getQuoteListApi, queryParams: queryParameters);
-  debugPrint("getQuoteFieldsAPI --- $response");
-  return response;
 }

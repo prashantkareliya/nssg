@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import '../../components/custom_appbar.dart';
 import '../../components/custom_dialog.dart';
+import '../../components/global_api_call.dart';
 import '../../constants/constants.dart';
 import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
@@ -109,7 +110,7 @@ class _ContactScreenState extends State<ContactScreen> {
             child: Row(
               children: [
                 InkWell(
-                    onTap: () => closeSearchBar(searchKey, context),
+                    onTap: () => closeSearchBar(),
                     child: Icon(Icons.arrow_back_ios_rounded,
                         color: AppColors.blackColor)),
                 SizedBox(width: 5.w),
@@ -121,10 +122,13 @@ class _ContactScreenState extends State<ContactScreen> {
                           searchItemList = [];
 
                           for (var element in contactItems!) {
-                            if (element.contactName!.contains(searchKey)) {
+                            if (element.contactName!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
                             } else if (element.contactCompany!
-                                .contains(searchKey)) {
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
                             }
                           }
@@ -211,6 +215,94 @@ class _ContactScreenState extends State<ContactScreen> {
                           padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                           child: Card(
                             shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.sp)),
+                            elevation: 2,
+                            child: InkWell(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        elevation: 0,
+                                        insetPadding: EdgeInsets.symmetric(
+                                            horizontal: 12.sp),
+                                        child: ContactDetail(
+                                            contactItems![index].id));
+                                  },
+                                ).then((value) {
+                                  if (value == "delete") {
+                                    getContact();
+                                  }
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.whiteColor,
+                                    borderRadius: BorderRadius.circular(12.sp)),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8.sp, horizontal: 15.sp),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                searchKey.isNotEmpty
+                                                    ? searchItemList![index]
+                                                        .contactName
+                                                        .toString()
+                                                    : contactItems![index]
+                                                        .contactName
+                                                        .toString(),
+                                                style: CustomTextStyle
+                                                    .labelMediumBoldFontText),
+                                            SizedBox(height: 1.3.h),
+                                            Text(
+                                                contactItems![index]
+                                                    .email
+                                                    .toString(),
+                                                style:
+                                                    CustomTextStyle.labelText),
+                                            SizedBox(height: 0.7.h),
+                                            Text(
+                                                contactItems![index]
+                                                    .mobile
+                                                    .toString(),
+                                                style:
+                                                    CustomTextStyle.labelText),
+                                          ],
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(LabelString.lblViewMore,
+                                              style:
+                                                  CustomTextStyle.commonText),
+                                          SizedBox(width: 2.w),
+                                          Image.asset(ImageString.imgViewMore,
+                                              height: 2.h)
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                        /*Padding(
+                          padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.sp),
                             ),
                             elevation: 3,
@@ -263,9 +355,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                                 .toString()),
                                         ContactTileField(
                                             LabelString.lblPrimaryEmail,
-                                            contactItems![index]
-                                                .email
-                                                .toString()),
+                                            contactItems![index].email.toString()),
                                         SizedBox(height: 2.0.h),
                                       ],
                                     ),
@@ -282,9 +372,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                             callNextScreen(
                                               context,
                                               AddContactPage(
-                                                  contactItems![index]
-                                                      .id
-                                                      .toString()),
+                                                  contactItems![index].id.toString()),
                                             );
                                           },
                                           child: Padding(
@@ -314,9 +402,9 @@ class _ContactScreenState extends State<ContactScreen> {
                                                       contactItems![index]
                                                           .id
                                                           .toString());
-                                                  /*setState(() {
+                                                  */ /*setState(() {
                                                     contactItems!.removeAt(index);
-                                                  });*/
+                                                  });*/ /*
                                                 },
                                                 () => Navigator.pop(
                                                     context), //No button
@@ -337,7 +425,7 @@ class _ContactScreenState extends State<ContactScreen> {
                               ),
                             ),
                           ),
-                        );
+                        );*/
                       },
                       separatorBuilder: (BuildContext context, int index) {
                         return Container(height: 10.sp);
@@ -387,11 +475,11 @@ class _ContactScreenState extends State<ContactScreen> {
     };
     contactBloc.add(DeleteContactEvent(queryParameters));
   }
-}
 
-void closeSearchBar(String searchKey, BuildContext context) {
-  Provider.of<WidgetChange>(context, listen: false).appbarVisibility();
-  searchKey = "";
+  void closeSearchBar() {
+    Provider.of<WidgetChange>(context, listen: false).appbarVisibility();
+    searchKey = "";
+  }
 }
 
 class ContactTileField extends StatelessWidget {
@@ -431,6 +519,9 @@ class ContactDetail extends StatelessWidget {
 
   Future<dynamic>? getDetail;
 
+  GetContactBloc contactBloc =
+      GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
+
   @override
   Widget build(BuildContext context) {
     getDetail = getContactDetail(id);
@@ -451,10 +542,8 @@ class ContactDetail extends StatelessWidget {
                   children: [
                     IconButton(
                         onPressed: null,
-                        icon: Icon(
-                          Icons.close_rounded,
-                          color: AppColors.transparent,
-                        )),
+                        icon: Icon(Icons.close_rounded,
+                            color: AppColors.transparent)),
                     Text(LabelString.lblContactDetail,
                         style: CustomTextStyle.labelBoldFontText),
                     IconButton(
@@ -468,48 +557,155 @@ class ContactDetail extends StatelessWidget {
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        ContactTileField(LabelString.lblFullName,
-                            "${dataContact["firstname"]} ${dataContact["lastname"]}"),
-                        ContactTileField(LabelString.lblCompany,
-                            dataContact["contact_company"]),
-                        ContactTileField(
-                            LabelString.lblOfficePhone, dataContact["phone"]),
-                        ContactTileField(
-                            LabelString.lblMobilePhone, dataContact["mobile"]),
-                        ContactTileField(
-                            LabelString.lblPrimaryEmail, dataContact["email"]),
-                        ContactTileField(LabelString.lblSecondaryEmail,
-                            dataContact["secondaryemail"]),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.sp),
-                          child: Text(LabelString.lblInstallationAddressDetails,
-                              style: CustomTextStyle.labelBoldFontTextBlue),
-                        ),
-                        ContactTileField(LabelString.lblAddress,
-                            dataContact["mailingstreet"]),
-                        ContactTileField(
-                            LabelString.lblCity, dataContact["mailingcity"]),
-                        ContactTileField(LabelString.lblCountry,
-                            dataContact["mailingcountry"]),
-                        ContactTileField(LabelString.lblPostalCode,
-                            dataContact["mailingzip"]),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.sp),
-                          child: Text(LabelString.lblInvoiceAddressDetails,
-                              style: CustomTextStyle.labelBoldFontTextBlue),
-                        ),
-                        ContactTileField(
-                            LabelString.lblAddress, dataContact["otherstreet"]),
-                        ContactTileField(
-                            LabelString.lblCity, dataContact["othercity"]),
-                        ContactTileField(LabelString.lblCountry,
-                            dataContact["othercountry"]),
-                        ContactTileField(
-                            LabelString.lblPostalCode, dataContact["otherzip"]),
-                        SizedBox(height: 1.5.h),
-                      ],
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                flex: 5,
+                                child: Column(
+                                  children: [
+                                    ContactTileField(LabelString.lblFullName,
+                                        "${dataContact["firstname"]} ${dataContact["lastname"]}"),
+                                    ContactTileField(LabelString.lblCompany,
+                                        dataContact["contact_company"]),
+                                    ContactTileField(LabelString.lblOfficePhone,
+                                        dataContact["phone"]),
+                                    ContactTileField(LabelString.lblMobilePhone,
+                                        dataContact["mobile"]),
+                                    ContactTileField(
+                                        LabelString.lblPrimaryEmail,
+                                        dataContact["email"]),
+                                    ContactTileField(
+                                        LabelString.lblSecondaryEmail,
+                                        dataContact["secondaryemail"]),
+                                  ],
+                                ),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                        onTap: () {
+                                          callNextScreen(context,
+                                              AddContactPage(id.toString()));
+                                        },
+                                        child: Image.asset(ImageString.icEdit,
+                                            height: 2.5.h)),
+                                    SizedBox(height: 2.h),
+                                    InkWell(
+                                      onTap: () {
+                                        //Dialog to confirm delete contact or not
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (ctx) => ValidationDialog(
+                                            Message.deleteContact,
+                                            //Yes button
+                                            () {
+                                              deleteContact(id.toString());
+                                              Navigator.pop(context);
+                                              Navigator.pop(context, "delete");
+                                            },
+                                            () => Navigator.pop(context), //No button
+                                          ),
+                                        );
+                                      },
+                                      child: Image.asset(ImageString.icDelete,
+                                          height: 2.5.h),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.sp),
+                            child: Text(
+                                LabelString.lblInstallationAddressDetails,
+                                style: CustomTextStyle.labelBoldFontTextBlue),
+                          ),
+                          Row(
+                            children: [
+                              Flexible(
+                                flex: 5,
+                                child: Column(
+                                  children: [
+                                    ContactTileField(LabelString.lblAddress,
+                                        dataContact["mailingstreet"]),
+                                    ContactTileField(LabelString.lblCity,
+                                        dataContact["mailingcity"]),
+                                    ContactTileField(LabelString.lblCountry,
+                                        dataContact["mailingcountry"]),
+                                    ContactTileField(LabelString.lblPostalCode,
+                                        dataContact["mailingzip"]),
+                                  ],
+                                ),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: Column(
+                                  children: [
+                                    Image.asset(ImageString.icEdit,
+                                        color: AppColors.transparent,
+                                        height: 2.5.h),
+                                    SizedBox(height: 2.h),
+                                    Image.asset(ImageString.icDelete,
+                                        color: AppColors.transparent,
+                                        height: 2.5.h),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.sp),
+                            child: Text(LabelString.lblInvoiceAddressDetails,
+                                style: CustomTextStyle.labelBoldFontTextBlue),
+                          ),
+                          Row(
+                            children: [
+                              Flexible(
+                                flex: 5,
+                                child: Column(
+                                  children: [
+                                    ContactTileField(LabelString.lblAddress,
+                                        dataContact["otherstreet"]),
+                                    ContactTileField(LabelString.lblCity,
+                                        dataContact["othercity"]),
+                                    ContactTileField(LabelString.lblCountry,
+                                        dataContact["othercountry"]),
+                                    ContactTileField(LabelString.lblPostalCode,
+                                        dataContact["otherzip"]),
+                                  ],
+                                ),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: Column(
+                                  children: [
+                                    Image.asset(ImageString.icEdit,
+                                        color: AppColors.transparent,
+                                        height: 2.5.h),
+                                    SizedBox(height: 2.h),
+                                    Image.asset(ImageString.icDelete,
+                                        color: AppColors.transparent,
+                                        height: 2.5.h),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 1.5.h),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -523,6 +719,19 @@ class ContactDetail extends StatelessWidget {
         return SizedBox(height: 70.h, child: loadingView());
       },
     );
+  }
+
+  //Method for delete contact
+  deleteContact(String contactId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': 'delete',
+      'sessionName': preferences.getString(PreferenceString.sessionName),
+      'id': contactId, //2017
+      'appversion': Constants.of().appversion,
+    };
+    contactBloc.add(DeleteContactEvent(queryParameters));
   }
 }
 

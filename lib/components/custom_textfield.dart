@@ -50,7 +50,7 @@ class CustomTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+       /* Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (titleText != null) ...[
@@ -69,7 +69,7 @@ class CustomTextField extends StatelessWidget {
             ],
             copyWidget ?? Container(),
           ],
-        ),
+        ),*/
         SizedBox(height: 1.h),
         TextFormField(
           controller: controller,
@@ -88,7 +88,7 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
               suffixIcon: suffixWidget,
               prefixIcon: prefixIcon,
-              border: OutlineInputBorder(
+             /* border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),
@@ -99,13 +99,33 @@ class CustomTextField extends StatelessWidget {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
+              ),*/
+             /* enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                    width: 1, color: AppColors.primaryColor)
+              ),*/
+              border: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      width: 1, color: AppColors.primaryColor)
+              ),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      width: 1, color: AppColors.primaryColor)
+              ),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      width: 1, color: AppColors.primaryColor)
               ),
               filled: true,
               fillColor: Colors.white,
               contentPadding: EdgeInsets.only(left: 12.sp),
               hintText: hint,
               hintStyle: CustomTextStyle.labelFontHintText,
-              counterText: ""),
+              counterText: "",
+
+            labelStyle: CustomTextStyle.labelFontHintText,
+            labelText: titleText!
+          ),
           validator: (validator != null)
               ? validator
               : (isRequired == true)
@@ -162,10 +182,10 @@ class MultiLineTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (titleText != null) ...[
+       /* if (titleText != null) ...[
           Text(titleText ?? "", style: CustomTextStyle.labelFontText),
           const SizedBox(height: 10),
-        ],
+        ],*/
         TextFormField(
           controller: controller,
           style: TextStyle(color: AppColors.blackColor),
@@ -181,7 +201,7 @@ class MultiLineTextField extends StatelessWidget {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: suffixWidget,
-              border: OutlineInputBorder(
+              /*border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),
@@ -192,6 +212,18 @@ class MultiLineTextField extends StatelessWidget {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
+              ),*/
+              border: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      width: 1, color: AppColors.primaryColor)
+              ),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      width: 1, color: AppColors.primaryColor)
+              ),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      width: 1, color: AppColors.primaryColor)
               ),
               filled: true,
               fillColor: Colors.white,
@@ -199,7 +231,9 @@ class MultiLineTextField extends StatelessWidget {
                   EdgeInsets.only(left: 12.sp, top: 14.sp, right: 12),
               hintText: hint,
               hintStyle: CustomTextStyle.labelFontHintText,
-              counterText: ""),
+              counterText: "",
+              labelStyle: CustomTextStyle.labelFontHintText,
+              labelText: titleText!),
           validator: (validator != null)
               ? validator
               : (isRequired == true)
