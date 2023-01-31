@@ -367,8 +367,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               children: List.generate(
                 stepOneData["quote_no_of_engineer"].length,
                 (index) {
-                  numbersOfEng.add(RadioModel(false,
-                      stepOneData["quote_no_of_engineer"][index]["label"]));
+                  numbersOfEng.add(RadioModel(false, stepOneData["quote_no_of_engineer"][index]["label"]));
                   return SizedBox(
                     height: 6.h,
                     width: 11.w,
@@ -379,15 +378,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         for (var element in numbersOfEng) {
                           element.isSelected = false;
                         }
-                        Provider.of<WidgetChange>(context, listen: false)
-                            .isSelectEngineers();
+                        Provider.of<WidgetChange>(context, listen: false).isSelectEngineers();
                         numbersOfEng[index].isSelected = true;
-                        Provider.of<WidgetChange>(context, listen: false)
-                            .isSetEngineer;
+                        Provider.of<WidgetChange>(context, listen: false).isSetEngineer;
 
-                        engineerNumbers = stepOneData["quote_no_of_engineer"]
-                                [index]["label"]
-                            .toString();
+                        engineerNumbers = stepOneData["quote_no_of_engineer"][index]["label"].toString();
                         calculation();
                       },
                       child: RadioItem(numbersOfEng[index]),
@@ -569,8 +564,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 children: List.generate(
                   stepTwoData["premises_type"].length,
                   (index) {
-                    premisesType.add(RadioModel(
-                        false, stepTwoData["premises_type"][index]["label"]));
+                    premisesType.add(
+                        RadioModel(false, stepTwoData["premises_type"][index]["label"]));
                     return InkWell(
                         splashColor: AppColors.transparent,
                         highlightColor: AppColors.transparent,
@@ -578,14 +573,12 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           for (var element in premisesType) {
                             element.isSelected = false;
                           }
-                          Provider.of<WidgetChange>(context, listen: false)
-                              .isSelectPremisesType();
-                          premisesType[index].isSelected = true;
-                          Provider.of<WidgetChange>(context, listen: false)
-                              .isSetPremises;
 
-                          premisesTypeSelect =
-                              stepTwoData["premises_type"][index]["label"];
+                          Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
+                          premisesType[index].isSelected = true;
+                          Provider.of<WidgetChange>(context, listen: false).isSetPremises;
+
+                          premisesTypeSelect = stepTwoData["premises_type"][index]["label"];
 
                           if (premisesTypeSelect.isNotEmpty) {
                             pageController.nextPage(
@@ -711,8 +704,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
             children: List.generate(
               stepThreeData["system_type"].length - 9,
               (index) {
-                systemType.add(RadioModel(
-                    false, stepThreeData["system_type"][index]["label"]));
+                systemType.add(RadioModel(false, stepThreeData["system_type"][index]["label"]));
                 return Container(
                   height: 16.h,
                   width: query.width / 1.13,
@@ -734,19 +726,16 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         element.isSelected = false;
                       }
 
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSelectSystemType();
+                      Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       systemType[index].isSelected = true;
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSetSystem;
+                      Provider.of<WidgetChange>(context, listen: false).isSetSystem;
 
                       systemTypeSelect =
                           stepThreeData["system_type"][index]["label"];
 
                       print(systemTypeSelect);
 
-                      if (systemTypeSelect ==
-                              "CCTV System: BS EN 62676-4:2015" ||
+                      if (systemTypeSelect == "CCTV System: BS EN 62676-4:2015" ||
                           systemTypeSelect == "Access Control: BS EN 50133" ||
                           systemTypeSelect == "Keyholding Services") {
                         pageController.jumpToPage(4);
@@ -763,8 +752,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SvgExtension(
-                                  itemName: stepThreeData["system_type"][index]
-                                      ["label"],
+                                  itemName: stepThreeData["system_type"][index]["label"],
                                   iconColor: systemType[index].isSelected
                                       ? AppColors.primaryColor
                                       : AppColors.blackColor),
@@ -772,8 +760,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               SizedBox(
                                 width: query.width * 0.7,
                                 child: Text(
-                                    stepThreeData["system_type"][index]
-                                        ["label"],
+                                    stepThreeData["system_type"][index]["label"],
                                     textAlign: TextAlign.center,
                                     style: systemType[index].isSelected
                                         ? CustomTextStyle.commonTextBlue
@@ -826,12 +813,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         //update button
                         title: ButtonString.btnNext,
                         onClick: () {
-                          if (signallingTypeSelect.isNotEmpty) {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          }
-
                           if (systemTypeSelect ==
                                   "CCTV System: BS EN 62676-4:2015" ||
                               systemTypeSelect ==
@@ -839,9 +820,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               systemTypeSelect == "Keyholding Services") {
                             pageController.jumpToPage(4);
                           } else {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
+                            if (systemTypeSelect.isNotEmpty) {
+                              pageController.nextPage(
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.decelerate);
+                            }
                           }
                         },
                         buttonColor: AppColors.primaryColor),
@@ -902,14 +885,14 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
                     onTap: () {
+
                       for (var element in gradeAndFire) {
                         element.isSelected = false;
                       }
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSelectGrade();
+
+                      Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
                       gradeAndFire[index].isSelected = true;
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSetGrade;
+                      Provider.of<WidgetChange>(context, listen: false).isSetGrade;
 
                       gradeFireSelect = dataGrade[index]["label"];
 
@@ -1245,10 +1228,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         element.isSelected = false;
                       }
 
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSelectTerms();
+                      Provider.of<WidgetChange>(context, listen: false).isSelectTerms();
                       termsList[index].isSelected = true;
                       Provider.of<WidgetChange>(context, listen: false).isTerms;
+
                       termsItemSelection =
                           stepFiveData["quotes_terms"][index]["label"];
                       if (quotePaymentSelection.isNotEmpty) {

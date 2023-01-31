@@ -3,15 +3,19 @@ import 'package:nssg/components/custom_textfield.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:provider/provider.dart';
-
 import '../../components/custom_appbar.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_radio_button.dart';
 import '../../components/custom_text_styles.dart';
+import '../../components/global_api_call.dart';
+import '../../components/svg_extension.dart';
+import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../utils/widgetChange.dart';
+import '../../utils/widgets.dart';
+import 'add_item_detail.dart';
 
 class BuildItemDetail extends StatefulWidget {
   const BuildItemDetail({super.key});
@@ -21,11 +25,8 @@ class BuildItemDetail extends StatefulWidget {
 }
 
 class _BuildItemDetailState extends State<BuildItemDetail> {
-
-
   List templateOptionList = [LabelString.lblHideProductPrice, LabelString.lblHideProduct, LabelString.lblNone];
   List<RadioModel> templateOption = <RadioModel>[]; //step 1
-
 
   TextEditingController sellingPriceController = TextEditingController();
   TextEditingController discountPriceController = TextEditingController();
@@ -50,20 +51,22 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(LabelString.lblTemplateOptions,
-                style: CustomTextStyle.labelText),
+            Padding(
+              padding: EdgeInsets.only(left:8.sp),
+              child: Text(LabelString.lblTemplateOptions,
+                  style: CustomTextStyle.labelText),
+            ),
             SizedBox(height: 1.h),
             Padding(
               padding: EdgeInsets.only(left: 12.sp),
               child: Wrap(
                 spacing: 3,
                 direction: Axis.horizontal,
-
                 children: List.generate(
                   growable: false,
                   templateOptionList.length,
-                      (index) {
-                        templateOption.add(RadioModel(false, templateOptionList[index]));
+                  (index) {
+                    templateOption.add(RadioModel(false, templateOptionList[index]));
                     return SizedBox(
                       height: 6.h,
                       child: InkWell(
@@ -73,9 +76,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                           for (var element in templateOption) {
                             element.isSelected = false;
                           }
-                        // Provider.of<WidgetChange>(context, listen: false).isTemplateOption();
+
+                          //Provider.of<WidgetChange>(context, listen: false).isTemplateOption();
                           templateOption[index].isSelected = true;
-                      //Provider.of<WidgetChange>(context, listen: false).isSelectTemplateOption;
+                          //Provider.of<WidgetChange>(context, listen: false).isSelectTemplateOption;
                           setState(() {});
                         },
                         child: RadioItem(templateOption[index]),
@@ -179,6 +183,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                               text: ' : 0',
                                               style: CustomTextStyle.labelText)
                                         ]),
+
                                   ),
                                 ),
                               ],
@@ -402,443 +407,7 @@ class BottomSheetData extends StatelessWidget {
   }
 }
 
-///Class for add item detail
-class AddItemDetail extends StatefulWidget {
-  const AddItemDetail({Key? key}) : super(key: key);
 
-  @override
-  State<AddItemDetail> createState() => _AddItemDetailState();
-}
-
-class _AddItemDetailState extends State<AddItemDetail> {
-  PageController pageController = PageController();
-
-  TextEditingController sellingPriceController = TextEditingController();
-  TextEditingController discountPriceController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    var query = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: BaseAppBar(
-        appBar: AppBar(),
-        title: LabelString.lblItemDetail,
-        isBack: true,
-        elevation: 1,
-        backgroundColor: AppColors.whiteColor,
-        searchWidget: Container(),
-        titleTextStyle: CustomTextStyle.labelBoldFontText,
-      ),
-      body: PageView(
-        scrollDirection: Axis.horizontal,
-        pageSnapping: true,
-        physics: const BouncingScrollPhysics(),
-        controller: pageController,
-        onPageChanged: (number) {},
-        children: [
-          buildStepZero(query), // category view
-          buildStepOne(query), // category view
-          buildStepTwo(query), //Sub-category view
-          buildStepThree(query) // Item listing view
-        ],
-      ),
-    );
-  }
-
-  Column buildStepZero(Size query) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.sp),
-          child: Text(LabelString.lblManufacturing,
-              style: CustomTextStyle.labelBoldFontText),
-        ),
-        Wrap(
-          spacing: 15.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 14.sp,
-          children: List.generate(
-            2,
-                (index) {
-              return Container(
-                height: 16.h,
-                width: query.width / 1.13,
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.borderColor, width: 2),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {},
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.lock_outline,
-                            color: AppColors.primaryColor, size: 30.sp),
-                        SizedBox(height: 1.h),
-                        Text("Ajax",
-                            textAlign: TextAlign.center,
-                            style: CustomTextStyle.labelFontText)
-                      ]),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-  // Design category view
-  Column buildStepOne(Size query) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.sp),
-          child: Text(LabelString.lblCategory,
-              style: CustomTextStyle.labelBoldFontText),
-        ),
-        Wrap(
-          spacing: 15.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 14.sp,
-          children: List.generate(
-            2,
-            (index) {
-              return Container(
-                height: 16.h,
-                width: query.width / 1.13,
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.borderColor, width: 2),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {},
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.lock_outline,
-                            color: AppColors.primaryColor, size: 30.sp),
-                        SizedBox(height: 1.h),
-                        Text("Ajax",
-                            textAlign: TextAlign.center,
-                            style: CustomTextStyle.labelFontText)
-                      ]),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Design sub-category view
-  Column buildStepTwo(Size query) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.sp),
-          child: Text(LabelString.lblSubCategory,
-              style: CustomTextStyle.labelBoldFontText),
-        ),
-        Wrap(
-          spacing: 15.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 14.sp,
-          children: List.generate(
-            2,
-            (index) {
-              return Container(
-                height: 16.h,
-                width: query.width / 1.13,
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.borderColor, width: 2),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {},
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.local_fire_department_outlined,
-                            color: AppColors.primaryColor, size: 30.sp),
-                        SizedBox(height: 1.h),
-                        Text("Fire Detection",
-                            textAlign: TextAlign.center,
-                            style: CustomTextStyle.labelFontText)
-                      ]),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Item listing view
-  buildStepThree(Size query) {
-    return ListView.separated(
-      padding: EdgeInsets.symmetric(vertical: 10.sp),
-      physics: const BouncingScrollPhysics(),
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.sp),
-                border: Border.all(color: AppColors.borderColor, width: 1),
-                color: AppColors.whiteColor),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child:
-                          Image.asset("assets/images/demo.png", height: 15.h),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 10.sp),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("AJAX SMOKE",
-                                    style: CustomTextStyle.labelBoldFontText),
-                                Text("",
-                                    style: TextStyle(
-                                        color: AppColors.transparent)),
-                              ],
-                            ),
-                            SizedBox(height: 1.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(LabelString.lblCostPrice,
-                                    style: CustomTextStyle.commonText),
-                                Text("£29.50",
-                                    style:
-                                        CustomTextStyle.labelBoldFontTextSmall)
-                              ],
-                            ),
-                            SizedBox(height: 1.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(LabelString.lblSellingPrice,
-                                    style: CustomTextStyle.commonText),
-                                Container(
-                                  height: 4.h,
-                                  width: 20.w,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1,
-                                          color: AppColors.primaryColor),
-                                      color: AppColors.whiteColor,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.sp))),
-                                  child: Center(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(3.sp, 0, 3.sp, 0),
-                                      child: TextField(
-                                        controller: sellingPriceController,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration.collapsed(
-                                            hintText: "£29.50",
-                                            hintStyle: CustomTextStyle
-                                                .labelFontHintText),
-                                        textAlign: TextAlign.right,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 1.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(LabelString.lblDiscPrice,
-                                    style: CustomTextStyle.commonText),
-                                Container(
-                                  height: 4.h,
-                                  width: 20.w,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1,
-                                          color: AppColors.primaryColor),
-                                      color: AppColors.whiteColor,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.sp))),
-                                  child: Center(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(3.sp, 0, 3.sp, 0),
-                                      child: TextField(
-                                        controller: discountPriceController,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration.collapsed(
-                                            hintText: "£29.50",
-                                            hintStyle: CustomTextStyle
-                                                .labelFontHintText),
-                                        textAlign: TextAlign.right,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 1.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(LabelString.lblAmount,
-                                    style: CustomTextStyle.commonText),
-                                Text("£29.50",
-                                    style:
-                                        CustomTextStyle.labelBoldFontTextSmall)
-                              ],
-                            ),
-                            SizedBox(height: 1.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(LabelString.lblProfit,
-                                    style: CustomTextStyle.commonText),
-                                Text("£29.50",
-                                    style:
-                                        CustomTextStyle.labelBoldFontTextSmall)
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.h),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 13.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(LabelString.lblAttachmentDocument,
-                                style: CustomTextStyle.commonTextBlue),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  ///Make new class for dialog
-                                  return Dialog(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      elevation: 0,
-                                      insetPadding: EdgeInsets.symmetric(
-                                          horizontal: 12.sp),
-                                      child: SelectLocation());
-                                },
-                              );
-                            },
-                            child: Text(LabelString.lblSelectLocation,
-                                style: CustomTextStyle.commonTextBlue),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 8.sp, vertical: 3.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              width: query.width * 0.4,
-                              height: query.height * 0.06,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.sp),
-                                  border: Border.all(
-                                      width: 1, color: AppColors.primaryColor)),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    InkWell(
-                                        onTap: () {},
-                                        child: Icon(Icons.remove,
-                                            color: AppColors.blackColor,
-                                            size: 15.sp)),
-                                    Container(
-                                        height: query.height * 0.06,
-                                        color: AppColors.primaryColor,
-                                        width: 0.3.w),
-                                    Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10.sp),
-                                        child: Text("0",
-                                            style: CustomTextStyle
-                                                .labelBoldFontText)),
-                                    Container(
-                                        height: query.height * 0.06,
-                                        color: AppColors.primaryColor,
-                                        width: 0.3.w),
-                                    InkWell(
-                                        onTap: () {},
-                                        child: Icon(Icons.add,
-                                            color: AppColors.blackColor,
-                                            size: 15.sp)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 6.w),
-                          Expanded(
-                            child: SizedBox(
-                              height: query.height * 0.06,
-                              child: CustomButton(
-                                  title: "Add to Cart",
-                                  buttonColor: AppColors.primaryColor,
-                                  onClick: () {}),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.h),
-              ],
-            ),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return Container(height: 10.sp);
-      },
-    );
-  }
-}
 
 ///class for select location dialog
 class SelectLocation extends StatelessWidget {

@@ -11,8 +11,7 @@ class QuoteRepository {
 
   final QuoteDatasource _quoteDatasource;
 
-  Future<ApiResult<GetQuoteData>> getQuote(
-      Map<String, dynamic> paraMeters) async {
+  Future<ApiResult<GetQuoteData>> getQuote(Map<String, dynamic> paraMeters) async {
     try {
       final result = await _quoteDatasource.getQuoteList(paraMeters);
 

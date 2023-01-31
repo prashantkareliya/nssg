@@ -272,7 +272,8 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: true,
         controller: newTextEditingController,
         focusNode: focusNode,
-        keyboardType: TextInputType.number,
+        keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+
         animationCurve: Curves.easeInOut,
         switchInAnimationCurve: Curves.easeIn,
         switchOutAnimationCurve: Curves.easeOut,

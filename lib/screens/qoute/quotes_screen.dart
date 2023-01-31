@@ -10,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
-import '../../components/custom_dialog.dart';
 import '../../components/custom_text_styles.dart';
 import '../../components/global_api_call.dart';
 import '../../constants/constants.dart';
@@ -122,13 +121,21 @@ class _QuoteScreenState extends State<QuoteScreen> {
                           searchKey = value;
                           searchItemList = [];
                           for (var element in quoteItems!) {
-                            if (element.subject!.toLowerCase().contains(searchKey)) {
+                            if (element.subject!
+                                .toLowerCase()
+                                .contains(searchKey)) {
                               searchItemList!.add(element);
-                            } else if (element.quotesCompany!.toLowerCase().contains(searchKey)) {
+                            } else if (element.quotesCompany!
+                                .toLowerCase()
+                                .contains(searchKey)) {
                               searchItemList!.add(element);
-                            } else if (element.shipStreet!.toLowerCase().contains(searchKey)) {
+                            } else if (element.shipStreet!
+                                .toLowerCase()
+                                .contains(searchKey)) {
                               searchItemList!.add(element);
-                            } else if (element.shipCode!.toLowerCase().contains(searchKey)) {
+                            } else if (element.shipCode!
+                                .toLowerCase()
+                                .contains(searchKey)) {
                               searchItemList!.add(element);
                             }
                           }
@@ -216,95 +223,56 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             child: InkWell(
                               onTap: () => callNextScreen(
                                   context, QuoteDetail(quoteItem.id)),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Flexible(
-                                    flex: 1,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 1.0.h),
-                                        ContactTileField(
-                                            LabelString.lblSubject,
-                                            searchKey.isNotEmpty
-                                                ? searchItemList![index].subject
-                                                : quoteItem.subject),
-                                        ContactTileField(
-                                            LabelString.lblCompany,
-                                            searchKey.isNotEmpty
-                                                ? searchItemList![index]
-                                                    .quotesCompany
-                                                : quoteItem.quotesCompany),
-                                        ContactTileField(
-                                            LabelString.lblPrimaryEmail,
-                                            quoteItem.quotesEmail),
-                                        ContactTileField(
-                                            LabelString.lblMobilePhone,
-                                            quoteItem.quoteMobileNumber),
-                                        ContactTileField(
-                                            LabelString.lblAddress,
-                                            searchKey.isNotEmpty
-                                                ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
-                                                : "${quoteItem.shipStreet} ${quoteItem.shipCode}"),
-                                        SizedBox(height: 2.0.h),
-                                      ],
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 8.sp, horizontal: 15.sp),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 1.0.h),
+                                    Text(
+                                        searchKey.isNotEmpty
+                                            ? searchItemList![index]
+                                                .contactName
+                                                .toString()
+                                            : quoteItem.subject.toString(),
+                                        style: CustomTextStyle
+                                            .labelMediumBoldFontText),SizedBox(height: 2.0.h),
+                                    Text(
+                                        searchKey.isNotEmpty
+                                            ? searchItemList![index]
+                                                .quotesCompany
+                                                .toString()
+                                            : quoteItem.quotesCompany
+                                                .toString(),
+                                        style: CustomTextStyle.labelText),SizedBox(height: 0.5.h),
+                                    Text.rich(
+                                      TextSpan(
+                                        text: quoteItem.quotesEmail.toString(),
+                                        style:CustomTextStyle.labelText,
+                                        children: [
+                                          WidgetSpan(
+                                            child:  quoteItem.quoteMobileNumber!.isEmpty ? Container() : Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                              child: Container(color: AppColors.hintFontColor, height: 2.0.h, width: 0.5.w)
+                                            )),
+                                          TextSpan(
+                                            text: quoteItem.quoteMobileNumber.toString(),
+                                            style: CustomTextStyle.labelText
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Flexible(
-                                    flex: 0,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Visibility(
-                                          visible:
-                                              quoteItem.quotestage != "accepted"
-                                                  ? true
-                                                  : false,
-                                          child: InkWell(
-                                            highlightColor:
-                                                AppColors.transparent,
-                                            splashColor: AppColors.transparent,
-                                            onTap: () {},
-                                            child: Padding(
-                                                padding: EdgeInsets.all(8.sp),
-                                                child: Center(
-                                                    child: Image.asset(
-                                                        ImageString.icEdit,
-                                                        height: 2.5.h))),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          highlightColor: AppColors.transparent,
-                                          splashColor: AppColors.transparent,
-                                          onTap: () {
-                                            //Dialog to confirm delete contact or not
-                                            showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (ctx) =>
-                                                  ValidationDialog(
-                                                Message.deleteContact,
-                                                //Yes button
-                                                () {
-                                                  Navigator.pop(context);
-                                                },
-                                                () => Navigator.pop(
-                                                    context), //No button
-                                              ),
-                                            );
-                                          },
-                                          child: Center(
-                                              child: Image.asset(
-                                                  ImageString.icDelete,
-                                                  height: 2.5.h)),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
+                                    SizedBox(height: 0.5.h),
+                                    Text(
+                                        searchKey.isNotEmpty
+                                            ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
+                                            : "${quoteItem.shipStreet} ${quoteItem.shipCode}",
+                                        style: CustomTextStyle.labelText),
+                                    SizedBox(height: 2.0.h),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -404,17 +372,40 @@ class _QuoteDetailState extends State<QuoteDetail> {
               return SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(10.sp, 10.sp, 10.sp, 5.sp),
+                  padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 15.sp),
                   child: Column(
                     children: [
-                      ContactTileField(
-                          LabelString.lblSubject, dataQuote["subject"]),
-                      ContactTileField(
-                          LabelString.lblCompany, dataQuote["quotes_company"]),
-                      ContactTileField(LabelString.lblPrimaryEmail,
-                          dataQuote["quotes_email"]),
-                      ContactTileField(LabelString.lblMobilePhone,
-                          dataQuote["quote_mobile_number"]),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 1.0.h),
+                            Text(
+                                dataQuote["subject"].toString(),
+                                style: CustomTextStyle
+                                    .labelMediumBoldFontText),SizedBox(height: 2.0.h),
+                            Text(dataQuote["quotes_company"].toString(),
+                                style: CustomTextStyle.labelText),SizedBox(height: 0.5.h),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(dataQuote["quotes_email"],
+                                      style: CustomTextStyle.labelText),
+                                ),
+                                dataQuote["quote_mobile_number"]=="" ? Container(): Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                  child: Container(color: AppColors.hintFontColor,height: 2.0.h,width: 0.5.w),
+                                ),
+                                Text(dataQuote["quote_mobile_number"],
+                                    style: CustomTextStyle.labelText),
+                              ],
+                            ),
+                            SizedBox(height: 1.5.h),
+                          ],
+                        ),
+                      ),
                       ContactTileField(LabelString.lblPremisesType,
                           dataQuote["premises_type"]),
                       ContactTileField(
@@ -527,11 +518,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 0.sp, bottom: 5.sp),
-                        child: Text(LabelString.lblItemDetail,
-                            style: CustomTextStyle.labelBoldFontTextBlue),
-                      ),
+
                       ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),

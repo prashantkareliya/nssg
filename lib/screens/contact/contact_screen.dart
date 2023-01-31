@@ -243,8 +243,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                     color: AppColors.whiteColor,
                                     borderRadius: BorderRadius.circular(12.sp)),
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8.sp, horizontal: 15.sp),
+                                  padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 15.sp),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -614,7 +613,8 @@ class ContactDetail extends StatelessWidget {
                                               Navigator.pop(context);
                                               Navigator.pop(context, "delete");
                                             },
-                                            () => Navigator.pop(context), //No button
+                                            () => Navigator.pop(
+                                                context), //No button
                                           ),
                                         );
                                       },

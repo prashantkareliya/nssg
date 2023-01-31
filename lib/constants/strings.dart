@@ -22,6 +22,8 @@ class LabelString {
 
   static const String selectField = "Select";
 
+
+  static const String lblNoData = "No Data";
   static const String lblEmailAddress = "Email address";
   static const String lblPoweredBy = "Powered by NSSG CRM";
   static const String lblUserName = "UserName";
@@ -127,6 +129,7 @@ class LabelString {
   static const String lblQuoteDetail = "Quote Detail";
   static const String lblViewAddress = "View Address";
   static const String lblEstimationAmount = "Estimated Installation amount";
+  static const String lblDescription = "Description";
 }
 
 //Button Strings

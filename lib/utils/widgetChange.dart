@@ -13,7 +13,13 @@ class WidgetChange extends ChangeNotifier {
   bool isQuotePayment = false;
   bool isTerms = false;
   bool isSelectTemplateOption = false;
+  bool isSelectManufacture = false;
+  bool isSelectSystemTypeItemDetail = false;
+  bool isSelectCategoryItemDetail = false;
 
+  var count = 1;
+
+  int get getCounter => count;
 
   //list for dropdown
   var items = ['None', 'Mr.', 'Mrs.', 'Miss'];
@@ -57,6 +63,7 @@ class WidgetChange extends ChangeNotifier {
     isSetEngineer = !isSetEngineer;
     notifyListeners();
   }
+
   void isSelectSystemType() {
     isSetSystem = !isSetSystem;
     notifyListeners();
@@ -66,6 +73,7 @@ class WidgetChange extends ChangeNotifier {
     isSetGrade = !isSetGrade;
     notifyListeners();
   }
+
   void isSelectSignallingType() {
     isSetSignallingType = !isSetSignallingType;
     notifyListeners();
@@ -80,8 +88,34 @@ class WidgetChange extends ChangeNotifier {
     isTerms = !isTerms;
     notifyListeners();
   }
+
+  void isManufacture() {
+    isSelectManufacture = !isSelectManufacture;
+    notifyListeners();
+  }
+
+  void isSystemTypeItemDetail() {
+    isSelectSystemTypeItemDetail = !isSelectSystemTypeItemDetail;
+    notifyListeners();
+  }
+
+  void isCategoryItemDetail() {
+    isSelectCategoryItemDetail = !isSelectCategoryItemDetail;
+    notifyListeners();
+  }
+
   void isTemplateOption() {
     isSelectTemplateOption = !isSelectTemplateOption;
+    notifyListeners();
+  }
+
+  void incrementCounter() {
+    count += 1;
+    notifyListeners();
+  }
+
+  void decrementCounter() {
+    count -= 1;
     notifyListeners();
   }
 }
