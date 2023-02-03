@@ -16,6 +16,8 @@ class WidgetChange extends ChangeNotifier {
   bool isSelectManufacture = false;
   bool isSelectSystemTypeItemDetail = false;
   bool isSelectCategoryItemDetail = false;
+  bool isExpansionOne = false;
+  bool isExpansionTwo = true;
 
   var count = 1;
 
@@ -116,6 +118,16 @@ class WidgetChange extends ChangeNotifier {
 
   void decrementCounter() {
     count -= 1;
+    notifyListeners();
+  }
+
+  void isExpansionTileFirst(bool value){
+    isExpansionOne = value;
+    notifyListeners();
+  }
+
+  void isExpansionTileSecond(bool value){
+    isExpansionTwo = value;
     notifyListeners();
   }
 }

@@ -23,7 +23,10 @@ class CustomTextField extends StatelessWidget {
       this.copyWidget,
       this.prefixIcon,
       this.maxLength,
-      this.star})
+      this.maxLines,
+      this.minLines,
+      this.star,
+      this.textInputAction})
       : super(key: key);
 
   final String? hint;
@@ -42,7 +45,10 @@ class CustomTextField extends StatelessWidget {
   final Widget? copyWidget;
   final Widget? prefixIcon;
   final int? maxLength;
+  final int? maxLines;
+  final int? minLines;
   final String? star;
+  final TextInputAction? textInputAction;
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +82,9 @@ class CustomTextField extends StatelessWidget {
           style: TextStyle(color: AppColors.blackColor),
           textCapitalization: TextCapitalization.sentences,
           inputFormatters: inputFormatters,
-          textInputAction: TextInputAction.next,
-          maxLines: 1,
+          textInputAction: textInputAction,
+          maxLines: maxLines,
+          minLines: minLines,
           maxLength: maxLength,
           readOnly: readOnly,
           onTap: onTap,
@@ -144,6 +151,7 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
+/*
 class MultiLineTextField extends StatelessWidget {
   const MultiLineTextField(
       {Key? key,
@@ -182,10 +190,12 @@ class MultiLineTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-       /* if (titleText != null) ...[
+       */
+/* if (titleText != null) ...[
           Text(titleText ?? "", style: CustomTextStyle.labelFontText),
           const SizedBox(height: 10),
-        ],*/
+        ],*//*
+
         TextFormField(
           controller: controller,
           style: TextStyle(color: AppColors.blackColor),
@@ -201,7 +211,8 @@ class MultiLineTextField extends StatelessWidget {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: suffixWidget,
-              /*border: OutlineInputBorder(
+              */
+/*border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),
@@ -212,7 +223,8 @@ class MultiLineTextField extends StatelessWidget {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-              ),*/
+              ),*//*
+
               border: UnderlineInputBorder(
                   borderSide: BorderSide(
                       width: 1, color: AppColors.primaryColor)
@@ -251,3 +263,4 @@ class MultiLineTextField extends StatelessWidget {
     );
   }
 }
+*/

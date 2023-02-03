@@ -11,6 +11,7 @@ class Message {
   static const String createQoute = "Do you want to create new quote now?";
   static const String deleteContact = "Do you want to delete this contact?";
   static const String quoteExit = "Do you want to exit from this module?";
+  static const String enterYourPasscodeToUnlock = "Enter your Passcode to unlock";
 }
 
 //Label Strings
@@ -19,6 +20,7 @@ class LabelString {
   static const String yes = "Yes";
   static const String no = "No";
   static const String noRecordFound = "No Record Found";
+  static const String noData = "No Data";
 
   static const String selectField = "Select";
 
@@ -121,15 +123,17 @@ class LabelString {
   static const String lblDiscount = "Discount : ";
   static const String lbItemName = "Item Name";
   static const String lbItemDescription = "Description";
-  static const String lblCostPricePound = "Cost Price(£)";
-  static const String lblSellingPricePound = "Selling Price(£)";
-  static const String lblDiscountPound = "Discount(£)";
+  static const String lblCostPricePound = "Cost Price(£) ";
+  static const String lblSellingPricePound = "Selling Price(£) ";
+  static const String lblDiscountPound = "Discount(£) ";
   static const String lblQuantityEdit = "Quantity";
   static const String lblSubject = "Subject";
   static const String lblQuoteDetail = "Quote Detail";
   static const String lblViewAddress = "View Address";
   static const String lblEstimationAmount = "Estimated Installation amount";
   static const String lblDescription = "Description";
+  static const String lblPersonalDetail = "Personal Detail";
+  static const String lblProductDetail = "Product Detail";
 }
 
 //Button Strings
@@ -164,6 +168,9 @@ class ImageString {
   static const String imgDemo = "assets/images/demo.png";
   static const String imgPlaceHolder = "assets/images/placeholder.svg";
   static const String imgViewMore = "assets/images/viewMore.png";
+  static const String imgCart = "assets/images/ic_cart.png";
+  static const String imgAccordion = "assets/images/arrow_down.svg";
+  static const String imgAccordionClose = "assets/images/arrow_down_close.svg";
 }
 
 class PreferenceString {

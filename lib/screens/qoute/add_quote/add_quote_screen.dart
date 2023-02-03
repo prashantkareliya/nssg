@@ -38,34 +38,38 @@ class AddQuotePage extends StatefulWidget {
 
 class _AddQuotePageState extends State<AddQuotePage> {
   PageController pageController = PageController();
+
+  //For manage stem container number
   StreamController<int> streamController = StreamController<int>.broadcast();
   List contactData = [];
+  List addressList = [];
 
   String? contactId;
   Future<dynamic>? getFields;
 
+  //object for estimated installation amount
   String? eAmount = "0.0";
+
   String? engineerNumbers;
-  String? installationTimeDay;
-  String? installationTimeHour;
 
   String? timeType;
 
+  //Radio selection strings
   String premisesTypeSelect = "";
   String systemTypeSelect = "";
   String gradeFireSelect = "";
   String signallingTypeSelect = "";
-
   String quotePaymentSelection = "";
   String termsItemSelection = "";
 
   @override
   void initState() {
     super.initState();
-    getList();
+    getContactList();
   }
 
-  getList() async {
+  //Method for get contact list from SharedPreferences
+  getContactList() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? contact = preferences.getString(PreferenceString.contactList);
     contactData = jsonDecode(contact!);
@@ -86,9 +90,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
   TextEditingController installationCountryController = TextEditingController();
   TextEditingController installationPostalController = TextEditingController();
 
-  List addressList = [];
 
   //This lists for add quote dropdown fields
+  //Here we use radio button instead of dropdown
   List<RadioModel> numbersOfEng = <RadioModel>[]; //step 1
   List<RadioModel> installationTiming = <RadioModel>[]; //step 1
   List<RadioModel> premisesType = <RadioModel>[]; //step 2
@@ -123,6 +127,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               builder: (context, snapshot) {
                 return Column(
                   children: [
+                    //Rounde Container with step number
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -148,6 +153,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       ],
                     ),
                     SizedBox(height: 2.h),
+                    //Linear progress indicator which set below steps container
                     StepProgressIndicator(
                       padding: 0.0,
                       totalSteps: 6,
@@ -165,6 +171,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         }
                       },
                     ),
+
                     Padding(
                       padding:
                           EdgeInsets.only(left: 10.sp, right: 10.sp, top: 8.sp),
@@ -193,7 +200,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               },
             ),
           ),
+
           FutureBuilder<dynamic>(
+            //Call API for set quote fields
               future: getFields,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -213,11 +222,17 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           streamController.add(number);
                         },
                         children: [
+                          //Number of engineer, installation time step design
                           buildStepOne(context, query, fieldsData),
+                          //System type design design
                           buildStepTwo(context, query, fieldsData),
+                          //Premises type design
                           buildStepThree(context, query, fieldsData),
+                          //Grade number, Signalling type design
                           buildStepFour(context, query, fieldsData),
+                          //Quote payment, Terms design
                           buildStepFive(context, query, fieldsData),
+                          //Invoice and installation detail design
                           buildStepSix(context, query),
                         ],
                       ),
@@ -228,7 +243,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   return Text(message);
                 }
                 return SizedBox(height: 70.h, child: loadingView());
-              }),
+              },
+          ),
         ],
       ),
     );
@@ -243,6 +259,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //Design Auto filled contact
             Autocomplete(
               fieldViewBuilder: (context, textEditingController, focusNode,
                   VoidCallback onFieldSubmitted) {
@@ -362,6 +379,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
             Text(LabelString.lblNumberOfEngineer,
                 style: CustomTextStyle.labelFontText),
             SizedBox(height: 1.5.h),
+            //Number of engineer
             Wrap(
               spacing: 5,
               children: List.generate(
@@ -395,6 +413,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
             Text(LabelString.lblInstallationHours,
                 style: CustomTextStyle.labelFontText),
             SizedBox(height: 1.5.h),
+            //Installation Hours,
             Wrap(
               spacing: 5,
               children: List.generate(
@@ -414,11 +433,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           element.isSelected = false;
                         }
 
-                        Provider.of<WidgetChange>(context, listen: false)
-                            .isSelectTime();
+                        Provider.of<WidgetChange>(context, listen: false).isSelectTime();
                         installationTiming[index].isSelected = true;
-                        Provider.of<WidgetChange>(context, listen: false)
-                            .isSetTime;
+                        Provider.of<WidgetChange>(context, listen: false).isSetTime;
 
                         if (stepOneData["quote_req_to_complete_work"][index]
                                 ["label"]
@@ -442,10 +459,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
               ),
             ),
             SizedBox(height: 2.5.h),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   height: 20,
                   width: 20,
 
@@ -468,18 +486,20 @@ class _AddQuotePageState extends State<AddQuotePage> {
               ],
             ),
             SizedBox(height: 1.5.h),
-            InkWell(
-              onTap: () {},
-              child: RichText(
-                text: TextSpan(
-                    text: "${LabelString.lblEstimationAmount} : ",
-                    style: CustomTextStyle.labelText,
-                    children: [
-                      TextSpan(
-                          text: "£$eAmount",
-                          style: CustomTextStyle.labelBoldFontTextBlue)
-                    ]),
-              ),
+
+            //Estimated installation amount text
+            RichText(
+              text: TextSpan(
+                  text: "${LabelString.lblEstimationAmount} : ",
+                  style: CustomTextStyle.labelText,
+                  children: [
+                    TextSpan(
+                        text: "£$eAmount",
+                        style: TextStyle(
+                            fontSize: 18.sp,
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.bold))
+                  ]),
             ),
             SizedBox(height: query.height * 0.08),
             Padding(
@@ -491,7 +511,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
-                        //update button
+                        //cancel button
                         title: ButtonString.btnCancel,
                         onClick: () => Navigator.of(context).pop(),
                         buttonColor: AppColors.redColor),
@@ -500,10 +520,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
-                        //update button
+                        //next button
                         title: ButtonString.btnNext,
                         onClick: () {
-
                           if (eAmount != "0.0") {
                             FocusScope.of(context).unfocus();
                             pageController.nextPage(
@@ -544,149 +563,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
     }
   }
 
-  ///step 2
-  Padding buildStepTwo(BuildContext context, Size query, stepTwoData) {
-    return Padding(
-      padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              Text(LabelString.lblPremisesType,
-                  style: CustomTextStyle.labelBoldFontTextSmall),
-              SizedBox(height: 4.h),
-              Wrap(
-                spacing: 15.sp,
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.spaceBetween,
-                runSpacing: 15.sp,
-                children: List.generate(
-                  stepTwoData["premises_type"].length,
-                  (index) {
-                    premisesType.add(
-                        RadioModel(false, stepTwoData["premises_type"][index]["label"]));
-                    return InkWell(
-                        splashColor: AppColors.transparent,
-                        highlightColor: AppColors.transparent,
-                        onTap: () {
-                          for (var element in premisesType) {
-                            element.isSelected = false;
-                          }
-
-                          Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
-                          premisesType[index].isSelected = true;
-                          Provider.of<WidgetChange>(context, listen: false).isSetPremises;
-
-                          premisesTypeSelect = stepTwoData["premises_type"][index]["label"];
-
-                          if (premisesTypeSelect.isNotEmpty) {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          }
-                        },
-                        child: Container(
-                          height: 15.h,
-                          width: 42.w,
-                          decoration: BoxDecoration(
-                              color: premisesType[index].isSelected
-                                  ? AppColors.primaryColorLawOpacity
-                                  : AppColors.whiteColor,
-                              border: Border.all(
-                                  color: premisesType[index].isSelected
-                                      ? AppColors.primaryColor
-                                      : AppColors.borderColor,
-                                  width: 1),
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SvgExtension(
-                                        iconColor:
-                                            premisesType[index].isSelected
-                                                ? AppColors.primaryColor
-                                                : AppColors.blackColor,
-                                        itemName:
-                                            premisesType[index].buttonText),
-                                    SizedBox(height: 1.h),
-                                    Text(premisesType[index].buttonText,
-                                        style: premisesType[index].isSelected
-                                            ? CustomTextStyle.commonTextBlue
-                                            : CustomTextStyle.commonText)
-                                  ]),
-                              Visibility(
-                                visible: premisesType[index].isSelected
-                                    ? true
-                                    : false,
-                                child: Positioned(
-                                  right: 10,
-                                  top: 5,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(80.0),
-                                        color: AppColors.greenColor),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: Icon(Icons.done,
-                                          color: AppColors.whiteColor,
-                                          size: 14.sp),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ));
-                  },
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 2.sp, vertical: 12.sp),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                      width: query.width * 0.4,
-                      height: query.height * 0.06,
-                      child: BorderButton(
-                          btnString: ButtonString.btnPrevious,
-                          onClick: () {
-                            pageController.previousPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          })),
-                  SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                        //update button
-                        title: ButtonString.btnNext,
-                        onClick: () {
-                          if (premisesTypeSelect.isNotEmpty) {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          }
-                        },
-                        buttonColor: AppColors.primaryColor),
-                  )
-                ]),
-          )
-        ],
-      ),
-    );
-  }
-
-  ///step 3
-  SingleChildScrollView buildStepThree(context, Size query, stepThreeData) {
+  ///step 2- system type
+  SingleChildScrollView buildStepTwo(BuildContext context, Size query, stepThreeData) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -703,7 +581,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
             runSpacing: 14.sp,
             children: List.generate(
               stepThreeData["system_type"].length - 9,
-              (index) {
+                  (index) {
                 systemType.add(RadioModel(false, stepThreeData["system_type"][index]["label"]));
                 return Container(
                   height: 16.h,
@@ -731,19 +609,13 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       Provider.of<WidgetChange>(context, listen: false).isSetSystem;
 
                       systemTypeSelect =
-                          stepThreeData["system_type"][index]["label"];
+                      stepThreeData["system_type"][index]["label"];
 
                       print(systemTypeSelect);
 
-                      if (systemTypeSelect == "CCTV System: BS EN 62676-4:2015" ||
-                          systemTypeSelect == "Access Control: BS EN 50133" ||
-                          systemTypeSelect == "Keyholding Services") {
-                        pageController.jumpToPage(4);
-                      } else {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
-                      }
+                      pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.decelerate);
                     },
                     child: Stack(
                       alignment: Alignment.center,
@@ -810,21 +682,181 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
-                        //update button
+                      //update button
                         title: ButtonString.btnNext,
                         onClick: () {
                           if (systemTypeSelect ==
-                                  "CCTV System: BS EN 62676-4:2015" ||
+                              "CCTV System: BS EN 62676-4:2015" ||
                               systemTypeSelect ==
                                   "Access Control: BS EN 50133" ||
                               systemTypeSelect == "Keyholding Services") {
-                            pageController.jumpToPage(4);
+
+                            pageController.animateToPage(4,  duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
                           } else {
                             if (systemTypeSelect.isNotEmpty) {
                               pageController.nextPage(
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.decelerate);
                             }
+                          }
+                        },
+                        buttonColor: AppColors.primaryColor),
+                  )
+                ]),
+          )
+        ],
+      ),
+    );
+  }
+
+  ///step 3
+  Padding buildStepThree(context, Size query, stepTwoData) {
+    return Padding(
+      padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            children: [
+              Text(LabelString.lblPremisesType,
+                  style: CustomTextStyle.labelBoldFontTextSmall),
+              SizedBox(height: 4.h),
+              Wrap(
+                spacing: 15.sp,
+                direction: Axis.horizontal,
+                alignment: WrapAlignment.spaceBetween,
+                runSpacing: 15.sp,
+                children: List.generate(
+                  stepTwoData["premises_type"].length,
+                      (index) {
+                    premisesType.add(RadioModel(false, stepTwoData["premises_type"][index]["label"]));
+                    return InkWell(
+                        splashColor: AppColors.transparent,
+                        highlightColor: AppColors.transparent,
+                        onTap: () {
+                          for (var element in premisesType) {
+                            element.isSelected = false;
+                          }
+
+                          Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
+                          premisesType[index].isSelected = true;
+                          Provider.of<WidgetChange>(context, listen: false).isSetPremises;
+
+                          premisesTypeSelect = stepTwoData["premises_type"][index]["label"];
+
+
+                          if (systemTypeSelect == "CCTV System: BS EN 62676-4:2015" ||
+                              systemTypeSelect == "Access Control: BS EN 50133" ||
+                              systemTypeSelect == "Keyholding Services") {
+
+                            pageController.animateToPage(4,  duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          } else {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }
+
+                          /*if (premisesTypeSelect.isNotEmpty) {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          }*/
+                        },
+                        child: Container(
+                          height: 15.h,
+                          width: 42.w,
+                          decoration: BoxDecoration(
+                              color: premisesType[index].isSelected
+                                  ? AppColors.primaryColorLawOpacity
+                                  : AppColors.whiteColor,
+                              border: Border.all(
+                                  color: premisesType[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.borderColor,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgExtension(
+                                        iconColor:
+                                        premisesType[index].isSelected
+                                            ? AppColors.primaryColor
+                                            : AppColors.blackColor,
+                                        itemName:
+                                        premisesType[index].buttonText),
+                                    SizedBox(height: 1.h),
+                                    Text(premisesType[index].buttonText,
+                                        style: premisesType[index].isSelected
+                                            ? CustomTextStyle.commonTextBlue
+                                            : CustomTextStyle.commonText)
+                                  ]),
+                              Visibility(
+                                visible: premisesType[index].isSelected
+                                    ? true
+                                    : false,
+                                child: Positioned(
+                                  right: 10,
+                                  top: 5,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(80.0),
+                                        color: AppColors.greenColor),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Icon(Icons.done,
+                                          color: AppColors.whiteColor,
+                                          size: 14.sp),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ));
+                  },
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 2.sp, vertical: 12.sp),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: BorderButton(
+                          btnString: ButtonString.btnPrevious,
+                          onClick: () {
+                            pageController.previousPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          })),
+                  SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                      //update button
+                        title: ButtonString.btnNext,
+                        onClick: () {
+                          if (systemTypeSelect == "CCTV System: BS EN 62676-4:2015" ||
+                              systemTypeSelect == "Access Control: BS EN 50133" ||
+                              systemTypeSelect == "Keyholding Services") {
+                            pageController.animateToPage(4,  duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
+                          } else {
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
                           }
                         },
                         buttonColor: AppColors.primaryColor),
@@ -1299,12 +1331,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     child: BorderButton(
                         btnString: ButtonString.btnPrevious,
                         onClick: () {
+
                           if (systemTypeSelect ==
                                   "CCTV System: BS EN 62676-4:2015" ||
                               systemTypeSelect ==
                                   "Access Control: BS EN 50133" ||
                               systemTypeSelect == "Keyholding Services") {
-                            pageController.jumpToPage(2);
+
+                            pageController.animateToPage(2,  duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
                           } else {
                             pageController.previousPage(
                                 duration: const Duration(milliseconds: 500),
@@ -1357,7 +1392,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               ],
             ),
             SizedBox(height: 2.h),
-            MultiLineTextField(
+            CustomTextField(
               keyboardType: TextInputType.name,
               readOnly: false,
               controller: invoiceAddressController,
@@ -1365,6 +1400,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblTypeAddress,
               titleText: LabelString.lblInvoiceAddress,
               isRequired: true,
+              minLines: 1,
+              maxLines: 4,
+              textInputAction: TextInputAction.none,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -1374,6 +1412,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblInvoiceCity,
               titleText: LabelString.lblInvoiceCity,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -1383,6 +1424,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblInvoiceCountry,
               titleText: LabelString.lblInvoiceCountry,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -1392,6 +1436,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblInvoicePostalCode,
               titleText: LabelString.lblInvoicePostalCode,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 1.0.h),
             Center(
@@ -1419,7 +1466,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 SizedBox(height: 2.h),
               ],
             ),
-            MultiLineTextField(
+            CustomTextField(
               keyboardType: TextInputType.name,
               readOnly: false,
               controller: installationAddressController,
@@ -1427,6 +1474,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblTypeAddress,
               titleText: LabelString.lblInstallationAddress,
               isRequired: true,
+              minLines: 1,
+              maxLines: 4,
+              textInputAction: TextInputAction.none,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -1436,6 +1486,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblInstallationCity,
               titleText: LabelString.lblInstallationCity,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -1445,6 +1498,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblInstallationCountry,
               titleText: LabelString.lblInstallationCountry,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -1454,6 +1510,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               hint: LabelString.lblInstallationPostalCode,
               titleText: LabelString.lblInstallationPostalCode,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15.sp),
@@ -1477,7 +1536,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           //update button
                           title: ButtonString.btnNext,
                           onClick: () =>
-                              callNextScreen(context, const BuildItemDetail()),
+                              callNextScreen(context, BuildItemDetail(eAmount)),
                           buttonColor: AppColors.primaryColor))
                 ],
               ),
@@ -1549,7 +1608,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 'Content-Type': 'application/json; charset=UTF-8'
               });
           final responseJson = json.decode(response.body);
-          addressList = responseJson["suggestions"];
+          if(responseJson["suggestions"]!=null){
+            addressList = responseJson["suggestions"];
+          }else{
+            /*if (mounted)*/ Helpers.showSnackBar(context, responseJson["Message"].toString());
+          }
           List<String> matchesAddress = <String>[];
           matchesAddress
               .addAll(addressList.map((e) => e["address"].toString()));

@@ -77,8 +77,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (state is LoginLoaded) {
             preferences.setPreference(PreferenceString.userId, state.userId);
-            preferences.setPreference(PreferenceString.sessionName, state.sessionName);
-            preferences.setPreference(PreferenceString.userName, state.userName);
+            preferences.setPreference(
+                PreferenceString.sessionName, state.sessionName);
+            preferences.setPreference(
+                PreferenceString.userName, state.userName);
             //Helpers.showSnackBar(context, state.msg.toString());
             moveToNextScreen();
           }
@@ -214,27 +216,30 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: passwordController,
-            obscureText:
-                Provider.of<WidgetChange>(context, listen: false).isVisibleText,
-            hint: "* * * * * * *",
-            titleText: LabelString.lblPassword,
-            isRequired: true,
-            suffixWidget: Padding(
-              padding: EdgeInsets.only(right: 2.sp),
-              child: IconButton(
-                onPressed: () {
-                  Provider.of<WidgetChange>(context, listen: false)
-                      .textVisibility();
-                },
-                icon: Provider.of<WidgetChange>(context, listen: true)
-                        .isVisibleText
-                    ? Image.asset(ImageString.icImageVisible)
-                    : Image.asset(ImageString.icImageInVisible),
-              ),
-            )),
+          keyboardType: TextInputType.name,
+          readOnly: false,
+          controller: passwordController,
+          obscureText:
+              Provider.of<WidgetChange>(context, listen: false).isVisibleText,
+          hint: "* * * * * * *",
+          titleText: LabelString.lblPassword,
+          isRequired: true,
+          suffixWidget: Padding(
+            padding: EdgeInsets.only(right: 2.sp),
+            child: IconButton(
+              onPressed: () {
+                Provider.of<WidgetChange>(context, listen: false)
+                    .textVisibility();
+              },
+              icon:
+                  Provider.of<WidgetChange>(context, listen: true).isVisibleText
+                      ? Image.asset(ImageString.icImageVisible)
+                      : Image.asset(ImageString.icImageInVisible),
+            ),
+          ),
+          maxLines: 1,
+          minLines: 1,
+        ),
       ],
     );
   }
@@ -272,8 +277,8 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: true,
         controller: newTextEditingController,
         focusNode: focusNode,
-        keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-
+        keyboardType:
+            const TextInputType.numberWithOptions(signed: true, decimal: true),
         animationCurve: Curves.easeInOut,
         switchInAnimationCurve: Curves.easeIn,
         switchOutAnimationCurve: Curves.easeOut,

@@ -7,25 +7,27 @@ import '../../components/custom_appbar.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_radio_button.dart';
 import '../../components/custom_text_styles.dart';
-import '../../components/global_api_call.dart';
-import '../../components/svg_extension.dart';
-import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../utils/widgetChange.dart';
-import '../../utils/widgets.dart';
 import 'add_item_detail.dart';
 
 class BuildItemDetail extends StatefulWidget {
-  const BuildItemDetail({super.key});
+  var eAmount;
+
+  BuildItemDetail(this.eAmount, {super.key});
 
   @override
   State<BuildItemDetail> createState() => _BuildItemDetailState();
 }
 
 class _BuildItemDetailState extends State<BuildItemDetail> {
-  List templateOptionList = [LabelString.lblHideProductPrice, LabelString.lblHideProduct, LabelString.lblNone];
+  List templateOptionList = [
+    LabelString.lblHideProductPrice,
+    LabelString.lblHideProduct,
+    LabelString.lblNone
+  ];
   List<RadioModel> templateOption = <RadioModel>[]; //step 1
 
   TextEditingController sellingPriceController = TextEditingController();
@@ -52,7 +54,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(left:8.sp),
+              padding: EdgeInsets.only(left: 8.sp),
               child: Text(LabelString.lblTemplateOptions,
                   style: CustomTextStyle.labelText),
             ),
@@ -66,7 +68,9 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                   growable: false,
                   templateOptionList.length,
                   (index) {
-                    templateOption.add(RadioModel(false, templateOptionList[index]));
+                    templateOption
+                        .add(RadioModel(false, templateOptionList[index]));
+                    Provider.of<WidgetChange>(context).isSelectTemplateOption;
                     return SizedBox(
                       height: 6.h,
                       child: InkWell(
@@ -76,11 +80,9 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                           for (var element in templateOption) {
                             element.isSelected = false;
                           }
-
-                          //Provider.of<WidgetChange>(context, listen: false).isTemplateOption();
+                          Provider.of<WidgetChange>(context, listen: false)
+                              .isTemplateOption();
                           templateOption[index].isSelected = true;
-                          //Provider.of<WidgetChange>(context, listen: false).isSelectTemplateOption;
-                          setState(() {});
                         },
                         child: RadioItem(templateOption[index]),
                       ),
@@ -93,7 +95,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               height: query.height / 1.65,
               child: ListView.separated(
                 physics: const BouncingScrollPhysics(),
-                itemCount: 5,
+                itemCount: 1,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
@@ -119,7 +121,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                       style: CustomTextStyle.labelFontHintText,
                                       children: [
                                         TextSpan(
-                                            text: '\nABCD Item',
+                                            text:
+                                                '\nInstallation (1st & 2nd fix)',
                                             style: CustomTextStyle.labelText)
                                       ]),
                                 ),
@@ -166,7 +169,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                             CustomTextStyle.labelFontHintText,
                                         children: [
                                           TextSpan(
-                                              text: ' : 0',
+                                              text: '\n80.00',
                                               style: CustomTextStyle.labelText)
                                         ]),
                                   ),
@@ -180,10 +183,9 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                             CustomTextStyle.labelFontHintText,
                                         children: [
                                           TextSpan(
-                                              text: ' : 0',
+                                              text: "\n${widget.eAmount}",
                                               style: CustomTextStyle.labelText)
                                         ]),
-
                                   ),
                                 ),
                               ],
@@ -199,7 +201,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                             CustomTextStyle.labelFontHintText,
                                         children: [
                                           TextSpan(
-                                              text: '2',
+                                              text: '1',
                                               style: CustomTextStyle.labelText)
                                         ]),
                                   ),
@@ -230,7 +232,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                             CustomTextStyle.labelFontHintText,
                                         children: [
                                           TextSpan(
-                                              text: '240.00',
+                                              text: '${widget.eAmount}',
                                               style: CustomTextStyle.labelText)
                                         ]),
                                   ),
@@ -243,7 +245,11 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                             CustomTextStyle.labelFontHintText,
                                         children: [
                                           TextSpan(
-                                              text: '28',
+                                              text: (double.parse(
+                                                          widget.eAmount) -
+                                                      80.0)
+                                                  .toString()
+                                                  .replaceAll(".0", ".00"),
                                               style: CustomTextStyle.labelText)
                                         ]),
                                   ),
@@ -252,7 +258,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                             ),
                             SizedBox(height: 2.0.h),
                             Text(
-                                "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                                "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
                                 style: CustomTextStyle.labelText),
                             SizedBox(height: 1.h),
                           ],
@@ -315,7 +321,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
       ///Make new class and using pageView for add item detail
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            callNextScreen(context, const AddItemDetail());
+            callNextScreen(context, AddItemDetail());
           },
           child: const Icon(Icons.add)),
     );
@@ -362,13 +368,13 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                         ),
                       ),
                     ),
-                    BottomSheetData("Discount Amount", "0.00"),
-                    BottomSheetData("Sub Total", "0"),
-                    BottomSheetData("Items Total", "0"),
-                    BottomSheetData("Vat Total", "0.00"),
-                    BottomSheetData("Deposit Amount", "0.00"),
-                    BottomSheetData("Grand Total", "0"),
-                    BottomSheetData("Total Profit", "0"),
+                    BottomSheetData("Discount Amount", "0.00",CustomTextStyle.labelText),
+                    BottomSheetData("Sub Total", "0",CustomTextStyle.labelText),
+                    BottomSheetData("Items Total", "0",CustomTextStyle.labelText),
+                    BottomSheetData("Vat Total", "0.00",CustomTextStyle.labelText),
+                    BottomSheetData("Deposit Amount", "0.00",CustomTextStyle.labelText),
+                    BottomSheetData("Grand Total", "0",CustomTextStyle.labelText),
+                    BottomSheetData("Total Profit", "0",CustomTextStyle.labelText),
                     SizedBox(
                       width: query.width * 0.8,
                       height: query.height * 0.06,
@@ -389,8 +395,9 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 class BottomSheetData extends StatelessWidget {
   String? keyText;
   String? valueText;
+  TextStyle? textStyle;
 
-  BottomSheetData(this.keyText, this.valueText, {super.key});
+  BottomSheetData(this.keyText, this.valueText, this.textStyle, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -399,19 +406,18 @@ class BottomSheetData extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(keyText!),
-          Text(valueText!),
+          Text(keyText!, style: textStyle),
+          Text(valueText!, style: textStyle),
         ],
       ),
     );
   }
 }
 
-
-
 ///class for select location dialog
 class SelectLocation extends StatelessWidget {
   TextEditingController titleController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
 
   SelectLocation({super.key});
 
@@ -438,15 +444,19 @@ class SelectLocation extends StatelessWidget {
               obscureText: false,
               hint: LabelString.lblTitle,
               titleText: LabelString.lblTitle,
-              isRequired: false),
+              isRequired: false, maxLines: 1,
+            minLines: 1,
+            textInputAction: TextInputAction.next,),
           CustomTextField(
               keyboardType: TextInputType.name,
               readOnly: false,
-              controller: titleController,
+              controller: locationController,
               obscureText: false,
               hint: LabelString.lblLocation,
               titleText: LabelString.lblLocation,
-              isRequired: false),
+              isRequired: false, maxLines: 1,
+            minLines: 1,
+            textInputAction: TextInputAction.next),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -474,6 +484,11 @@ class EditItem extends StatelessWidget {
   EditItem({Key? key}) : super(key: key);
 
   TextEditingController itemNameController = TextEditingController();
+  TextEditingController itemDescriptionController = TextEditingController();
+  TextEditingController itemCostPriceController = TextEditingController();
+  TextEditingController itemSellingPriceController = TextEditingController();
+  TextEditingController itemQuantityController = TextEditingController();
+  TextEditingController itemDiscountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -497,12 +512,14 @@ class EditItem extends StatelessWidget {
             CustomTextField(
               keyboardType: TextInputType.name,
               readOnly: false,
-              //controller: titleController,
               obscureText: false,
               hint: LabelString.lbItemName,
               titleText: LabelString.lbItemName,
               isRequired: false,
               controller: itemNameController,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -533,26 +550,31 @@ class EditItem extends StatelessWidget {
                 ),
               ],
             ),
-            MultiLineTextField(
+            CustomTextField(
                 keyboardType: TextInputType.name,
                 readOnly: false,
-                controller: itemNameController,
+                controller: itemDescriptionController,
                 obscureText: false,
                 hint: LabelString.lbItemDescription,
                 titleText: LabelString.lbItemDescription,
+                minLines: 1,
+                maxLines: 4,
+                textInputAction: TextInputAction.none,
                 isRequired: false),
             CustomTextField(
                 keyboardType: TextInputType.name,
                 readOnly: false,
-                controller: itemNameController,
+                controller: itemCostPriceController,
                 obscureText: false,
                 hint: LabelString.lblCostPricePound,
                 titleText: LabelString.lblCostPricePound,
-                isRequired: false),
+                isRequired: false,maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,),
             CustomTextField(
                 keyboardType: TextInputType.name,
                 readOnly: false,
-                controller: itemNameController,
+                controller: itemSellingPriceController,
                 obscureText: false,
                 hint: LabelString.lblSellingPricePound,
                 titleText: LabelString.lblSellingPricePound,
@@ -564,12 +586,11 @@ class EditItem extends StatelessWidget {
                   child: CustomTextField(
                     keyboardType: TextInputType.name,
                     readOnly: false,
-                    //controller: titleController,
+                    controller: itemQuantityController,
                     obscureText: false,
                     hint: LabelString.lblQuantityEdit,
                     titleText: LabelString.lblQuantityEdit,
-                    isRequired: false,
-                    controller: itemNameController,
+                    isRequired: false
                   ),
                 ),
                 SizedBox(width: 3.w),
@@ -603,7 +624,7 @@ class EditItem extends StatelessWidget {
             CustomTextField(
                 keyboardType: TextInputType.name,
                 readOnly: false,
-                controller: itemNameController,
+                controller: itemDiscountController,
                 obscureText: false,
                 hint: LabelString.lblDiscountPound,
                 titleText: LabelString.lblDiscountPound,

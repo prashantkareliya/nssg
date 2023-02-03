@@ -30,9 +30,10 @@ class CustomTextStyle {
 
   static TextStyle labelBoldFontTextBlue = GoogleFonts.roboto(
       textStyle: TextStyle(
-          fontSize: 18.sp,
+          fontSize: 16.sp,
           color: AppColors.primaryColor,
           fontWeight: FontWeight.bold));
+
 
   static TextStyle commonTextBlue = GoogleFonts.roboto(
       textStyle: TextStyle(

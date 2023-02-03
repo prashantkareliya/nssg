@@ -39,7 +39,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
               highlightColor: AppColors.transparent,
               splashColor: AppColors.transparent,
               onPressed: () {
-                showDialog(
+                /*showDialog(
                   context: context,
                   barrierDismissible: false,
                   builder: (ctx) => ValidationDialog(
@@ -53,7 +53,8 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                     //No   button
                     () => Navigator.pop(context), //No button
                   ),
-                );
+                );*/
+                Navigator.pop(context);
               },
               icon: Icon(Icons.arrow_back_ios_outlined,
                   color: AppColors.blackColor, size: 14.sp),

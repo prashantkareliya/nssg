@@ -90,6 +90,7 @@ class Result {
   String? productDescriptionLock;
   String? proShortDescription;
   String? id;
+  int? quantity;
 
   Result(
       {this.productname,
@@ -156,7 +157,8 @@ class Result {
         this.productDirectDebitForm,
         this.productDescriptionLock,
         this.proShortDescription,
-        this.id});
+        this.id,
+        this.quantity});
 
   Result.fromJson(Map<String, dynamic> json) {
     productname = json['productname'];
@@ -224,6 +226,7 @@ class Result {
     productDescriptionLock = json['product_description_lock'];
     proShortDescription = json['pro_short_description'];
     id = json['id'];
+    quantity = json['quantity'] ?? 1;
   }
 
   Map<String, dynamic> toJson() {
@@ -293,6 +296,7 @@ class Result {
     data['product_description_lock'] = productDescriptionLock;
     data['pro_short_description'] = proShortDescription;
     data['id'] = id;
+    data['quantity'] = quantity;
     return data;
   }
 }

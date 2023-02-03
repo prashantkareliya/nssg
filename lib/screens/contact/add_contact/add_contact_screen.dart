@@ -150,7 +150,7 @@ class _AddContactPageState extends State<AddContactPage> {
                     ),
 
                     //basic or address information label
-                    Padding(
+                    /*Padding(
                       padding:
                           EdgeInsets.only(left: 10.sp, right: 10.sp, top: 8.sp),
                       child: Row(
@@ -172,7 +172,7 @@ class _AddContactPageState extends State<AddContactPage> {
                           )
                         ],
                       ),
-                    )
+                    )*/
                   ],
                 );
               },
@@ -277,7 +277,7 @@ class _AddContactPageState extends State<AddContactPage> {
             children: [
               Consumer<WidgetChange>(
                 builder: (context, value, child) => CustomTextField(
-                  keyboardType: TextInputType.name,
+                  keyboardType: TextInputType.multiline,
                   readOnly: false,
                   controller: firstNameController,
                   obscureText: false,
@@ -285,6 +285,9 @@ class _AddContactPageState extends State<AddContactPage> {
                   titleText: LabelString.lblFirstName,
                   star: "*",
                   isRequired: true,
+                  maxLines: 1,
+                  minLines: 1,
+                  textInputAction: TextInputAction.next,
                   /*prefixIcon: Padding(
                               padding: EdgeInsets.all(4.sp),
                               child: Container(
@@ -330,6 +333,9 @@ class _AddContactPageState extends State<AddContactPage> {
                   obscureText: false,
                   hint: LabelString.lblLastName,
                   titleText: LabelString.lblLastName,
+                  maxLines: 1,
+                  minLines: 1,
+                  textInputAction: TextInputAction.next,
                   isRequired: false),
               CustomTextField(
                   keyboardType: TextInputType.name,
@@ -338,6 +344,9 @@ class _AddContactPageState extends State<AddContactPage> {
                   obscureText: false,
                   hint: LabelString.lblCompanyName,
                   titleText: LabelString.lblCompanyName,
+                  maxLines: 1,
+                  minLines: 1,
+                  textInputAction: TextInputAction.next,
                   isRequired: false),
               CustomTextField(
                   keyboardType: TextInputType.number,
@@ -347,6 +356,9 @@ class _AddContactPageState extends State<AddContactPage> {
                   hint: LabelString.lblMobilePhone,
                   maxLength: 10,
                   titleText: LabelString.lblMobilePhone,
+                  maxLines: 1,
+                  minLines: 1,
+                  textInputAction: TextInputAction.next,
                   isRequired: false),
               CustomTextField(
                   keyboardType: TextInputType.number,
@@ -356,6 +368,9 @@ class _AddContactPageState extends State<AddContactPage> {
                   hint: LabelString.lblOfficePhone,
                   maxLength: 10,
                   titleText: LabelString.lblOfficePhone,
+                  maxLines: 1,
+                  minLines: 1,
+                  textInputAction: TextInputAction.next,
                   isRequired: false),
               CustomTextField(
                   keyboardType: TextInputType.emailAddress,
@@ -364,6 +379,9 @@ class _AddContactPageState extends State<AddContactPage> {
                   obscureText: false,
                   hint: LabelString.lblPrimaryEmail,
                   titleText: LabelString.lblPrimaryEmail,
+                  textInputAction: TextInputAction.next,
+                  maxLines: 1,
+                  minLines: 1,
                   star: "*",
                   isRequired: true),
               CustomTextField(
@@ -373,6 +391,9 @@ class _AddContactPageState extends State<AddContactPage> {
                   obscureText: false,
                   hint: LabelString.lblSecondaryEmail,
                   titleText: LabelString.lblSecondaryEmail,
+                  maxLines: 1,
+                  minLines: 1,
+                  textInputAction: TextInputAction.next,
                   isRequired: false),
               Padding(
                 padding:
@@ -448,7 +469,7 @@ class _AddContactPageState extends State<AddContactPage> {
             ),*/
             autoComplete("invoice"),
             SizedBox(height: 2.h),
-            MultiLineTextField(
+            CustomTextField(
               keyboardType: TextInputType.name,
               readOnly: false,
               controller: invoiceAddressController,
@@ -456,6 +477,9 @@ class _AddContactPageState extends State<AddContactPage> {
               hint: LabelString.lblTypeAddress,
               titleText: LabelString.lblInvoiceAddress,
               isRequired: true,
+              textInputAction: TextInputAction.none,
+              minLines: 1,
+              maxLines: 4,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -464,7 +488,10 @@ class _AddContactPageState extends State<AddContactPage> {
               obscureText: false,
               hint: LabelString.lblInvoiceCity,
               titleText: LabelString.lblInvoiceCity,
+              textInputAction: TextInputAction.next,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -473,7 +500,10 @@ class _AddContactPageState extends State<AddContactPage> {
               obscureText: false,
               hint: LabelString.lblInvoiceCountry,
               titleText: LabelString.lblInvoiceCountry,
+              textInputAction: TextInputAction.next,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -482,7 +512,10 @@ class _AddContactPageState extends State<AddContactPage> {
               obscureText: false,
               hint: LabelString.lblInvoicePostalCode,
               titleText: LabelString.lblInvoicePostalCode,
+              textInputAction: TextInputAction.next,
               isRequired: true,
+              maxLines: 1,
+              minLines: 1,
             ),
             SizedBox(height: 1.0.h),
             Center(
@@ -518,14 +551,17 @@ class _AddContactPageState extends State<AddContactPage> {
                 SizedBox(height: 2.h),
               ],
             ),
-            MultiLineTextField(
+            CustomTextField(
               keyboardType: TextInputType.name,
               readOnly: false,
               controller: installationAddressController,
               obscureText: false,
               hint: LabelString.lblTypeAddress,
               titleText: LabelString.lblInstallationAddress,
+              textInputAction: TextInputAction.none,
               isRequired: true,
+              minLines: 1,
+              maxLines: 4,
             ),
             CustomTextField(
               keyboardType: TextInputType.name,
@@ -534,6 +570,9 @@ class _AddContactPageState extends State<AddContactPage> {
               obscureText: false,
               hint: LabelString.lblInstallationCity,
               titleText: LabelString.lblInstallationCity,
+              textInputAction: TextInputAction.next,
+              maxLines: 1,
+              minLines: 1,
               isRequired: true,
             ),
             CustomTextField(
@@ -543,6 +582,9 @@ class _AddContactPageState extends State<AddContactPage> {
               obscureText: false,
               hint: LabelString.lblInstallationCountry,
               titleText: LabelString.lblInstallationCountry,
+              textInputAction: TextInputAction.next,
+              maxLines: 1,
+              minLines: 1,
               isRequired: true,
             ),
             CustomTextField(
@@ -552,6 +594,9 @@ class _AddContactPageState extends State<AddContactPage> {
               obscureText: false,
               hint: LabelString.lblInstallationPostalCode,
               titleText: LabelString.lblInstallationPostalCode,
+              textInputAction: TextInputAction.next,
+              maxLines: 1,
+              minLines: 1,
               isRequired: true,
             ),
             buildButtons(query),
@@ -695,7 +740,11 @@ class _AddContactPageState extends State<AddContactPage> {
                 'Content-Type': 'application/json; charset=UTF-8'
               });
           final responseJson = json.decode(response.body);
-          addressList = responseJson["suggestions"];
+          if(responseJson["suggestions"]!=null){
+            addressList = responseJson["suggestions"];
+          }else{
+            /*if (mounted)*/ Helpers.showSnackBar(context, responseJson["Message"].toString());
+          }
           List<String> matchesAddress = <String>[];
           matchesAddress
               .addAll(addressList.map((e) => e["address"].toString()));

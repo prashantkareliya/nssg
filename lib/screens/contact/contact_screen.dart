@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/screens/contact/contact_datasource.dart';
 import 'package:nssg/screens/contact/contact_repository.dart';
@@ -37,6 +38,9 @@ class _ContactScreenState extends State<ContactScreen> {
   List<Result>? searchItemList = [];
   String searchKey = "";
 
+  //This variable for contact detail new design, send to open drawer end drawer
+  String? setContactId = "";
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +57,7 @@ class _ContactScreenState extends State<ContactScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.backWhiteColor,
+        //endDrawer: Drawer(child: ContactDetail(setContactId)),
         body: Column(
           children: [
             buildAppbar(context),
@@ -204,231 +209,259 @@ class _ContactScreenState extends State<ContactScreen> {
                 ? loadingView()
                 : RefreshIndicator(
                     onRefresh: () => getContact(),
-                    child: ListView.separated(
-                      padding: EdgeInsets.only(top: 10.sp),
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: searchKey.isNotEmpty
-                          ? searchItemList!.length
-                          : contactItems!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.sp)),
-                            elevation: 2,
-                            child: InkWell(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Dialog(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        elevation: 0,
-                                        insetPadding: EdgeInsets.symmetric(
-                                            horizontal: 12.sp),
-                                        child: ContactDetail(
-                                            contactItems![index].id));
-                                  },
-                                ).then((value) {
-                                  if (value == "delete") {
-                                    getContact();
-                                  }
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: AppColors.whiteColor,
-                                    borderRadius: BorderRadius.circular(12.sp)),
+                    child: AnimationLimiter(
+                      child: ListView.separated(
+                        padding: EdgeInsets.only(top: 10.sp),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: searchKey.isNotEmpty
+                            ? searchItemList!.length
+                            : contactItems!.length,
+                        itemBuilder: (context, index) {
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            child: SlideAnimation(
+                              verticalOffset: 0.0,
+                              curve: Curves.decelerate,
+                              child: FadeInAnimation(
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 15.sp),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                searchKey.isNotEmpty
-                                                    ? searchItemList![index]
-                                                        .contactName
-                                                        .toString()
-                                                    : contactItems![index]
-                                                        .contactName
-                                                        .toString(),
-                                                style: CustomTextStyle
-                                                    .labelMediumBoldFontText),
-                                            SizedBox(height: 1.3.h),
-                                            Text(
-                                                contactItems![index]
-                                                    .email
-                                                    .toString(),
-                                                style:
-                                                    CustomTextStyle.labelText),
-                                            SizedBox(height: 0.7.h),
-                                            Text(
-                                                contactItems![index]
-                                                    .mobile
-                                                    .toString(),
-                                                style:
-                                                    CustomTextStyle.labelText),
-                                          ],
+                                  padding: EdgeInsets.only(
+                                      left: 12.sp, right: 12.sp),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.sp)),
+                                    elevation: 2,
+                                    child: InkWell(
+                                      onTap: () {
+                                        //TODO: uncomment code, - this code is for new contact design
+                                        /*setState(() {
+                                          setContactId = contactItems![index].id;
+                                        });
+                                        Scaffold.of(context).openEndDrawer();*/
+
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                elevation: 0,
+                                                insetPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 12.sp),
+                                                child: ContactDetail(
+                                                    contactItems![index].id));
+                                          },
+                                        ).then((value) {
+                                          if (value == "delete") {
+                                            getContact();
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: AppColors.whiteColor,
+                                            borderRadius:
+                                                BorderRadius.circular(12.sp)),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.sp,
+                                              horizontal: 15.sp),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                        searchKey.isNotEmpty
+                                                            ? searchItemList![
+                                                                    index]
+                                                                .contactName
+                                                                .toString()
+                                                            : contactItems![
+                                                                    index]
+                                                                .contactName
+                                                                .toString(),
+                                                        style: CustomTextStyle
+                                                            .labelMediumBoldFontText),
+                                                    SizedBox(height: 1.3.h),
+                                                    Text(
+                                                        contactItems![index]
+                                                            .email
+                                                            .toString(),
+                                                        style: CustomTextStyle
+                                                            .labelText),
+                                                    SizedBox(height: 0.7.h),
+                                                    Text(
+                                                        contactItems![index]
+                                                            .mobile
+                                                            .toString(),
+                                                        style: CustomTextStyle
+                                                            .labelText),
+                                                  ],
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(LabelString.lblViewMore,
+                                                      style: CustomTextStyle
+                                                          .commonText),
+                                                  SizedBox(width: 2.w),
+                                                  Image.asset(
+                                                      ImageString.imgViewMore,
+                                                      height: 2.h)
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                      Row(
-                                        children: [
-                                          Text(LabelString.lblViewMore,
-                                              style:
-                                                  CustomTextStyle.commonText),
-                                          SizedBox(width: 2.w),
-                                          Image.asset(ImageString.imgViewMore,
-                                              height: 2.h)
-                                        ],
-                                      )
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                        /*Padding(
-                          padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.sp),
-                            ),
-                            elevation: 3,
-                            child: InkWell(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Dialog(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        elevation: 0,
-                                        insetPadding: EdgeInsets.symmetric(
-                                            horizontal: 12.sp),
-                                        child: ContactDetail(
-                                            contactItems![index].id));
-                                  },
-                                );
-                              },
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Flexible(
-                                    flex: 1,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 1.0.h),
-                                        ContactTileField(
-                                            LabelString.lblFullName,
-                                            searchKey.isNotEmpty
-                                                ? searchItemList![index]
-                                                    .contactName
-                                                : contactItems![index]
-                                                    .contactName),
-                                        ContactTileField(
-                                            LabelString.lblCompany,
-                                            searchKey.isNotEmpty
-                                                ? searchItemList![index]
-                                                    .contactCompany
-                                                : contactItems![index]
-                                                    .contactCompany),
-                                        ContactTileField(
-                                            LabelString.lblMobilePhone,
-                                            contactItems![index]
-                                                .mobile
-                                                .toString()),
-                                        ContactTileField(
-                                            LabelString.lblPrimaryEmail,
-                                            contactItems![index].email.toString()),
-                                        SizedBox(height: 2.0.h),
-                                      ],
+                          );
+                          /*Padding(
+                            padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.sp),
+                              ),
+                              elevation: 3,
+                              child: InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          elevation: 0,
+                                          insetPadding: EdgeInsets.symmetric(
+                                              horizontal: 12.sp),
+                                          child: ContactDetail(
+                                              contactItems![index].id));
+                                    },
+                                  );
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      flex: 1,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 1.0.h),
+                                          ContactTileField(
+                                              LabelString.lblFullName,
+                                              searchKey.isNotEmpty
+                                                  ? searchItemList![index]
+                                                      .contactName
+                                                  : contactItems![index]
+                                                      .contactName),
+                                          ContactTileField(
+                                              LabelString.lblCompany,
+                                              searchKey.isNotEmpty
+                                                  ? searchItemList![index]
+                                                      .contactCompany
+                                                  : contactItems![index]
+                                                      .contactCompany),
+                                          ContactTileField(
+                                              LabelString.lblMobilePhone,
+                                              contactItems![index]
+                                                  .mobile
+                                                  .toString()),
+                                          ContactTileField(
+                                              LabelString.lblPrimaryEmail,
+                                              contactItems![index].email.toString()),
+                                          SizedBox(height: 2.0.h),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Flexible(
-                                    flex: 0,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        InkWell(
-                                          highlightColor: AppColors.transparent,
-                                          splashColor: AppColors.transparent,
-                                          onTap: () {
-                                            callNextScreen(
-                                              context,
-                                              AddContactPage(
-                                                  contactItems![index].id.toString()),
-                                            );
-                                          },
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.sp),
-                                            child: Center(
-                                                child: Icon(Icons.edit_rounded,
-                                                    size: 14.sp,
-                                                    color:
-                                                        AppColors.blackColor)),
+                                    Flexible(
+                                      flex: 0,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          InkWell(
+                                            highlightColor: AppColors.transparent,
+                                            splashColor: AppColors.transparent,
+                                            onTap: () {
+                                              callNextScreen(
+                                                context,
+                                                AddContactPage(
+                                                    contactItems![index].id.toString()),
+                                              );
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.sp),
+                                              child: Center(
+                                                  child: Icon(Icons.edit_rounded,
+                                                      size: 14.sp,
+                                                      color:
+                                                          AppColors.blackColor)),
+                                            ),
                                           ),
-                                        ),
-                                        InkWell(
-                                          highlightColor: AppColors.transparent,
-                                          splashColor: AppColors.transparent,
-                                          onTap: () {
-                                            //Dialog to confirm delete contact or not
-                                            showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (ctx) =>
-                                                  ValidationDialog(
-                                                Message.deleteContact,
-                                                //Yes button
-                                                () {
-                                                  Navigator.pop(context);
-                                                  deleteContact(
-                                                      contactItems![index]
-                                                          .id
-                                                          .toString());
-                                                  */ /*setState(() {
-                                                    contactItems!.removeAt(index);
-                                                  });*/ /*
-                                                },
-                                                () => Navigator.pop(
-                                                    context), //No button
-                                              ),
-                                            );
-                                          },
-                                          child: Center(
-                                              child: Icon(
-                                            Icons.delete_rounded,
-                                            color: AppColors.redColor,
-                                            size: 14.sp,
-                                          )),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
+                                          InkWell(
+                                            highlightColor: AppColors.transparent,
+                                            splashColor: AppColors.transparent,
+                                            onTap: () {
+                                              //Dialog to confirm delete contact or not
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (ctx) =>
+                                                    ValidationDialog(
+                                                  Message.deleteContact,
+                                                  //Yes button
+                                                  () {
+                                                    Navigator.pop(context);
+                                                    deleteContact(
+                                                        contactItems![index]
+                                                            .id
+                                                            .toString());
+                                                    */ /*setState(() {
+                                                      contactItems!.removeAt(index);
+                                                    });*/ /*
+                                                  },
+                                                  () => Navigator.pop(
+                                                      context), //No button
+                                                ),
+                                              );
+                                            },
+                                            child: Center(
+                                                child: Icon(
+                                              Icons.delete_rounded,
+                                              color: AppColors.redColor,
+                                              size: 14.sp,
+                                            )),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );*/
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return Container(height: 10.sp);
-                      },
+                          );*/
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Container(height: 10.sp);
+                        },
+                      ),
                     ),
                   ),
           );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:nssg/pincode_screen.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:nssg/utils/widgetChange.dart';
@@ -29,10 +30,9 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'National Security System ',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-                primary: AppColors.primaryColor,
-                secondary: AppColors.primaryColor),
-          ),
+              colorScheme: ColorScheme.fromSwatch().copyWith(
+                  primary: AppColors.primaryColor,
+                  secondary: AppColors.primaryColor)),
           home: const CheckingScreen(),
         ),
       );
@@ -77,7 +77,7 @@ class _CheckingScreenState extends State<CheckingScreen> {
     if (preferences.getString(PreferenceString.sessionName) != null) {
       //callNextScreen(context, LoginScreen("isLogin"));
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (c) => LoginScreen("isLogin")),
+          MaterialPageRoute(builder: (c) => const PinCodeScreen()),
           (route) => false);
     } else {
       // callNextScreen(context, LoginScreen("isNotLogin"));

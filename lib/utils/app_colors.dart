@@ -11,6 +11,8 @@ class AppColors {
 
   static Color primaryColor = const Color(0xFF1E5CA4);
   static Color primaryColorLawOpacity = const Color(0xFF1E5CA4).withOpacity(0.10);
+  static Color loaderColor = const Color(0xFF1E5CA4).withOpacity(0.5);
+  static Color primaryColorLawOpacityBack = const Color(0xFFE2E9F1);
   static Color fontColor = const Color(0xFF333333);
   static Color redColor = const Color(0xFFA41E1E);
 
