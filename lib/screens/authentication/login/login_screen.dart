@@ -172,8 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       onClick: () {
                                         setState(() {
                                           widget.isLogin = "isNotLogin";
-                                          preferences.removeKeyFromPreference(
-                                              PreferenceString.sessionName);
+                                          preferences.removeKeyFromPreference(PreferenceString.sessionName);
                                         });
                                       })
                                   : CustomButton(

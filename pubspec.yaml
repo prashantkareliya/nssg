@@ -47,6 +47,7 @@ dependencies:
   accordion: ^2.0.1
   flutter_svg: ^1.1.6
   passcode_screen: ^2.0.1
+  page_transition: ^2.0.9
 
   #Animation
   flutter_staggered_animations: ^1.1.1

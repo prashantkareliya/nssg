@@ -25,4 +25,7 @@ extension ExtString on String {
     return phoneRegExp.hasMatch(this);
   }
 
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
 }

@@ -117,57 +117,60 @@ class _QuoteScreenState extends State<QuoteScreen> {
                         color: AppColors.blackColor)),
                 SizedBox(width: 5.w),
                 Expanded(
-                  child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          searchKey = value;
-                          searchItemList = [];
-                          for (var element in quoteItems!) {
-                            if (element.subject!
-                                .toLowerCase()
-                                .contains(searchKey)) {
-                              searchItemList!.add(element);
-                            } else if (element.quotesCompany!
-                                .toLowerCase()
-                                .contains(searchKey)) {
-                              searchItemList!.add(element);
-                            } else if (element.shipStreet!
-                                .toLowerCase()
-                                .contains(searchKey)) {
-                              searchItemList!.add(element);
-                            } else if (element.shipCode!
-                                .toLowerCase()
-                                .contains(searchKey)) {
-                              searchItemList!.add(element);
+                  child: Consumer<WidgetChange>(
+                    builder: (context, updateKey, search){
+                      return TextField(
+                          onChanged: (value) {
+                          Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
+                          searchKey = updateKey.updateSearchText.toString();
+
+                            searchItemList = [];
+                            for (var element in quoteItems!) {
+                              if (element.subject!.toLowerCase().contains(searchKey)) {
+                                searchItemList!.add(element);
+                              } else if (element.quotesCompany!
+                                  .toLowerCase()
+                                  .contains(searchKey)) {
+                                searchItemList!.add(element);
+                              } else if (element.shipStreet!
+                                  .toLowerCase()
+                                  .contains(searchKey)) {
+                                searchItemList!.add(element);
+                              } else if (element.shipCode!
+                                  .toLowerCase()
+                                  .contains(searchKey)) {
+                                searchItemList!.add(element);
+                              }
                             }
-                          }
-                        });
-                      },
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                          hintText: LabelString.lblSearch,
-                          suffixIcon: Container(
-                              decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(5),
-                                      bottomRight: Radius.circular(5))),
-                              child: Icon(Icons.search,
-                                  color: AppColors.whiteColor, size: 15.sp)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(
-                                  width: 2, color: AppColors.primaryColor)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(
-                                  width: 2, color: AppColors.primaryColor)),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(
-                                  width: 2, color: AppColors.primaryColor)),
-                          contentPadding:
-                              EdgeInsets.only(left: 10.sp, top: 0, bottom: 0))),
+                          },
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                              hintText: LabelString.lblSearch,
+                              suffixIcon: Container(
+                                  decoration: BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(5),
+                                          bottomRight: Radius.circular(5))),
+                                  child: Icon(Icons.search,
+                                      color: AppColors.whiteColor, size: 15.sp)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(
+                                      width: 2, color: AppColors.primaryColor)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(
+                                      width: 2, color: AppColors.primaryColor)),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(
+                                      width: 2, color: AppColors.primaryColor)),
+                              contentPadding:
+                              EdgeInsets.only(left: 10.sp, top: 0, bottom: 0)));
+                    },
+
+                  ),
                 ),
               ],
             ),
@@ -219,78 +222,114 @@ class _QuoteScreenState extends State<QuoteScreen> {
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             child: SlideAnimation(
-                                verticalOffset: 50.0,
-                                curve: Curves.decelerate,
-                                child: FadeInAnimation(
+                              verticalOffset: 50.0,
+                              curve: Curves.decelerate,
+                              child: FadeInAnimation(
                                 child: Padding(
-                            padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.sp),
-                              ),
-                              elevation: 3,
-                              child: InkWell(
-                                onTap: () => callNextScreen(
-                                    context, QuoteDetail(quoteItems![index].id)),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: AppColors.whiteColor,
-                                      borderRadius: BorderRadius.circular(12.sp)),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8.sp, horizontal: 15.sp),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 1.0.h),
-                                        Text(
-                                            searchKey.isNotEmpty
-                                                ? searchItemList![index].subject.toString()
-                                                : quoteItems![index].subject.toString(),
-                                            style: CustomTextStyle.labelMediumBoldFontText),
-                                        SizedBox(height: 2.0.h),
-                                        Text(
-                                            searchKey.isNotEmpty
-                                                ? searchItemList![index].quotesCompany.toString()
-                                                : quoteItems![index].quotesCompany.toString(),
-                                            style: CustomTextStyle.labelText),
-                                        SizedBox(height: 0.5.h),
-                                        Text.rich(
-                                          TextSpan(
-                                            text: quoteItems![index].quotesEmail.toString(),
-                                            style: CustomTextStyle.labelText,
+                                  padding: EdgeInsets.only(
+                                      left: 12.sp, right: 12.sp),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12.sp),
+                                    ),
+                                    elevation: 3,
+                                    child: InkWell(
+                                      onTap: () {
+                                        if(searchKey.isNotEmpty){
+                                          callNextScreen(context, QuoteDetail(searchItemList![index].id));
+                                        }else{
+                                          callNextScreen(context, QuoteDetail(quoteItems![index].id));
+                                        }
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: AppColors.whiteColor,
+                                            borderRadius:
+                                                BorderRadius.circular(12.sp)),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.sp,
+                                              horizontal: 15.sp),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              WidgetSpan(
-                                                  child: quoteItems![index].quoteMobileNumber!.isEmpty
-                                                      ? Container()
-                                                      : Padding(
-                                                          padding:
-                                                              EdgeInsets.symmetric(horizontal: 8.sp),
-                                                          child: Container(
-                                                              color: AppColors.hintFontColor,
-                                                              height: 2.0.h, width: 0.5.w))),
-                                              TextSpan(
-                                                  text: quoteItems![index].quoteMobileNumber.toString(),
-                                                  style: CustomTextStyle.labelText)
+                                              SizedBox(height: 1.0.h),
+                                              Text(
+                                                  searchKey.isNotEmpty
+                                                      ? searchItemList![index]
+                                                          .subject
+                                                          .toString()
+                                                      : quoteItems![index]
+                                                          .subject
+                                                          .toString(),
+                                                  style: CustomTextStyle
+                                                      .labelMediumBoldFontText),
+                                              SizedBox(height: 2.0.h),
+                                              Text(
+                                                  searchKey.isNotEmpty
+                                                      ? searchItemList![index]
+                                                          .quotesCompany
+                                                          .toString()
+                                                      : quoteItems![index]
+                                                          .quotesCompany
+                                                          .toString(),
+                                                  style: CustomTextStyle
+                                                      .labelText),
+                                              SizedBox(height: 0.5.h),
+                                              Text.rich(
+                                                TextSpan(
+                                                  text: quoteItems![index]
+                                                      .quotesEmail
+                                                      .toString(),
+                                                  style:
+                                                      CustomTextStyle.labelText,
+                                                  children: [
+                                                    WidgetSpan(
+                                                        child: quoteItems![
+                                                                    index]
+                                                                .quoteMobileNumber!
+                                                                .isEmpty
+                                                            ? Container()
+                                                            : Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal: 8
+                                                                            .sp),
+                                                                child: Container(
+                                                                    color: AppColors
+                                                                        .hintFontColor,
+                                                                    height:
+                                                                        2.0.h,
+                                                                    width: 0.5
+                                                                        .w))),
+                                                    TextSpan(
+                                                        text: quoteItems![index]
+                                                            .quoteMobileNumber
+                                                            .toString(),
+                                                        style: CustomTextStyle
+                                                            .labelText)
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(height: 0.5.h),
+                                              Text(
+                                                  searchKey.isNotEmpty
+                                                      ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
+                                                      : "${quoteItems![index].shipStreet} ${quoteItems![index].shipCode}",
+                                                  style: CustomTextStyle
+                                                      .labelText),
+                                              SizedBox(height: 2.0.h),
                                             ],
                                           ),
                                         ),
-                                        SizedBox(height: 0.5.h),
-                                        Text(
-                                            searchKey.isNotEmpty
-                                                ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
-                                                : "${quoteItems![index].shipStreet} ${quoteItems![index].shipCode}",
-                                            style: CustomTextStyle.labelText),
-                                        SizedBox(height: 2.0.h),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                                ),
                             ),
                           );
                         },
@@ -313,6 +352,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
         },
         child: const Icon(Icons.add));
   }
+
 
   Future<void> getQuote() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -371,29 +411,32 @@ class _QuoteDetailState extends State<QuoteDetail> {
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                  child:Column(
+                  child: Column(
                     children: [
                       SizedBox(height: 2.h),
                       ExpansionTile(
                         iconColor: AppColors.primaryColor,
                         onExpansionChanged: (value) {
-                          Provider.of<WidgetChange>(context, listen: false)
-                              .isExpansionTileFirst(value);
+                          Provider.of<WidgetChange>(context, listen: false).isExpansionTileFirst(value);
                         },
                         textColor: AppColors.blackColor,
                         collapsedBackgroundColor: AppColors.whiteColor,
                         title: Text(LabelString.lblPersonalDetail,
-                            style: Provider.of<WidgetChange>(context, listen: true).isExpansionOne
-                                ? TextStyle(
-                                fontSize: 14.sp,
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold)
-                                : CustomTextStyle.labelBoldFontText),
-                        trailing: SvgPicture.asset(Provider.of<WidgetChange>(context, listen: true).isExpansionOne ?
-                        ImageString.imgAccordion : ImageString.imgAccordionClose),
+                            style:
+                                Provider.of<WidgetChange>(context, listen: true)
+                                        .isExpansionOne
+                                    ? TextStyle(
+                                        fontSize: 14.sp,
+                                        color: AppColors.primaryColor,
+                                        fontWeight: FontWeight.bold)
+                                    : CustomTextStyle.labelBoldFontText),
+                        trailing: SvgPicture.asset(
+                            Provider.of<WidgetChange>(context, listen: true)
+                                    .isExpansionOne
+                                ? ImageString.imgAccordion
+                                : ImageString.imgAccordionClose),
                         backgroundColor: AppColors.whiteColor,
                         children: [buildPersonalDetail(dataQuote)],
-
                       ),
                       SizedBox(height: 2.h),
                       ExpansionTile(
@@ -406,16 +449,20 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           textColor: AppColors.blackColor,
                           collapsedBackgroundColor: AppColors.whiteColor,
                           title: Text(LabelString.lblProductDetail,
-                              style: Provider.of<WidgetChange>(context,listen: true).isExpansionTwo
+                              style: Provider.of<WidgetChange>(context,
+                                          listen: true)
+                                      .isExpansionTwo
                                   ? TextStyle(
-                                  fontSize: 14.sp,
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold)
+                                      fontSize: 14.sp,
+                                      color: AppColors.primaryColor,
+                                      fontWeight: FontWeight.bold)
                                   : CustomTextStyle.labelBoldFontText),
                           backgroundColor: AppColors.whiteColor,
-                          trailing: SvgPicture.asset(Provider.of<WidgetChange>(context, listen: true).isExpansionTwo ?
-                          ImageString.imgAccordion : ImageString.imgAccordionClose),
-
+                          trailing: SvgPicture.asset(
+                              Provider.of<WidgetChange>(context, listen: true)
+                                      .isExpansionTwo
+                                  ? ImageString.imgAccordion
+                                  : ImageString.imgAccordionClose),
                           children: [buildProductDetail(dataQuote, itemList)]),
                       SizedBox(height: 2.h),
                       Container(
@@ -441,10 +488,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   indent: 8.sp),
                               Padding(
                                 padding:
-                                EdgeInsets.symmetric(horizontal: 14.sp),
+                                    EdgeInsets.symmetric(horizontal: 14.sp),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Total Profit",
                                         style: TextStyle(
@@ -458,10 +505,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
                               ),
                               Padding(
                                 padding:
-                                EdgeInsets.symmetric(horizontal: 14.sp),
+                                    EdgeInsets.symmetric(horizontal: 14.sp),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Grand Total",
                                         style: TextStyle(
@@ -495,7 +542,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
     return Container(
       color: AppColors.primaryColorLawOpacityBack,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.sp,horizontal: 5.sp),
+        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
         child: ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -513,7 +560,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(left: 8.sp),
-                          child: Image.asset(ImageString.imgDemo, height: 80.sp),
+                          child:
+                              Image.asset(ImageString.imgDemo, height: 80.sp),
                         ),
                         Expanded(
                           child: Padding(
@@ -548,12 +596,14 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                       elevation: 0,
                                                       insetPadding:
                                                           EdgeInsets.symmetric(
-                                                              horizontal: 12.sp),
-                                                      child: itemDescription(
-                                                          itemList[index]
-                                                              ["prod_name"],
-                                                          itemList[index]
-                                                              ["comment"]));
+                                                              horizontal: 12
+                                                                  .sp),
+                                                      child:
+                                                          itemDescription(
+                                                              itemList[index]
+                                                                  ["prod_name"],
+                                                              itemList[index]
+                                                                  ["comment"]));
                                                 },
                                               );
                                             },
@@ -598,7 +648,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                 //(listPrice-costPrice)*quantity
                                 ContactTileField(
                                     LabelString.lblProfit,
-                                    ((double.parse(itemList[index]["listprice"]) -
+                                    ((double.parse(itemList[index]
+                                                    ["listprice"]) -
                                                 double.parse(itemList[index]
                                                     ["costprice"])) *
                                             double.parse(
@@ -700,7 +751,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
             QuoteTileField(
                 LabelString.lblPremisesType, dataQuote["premises_type"]),
             QuoteTileField(LabelString.lblSystemType, dataQuote["system_type"]),
-            QuoteTileField(LabelString.lblGradeNumber, dataQuote["grade_number"]),
+            QuoteTileField(
+                LabelString.lblGradeNumber, dataQuote["grade_number"]),
             QuoteTileField(
                 LabelString.lblSignallingType, dataQuote["signalling_type"]),
             QuoteTileField(

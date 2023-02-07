@@ -21,6 +21,9 @@ class WidgetChange extends ChangeNotifier {
 
   var count = 1;
 
+  String? updateContactId;
+  String? updateSearchText;
+
   int get getCounter => count;
 
   //list for dropdown
@@ -51,51 +54,61 @@ class WidgetChange extends ChangeNotifier {
     notifyListeners();
   }
 
+  //select hours or day
   void isSelectTime() {
     isSetTime = !isSetTime;
     notifyListeners();
   }
 
+  //For premises type radio button
   void isSelectPremisesType() {
     isSetPremises = !isSetPremises;
     notifyListeners();
   }
 
+  //For select numbers of engineer
   void isSelectEngineers() {
     isSetEngineer = !isSetEngineer;
     notifyListeners();
   }
 
+  //For select system type
   void isSelectSystemType() {
     isSetSystem = !isSetSystem;
     notifyListeners();
   }
 
+  //For select Grade
   void isSelectGrade() {
     isSetGrade = !isSetGrade;
     notifyListeners();
   }
 
+  //For select Signalling type
   void isSelectSignallingType() {
     isSetSignallingType = !isSetSignallingType;
     notifyListeners();
   }
 
+  //For select payment type, deposit or not
   void isSelectQuotePayment() {
     isQuotePayment = !isQuotePayment;
     notifyListeners();
   }
 
+  //For select terms
   void isSelectTerms() {
     isTerms = !isTerms;
     notifyListeners();
   }
 
+  //For select Manufacture Type
   void isManufacture() {
     isSelectManufacture = !isSelectManufacture;
     notifyListeners();
   }
 
+  //For select system type
   void isSystemTypeItemDetail() {
     isSelectSystemTypeItemDetail = !isSelectSystemTypeItemDetail;
     notifyListeners();
@@ -111,23 +124,39 @@ class WidgetChange extends ChangeNotifier {
     notifyListeners();
   }
 
+  //add item
   void incrementCounter() {
     count += 1;
     notifyListeners();
   }
 
+  //remove item
   void decrementCounter() {
     count -= 1;
     notifyListeners();
   }
 
-  void isExpansionTileFirst(bool value){
+  //For quote detail's accordion design
+  void isExpansionTileFirst(bool value) {
     isExpansionOne = value;
     notifyListeners();
   }
 
-  void isExpansionTileSecond(bool value){
+  //For quote detail's accordion design
+  void isExpansionTileSecond(bool value) {
     isExpansionTwo = value;
+    notifyListeners();
+  }
+
+  //save value in setContactId variable
+  void updateContact(String id) {
+    updateContactId = id;
+    notifyListeners();
+  }
+
+  //For search in contact and quote listing page
+  void updateSearch(String searchKey) {
+    updateSearchText = searchKey;
     notifyListeners();
   }
 }

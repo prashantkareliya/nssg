@@ -44,8 +44,7 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
   deleteContactEvent(
       DeleteContactEvent event, Emitter<GetContactState> emit) async {
     emit(ContactLoadingState(true));
-    final response =
-        await contactRepository.contactDelete(event.queryParameters);
+    final response = await contactRepository.contactDelete(event.queryParameters);
 
     response.when(success: (success) {
       emit(ContactLoadingState(false));

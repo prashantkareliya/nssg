@@ -5,6 +5,7 @@ class ErrorString {
   static const String mandatoryField = "Field can't be empty";
   static const String emailNotValid = "Email address is not valid";
   static const String selectOneContact = "Select at least one contact";
+  static const String deletedItemError = "This item is delete already";
 }
 
 class Message {
@@ -171,6 +172,7 @@ class ImageString {
   static const String imgCart = "assets/images/ic_cart.png";
   static const String imgAccordion = "assets/images/arrow_down.svg";
   static const String imgAccordionClose = "assets/images/arrow_down_close.svg";
+  static const String icContactDetail = "assets/images/ic_contactDetail.svg";
 }
 
 class PreferenceString {

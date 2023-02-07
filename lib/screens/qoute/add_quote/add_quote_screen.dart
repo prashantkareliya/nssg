@@ -854,9 +854,12 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             pageController.animateToPage(4,  duration: const Duration(milliseconds: 500),
                                 curve: Curves.decelerate);
                           } else {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
+                            if(premisesTypeSelect.isNotEmpty){
+                              pageController.nextPage(
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.decelerate);
+                            }
+
                           }
                         },
                         buttonColor: AppColors.primaryColor),

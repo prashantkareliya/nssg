@@ -103,12 +103,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
               controller: pageController,
               onPageChanged: (number) {},
               children: [
+                // manufacturing view
                 buildStepZeroItem(context, query, fieldsData),
-                // category view
-                buildStepOneItem(context, query, fieldsData),
+                // systemType view
+                //buildStepOneItem(context, query, fieldsData),
                 // category view
                 buildStepTwoItem(context, query, fieldsData),
-                //Sub-category view
+                //pruducts view
                 buildStepThreeItem(context, query)
               ],
             );
@@ -233,7 +234,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
   // Design manufacture view
   ///step 2
-  SingleChildScrollView buildStepOneItem(context, Size query, stepTwoData) {
+  /*SingleChildScrollView buildStepOneItem(context, Size query, stepTwoData) {
     Provider.of<WidgetChange>(context, listen: false)
         .isSelectSystemTypeItemDetail;
     return SingleChildScrollView(
@@ -341,7 +342,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
         ],
       ),
     );
-  }
+  }*/
 
   // Design system type view
   ///step 3
@@ -707,7 +708,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               insetPadding:
                                               EdgeInsets.symmetric(
                                                   horizontal: 12.sp),
-                                              child: SelectLocation());
+                                              child: SelectLocation(1));
                                         },
                                       );
                                     },
