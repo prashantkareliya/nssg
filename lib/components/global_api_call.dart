@@ -38,3 +38,34 @@ Future<dynamic> getContactDetail(contactId) async {
   debugPrint("getContactDetailApi --- $response");
   return response;
 }
+
+Future<dynamic> getItemFields(String? systemType, String mfg) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  if(mfg == 'noMfg'){
+    Map<String, dynamic> queryParameters = {
+      'operation': 'describe',
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'elementType': "Products",
+      'appversion': Constants.of().appversion,
+      'systemtype': systemType.toString(),
+    };
+    final response = await HttpActions().getMethod(ApiEndPoint.getItemDetailListApi, queryParams: queryParameters);
+    debugPrint("getItemDetailsAPI --- $response");
+    return response;
+  }else{
+    Map<String, dynamic> queryParameters = {
+      'operation': 'describe',
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'elementType': "Products",
+      'appversion': Constants.of().appversion,
+      'systemtype': systemType.toString(),
+      'manufacturer': mfg.toString()
+    };
+    final response = await HttpActions().getMethod(ApiEndPoint.getItemDetailListApi, queryParams: queryParameters);
+    debugPrint("getItemDetailsAPI --- $response");
+    return response;
+  }
+
+
+}

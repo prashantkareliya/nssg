@@ -51,6 +51,7 @@ class ApiEndPoint {
   static const String getContactListApi = "webservice.php";
   static const String getQuoteListApi = "webservice.php";
   static const String getProductListApi = "webservice.php";
+  static const String getItemDetailListApi = "webservice.php";
 }
 
 //class for image/icon base url

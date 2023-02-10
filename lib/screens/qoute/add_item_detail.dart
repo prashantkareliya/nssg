@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/custom_appbar.dart';
@@ -25,7 +26,9 @@ import 'item_detail.dart';
 
 ///Class for add item detail
 class AddItemDetail extends StatefulWidget {
-  AddItemDetail({Key? key}) : super(key: key);
+  String? systemTypeSelect;
+
+  AddItemDetail(this.systemTypeSelect, {Key? key}) : super(key: key);
 
   @override
   State<AddItemDetail> createState() => _AddItemDetailState();
@@ -33,7 +36,7 @@ class AddItemDetail extends StatefulWidget {
 
 class _AddItemDetailState extends State<AddItemDetail> {
   PageController pageController = PageController();
-  Future<dynamic>? getItemFields;
+  Future<dynamic>? getItemDetailFields;
 
   List<Result>? productItems = [];
   List<Result>? filterList = [];
@@ -58,7 +61,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
   List<RadioModel> categoryType = <RadioModel>[]; //step 3
 
   GetProductBloc productBloc =
-  GetProductBloc(ProductRepository(productDatasource: ProductDatasource()));
+      GetProductBloc(ProductRepository(productDatasource: ProductDatasource()));
   bool isLoading = false;
 
   Future<void> getProduct() async {
@@ -67,7 +70,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
     Map<String, dynamic> queryParameters = {
       'operation': "query",
       'sessionName':
-      preferences.getString(PreferenceString.sessionName).toString(),
+          preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyProduct
     };
     productBloc.add(GetProductListEvent(queryParameters));
@@ -76,7 +79,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
-    getItemFields = getQuoteFields("Products");
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: BaseAppBar(
@@ -91,8 +93,29 @@ class _AddItemDetailState extends State<AddItemDetail> {
         ),
         titleTextStyle: CustomTextStyle.labelBoldFontText,
       ),
-      body: FutureBuilder<dynamic>(
-        future: getItemFields,
+      body: PageView(
+        scrollDirection: Axis.horizontal,
+        pageSnapping: true,
+        physics: const BouncingScrollPhysics(),
+        controller: pageController,
+        onPageChanged: (number) {},
+        children: [
+          // manufacturing view
+          buildStepZeroItem(context, query),
+
+          // systemType view
+          //buildStepOneItem(context, query, fieldsData),
+
+          // category view
+          buildStepTwoItem(context, query),
+
+          //products view
+          buildStepThreeItem(context, query)
+        ],
+      )
+
+      /*FutureBuilder<dynamic>(
+        future: getItemDetailFields,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var fieldsData = snapshot.data["result"];
@@ -105,12 +128,15 @@ class _AddItemDetailState extends State<AddItemDetail> {
               children: [
                 // manufacturing view
                 buildStepZeroItem(context, query, fieldsData),
+
                 // systemType view
                 //buildStepOneItem(context, query, fieldsData),
+
                 // category view
-                buildStepTwoItem(context, query, fieldsData),
-                //pruducts view
-                buildStepThreeItem(context, query)
+                buildStepTwoItem(context, query),
+
+                //products view
+                //buildStepThreeItem(context, query)
               ],
             );
           } else if (snapshot.hasError) {
@@ -119,116 +145,128 @@ class _AddItemDetailState extends State<AddItemDetail> {
           }
           return SizedBox(height: 70.h, child: loadingView());
         },
-      ),
+      ),*/
     );
   }
 
   ///step 1
-  buildStepZeroItem(context, Size query, stepOneData) {
-    List dataMfg = stepOneData["manufacturer"];
-    Provider.of<WidgetChange>(context, listen: false).isSelectManufacture;
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.sp),
-          child: Text(LabelString.lblManufacturing,
-              style: CustomTextStyle.labelBoldFontText),
-        ),
-        Wrap(
-          spacing: 15.sp,
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.center,
-          runSpacing: 14.sp,
-          children: List.generate(
-            dataMfg.getRange(20, 22).toList().length,
-                (index) {
-              manufacturingType.add(RadioModel(
-                  false, dataMfg.getRange(20, 22).toList()[index]["label"]));
-              return InkWell(
-                onTap: () {
-                  for (var element in manufacturingType) {
-                    element.isSelected = false;
-                  }
+  buildStepZeroItem(context, Size query) {
+    Provider.of<WidgetChange>(context).isSelectManufacture;
+    return FutureBuilder<dynamic>(
+      future: getItemFields(
+          widget.systemTypeSelect == "Intruder & Hold Up Alarm: PD6662:2017"
+              ? widget.systemTypeSelect.toString().replaceAll("&", "%26")
+              : widget.systemTypeSelect.toString().replaceAll("+", " "),
+          ""),
+      builder: (context, snapshotOne){
+        if(snapshotOne.hasData){
+          var fieldsData = snapshotOne.data["result"];
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.sp),
+                  child: Text(LabelString.lblManufacturing,
+                      style: CustomTextStyle.labelBoldFontText),
+                ),
+                Wrap(
+                  spacing: 15.sp,
+                  direction: Axis.horizontal,
+                  alignment: WrapAlignment.center,
+                  runSpacing: 14.sp,
+                  children: List.generate(
+                    fieldsData["manufacturer"].length,
+                        (index) {
+                      manufacturingType
+                          .add(RadioModel(false, fieldsData["manufacturer"][index]["label"]));
+                      return InkWell(
+                        onTap: () {
+                          for (var element in manufacturingType) {
+                            element.isSelected = false;
+                          }
 
-                  Provider.of<WidgetChange>(context, listen: false)
-                      .isManufacture();
-                  manufacturingType[index].isSelected = true;
+                          Provider.of<WidgetChange>(context, listen: false)
+                              .isManufacture();
+                          manufacturingType[index].isSelected = true;
 
-                  if (manufactureSelect.isEmpty) {
-                    manufactureSelect =
-                    dataMfg.getRange(20, 22).toList()[index]["label"];
-                  } else {
-                    manufactureSelect = "";
-                    manufactureSelect =
-                    dataMfg.getRange(20, 22).toList()[index]["label"];
-                  }
-
-                  if (manufacturingType.isNotEmpty) {
-                    pageController.nextPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.decelerate);
-                  }
-                },
-                child: Container(
-                  height: 15.h,
-                  width: query.width / 1.13,
-                  decoration: BoxDecoration(
-                      color: manufacturingType[index].isSelected
-                          ? AppColors.primaryColorLawOpacity
-                          : AppColors.whiteColor,
-                      border: Border.all(
-                          color: manufacturingType[index].isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.borderColor,
-                          width: 1),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgExtension(
-                                iconColor: manufacturingType[index].isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.blackColor,
-                                itemName: dataMfg
-                                    .getRange(20, 22)
-                                    .toList()[index]["label"]),
-                            SizedBox(height: 1.h),
-                            Text(
-                                dataMfg.getRange(20, 22).toList()[index]
-                                ["label"],
-                                style: manufacturingType[index].isSelected
-                                    ? CustomTextStyle.commonTextBlue
-                                    : CustomTextStyle.commonText)
-                          ]),
-                      Visibility(
-                        visible:
-                        manufacturingType[index].isSelected ? true : false,
-                        child: Positioned(
-                          right: 10,
-                          top: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(80.0),
-                                color: AppColors.greenColor),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Icon(Icons.done,
-                                  color: AppColors.whiteColor, size: 14.sp),
-                            ),
+                          if (manufactureSelect.isEmpty) {
+                            manufactureSelect = fieldsData["manufacturer"][index]["label"];
+                          } else {
+                            manufactureSelect = "";
+                            manufactureSelect = fieldsData["manufacturer"][index]["label"];
+                          }
+                          pageController.nextPage(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.decelerate);
+                        },
+                        child: Container(
+                          height: 15.h,
+                          width: query.width / 1.13,
+                          decoration: BoxDecoration(
+                              color: manufacturingType[index].isSelected
+                                  ? AppColors.primaryColorLawOpacity
+                                  : AppColors.whiteColor,
+                              border: Border.all(
+                                  color: manufacturingType[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.borderColor,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgExtension(
+                                        iconColor: manufacturingType[index].isSelected
+                                            ? AppColors.primaryColor
+                                            : AppColors.blackColor,
+                                        itemName: fieldsData["manufacturer"][index]["label"].toString()),
+                                    SizedBox(height: 1.h),
+                                    Text(fieldsData["manufacturer"][index]["label"],
+                                        style: manufacturingType[index].isSelected
+                                            ? CustomTextStyle.commonTextBlue
+                                            : CustomTextStyle.commonText)
+                                  ]),
+                              Visibility(
+                                visible: manufacturingType[index].isSelected
+                                    ? true
+                                    : false,
+                                child: Positioned(
+                                  right: 10,
+                                  top: 5,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(80.0),
+                                        color: AppColors.greenColor),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Icon(Icons.done,
+                                          color: AppColors.whiteColor, size: 14.sp),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                      )
-                    ],
+                      );
+                    },
                   ),
                 ),
-              );
-            },
-          ),
-        ),
-      ],
+              ],
+            ),
+          );
+        }else if (snapshotOne.hasError) {
+          final message = HandleAPI.handleAPIError(snapshotOne.error);
+          return Text(message);
+        }
+        return SizedBox(height: 70.h, child: loadingView());
+      },
+
+
     );
   }
 
@@ -346,109 +384,124 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
   // Design system type view
   ///step 3
-  SingleChildScrollView buildStepTwoItem(context, Size query, stepThreeData) {
+  FutureBuilder buildStepTwoItem(context, Size query) {
     Provider.of<WidgetChange>(context).isSelectCategoryItemDetail;
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.sp),
-            child: Text(LabelString.lblCategory,
-                style: CustomTextStyle.labelBoldFontText),
-          ),
-          Wrap(
-            spacing: 15.sp,
-            direction: Axis.horizontal,
-            alignment: WrapAlignment.center,
-            runSpacing: 15.sp,
-            children: List.generate(
-              stepThreeData["sub_category"].length,
-                  (index) {
-                categoryType.add(RadioModel(
-                    false, stepThreeData["sub_category"][index]["label"]));
+    return FutureBuilder(
+      future: getItemFields(
+          widget.systemTypeSelect == "Intruder & Hold Up Alarm: PD6662:2017"
+              ? widget.systemTypeSelect.toString().replaceAll("&", "%26")
+              : widget.systemTypeSelect.toString().replaceAll("+", " "),
+          manufactureSelect),
+        builder: (context, snapshot){
+        if(snapshot.hasData){
+          var stepThreeData = snapshot.data["result"];
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.sp),
+                  child: Text(LabelString.lblCategory,
+                      style: CustomTextStyle.labelBoldFontText),
+                ),
+                Wrap(
+                  spacing: 15.sp,
+                  direction: Axis.horizontal,
+                  alignment: WrapAlignment.center,
+                  runSpacing: 15.sp,
+                  children: List.generate(stepThreeData["sub_category"].length,
+                        (index) {categoryType.add(RadioModel(false, stepThreeData["sub_category"][index]["label"]));
 
-                return InkWell(
-                  onTap: () {
-                    for (var element in categoryType) {
-                      element.isSelected = false;
-                    }
+                    return InkWell(
+                      onTap: () {
+                        for (var element in categoryType) {
+                          element.isSelected = false;
+                        }
 
-                    Provider.of<WidgetChange>(context, listen: false).isCategoryItemDetail();
-                    categoryType[index].isSelected = true;
+                        Provider.of<WidgetChange>(context, listen: false)
+                            .isCategoryItemDetail();
+                        categoryType[index].isSelected = true;
 
-                    filterList!.clear();
-                    if (categorySelect.isEmpty) {
-                      categorySelect =
-                      stepThreeData["sub_category"][index]["label"];
-                    } else {
-                      categorySelect = "";
-                      categorySelect =
-                      stepThreeData["sub_category"][index]["label"];
-                    }
+                        filterList!.clear();
+                        if (categorySelect.isEmpty) {
+                        categorySelect =
+                        stepThreeData["sub_category"][index]["label"];
+                      } else {
+                        categorySelect = "";
+                        categorySelect =
+                        stepThreeData["sub_category"][index]["label"];
+                      }
 
-                    if (categoryType.isNotEmpty) {
-                      pageController.nextPage(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.decelerate);
-                    }
-                  },
-                  child: Container(
-                    height: 15.h,
-                    width: query.width / 1.13,
-                    decoration: BoxDecoration(
-                        color: categoryType[index].isSelected
-                            ? AppColors.primaryColorLawOpacity
-                            : AppColors.whiteColor,
-                        border: Border.all(
+                        if (categoryType.isNotEmpty) {
+                          pageController.nextPage(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.decelerate);
+                        }
+                      },
+                      child: Container(
+                        height: 15.h,
+                        width: query.width / 1.13,
+                        decoration: BoxDecoration(
                             color: categoryType[index].isSelected
-                                ? AppColors.primaryColor
-                                : AppColors.borderColor,
-                            width: 1),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgExtension(
-                                  iconColor: categoryType[index].isSelected
-                                      ? AppColors.primaryColor
-                                      : AppColors.blackColor,
-                                  itemName: categoryType[index].buttonText),
-                              SizedBox(height: 1.h),
-                              Text(categoryType[index].buttonText,
-                                  style: categoryType[index].isSelected
-                                      ? CustomTextStyle.commonTextBlue
-                                      : CustomTextStyle.commonText)
-                            ]),
-                        Visibility(
-                          visible:
-                          categoryType[index].isSelected ? true : false,
-                          child: Positioned(
-                            right: 10,
-                            top: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(80.0),
-                                  color: AppColors.greenColor),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Icon(Icons.done,
-                                    color: AppColors.whiteColor, size: 14.sp),
+                                ? AppColors.primaryColorLawOpacity
+                                : AppColors.whiteColor,
+                            border: Border.all(
+                                color: categoryType[index].isSelected
+                                    ? AppColors.primaryColor
+                                    : AppColors.borderColor,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgExtension(
+                                      iconColor: categoryType[index].isSelected
+                                          ? AppColors.primaryColor
+                                          : AppColors.blackColor,
+                                      itemName: categoryType[index].buttonText),
+                                  SizedBox(height: 1.h),
+                                  Text(categoryType[index].buttonText,
+                                      style: categoryType[index].isSelected
+                                          ? CustomTextStyle.commonTextBlue
+                                          : CustomTextStyle.commonText)
+                                ]),
+                            Visibility(
+                              visible:
+                              categoryType[index].isSelected ? true : false,
+                              child: Positioned(
+                                right: 10,
+                                top: 5,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(80.0),
+                                      color: AppColors.greenColor),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(Icons.done,
+                                        color: AppColors.whiteColor, size: 14.sp),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
+          );
+        }else if (snapshot.hasError) {
+          final message = HandleAPI.handleAPIError(snapshot.error);
+          return Text(message);
+        }
+        return SizedBox(height: 70.h, child: loadingView());
+        }
+
     );
   }
 
@@ -473,11 +526,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
             productItems = state.productList;
             filterList!.clear();
             for (var element in productItems!) {
-                if (element.manufacturer!.contains(manufactureSelect) &&
-                    element.productcategory!.contains(systemTypeItemProductSelect) &&
-                    element.subCategory!.contains(categorySelect)) {
-                  filterList!.add(element);
-                }
+              if (element.manufacturer!.contains(manufactureSelect) &&
+                  widget.systemTypeSelect!.contains(systemTypeItemProductSelect) &&
+                  element.subCategory!.contains(categorySelect)) {
+                filterList!.add(element);
+              }
               //filterList!.add(element);
             }
           }
@@ -500,7 +553,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.sp),
                         border:
-                        Border.all(color: AppColors.borderColor, width: 1),
+                            Border.all(color: AppColors.borderColor, width: 1),
                         color: AppColors.whiteColor),
                     child: Column(
                       children: [
@@ -519,19 +572,22 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Flexible(
                                             flex: 4,
                                             child: Text(
                                                 filterList![index].productname.toString(),
-                                                style: CustomTextStyle.labelBoldFontText)),
+                                                style: CustomTextStyle
+                                                    .labelBoldFontText)),
                                         Flexible(
                                             flex: 1,
                                             child: IconButton(
-                                              splashColor: AppColors.transparent,
-                                              highlightColor: AppColors.transparent,
+                                              splashColor:
+                                                  AppColors.transparent,
+                                              highlightColor:
+                                                  AppColors.transparent,
                                               onPressed: () {
                                                 showDialog(
                                                   context: context,
@@ -539,29 +595,34 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                     return Dialog(
                                                         shape: RoundedRectangleBorder(
                                                             borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                10)),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
                                                         elevation: 0,
                                                         insetPadding: EdgeInsets
                                                             .symmetric(
-                                                            horizontal:
-                                                            12.sp),
-                                                        child: itemDescription(filterList![index].productname.toString(),
-                                                            filterList![index].description.toString()));
+                                                                horizontal:
+                                                                    12.sp),
+                                                        child: itemDescription(
+                                                            filterList![index]
+                                                                .productname
+                                                                .toString(),
+                                                            filterList![index]
+                                                                .description
+                                                                .toString()));
                                                   },
                                                 );
                                               },
                                               icon: Icon(Icons.info_outline,
                                                   color:
-                                                  AppColors.primaryColor),
+                                                      AppColors.primaryColor),
                                             ))
                                       ],
                                     ),
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblCostPrice,
                                             style: CustomTextStyle.commonText),
@@ -573,7 +634,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblSellingPrice,
                                             style: CustomTextStyle.commonText),
@@ -584,7 +645,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               border: Border.all(
                                                   width: 1,
                                                   color:
-                                                  AppColors.primaryColor),
+                                                      AppColors.primaryColor),
                                               color: AppColors.whiteColor,
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5.sp))),
@@ -594,12 +655,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   3.sp, 0, 3.sp, 0),
                                               child: TextField(
                                                 controller:
-                                                sellingPriceController,
+                                                    sellingPriceController,
                                                 keyboardType:
-                                                TextInputType.number,
+                                                    TextInputType.number,
                                                 decoration: InputDecoration.collapsed(
                                                     hintText:
-                                                    "£${filterList![index].unitPrice.toString().substring(0, 5)}",
+                                                        "£${filterList![index].unitPrice.toString().substring(0, 5)}",
                                                     hintStyle: CustomTextStyle
                                                         .labelFontHintText),
                                                 textAlign: TextAlign.right,
@@ -612,7 +673,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblDiscPrice,
                                             style: CustomTextStyle.commonText),
@@ -623,7 +684,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               border: Border.all(
                                                   width: 1,
                                                   color:
-                                                  AppColors.primaryColor),
+                                                      AppColors.primaryColor),
                                               color: AppColors.whiteColor,
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5.sp))),
@@ -633,14 +694,14 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   3.sp, 0, 3.sp, 0),
                                               child: TextField(
                                                 controller:
-                                                discountPriceController,
+                                                    discountPriceController,
                                                 keyboardType:
-                                                TextInputType.number,
+                                                    TextInputType.number,
                                                 decoration:
-                                                InputDecoration.collapsed(
-                                                    hintText: "£29.50",
-                                                    hintStyle: CustomTextStyle
-                                                        .labelFontHintText),
+                                                    InputDecoration.collapsed(
+                                                        hintText: "£29.50",
+                                                        hintStyle: CustomTextStyle
+                                                            .labelFontHintText),
                                                 textAlign: TextAlign.right,
                                               ),
                                             ),
@@ -651,7 +712,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblAmount,
                                             style: CustomTextStyle.commonText),
@@ -663,7 +724,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblProfit,
                                             style: CustomTextStyle.commonText),
@@ -685,7 +746,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               padding: EdgeInsets.symmetric(horizontal: 13.sp),
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextButton(
                                     onPressed: () {},
@@ -702,13 +763,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           return Dialog(
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      10)),
+                                                      BorderRadius.circular(
+                                                          10)),
                                               elevation: 0,
                                               insetPadding:
-                                              EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: SelectLocation(1));
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 12.sp),
+                                              child: SelectLocation(filterList![index].quantity));
                                         },
                                       );
                                     },
@@ -723,7 +784,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   horizontal: 8.sp, vertical: 3.sp),
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Container(
@@ -731,7 +792,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       height: query.height * 0.06,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(10.sp),
+                                              BorderRadius.circular(10.sp),
                                           border: Border.all(
                                               width: 1,
                                               color: AppColors.primaryColor)),
@@ -740,18 +801,26 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             horizontal: 0.sp),
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                              MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Expanded(
                                               child: IconButton(
                                                   onPressed: () {
                                                     if (filterList![index].quantity! >= 2) {
-                                                      Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                                                      filterList![index].quantity = filterList![index].quantity! - 1;
+                                                      Provider.of<WidgetChange>(
+                                                              context,
+                                                              listen: false)
+                                                          .incrementCounter();
+                                                      filterList![index]
+                                                              .quantity =
+                                                          filterList![index]
+                                                                  .quantity! -
+                                                              1;
                                                     }
                                                   },
                                                   icon: Icon(Icons.remove,
-                                                      color: AppColors.blackColor,
+                                                      color:
+                                                          AppColors.blackColor,
                                                       size: 15.sp)),
                                             ),
                                             Container(
@@ -772,11 +841,19 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             Expanded(
                                               child: IconButton(
                                                   onPressed: () {
-                                                    Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                                                    filterList![index].quantity = filterList![index].quantity! + 1;
+                                                    Provider.of<WidgetChange>(
+                                                            context,
+                                                            listen: false)
+                                                        .incrementCounter();
+                                                    filterList![index]
+                                                            .quantity =
+                                                        filterList![index]
+                                                                .quantity! +
+                                                            1;
                                                   },
                                                   icon: Icon(Icons.add,
-                                                      color: AppColors.blackColor,
+                                                      color:
+                                                          AppColors.blackColor,
                                                       size: 15.sp)),
                                             ),
                                           ],
@@ -791,7 +868,21 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       child: CustomButton(
                                           title: "Add to Cart",
                                           buttonColor: AppColors.primaryColor,
-                                          onClick: () {}),
+                                          onClick: () {
+                                             products.add({
+                                               "itemName" : filterList![index].productname.toString(),
+                                               "costPrice" : filterList![index].costPrice.toString(),
+                                               "sellingPrice" : sellingPriceController.text.isEmpty ? filterList![index].unitPrice : sellingPriceController.text,
+                                               "discountPrice" : discountPriceController.text.toString(),
+                                               "amountPrice" : filterList![index].unitPrice.toString(),
+                                               "profit" : "29.50",
+
+                                             } );
+
+                                             print("%%%%%%%%%%%%%%%%%%%%%%%%%  ${jsonEncode(products)}");
+
+                                            }
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -834,13 +925,14 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     splashColor: AppColors.transparent,
                     onPressed: () => Navigator.pop(context),
                     icon:
-                    Icon(Icons.close_rounded, color: AppColors.blackColor)),
+                        Icon(Icons.close_rounded, color: AppColors.blackColor)),
               ],
             ),
             SizedBox(height: 2.h),
             Text(productName, style: CustomTextStyle.labelBoldFontText),
             SizedBox(height: 3.h),
-            Text(description == "" ? LabelString.lblNoData : description, style: CustomTextStyle.labelText),
+            Text(description == "" ? LabelString.lblNoData : description,
+                style: CustomTextStyle.labelText),
           ],
         ),
       ),

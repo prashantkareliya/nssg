@@ -1539,7 +1539,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           //update button
                           title: ButtonString.btnNext,
                           onClick: () =>
-                              callNextScreen(context, BuildItemDetail(eAmount)),
+                              callNextScreen(context, BuildItemDetail(eAmount, systemTypeSelect)),
                           buttonColor: AppColors.primaryColor))
                 ],
               ),
