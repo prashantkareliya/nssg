@@ -29,6 +29,7 @@ class UpdatedContactData extends AddContactState{
   UpdatedContactData({this.updateContactDetail});
 }
 
+// ignore: must_be_immutable
 class GetContactData extends AddContactState{
   var contactData;
 

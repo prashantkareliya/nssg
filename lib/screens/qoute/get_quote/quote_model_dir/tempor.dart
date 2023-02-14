@@ -7,14 +7,14 @@ class AddQuoteFields {
   AddQuoteFields.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     result =
-        json['result'] != null ? new Result.fromJson(json['result']) : null;
+        json['result'] != null ? Result.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.result != null) {
-      data['result'] = this.result!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    if (result != null) {
+      data['result'] = result!.toJson();
     }
     return data;
   }
@@ -54,131 +54,131 @@ class Result {
     if (json['quotestage'] != null) {
       quotestage = <Quotestage>[];
       json['quotestage'].forEach((v) {
-        quotestage!.add(new Quotestage.fromJson(v));
+        quotestage!.add(Quotestage.fromJson(v));
       });
     }
     if (json['hdnTaxType'] != null) {
       hdnTaxType = <HdnTaxType>[];
       json['hdnTaxType'].forEach((v) {
-        hdnTaxType!.add(new HdnTaxType.fromJson(v));
+        hdnTaxType!.add(HdnTaxType.fromJson(v));
       });
     }
     if (json['quotes_terms'] != null) {
       quotesTerms = <QuotesTerms>[];
       json['quotes_terms'].forEach((v) {
-        quotesTerms!.add(new QuotesTerms.fromJson(v));
+        quotesTerms!.add(QuotesTerms.fromJson(v));
       });
     }
     if (json['grade_number'] != null) {
       gradeNumber = <GradeNumber>[];
       json['grade_number'].forEach((v) {
-        gradeNumber!.add(new GradeNumber.fromJson(v));
+        gradeNumber!.add(GradeNumber.fromJson(v));
       });
     }
     if (json['system_type'] != null) {
       systemType = <SystemType>[];
       json['system_type'].forEach((v) {
-        systemType!.add(new SystemType.fromJson(v));
+        systemType!.add(SystemType.fromJson(v));
       });
     }
     if (json['signalling_type'] != null) {
       signallingType = <SignallingType>[];
       json['signalling_type'].forEach((v) {
-        signallingType!.add(new SignallingType.fromJson(v));
+        signallingType!.add(SignallingType.fromJson(v));
       });
     }
     if (json['premises_type'] != null) {
       premisesType = <PremisesType>[];
       json['premises_type'].forEach((v) {
-        premisesType!.add(new PremisesType.fromJson(v));
+        premisesType!.add(PremisesType.fromJson(v));
       });
     }
     if (json['quotes_payment'] != null) {
       quotesPayment = <QuotesPayment>[];
       json['quotes_payment'].forEach((v) {
-        quotesPayment!.add(new QuotesPayment.fromJson(v));
+        quotesPayment!.add(QuotesPayment.fromJson(v));
       });
     }
     if (json['quote_quote_type'] != null) {
       quoteQuoteType = <QuoteQuoteType>[];
       json['quote_quote_type'].forEach((v) {
-        quoteQuoteType!.add(new QuoteQuoteType.fromJson(v));
+        quoteQuoteType!.add(QuoteQuoteType.fromJson(v));
       });
     }
     if (json['quote_priority_level'] != null) {
       quotePriorityLevel = <QuotePriorityLevel>[];
       json['quote_priority_level'].forEach((v) {
-        quotePriorityLevel!.add(new QuotePriorityLevel.fromJson(v));
+        quotePriorityLevel!.add(QuotePriorityLevel.fromJson(v));
       });
     }
     if (json['quote_works_schedule'] != null) {
       quoteWorksSchedule = <QuoteWorksSchedule>[];
       json['quote_works_schedule'].forEach((v) {
-        quoteWorksSchedule!.add(new QuoteWorksSchedule.fromJson(v));
+        quoteWorksSchedule!.add(QuoteWorksSchedule.fromJson(v));
       });
     }
     if (json['quote_no_of_engineer'] != null) {
       quoteNoOfEngineer = <QuoteNoOfEngineer>[];
       json['quote_no_of_engineer'].forEach((v) {
-        quoteNoOfEngineer!.add(new QuoteNoOfEngineer.fromJson(v));
+        quoteNoOfEngineer!.add(QuoteNoOfEngineer.fromJson(v));
       });
     }
     if (json['quote_req_to_complete_work'] != null) {
       quoteReqToCompleteWork = <QuoteReqToCompleteWork>[];
       json['quote_req_to_complete_work'].forEach((v) {
-        quoteReqToCompleteWork!.add(new QuoteReqToCompleteWork.fromJson(v));
+        quoteReqToCompleteWork!.add(QuoteReqToCompleteWork.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.quotestage != null) {
-      data['quotestage'] = this.quotestage!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (quotestage != null) {
+      data['quotestage'] = quotestage!.map((v) => v.toJson()).toList();
     }
-    if (this.hdnTaxType != null) {
-      data['hdnTaxType'] = this.hdnTaxType!.map((v) => v.toJson()).toList();
+    if (hdnTaxType != null) {
+      data['hdnTaxType'] = hdnTaxType!.map((v) => v.toJson()).toList();
     }
-    if (this.quotesTerms != null) {
-      data['quotes_terms'] = this.quotesTerms!.map((v) => v.toJson()).toList();
+    if (quotesTerms != null) {
+      data['quotes_terms'] = quotesTerms!.map((v) => v.toJson()).toList();
     }
-    if (this.gradeNumber != null) {
-      data['grade_number'] = this.gradeNumber!.map((v) => v.toJson()).toList();
+    if (gradeNumber != null) {
+      data['grade_number'] = gradeNumber!.map((v) => v.toJson()).toList();
     }
-    if (this.systemType != null) {
-      data['system_type'] = this.systemType!.map((v) => v.toJson()).toList();
+    if (systemType != null) {
+      data['system_type'] = systemType!.map((v) => v.toJson()).toList();
     }
-    if (this.signallingType != null) {
+    if (signallingType != null) {
       data['signalling_type'] =
-          this.signallingType!.map((v) => v.toJson()).toList();
+          signallingType!.map((v) => v.toJson()).toList();
     }
-    if (this.premisesType != null) {
+    if (premisesType != null) {
       data['premises_type'] =
-          this.premisesType!.map((v) => v.toJson()).toList();
+          premisesType!.map((v) => v.toJson()).toList();
     }
-    if (this.quotesPayment != null) {
+    if (quotesPayment != null) {
       data['quotes_payment'] =
-          this.quotesPayment!.map((v) => v.toJson()).toList();
+          quotesPayment!.map((v) => v.toJson()).toList();
     }
-    if (this.quoteQuoteType != null) {
+    if (quoteQuoteType != null) {
       data['quote_quote_type'] =
-          this.quoteQuoteType!.map((v) => v.toJson()).toList();
+          quoteQuoteType!.map((v) => v.toJson()).toList();
     }
-    if (this.quotePriorityLevel != null) {
+    if (quotePriorityLevel != null) {
       data['quote_priority_level'] =
-          this.quotePriorityLevel!.map((v) => v.toJson()).toList();
+          quotePriorityLevel!.map((v) => v.toJson()).toList();
     }
-    if (this.quoteWorksSchedule != null) {
+    if (quoteWorksSchedule != null) {
       data['quote_works_schedule'] =
-          this.quoteWorksSchedule!.map((v) => v.toJson()).toList();
+          quoteWorksSchedule!.map((v) => v.toJson()).toList();
     }
-    if (this.quoteNoOfEngineer != null) {
+    if (quoteNoOfEngineer != null) {
       data['quote_no_of_engineer'] =
-          this.quoteNoOfEngineer!.map((v) => v.toJson()).toList();
+          quoteNoOfEngineer!.map((v) => v.toJson()).toList();
     }
-    if (this.quoteReqToCompleteWork != null) {
+    if (quoteReqToCompleteWork != null) {
       data['quote_req_to_complete_work'] =
-          this.quoteReqToCompleteWork!.map((v) => v.toJson()).toList();
+          quoteReqToCompleteWork!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -196,9 +196,9 @@ class Quotestage {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -215,9 +215,9 @@ class HdnTaxType {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -234,9 +234,9 @@ class QuotesTerms {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -253,9 +253,9 @@ class GradeNumber {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -272,9 +272,9 @@ class SystemType {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -291,9 +291,9 @@ class SignallingType {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -310,9 +310,9 @@ class PremisesType {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -329,9 +329,9 @@ class QuotesPayment {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -348,9 +348,9 @@ class QuoteQuoteType {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -367,9 +367,9 @@ class QuotePriorityLevel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -386,9 +386,9 @@ class QuoteWorksSchedule {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -405,9 +405,9 @@ class QuoteNoOfEngineer {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }
@@ -424,9 +424,9 @@ class QuoteReqToCompleteWork {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['label'] = this.label;
-    data['value'] = this.value;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['label'] = label;
+    data['value'] = value;
     return data;
   }
 }

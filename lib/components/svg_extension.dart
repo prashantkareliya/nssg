@@ -4,8 +4,8 @@ import 'package:nssg/constants/strings.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants/constants.dart';
-import '../utils/widgets.dart';
 
+// ignore: must_be_immutable
 class SvgExtension extends StatelessWidget {
   String? itemName;
   Color? iconColor;

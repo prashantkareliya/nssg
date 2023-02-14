@@ -666,22 +666,20 @@ class ContactDetail extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         SvgPicture.asset(
-                                            ImageString.icContactDetail),
+                                            ImageString.icCompany,height: 2.h, color: AppColors.primaryColor),
                                         SizedBox(width: 2.w),
                                         Expanded(
-                                            child: Text(
-                                                dataContact["contact_company"],
+                                            child: Text(dataContact["contact_company"]=="" ? LabelString.lblCompanyName : dataContact["contact_company"],
                                                 style:
                                                     CustomTextStyle.labelText))
                                       ],
                                     ),
                                     divider(),
                                     Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         SvgPicture.asset(
-                                            ImageString.icContactDetail),
+                                            ImageString.icPhone,height: 2.h, color: AppColors.primaryColor),
                                         SizedBox(width: 2.w),
                                         Expanded(
                                           child: RichText(
@@ -709,11 +707,9 @@ class ContactDetail extends StatelessWidget {
                                     ),
                                     divider(),
                                     Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        SvgPicture.asset(
-                                            ImageString.icContactDetail),
+                                        Icon(Icons.email_outlined, color: AppColors.primaryColor, size: 13.sp),
                                         SizedBox(width: 2.w),
                                         Expanded(
                                             child: Text(
@@ -724,11 +720,10 @@ class ContactDetail extends StatelessWidget {
                                     ),
                                     divider(),
                                     Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         SvgPicture.asset(
-                                            ImageString.icContactDetail),
+                                            ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
                                         SizedBox(width: 2.w),
                                         Expanded(
                                           child: RichText(
@@ -756,11 +751,10 @@ class ContactDetail extends StatelessWidget {
                                     ),
                                     divider(),
                                     Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         SvgPicture.asset(
-                                            ImageString.icContactDetail),
+                                            ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
                                         SizedBox(width: 2.w),
                                         Expanded(
                                           child: RichText(

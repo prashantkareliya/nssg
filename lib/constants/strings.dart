@@ -173,6 +173,9 @@ class ImageString {
   static const String imgAccordion = "assets/images/arrow_down.svg";
   static const String imgAccordionClose = "assets/images/arrow_down_close.svg";
   static const String icContactDetail = "assets/images/ic_contactDetail.svg";
+  static const String icCompany = "assets/images/ic_company.svg";
+  static const String icPhone = "assets/images/ic_phone.svg";
+  static const String icAddress = "assets/images/ic_address.svg";
 }
 
 class PreferenceString {

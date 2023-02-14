@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
-import '../constants/strings.dart';
-import 'custom_dialog.dart';
-
 // ignore: must_be_immutable
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   Color? backgroundColor;
