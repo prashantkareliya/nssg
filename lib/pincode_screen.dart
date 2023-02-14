@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/constants/strings.dart';
@@ -84,7 +85,6 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                       textAlign: TextAlign.center,
                       style: CustomTextStyle.labelMediumBoldFontText,
                     ),
-
                     passwordEnteredCallback: _onPasscodeEntered,
                     deleteButton: Icon(Icons.backspace, color: AppColors.blackColor),
                     shouldTriggerVerification: _verificationNotifier.stream,

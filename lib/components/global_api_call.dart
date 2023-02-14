@@ -39,6 +39,7 @@ Future<dynamic> getContactDetail(contactId) async {
   return response;
 }
 
+
 Future<dynamic> getItemFields(String? systemType, String mfg) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -66,6 +67,4 @@ Future<dynamic> getItemFields(String? systemType, String mfg) async {
     debugPrint("getItemDetailsAPI --- $response");
     return response;
   }
-
-
 }

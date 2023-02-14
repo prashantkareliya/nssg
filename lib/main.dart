@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:nssg/pincode_screen.dart';
-import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
+import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
@@ -27,13 +28,16 @@ class MyApp extends StatelessWidget {
     return Sizer(builder: (context, orientation, deviceType) {
       return MultiProvider(
         providers: [ChangeNotifierProvider.value(value: WidgetChange())],
-        child: MaterialApp(
-          title: 'National Security System ',
-          theme: ThemeData(
-              colorScheme: ColorScheme.fromSwatch().copyWith(
-                  primary: AppColors.primaryColor,
-                  secondary: AppColors.primaryColor)),
-          home: const CheckingScreen(),
+        child: BlocProvider(
+          create: (context) => ProductListBloc(),
+          child: MaterialApp(
+            title: 'National Security System ',
+            theme: ThemeData(
+                colorScheme: ColorScheme.fromSwatch().copyWith(
+                    primary: AppColors.primaryColor,
+                    secondary: AppColors.primaryColor)),
+            home: const CheckingScreen(),
+          ),
         ),
       );
     });

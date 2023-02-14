@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/custom_textfield.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
+import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
+import 'package:nssg/screens/qoute/models/products_list.dart';
 import 'package:provider/provider.dart';
 import '../../components/custom_appbar.dart';
 import '../../components/custom_button.dart';
@@ -12,14 +17,17 @@ import 'package:sizer/sizer.dart';
 
 import '../../utils/widgetChange.dart';
 import 'add_item_detail.dart';
+import 'package:collection/collection.dart';
 
-List products = [];
+// List products = [];
 
 class BuildItemDetail extends StatefulWidget {
   var eAmount;
   String? systemTypeSelect;
 
-  BuildItemDetail(this.eAmount, this.systemTypeSelect, {super.key});
+  String? quotePaymentSelection;
+
+  BuildItemDetail(this.eAmount, this.systemTypeSelect, this.quotePaymentSelection, {super.key});
 
   @override
   State<BuildItemDetail> createState() => _BuildItemDetailState();
@@ -35,6 +43,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
   TextEditingController sellingPriceController = TextEditingController();
   TextEditingController discountPriceController = TextEditingController();
+
+  var total = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +67,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
         child: ListView(
-         // crossAxisAlignment: CrossAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.only(left: 8.sp),
@@ -65,6 +75,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                   style: CustomTextStyle.labelText),
             ),
             SizedBox(height: 1.h),
+
             //Template opation design
             Padding(
               padding: EdgeInsets.only(left: 12.sp),
@@ -75,7 +86,6 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                   growable: false,
                   templateOptionList.length,
                   (index) {
-
                     templateOption
                         .add(RadioModel(false, templateOptionList[index]));
                     Provider.of<WidgetChange>(context).isSelectTemplateOption;
@@ -100,382 +110,369 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               ),
             ),
 
-            //default item
-            Padding(
-      padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-      child: Card(
-        shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.sp),
-        ),
-        elevation: 3,
-        child: Padding(
-        padding:
-        EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 1.h),
-            Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                      text: LabelString.lblItemName,
-                      style:
-                      CustomTextStyle.labelFontHintText,
-                      children: [
-                        TextSpan(
-                            text:
-                            '\nInstallation (1st & 2nd fix)',
-                            style: CustomTextStyle.labelText)
-                      ]),
-                ),
-                Column(
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              ///Make new class for dialog
-                              return Dialog(
-                                  shape:
-                                  RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius
-                                          .circular(
-                                          10)),
-                                  elevation: 0,
-                                  insetPadding:
-                                  EdgeInsets.symmetric(
-                                      horizontal: 12.sp),
-                                  child: EditItem(
-                                      widget.eAmount,
-                                      profit));
-                            },
-                          );
-                        },
-                        child: Image.asset(ImageString.icEdit,
-                            height: 2.5.h)
-                      /*Icon(Icons.edit,
-                                          color: AppColors.primaryColor,
-                                          size: 14.sp),*/
-                    ),
-                    SizedBox(height: 1.5.h),
-                    Image.asset(ImageString.icDelete,
-                        height: 2.5.h)
-                  ],
-                )
-              ],
-            ),
-            SizedBox(height: 1.5.h),
-            Row(
-              children: [
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                        text: LabelString.lblCostPricePound,
-                        style:
-                        CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: '\n80.00',
-                              style:
-                              CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-                Expanded(
-                  child: RichText(
-                    textAlign: TextAlign.start,
-                    text: TextSpan(
-                        text:
-                        LabelString.lblSellingPricePound,
-                        style:
-                        CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: "\n${widget.eAmount}",
-                              style:
-                              CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 1.5.h),
-            Row(
-              children: [
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                        text: "${LabelString.lblQuantity} : ",
-                        style:
-                        CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: '1',
-                              style:
-                              CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                        text: LabelString.lblDiscountPound,
-                        style:
-                        CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: ' : 0',
-                              style:
-                              CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 1.5.h),
-            Row(
-              children: [
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                        text: "${LabelString.lblAmount} : ",
-                        style:
-                        CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: '${widget.eAmount}',
-                              style:
-                              CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                        text: "${LabelString.lblProfit} : ",
-                        style:
-                        CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: profit.toString(),
-                              style:
-                              CustomTextStyle.labelText)
-                        ]),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(height: 2.0.h),
-            Text(
-                "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
-                style: CustomTextStyle.labelText),
-            SizedBox(height: 1.h),
-          ],
-        ),
-        ),
-      ),
-    ),
 
-            //item list
-            SizedBox(
-              height: query.height / 3.5,
-              child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  // profit calculation
-                  var profit = (double.parse(widget.eAmount) - 80.0)
-                      .toString()
-                      .replaceAll(".0", ".00");
-                  return Padding(
-                    padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.sp),
+            Padding(
+              padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.sp),
+                ),
+                elevation: 3,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 1.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                                text: LabelString.lblItemName,
+                                style: CustomTextStyle.labelFontHintText,
+                                children: [
+                                  TextSpan(
+                                      text: '\nInstallation (1st & 2nd fix)',
+                                      style: CustomTextStyle.labelText)
+                                ]),
+                          ),
+                          Column(
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        ///Make new class for dialog
+                                        return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10)),
+                                            elevation: 0,
+                                            insetPadding: EdgeInsets.symmetric(
+                                                horizontal: 12.sp),
+                                            child: EditItem('Installation (1st & 2nd fix)','80.00',widget.eAmount, '1', widget.eAmount, profit, "0"));
+                                      },
+                                    );
+                                  },
+                                  child: Image.asset(ImageString.icEdit,
+                                      height: 2.5.h)
+                                /*Icon(Icons.edit,
+                                            color: AppColors.primaryColor,
+                                            size: 14.sp),*/
+                              ),
+                              SizedBox(height: 1.5.h),
+                              Image.asset(ImageString.icDelete, height: 2.5.h)
+                            ],
+                          )
+                        ],
                       ),
-                      elevation: 3,
-                      child: Padding(
-                        padding:
-                            EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 1.h),
-                            Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                      SizedBox(height: 1.5.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                  text: LabelString.lblCostPricePound,
+                                  style: CustomTextStyle.labelFontHintText,
+                                  children: [
+                                    TextSpan(
+                                        text: '\n80.00',
+                                        style: CustomTextStyle.labelText)
+                                  ]),
+                            ),
+                          ),
+                          Expanded(
+                            child: RichText(
+                              textAlign: TextAlign.start,
+                              text: TextSpan(
+                                  text: LabelString.lblSellingPricePound,
+                                  style: CustomTextStyle.labelFontHintText,
+                                  children: [
+                                    TextSpan(
+                                        text: "\n${widget.eAmount}",
+                                        style: CustomTextStyle.labelText)
+                                  ]),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 1.5.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                  text: "${LabelString.lblQuantity} : ",
+                                  style: CustomTextStyle.labelFontHintText,
+                                  children: [
+                                    TextSpan(
+                                        text: '1',
+                                        style: CustomTextStyle.labelText)
+                                  ]),
+                            ),
+                          ),
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                  text: LabelString.lblDiscountPound,
+                                  style: CustomTextStyle.labelFontHintText,
+                                  children: [
+                                    TextSpan(
+                                        text: ' : 0',
+                                        style: CustomTextStyle.labelText)
+                                  ]),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 1.5.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                  text: "${LabelString.lblAmount} : ",
+                                  style: CustomTextStyle.labelFontHintText,
+                                  children: [
+                                    TextSpan(
+                                        text: '${widget.eAmount}',
+                                        style: CustomTextStyle.labelText)
+                                  ]),
+                            ),
+                          ),
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                  text: "${LabelString.lblProfit} : ",
+                                  style: CustomTextStyle.labelFontHintText,
+                                  children: [
+                                    TextSpan(
+                                        text: profit.toString(),
+                                        style: CustomTextStyle.labelText)
+                                  ]),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.0.h),
+                      Text(
+                          "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
+                          style: CustomTextStyle.labelText),
+                      SizedBox(height: 1.h),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10.sp),
+            //item list
+            BlocConsumer<ProductListBloc, ProductListState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                return SizedBox(
+                  height: query.height/3.7,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: state.productList.length,
+                    itemBuilder: (context, index) {
+                      ProductsList products = state.productList[index];
+
+                      double total = 0.0;
+
+                      print(jsonEncode(products));
+                      for (var element in state.productList) {
+                         total += num.parse(products.amountPrice.toString());
+                      }
+
+                      print("********************************* $total");
+                      // profit calculation
+                      //var profit = (double.parse(widget.eAmount) - 80.0).toString().replaceAll(".0", ".00");
+                      return Padding(
+                        padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.sp),
+                          ),
+                          elevation: 3,
+                          child: Padding(
+                            padding:
+                                EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                RichText(
-                                  text: TextSpan(
-                                      text: LabelString.lblItemName,
-                                      style:
-                                          CustomTextStyle.labelFontHintText,
-                                      children: [
-                                        TextSpan(
-                                            text: "\n${products[index]["itemName"]}",
-                                            style: CustomTextStyle.labelText)
-                                      ]),
-                                ),
-                                Column(
+                                SizedBox(height: 1.h),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    InkWell(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              ///Make new class for dialog
-                                              return Dialog(
-                                                  shape:
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10)),
-                                                  elevation: 0,
-                                                  insetPadding:
-                                                      EdgeInsets.symmetric(
-                                                          horizontal: 12.sp),
-                                                  child: EditItem(
-                                                      widget.eAmount,
-                                                      profit));
+                                    RichText(
+                                      text: TextSpan(
+                                          text: LabelString.lblItemName,
+                                          style:
+                                              CustomTextStyle.labelFontHintText,
+                                          children: [
+                                            TextSpan(
+                                                text: "\n${products.itemName}",
+                                                style:
+                                                    CustomTextStyle.labelText)
+                                          ]),
+                                    ),
+                                    Column(
+                                      children: [
+                                        InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  ///Make new class for dialog
+                                                  return Dialog(
+                                                      shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
+                                                      elevation: 0,
+                                                      insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                                      child: EditItem(products.itemName, products.costPrice, products.sellingPrice, products.quantity, products.amountPrice, products.profit, products.discountPrice));
+                                                },
+                                              );
                                             },
-                                          );
-                                        },
-                                        child: Image.asset(ImageString.icEdit,
-                                            height: 2.5.h)
-                                        /*Icon(Icons.edit,
-                                          color: AppColors.primaryColor,
-                                          size: 14.sp),*/
-                                        ),
-                                    SizedBox(height: 1.5.h),
-                                    Image.asset(ImageString.icDelete,
-                                        height: 2.5.h)
+                                            child: Image.asset(ImageString.icEdit, height: 2.5.h)
+                                            /*Icon(Icons.edit,
+                                                        color: AppColors.primaryColor,
+                                                        size: 14.sp),*/
+                                            ),
+                                        SizedBox(height: 1.5.h),
+                                        InkWell(
+                                          onTap: () => state.productList.removeAt(index),
+                                          child: Image.asset(ImageString.icDelete, height: 2.5.h),
+                                        )
+                                      ],
+                                    )
                                   ],
-                                )
+                                ),
+                                SizedBox(height: 1.5.h),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                            text: LabelString.lblCostPricePound,
+                                            style: CustomTextStyle
+                                                .labelFontHintText,
+                                            children: [
+                                              TextSpan(
+                                                  text:
+                                                      '\n${products.costPrice}',
+                                                  style:
+                                                      CustomTextStyle.labelText)
+                                            ]),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: RichText(
+                                        textAlign: TextAlign.start,
+                                        text: TextSpan(
+                                            text: LabelString.lblSellingPricePound,
+                                            style: CustomTextStyle
+                                                .labelFontHintText,
+                                            children: [
+                                              TextSpan(
+                                                  text:
+                                                      "\n${double.parse(products.sellingPrice.toString())}",
+                                                  style:
+                                                      CustomTextStyle.labelText)
+                                            ]),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 1.5.h),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                            text:
+                                                "${LabelString.lblQuantity} : ",
+                                            style: CustomTextStyle
+                                                .labelFontHintText,
+                                            children: [
+                                              TextSpan(
+                                                  text: '${products.quantity ?? "1"}',
+                                                  style:
+                                                      CustomTextStyle.labelText)
+                                            ]),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                            text: LabelString.lblDiscountPound,
+                                            style: CustomTextStyle
+                                                .labelFontHintText,
+                                            children: [
+                                              TextSpan(
+                                                  text: products.discountPrice,
+                                                  style:
+                                                      CustomTextStyle.labelText)
+                                            ]),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 1.5.h),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                            text: "${LabelString.lblAmount} : ",
+                                            style: CustomTextStyle
+                                                .labelFontHintText,
+                                            children: [
+                                              TextSpan(
+                                                  text: products.amountPrice
+                                                      .toString()
+                                                      .substring(0, 5),
+                                                  style:
+                                                      CustomTextStyle.labelText)
+                                            ]),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                            text: "${LabelString.lblProfit} : ",
+                                            style: CustomTextStyle
+                                                .labelFontHintText,
+                                            children: [
+                                              TextSpan(
+                                                  text: products.profit.toString().substring(0, 5),
+                                                  style:
+                                                      CustomTextStyle.labelText)
+                                            ]),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: 2.0.h),
+                                Text(
+                                    "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
+                                    style: CustomTextStyle.labelText),
+                                SizedBox(height: 1.h),
                               ],
                             ),
-                            SizedBox(height: 1.5.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                        text: LabelString.lblCostPricePound,
-                                        style:
-                                            CustomTextStyle.labelFontHintText,
-                                        children: [
-                                          TextSpan(
-                                              text: '\n${products[index]["costPrice"]}',
-                                              style:
-                                                  CustomTextStyle.labelText)
-                                        ]),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: RichText(
-                                    textAlign: TextAlign.start,
-                                    text: TextSpan(
-                                        text:
-                                            LabelString.lblSellingPricePound,
-                                        style:
-                                            CustomTextStyle.labelFontHintText,
-                                        children: [
-                                          TextSpan(
-                                              text: "\n${products[index]["sellingPrice"].toString()}",
-                                              style:
-                                                  CustomTextStyle.labelText)
-                                        ]),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 1.5.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                        text: "${LabelString.lblQuantity} : ",
-                                        style:
-                                            CustomTextStyle.labelFontHintText,
-                                        children: [
-                                          TextSpan(
-                                              text: '1',
-                                              style:
-                                                  CustomTextStyle.labelText)
-                                        ]),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                        text: LabelString.lblDiscountPound,
-                                        style:
-                                            CustomTextStyle.labelFontHintText,
-                                        children: [
-                                          TextSpan(
-                                              text: products[index]["discountPrice"],
-                                              style:
-                                                  CustomTextStyle.labelText)
-                                        ]),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 1.5.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                        text: "${LabelString.lblAmount} : ",
-                                        style:
-                                            CustomTextStyle.labelFontHintText,
-                                        children: [
-                                          TextSpan(
-                                              text: products[index]["amountPrice"].toString().substring(0, 5),
-                                              style: CustomTextStyle.labelText)
-                                        ]),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                        text: "${LabelString.lblProfit} : ",
-                                        style:
-                                            CustomTextStyle.labelFontHintText,
-                                        children: [
-                                          TextSpan(
-                                              text: profit.toString(),
-                                              style:
-                                                  CustomTextStyle.labelText)
-                                        ]),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 2.0.h),
-                            Text(
-                                "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
-                                style: CustomTextStyle.labelText),
-                            SizedBox(height: 1.h),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Container(height: 10.sp);
-                },
-              ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(height: 10.sp);
+                    },
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -575,15 +572,52 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                       ),
                     ),
                     BottomSheetData(
-                        "Discount Amount", "0.00", CustomTextStyle.labelText),
-                    BottomSheetData(
                         "Sub Total", "0", CustomTextStyle.labelText),
+                    BottomSheetData(
+                        "Discount Amount", "0.00", CustomTextStyle.labelText),
+
                     BottomSheetData(
                         "Items Total", "0", CustomTextStyle.labelText),
                     BottomSheetData(
                         "Vat Total", "0.00", CustomTextStyle.labelText),
-                    BottomSheetData(
-                        "Deposit Amount", "0.00", CustomTextStyle.labelText),
+                    widget.quotePaymentSelection == "No deposit" ? Container() :
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.sp),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Deposit Amount", style: CustomTextStyle.labelText),
+                          Container(
+                            height: 4.h,
+                            width: 20.w,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 1,
+                                    color:
+                                    AppColors.primaryColor),
+                                color: AppColors.whiteColor,
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(5.sp))),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    3.sp, 0, 3.sp, 0),
+                                child: TextField(
+                                  controller:
+                                  sellingPriceController,
+                                  keyboardType:
+                                  TextInputType.number,
+                                  decoration: InputDecoration.collapsed(
+                                      hintText: "Deposit",
+                                      hintStyle: CustomTextStyle.labelFontHintText),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     BottomSheetData(
                         "Grand Total", "0", CustomTextStyle.labelText),
                     BottomSheetData(
@@ -651,10 +685,10 @@ class SelectLocation extends StatelessWidget {
                     highlightColor: AppColors.transparent,
                     splashColor: AppColors.transparent,
                     onPressed: () => Navigator.pop(context),
-                    icon:
-                        Icon(Icons.close_rounded, color: AppColors.blackColor))),
+                    icon: Icon(Icons.close_rounded,
+                        color: AppColors.blackColor))),
             SizedBox(
-              height: quantity==1 ? query.height / 4 :query.height / 2,
+              height: quantity == 1 ? query.height / 4 : query.height / 2,
               child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: quantity,
@@ -714,24 +748,26 @@ class SelectLocation extends StatelessWidget {
 
 ///Class for edit item
 class EditItem extends StatefulWidget {
-  String? eAmount;
-
+  var itemName;
+  var costPrice;
+  var sellingPrice;
+  var quantity;
+  var amountPrice;
   var profit;
+  var discountPrice;
 
-  EditItem(this.eAmount, this.profit, {Key? key}) : super(key: key);
+
+
+  EditItem(this.itemName, this.costPrice, this.sellingPrice, this.quantity, this.amountPrice, this.profit, this.discountPrice, {Key? key}) : super(key: key);
 
   @override
   State<EditItem> createState() => _EditItemState();
 }
 
 class _EditItemState extends State<EditItem> {
-  TextEditingController itemNameController =
-      TextEditingController(text: 'Installation (1st & 2nd fix)');
-  TextEditingController itemDescriptionController = TextEditingController(
-      text:
-          'Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm');
-  TextEditingController itemCostPriceController =
-      TextEditingController(text: '80.00');
+  TextEditingController itemNameController = TextEditingController();
+  TextEditingController itemDescriptionController = TextEditingController(text: 'Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm');
+  TextEditingController itemCostPriceController = TextEditingController();
   TextEditingController itemSellingPriceController = TextEditingController();
   TextEditingController itemQuantityController = TextEditingController();
   TextEditingController itemDiscountController = TextEditingController();
@@ -741,13 +777,20 @@ class _EditItemState extends State<EditItem> {
   @override
   void initState() {
     super.initState();
-    itemSellingPriceController.text = widget.eAmount.toString();
-    itemQuantityController.text = quantity.toString();
+    itemNameController.text = widget.itemName.toString();
+    itemCostPriceController.text = widget.costPrice.toString();
+    itemSellingPriceController.text = (double.parse(widget.sellingPrice)).toString();
+    itemQuantityController.text = widget.quantity.toString();
+    itemDiscountController.text = widget.discountPrice.toString();
   }
 
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
+    dynamic amount = (double.parse(widget.sellingPrice.toString()) * double.parse(quantity.toString())-double.parse(itemDiscountController.text=="" ? "0" : itemDiscountController.text));
+    dynamic profit = ((double.parse(widget.sellingPrice.toString())-double.parse(widget.costPrice.toString()))*(quantity!)-double.parse(itemDiscountController.text=="" ? "0" : itemDiscountController.text));
+    quantity = int.parse(widget.quantity.toString());
+
     return Padding(
       padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 0.sp),
       child: SizedBox(
@@ -790,7 +833,6 @@ class _EditItemState extends State<EditItem> {
                       context: context,
                       barrierDismissible: false,
                       builder: (context) {
-
                         ///Make new class for dialog
                         return Dialog(
                             shape: RoundedRectangleBorder(
@@ -858,7 +900,7 @@ class _EditItemState extends State<EditItem> {
                     onTap: () {
                       if (quantity! >= 2) {
                         Provider.of<WidgetChange>(context, listen: false).decrementCounter();
-                        quantity = quantity!-1;
+                        quantity = quantity! - 1;
                         itemQuantityController.text = quantity.toString();
                       }
                     },
@@ -879,8 +921,12 @@ class _EditItemState extends State<EditItem> {
                   child: InkWell(
                     onTap: () {
                       Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                      quantity = quantity!+1;
+                      quantity = quantity! + 1;
                       itemQuantityController.text = quantity.toString();
+                      /*setState(() {
+                        widget.amountPrice = (double.parse(widget.amountPrice)+double.parse(widget.sellingPrice)).toString();
+                        widget.profit = ((double.parse(widget.sellingPrice.toString())-double.parse(widget.costPrice.toString()))*(quantity!)-double.parse(itemDiscountController.text=="" ? "0" : itemDiscountController.text));
+                      });*/
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -912,7 +958,8 @@ class _EditItemState extends State<EditItem> {
                         style: CustomTextStyle.labelFontHintText,
                         children: [
                           TextSpan(
-                              text: widget.eAmount.toString(),
+                              text:
+                              widget.amountPrice.toString(),
                               style: CustomTextStyle.labelText)
                         ]),
                   ),
@@ -925,7 +972,7 @@ class _EditItemState extends State<EditItem> {
                         style: CustomTextStyle.labelFontHintText,
                         children: [
                           TextSpan(
-                              text: widget.profit.toString(),
+                              text: widget.profit.toString().substring(0,5),
                               style: CustomTextStyle.labelText)
                         ]),
                   ),
