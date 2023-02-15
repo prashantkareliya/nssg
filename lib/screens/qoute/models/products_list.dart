@@ -9,6 +9,30 @@ class ProductsList {
   String? description;
   int? quantity;
 
+  ProductsList copyWith({
+    String? itemId,
+    String? itemName,
+    String? costPrice,
+    String? sellingPrice,
+    String? discountPrice,
+    String? amountPrice,
+    String? profit,
+    String? description,
+    int? quantity,
+  }) {
+    return ProductsList(
+      itemId: itemId ?? this.itemId,
+      itemName: itemName ?? this.itemName,
+      costPrice: costPrice ?? this.costPrice,
+      sellingPrice: sellingPrice ?? this.sellingPrice,
+      discountPrice: discountPrice ?? this.discountPrice,
+      amountPrice: amountPrice ?? this.amountPrice,
+      profit: profit ?? this.profit,
+      description: description ?? this.description,
+      quantity: quantity ?? this.quantity,
+    );
+  }
+
   ProductsList(
       {this.itemId,
       this.itemName,

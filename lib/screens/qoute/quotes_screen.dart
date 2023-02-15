@@ -22,6 +22,7 @@ import '../../utils/helpers.dart';
 import '../../utils/widgetChange.dart';
 import '../../utils/widgets.dart';
 import '../contact/contact_screen.dart';
+import 'bloc/product_list_bloc.dart';
 import 'get_quote/quote_bloc_dir/get_quote_bloc.dart';
 import 'get_quote/quote_model_dir/get_quote_response_model.dart';
 import 'item_detail.dart';
@@ -349,6 +350,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
   FloatingActionButton buildAddContactButton(BuildContext context) {
     return FloatingActionButton(
         onPressed: () {
+          context.read<ProductListBloc>().add(ClearProductToListEvent());
           callNextScreen(context, AddQuotePage(true));
         },
         child: const Icon(Icons.add));

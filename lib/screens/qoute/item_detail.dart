@@ -13,7 +13,7 @@ import '../../components/custom_radio_button.dart';
 import '../../components/custom_text_styles.dart';
 import '../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
-
+import 'package:collection/collection.dart';
 import '../../utils/widgetChange.dart';
 import 'add_item_detail.dart';
 
@@ -43,11 +43,29 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   TextEditingController depositAmountController = TextEditingController();
 
   var total = 0;
-
+  @override
+  void initState() {
+    super.initState();
+    var profit = (double.parse(widget.eAmount) - 80.0).formatAmount();
+    var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
+    if(productList ==null){
+      context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
+          itemId:  "123456",
+          itemName: 'Installation (1st & 2nd fix)',
+          costPrice: '80.00',
+          sellingPrice: widget.eAmount,
+          quantity: 1,
+          discountPrice: "0",
+          amountPrice: widget.eAmount,
+          profit: profit,
+          description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
+      )));
+    }
+    //todo: call event(ClearProductToListEvent) after get success response
+  }
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
-    var profit = (double.parse(widget.eAmount) - 80.0).formatAmount();
     return Scaffold(
       backgroundColor: AppColors.backWhiteColor,
       appBar: BaseAppBar(
@@ -110,176 +128,6 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 ),
                 SizedBox(height: 10.sp),
 
-                //Static list item
-                Padding(
-                  padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.sp),
-                    ),
-                    elevation: 3,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 1.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                    text: LabelString.lblItemName,
-                                    style: CustomTextStyle.labelFontHintText,
-                                    children: [
-                                      TextSpan(
-                                          text: '\nInstallation (1st & 2nd fix)',
-                                          style: CustomTextStyle.labelText)
-                                    ]),
-                              ),
-                              Column(
-                                children: [
-                                  InkWell(
-                                    splashColor: AppColors.transparent,
-                                      highlightColor: AppColors.transparent,
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            ///Make new class for dialog
-                                            return Dialog(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(10)),
-                                                elevation: 0,
-                                                insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 12.sp),
-                                                child: EditItem(productsList: ProductsList(
-                                                    itemId: DateTime.now().microsecondsSinceEpoch.toString(),
-                                                    itemName: 'Installation (1st & 2nd fix)',
-                                                    costPrice: '80.00',
-                                                    sellingPrice: widget.eAmount,
-                                                    quantity: 1,
-                                                    discountPrice: "0",
-                                                    amountPrice: widget.eAmount,
-                                                    profit: profit,
-                                                  description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
-                                                )));
-                                          },
-                                        );
-                                      },
-                                      child: Image.asset(ImageString.icEdit,color: AppColors.borderColor,
-                                          height: 2.5.h)
-                                    /*Icon(Icons.edit,
-                                            color: AppColors.primaryColor,
-                                            size: 14.sp),*/
-
-                                  ),
-                                  SizedBox(height: 1.5.h),
-                                  Image.asset(ImageString.icDelete, height: 2.5.h)
-                                ],
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 1.5.h),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                      text: LabelString.lblCostPricePound,
-                                      style: CustomTextStyle.labelFontHintText,
-                                      children: [
-                                        TextSpan(
-                                            text: '\n80.00',
-                                            style: CustomTextStyle.labelText)
-                                      ]),
-                                ),
-                              ),
-                              Expanded(
-                                child: RichText(
-                                  textAlign: TextAlign.start,
-                                  text: TextSpan(
-                                      text: LabelString.lblSellingPricePound,
-                                      style: CustomTextStyle.labelFontHintText,
-                                      children: [
-                                        TextSpan(
-                                            text: "\n${widget.eAmount}",
-                                            style: CustomTextStyle.labelText)
-                                      ]),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 1.5.h),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                      text: "${LabelString.lblQuantity} : ",
-                                      style: CustomTextStyle.labelFontHintText,
-                                      children: [
-                                        TextSpan(
-                                            text: '1',
-                                            style: CustomTextStyle.labelText)
-                                      ]),
-                                ),
-                              ),
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                      text: LabelString.lblDiscountPound,
-                                      style: CustomTextStyle.labelFontHintText,
-                                      children: [
-                                        TextSpan(
-                                            text: ' : 0',
-                                            style: CustomTextStyle.labelText)
-                                      ]),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 1.5.h),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                      text: "${LabelString.lblAmount} : ",
-                                      style: CustomTextStyle.labelFontHintText,
-                                      children: [
-                                        TextSpan(
-                                            text: '${widget.eAmount}',
-                                            style: CustomTextStyle.labelText)
-                                      ]),
-                                ),
-                              ),
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                      text: "${LabelString.lblProfit} : ",
-                                      style: CustomTextStyle.labelFontHintText,
-                                      children: [
-                                        TextSpan(
-                                            text: profit.toString(),
-                                            style: CustomTextStyle.labelText)
-                                      ]),
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 2.0.h),
-                          Text(
-                              "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
-                              style: CustomTextStyle.labelText),
-                          SizedBox(height: 1.h),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
                 ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
                 //item list
                 SizedBox(height: query.height *0.15)
@@ -302,7 +150,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             InkWell(
-              onTap: () => modelBottomSheetMenu(query, profit),
+              onTap: () => modelBottomSheetMenu(query),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -393,9 +241,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                             });
                           },
                           child: Image.asset(ImageString.icEdit, height: 2.5.h)
-                        /*Icon(Icons.edit,
-                                                      color: AppColors.primaryColor,
-                                                      size: 14.sp),*/
+
                       ),
                       SizedBox(height: 1.5.h),
                       InkWell(
@@ -522,7 +368,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
   ///Method for open bottom sheet
   ///Design opened bottom sheet
-  void modelBottomSheetMenu(Size query, String profitFirst) {
+  void modelBottomSheetMenu(Size query) {
     showModalBottomSheet(
         backgroundColor: AppColors.transparent,
         enableDrag: false,
@@ -543,17 +389,11 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 //total of amount
                 for(ProductsList p in state.productList){
                   subTotal += p.amountPrice.formatDouble();
+                  disc += (p.discountPrice == "" ? 0.0 : p.discountPrice.formatDouble());
+                  profit += p.profit.formatDouble();
                 }
 
-                //total of discount
-                for(ProductsList d in state.productList){
-                  disc += (d.discountPrice == "" ? 0.0 : d.discountPrice.formatDouble());
-                }
 
-                //total of profit
-                for(ProductsList i in state.productList){
-                  profit += i.profit.formatDouble();
-                }
 
                 //initial text for deposit textField
                 depositAmountController.text = (subTotal+(subTotal*0.2)).formatAmount() == "0.00" ? (double.parse(widget.eAmount)+(double.parse(widget.eAmount)*0.2)).formatAmount(): ((subTotal+(subTotal*0.2))+(double.parse(widget.eAmount)+(double.parse(widget.eAmount)*0.2))).formatAmount();
@@ -644,7 +484,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
                         //Sum of all profit amount
                         BottomSheetData(
-                            "Total Profit", profit.formatAmount()=="0.00"? profitFirst : (double.parse(profitFirst)+profit).formatAmount() , CustomTextStyle.labelText),
+                            "Total Profit", profit.formatAmount() , CustomTextStyle.labelText),
                         SizedBox(
                           width: query.width * 0.8,
                           height: query.height * 0.06,
@@ -811,6 +651,19 @@ class _EditItemState extends State<EditItem> {
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
+    final finalAmount = (double.parse(productsList.amountPrice!) -
+        (itemDiscountController.text == ""
+            ? 0.0
+            : double.parse(
+            itemDiscountController.text)))
+        .formatAmount();
+
+    final finalProfit = (double.parse(productsList.profit!) -
+        (itemDiscountController.text == ""
+            ? 0.0
+            : double.parse(
+            itemDiscountController.text)))
+        .formatAmount();
     return Padding(
       padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 0.sp),
       child: SizedBox(
@@ -989,7 +842,7 @@ class _EditItemState extends State<EditItem> {
                         style: CustomTextStyle.labelFontHintText,
                         children: [
                           TextSpan(
-                              text: (double.parse(productsList.amountPrice!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount(),
+                              text: finalAmount,
                               style: CustomTextStyle.labelText)
                         ]),
                   ),
@@ -1002,7 +855,7 @@ class _EditItemState extends State<EditItem> {
                         style: CustomTextStyle.labelFontHintText,
                         children: [
                           TextSpan(
-                              text: (double.parse(productsList.profit!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount(),
+                              text: finalProfit,
                               //productsList.profit.formatAmount(),
                               style: CustomTextStyle.labelText)
                         ]),
@@ -1017,6 +870,12 @@ class _EditItemState extends State<EditItem> {
                 child: CustomButton(
                     title: ButtonString.btnAddProduct,
                     onClick: () {
+                      context.read<ProductListBloc>().add(
+                          UpdateProductToListEvent(productsList: productsList.copyWith(
+                            profit:finalProfit,
+                            amountPrice: finalAmount,
+                            discountPrice : itemDiscountController.text,
+                          )));
                       //productsList.discountPrice = itemDiscountController.text;
                       /*productsList.discountPrice = (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text)).formatAmount();
                       productsList.amountPrice = (double.parse(productsList.amountPrice!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
