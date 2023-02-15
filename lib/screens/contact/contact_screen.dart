@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -579,337 +580,341 @@ class ContactDetail extends StatelessWidget {
     getDetail = getContactDetail(id);
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Colors.black54,
+          backgroundColor: Colors.transparent,
           drawerEnableOpenDragGesture: false,
-          body: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(left: 60.sp),
-              color: Colors.transparent,
-              child: Drawer(
-                child: FutureBuilder<dynamic>(
-                  future: getDetail,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var dataContact = snapshot.data["result"];
-                      return snapshot.data["success"] == true
-                          ? Container(
-                              height: 70.h,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(15.sp, 0, 0, 0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              callNextScreen(
-                                                  context,
-                                                  AddContactPage(
-                                                      id.toString()));
-                                            },
-                                            icon: Image.asset(
-                                                ImageString.icEdit,
-                                                height: 2.5.h)),
-                                        SizedBox(height: 2.h),
-                                        InkWell(
-                                          onTap: () {
-                                            //Dialog to confirm delete contact or not
-                                            showDialog(
-                                              context: context,
-                                              barrierDismissible: false,
-                                              builder: (ctx) =>
-                                                  ValidationDialog(
-                                                Message.deleteContact,
-                                                //Yes button
-                                                () {
-                                                  isDelete = true;
-                                                  deleteContact(id.toString());
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(
-                                                      context, "delete");
-                                                },
-                                                () => Navigator.pop(
-                                                    context), //No button
-                                              ),
-                                            );
-                                          },
-                                          child: Image.asset(
-                                              ImageString.icDelete,
-                                              height: 2.5.h),
-                                        ),
-                                        IconButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            icon: Icon(Icons.close_rounded,
-                                                color: AppColors.blackColor),
-                                            highlightColor:
-                                                AppColors.transparent,
-                                            splashColor: AppColors.transparent)
-                                      ],
-                                    ),
-                                    Text(
-                                        "${dataContact["firstname"].toString().isNotEmpty ? dataContact["firstname"].toString().capitalize() : dataContact["firstname"]} "
-                                        "${dataContact["lastname"].toString().isNotEmpty ? dataContact["lastname"].toString().capitalize() : dataContact["lastname"]}",
-                                        style: TextStyle(
-                                            fontSize: 20.sp,
-                                            color: AppColors.fontColor,
-                                            fontWeight: FontWeight.w500)),
-                                    SizedBox(height: 3.h),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                            ImageString.icCompany,height: 2.h, color: AppColors.primaryColor),
-                                        SizedBox(width: 2.w),
-                                        Expanded(
-                                            child: Text(dataContact["contact_company"]=="" ? LabelString.lblCompanyName : dataContact["contact_company"],
-                                                style:
-                                                    CustomTextStyle.labelText))
-                                      ],
-                                    ),
-                                    divider(),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                            ImageString.icPhone,height: 2.h, color: AppColors.primaryColor),
-                                        SizedBox(width: 2.w),
-                                        Expanded(
-                                          child: RichText(
-                                            text: TextSpan(
-                                                text: dataContact["mobile"],
-                                                style: CustomTextStyle.labelText,
-                                                children: [
-                                                  WidgetSpan(
-                                                      child: dataContact["phone"] =="" || dataContact["mobile"] ==""
-                                                          ? Container()
-                                                          : Padding(
-                                                              padding: EdgeInsets.symmetric(horizontal:8.sp),
-                                                              child: Container(
-                                                                  height: 2.5.h,
-                                                                  width: 0.3.w,
-                                                                  color: AppColors.blackColor),
-                                                            )),
-                                                  TextSpan(
-                                                      text: dataContact["phone"],
-                                                      style: CustomTextStyle.labelText)
-                                                ]),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    divider(),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Icon(Icons.email_outlined, color: AppColors.primaryColor, size: 13.sp),
-                                        SizedBox(width: 2.w),
-                                        Expanded(
-                                            child: Text(
-                                                "${dataContact["email"]}  ${dataContact["secondaryemail"]}",
-                                                style:
-                                                    CustomTextStyle.labelText))
-                                      ],
-                                    ),
-                                    divider(),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                            ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
-                                        SizedBox(width: 2.w),
-                                        Expanded(
-                                          child: RichText(
-                                            text: TextSpan(
-                                                text: LabelString.lblInstallationAddress,
-                                                style: TextStyle(
-                                                    fontSize: 14.sp,
-                                                    color: AppColors.primaryColor,
-                                                    fontWeight: FontWeight.bold),
-                                                children: [
-                                                  TextSpan(
-                                                      text:
-                                                          "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
-                                                      style: TextStyle(
-                                                          height: 1.5,
-                                                          fontSize: 12.sp,
-                                                          color: AppColors
-                                                              .blackColor,
-                                                          fontWeight: FontWeight
-                                                              .normal))
-                                                ]),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    divider(),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                            ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
-                                        SizedBox(width: 2.w),
-                                        Expanded(
-                                          child: RichText(
-                                            text: TextSpan(
-                                                text: LabelString.lblInvoiceAddress,
-                                                style: TextStyle(
-                                                    fontSize: 14.sp,
-                                                    color: AppColors.primaryColor,
-                                                    fontWeight: FontWeight.bold),
-                                                children: [
-                                                  TextSpan(
-                                                      text:
-                                                          "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, ${dataContact["othercountry"]}, ${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
-                                                      style: TextStyle(
-                                                          height: 1.5,
-                                                          fontSize: 12.sp,
-                                                          color: AppColors.blackColor,
-                                                          fontWeight: FontWeight.normal))
-                                                ]),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    divider(),
-                                    /*SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                ContactTileField(LabelString.lblFullName,
-                                    "${dataContact["firstname"]} ${dataContact["lastname"]}"),
-                                ContactTileField(LabelString.lblCompany,
-                                    dataContact["contact_company"]),
-                                ContactTileField(LabelString.lblOfficePhone,
-                                    dataContact["phone"]),
-                                ContactTileField(LabelString.lblMobilePhone,
-                                    dataContact["mobile"]),
-                                ContactTileField(
-                                    LabelString.lblPrimaryEmail,
-                                    dataContact["email"]),
-                                ContactTileField(
-                                    LabelString.lblSecondaryEmail,
-                                    dataContact["secondaryemail"]),
-                              ],
-                            ),
-                            Flexible(
-                              flex: 1,
-                              child: Column(
-                                children: [
+          body: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.only(left: 60.sp),
+                color: Colors.transparent,
+                child: Drawer(
 
+                  child: FutureBuilder<dynamic>(
+                    future: getDetail,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var dataContact = snapshot.data["result"];
+                        return snapshot.data["success"] == true
+                            ? Container(
+                                height: 70.h,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(15.sp, 0, 0, 0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                callNextScreen(
+                                                    context,
+                                                    AddContactPage(
+                                                        id.toString()));
+                                              },
+                                              icon: Image.asset(
+                                                  ImageString.icEdit,
+                                                  height: 2.5.h)),
+                                          SizedBox(height: 2.h),
+                                          InkWell(
+                                            onTap: () {
+                                              //Dialog to confirm delete contact or not
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (ctx) =>
+                                                    ValidationDialog(
+                                                  Message.deleteContact,
+                                                  //Yes button
+                                                  () {
+                                                    isDelete = true;
+                                                    deleteContact(id.toString());
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(
+                                                        context, "delete");
+                                                  },
+                                                  () => Navigator.pop(
+                                                      context), //No button
+                                                ),
+                                              );
+                                            },
+                                            child: Image.asset(
+                                                ImageString.icDelete,
+                                                height: 2.5.h),
+                                          ),
+                                          IconButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              icon: Icon(Icons.close_rounded,
+                                                  color: AppColors.blackColor),
+                                              highlightColor:
+                                                  AppColors.transparent,
+                                              splashColor: AppColors.transparent)
+                                        ],
+                                      ),
+                                      Text(
+                                          "${dataContact["firstname"].toString().isNotEmpty ? dataContact["firstname"].toString().capitalize() : dataContact["firstname"]} "
+                                          "${dataContact["lastname"].toString().isNotEmpty ? dataContact["lastname"].toString().capitalize() : dataContact["lastname"]}",
+                                          style: TextStyle(
+                                              fontSize: 20.sp,
+                                              color: AppColors.fontColor,
+                                              fontWeight: FontWeight.w500)),
+                                      SizedBox(height: 3.h),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              ImageString.icCompany,height: 2.h, color: AppColors.primaryColor),
+                                          SizedBox(width: 2.w),
+                                          Expanded(
+                                              child: Text(dataContact["contact_company"]=="" ? LabelString.lblCompanyName : dataContact["contact_company"],
+                                                  style:
+                                                      CustomTextStyle.labelText))
+                                        ],
+                                      ),
+                                      divider(),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              ImageString.icPhone,height: 2.h, color: AppColors.primaryColor),
+                                          SizedBox(width: 2.w),
+                                          Expanded(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  text: dataContact["mobile"],
+                                                  style: CustomTextStyle.labelText,
+                                                  children: [
+                                                    WidgetSpan(
+                                                        child: dataContact["phone"] =="" || dataContact["mobile"] ==""
+                                                            ? Container()
+                                                            : Padding(
+                                                                padding: EdgeInsets.symmetric(horizontal:8.sp),
+                                                                child: Container(
+                                                                    height: 2.5.h,
+                                                                    width: 0.3.w,
+                                                                    color: AppColors.blackColor),
+                                                              )),
+                                                    TextSpan(
+                                                        text: dataContact["phone"],
+                                                        style: CustomTextStyle.labelText)
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      divider(),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(Icons.email_outlined, color: AppColors.primaryColor, size: 13.sp),
+                                          SizedBox(width: 2.w),
+                                          Expanded(
+                                              child: Text(
+                                                  "${dataContact["email"]}  ${dataContact["secondaryemail"]}",
+                                                  style:
+                                                      CustomTextStyle.labelText))
+                                        ],
+                                      ),
+                                      divider(),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
+                                          SizedBox(width: 2.w),
+                                          Expanded(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  text: LabelString.lblInstallationAddress,
+                                                  style: TextStyle(
+                                                      fontSize: 14.sp,
+                                                      color: AppColors.primaryColor,
+                                                      fontWeight: FontWeight.bold),
+                                                  children: [
+                                                    TextSpan(
+                                                        text:
+                                                            "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
+                                                        style: TextStyle(
+                                                            height: 1.5,
+                                                            fontSize: 12.sp,
+                                                            color: AppColors
+                                                                .blackColor,
+                                                            fontWeight: FontWeight
+                                                                .normal))
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      divider(),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
+                                          SizedBox(width: 2.w),
+                                          Expanded(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  text: LabelString.lblInvoiceAddress,
+                                                  style: TextStyle(
+                                                      fontSize: 14.sp,
+                                                      color: AppColors.primaryColor,
+                                                      fontWeight: FontWeight.bold),
+                                                  children: [
+                                                    TextSpan(
+                                                        text:
+                                                            "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, ${dataContact["othercountry"]}, ${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
+                                                        style: TextStyle(
+                                                            height: 1.5,
+                                                            fontSize: 12.sp,
+                                                            color: AppColors.blackColor,
+                                                            fontWeight: FontWeight.normal))
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      divider(),
+                                      /*SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                children: [
+                                  ContactTileField(LabelString.lblFullName,
+                                      "${dataContact["firstname"]} ${dataContact["lastname"]}"),
+                                  ContactTileField(LabelString.lblCompany,
+                                      dataContact["contact_company"]),
+                                  ContactTileField(LabelString.lblOfficePhone,
+                                      dataContact["phone"]),
+                                  ContactTileField(LabelString.lblMobilePhone,
+                                      dataContact["mobile"]),
+                                  ContactTileField(
+                                      LabelString.lblPrimaryEmail,
+                                      dataContact["email"]),
+                                  ContactTileField(
+                                      LabelString.lblSecondaryEmail,
+                                      dataContact["secondaryemail"]),
                                 ],
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.sp),
-                              child: Text(
-                                  LabelString.lblInstallationAddressDetails,
-                                  style: CustomTextStyle.labelBoldFontTextBlue),
-                            ),
-                            Row(
-                              children: [
-                                Flexible(
-                                  flex: 5,
-                                  child: Column(
-                                    children: [
-                                      ContactTileField(LabelString.lblAddress,
-                                          dataContact["mailingstreet"]),
-                                      ContactTileField(LabelString.lblCity,
-                                          dataContact["mailingcity"]),
-                                      ContactTileField(LabelString.lblCountry,
-                                          dataContact["mailingcountry"]),
-                                      ContactTileField(LabelString.lblPostalCode,
-                                          dataContact["mailingzip"]),
-                                    ],
-                                  ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: Column(
-                                    children: [
-                                      Image.asset(ImageString.icEdit,
-                                          color: AppColors.transparent,
-                                          height: 2.5.h),
-                                      SizedBox(height: 2.h),
-                                      Image.asset(ImageString.icDelete,
-                                          color: AppColors.transparent,
-                                          height: 2.5.h),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.sp),
-                              child: Text(LabelString.lblInvoiceAddressDetails,
-                                  style: CustomTextStyle.labelBoldFontTextBlue),
-                            ),
-                            Row(
-                              children: [
-                                Flexible(
-                                  flex: 5,
-                                  child: Column(
-                                    children: [
-                                      ContactTileField(LabelString.lblAddress,
-                                          dataContact["otherstreet"]),
-                                      ContactTileField(LabelString.lblCity,
-                                          dataContact["othercity"]),
-                                      ContactTileField(LabelString.lblCountry,
-                                          dataContact["othercountry"]),
-                                      ContactTileField(LabelString.lblPostalCode,
-                                          dataContact["otherzip"]),
-                                    ],
-                                  ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: Column(
-                                    children: [
-                                      Image.asset(ImageString.icEdit,
-                                          color: AppColors.transparent,
-                                          height: 2.5.h),
-                                      SizedBox(height: 2.h),
-                                      Image.asset(ImageString.icDelete,
-                                          color: AppColors.transparent,
-                                          height: 2.5.h),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 1.5.h),
-                          ],
-                        ),
-                      ),
-                    ),*/
+                              Flexible(
+                                flex: 1,
+                                child: Column(
+                                  children: [
+
                                   ],
                                 ),
                               ),
-                            )
-                          : Center(
-                              child: Text(ErrorString.deletedItemError,
-                                  style: CustomTextStyle.labelText));
-                    } else if (snapshot.hasError) {
-                      final message = HandleAPI.handleAPIError(snapshot.error);
-                      return Text(message);
-                    }
-                    return SizedBox(height: 70.h, child: loadingView());
-                  },
-                ),
-              ))),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.sp),
+                                child: Text(
+                                    LabelString.lblInstallationAddressDetails,
+                                    style: CustomTextStyle.labelBoldFontTextBlue),
+                              ),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: Column(
+                                      children: [
+                                        ContactTileField(LabelString.lblAddress,
+                                            dataContact["mailingstreet"]),
+                                        ContactTileField(LabelString.lblCity,
+                                            dataContact["mailingcity"]),
+                                        ContactTileField(LabelString.lblCountry,
+                                            dataContact["mailingcountry"]),
+                                        ContactTileField(LabelString.lblPostalCode,
+                                            dataContact["mailingzip"]),
+                                      ],
+                                    ),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    child: Column(
+                                      children: [
+                                        Image.asset(ImageString.icEdit,
+                                            color: AppColors.transparent,
+                                            height: 2.5.h),
+                                        SizedBox(height: 2.h),
+                                        Image.asset(ImageString.icDelete,
+                                            color: AppColors.transparent,
+                                            height: 2.5.h),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.sp),
+                                child: Text(LabelString.lblInvoiceAddressDetails,
+                                    style: CustomTextStyle.labelBoldFontTextBlue),
+                              ),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: Column(
+                                      children: [
+                                        ContactTileField(LabelString.lblAddress,
+                                            dataContact["otherstreet"]),
+                                        ContactTileField(LabelString.lblCity,
+                                            dataContact["othercity"]),
+                                        ContactTileField(LabelString.lblCountry,
+                                            dataContact["othercountry"]),
+                                        ContactTileField(LabelString.lblPostalCode,
+                                            dataContact["otherzip"]),
+                                      ],
+                                    ),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    child: Column(
+                                      children: [
+                                        Image.asset(ImageString.icEdit,
+                                            color: AppColors.transparent,
+                                            height: 2.5.h),
+                                        SizedBox(height: 2.h),
+                                        Image.asset(ImageString.icDelete,
+                                            color: AppColors.transparent,
+                                            height: 2.5.h),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: 1.5.h),
+                            ],
+                          ),
+                        ),
+                      ),*/
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: Text(ErrorString.deletedItemError,
+                                    style: CustomTextStyle.labelText));
+                      } else if (snapshot.hasError) {
+                        final message = HandleAPI.handleAPIError(snapshot.error);
+                        return Text(message);
+                      }
+                      return SizedBox(height: 70.h, child: loadingView());
+                    },
+                  ),
+                )),
+          )),
     );
   }
 

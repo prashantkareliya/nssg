@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -91,8 +92,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                     cancelCallback: _onPasscodeCancelled,
                     digits: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
                     passwordDigits: 4,
-                    cancelButton: Text(
-                      "",
+                    cancelButton: Text("",
                       style: CustomTextStyle.labelText,
                     ),
                   ),
@@ -100,14 +100,17 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                     visible: isLoading,
                     child: Align(
                         alignment: Alignment.center,
-                        child: Container(
-                          height: 8.h,
-                          width: 25.w,
-                          decoration: BoxDecoration(
-                              color: Colors.white10,
-                            borderRadius: BorderRadius.circular(10.0)
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+
+                              borderRadius: BorderRadius.circular(10.0)
+                            ),
+                            child: loadingView(),
                           ),
-                          child: loadingView(),
                         )),
                   ),
                 ],

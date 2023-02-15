@@ -6,6 +6,7 @@ import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
+import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -652,10 +653,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                     ["listprice"]) -
                                                 double.parse(itemList[index]
                                                     ["costprice"])) *
-                                            double.parse(
-                                                itemList[index]["quantity"]))
-                                        .toString()
-                                        .substring(0, 4),
+                                            double.parse(itemList[index]["quantity"])).formatAmount(),
                                     textAlign: TextAlign.end),
 
                                 ContactTileField(

@@ -8,3 +8,10 @@ class AddProductToListEvent extends ProductListEvent {
 
   AddProductToListEvent({required this.productsList});
 }
+
+
+class UpdateProductToListEvent extends ProductListEvent {
+  final ProductsList productsList;
+
+  UpdateProductToListEvent({required this.productsList});
+}

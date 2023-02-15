@@ -28,4 +28,26 @@ extension ExtString on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
+
+  String get formatAmount {
+    return double.parse(this).toStringAsFixed(2);
+  }
+
+
+}
+
+extension DoubleHelper on double{
+  String formatAmount() {
+    return toStringAsFixed(2);
+  }
+}
+
+extension StringHelper on String?{
+  String formatAmount() {
+    return double.parse(this ?? '0').toStringAsFixed(2);
+  }
+
+  double formatDouble() {
+    return double.parse(this ?? '0');
+  }
 }

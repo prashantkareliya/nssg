@@ -5,6 +5,7 @@ import 'package:nssg/components/custom_appbar.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/screens/qoute/get_product/product_datasource.dart';
 import 'package:nssg/screens/qoute/models/products_list.dart';
+import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -63,7 +64,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
   List<RadioModel> categoryType = <RadioModel>[]; //step 3
 
   GetProductBloc productBloc =
-      GetProductBloc(ProductRepository(productDatasource: ProductDatasource()));
+  GetProductBloc(ProductRepository(productDatasource: ProductDatasource()));
   bool isLoading = false;
 
   Future<void> getProduct() async {
@@ -72,7 +73,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
     Map<String, dynamic> queryParameters = {
       'operation': "query",
       'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyProduct
     };
     productBloc.add(GetProductListEvent(queryParameters));
@@ -90,7 +91,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           elevation: 1,
           backgroundColor: AppColors.whiteColor,
           searchWidget: InkWell(
-            onTap: ()=> Navigator.pop(context),
+              onTap: ()=> Navigator.pop(context),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -98,11 +99,17 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     padding:  EdgeInsets.only(right: 20.sp),
                     child: Image.asset(ImageString.imgCart, width: 6.w),
                   ),
-                  Positioned(
+                  itemNumber.isEmpty ? Container() : Positioned(
                     top: 12,
                     right: 15,
-                    child: Container(height: 2.h,width: 4.w,decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0),color: AppColors.redColor,),
-                    child: Center(child: Text(itemNumber.length.toString() ,textAlign: TextAlign.center ,style: TextStyle(color: AppColors.whiteColor,fontSize: 8.sp))),),
+                    child: Container(height: 2.h, width: 4.w,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: AppColors.redColor),
+                      child: Center(child: Text(
+                          itemNumber.length.toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.whiteColor,fontSize: 8.sp))),),
                   ),
 
                 ],
@@ -130,7 +137,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           ],
         )
 
-        /*FutureBuilder<dynamic>(
+      /*FutureBuilder<dynamic>(
         future: getItemDetailFields,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -162,7 +169,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           return SizedBox(height: 70.h, child: loadingView());
         },
       ),*/
-        );
+    );
   }
 
   ///step 1
@@ -193,7 +200,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   runSpacing: 14.sp,
                   children: List.generate(
                     fieldsData["manufacturer"].length,
-                    (index) {
+                        (index) {
                       manufacturingType.add(RadioModel(
                           false, fieldsData["manufacturer"][index]["label"]));
                       return InkWell(
@@ -208,11 +215,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
                           if (manufactureSelect.isEmpty) {
                             manufactureSelect =
-                                fieldsData["manufacturer"][index]["label"];
+                            fieldsData["manufacturer"][index]["label"];
                           } else {
                             manufactureSelect = "";
                             manufactureSelect =
-                                fieldsData["manufacturer"][index]["label"];
+                            fieldsData["manufacturer"][index]["label"];
                           }
                           pageController.nextPage(
                               duration: const Duration(milliseconds: 500),
@@ -239,20 +246,20 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   children: [
                                     SvgExtension(
                                         iconColor:
-                                            manufacturingType[index].isSelected
-                                                ? AppColors.primaryColor
-                                                : AppColors.blackColor,
+                                        manufacturingType[index].isSelected
+                                            ? AppColors.primaryColor
+                                            : AppColors.blackColor,
                                         itemName: fieldsData["manufacturer"]
-                                                [index]["label"]
+                                        [index]["label"]
                                             .toString()),
                                     SizedBox(height: 1.h),
                                     Text(
                                         fieldsData["manufacturer"][index]
-                                            ["label"],
+                                        ["label"],
                                         style:
-                                            manufacturingType[index].isSelected
-                                                ? CustomTextStyle.commonTextBlue
-                                                : CustomTextStyle.commonText)
+                                        manufacturingType[index].isSelected
+                                            ? CustomTextStyle.commonTextBlue
+                                            : CustomTextStyle.commonText)
                                   ]),
                               Visibility(
                                 visible: manufacturingType[index].isSelected
@@ -264,7 +271,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.circular(80.0),
+                                        BorderRadius.circular(80.0),
                                         color: AppColors.greenColor),
                                     child: Padding(
                                       padding: const EdgeInsets.all(2.0),
@@ -434,7 +441,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     runSpacing: 15.sp,
                     children: List.generate(
                       stepThreeData["sub_category"].length,
-                      (index) {
+                          (index) {
                         categoryType.add(RadioModel(false,
                             stepThreeData["sub_category"][index]["label"]));
 
@@ -451,11 +458,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                             filterList!.clear();
                             if (categorySelect.isEmpty) {
                               categorySelect =
-                                  stepThreeData["sub_category"][index]["label"];
+                              stepThreeData["sub_category"][index]["label"];
                             } else {
                               categorySelect = "";
                               categorySelect =
-                                  stepThreeData["sub_category"][index]["label"];
+                              stepThreeData["sub_category"][index]["label"];
                             }
 
                             if (categoryType.isNotEmpty) {
@@ -485,11 +492,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     children: [
                                       SvgExtension(
                                           iconColor:
-                                              categoryType[index].isSelected
-                                                  ? AppColors.primaryColor
-                                                  : AppColors.blackColor,
+                                          categoryType[index].isSelected
+                                              ? AppColors.primaryColor
+                                              : AppColors.blackColor,
                                           itemName:
-                                              categoryType[index].buttonText),
+                                          categoryType[index].buttonText),
                                       SizedBox(height: 1.h),
                                       Text(categoryType[index].buttonText,
                                           style: categoryType[index].isSelected
@@ -506,7 +513,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     child: Container(
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(80.0),
+                                          BorderRadius.circular(80.0),
                                           color: AppColors.greenColor),
                                       child: Padding(
                                         padding: const EdgeInsets.all(2.0),
@@ -574,6 +581,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                 child: Text(LabelString.lblNoData,
                     style: CustomTextStyle.labelBoldFontText));
           } else {
+
             return ListView.separated(
               padding: EdgeInsets.symmetric(vertical: 10.sp),
               physics: const BouncingScrollPhysics(),
@@ -581,15 +589,15 @@ class _AddItemDetailState extends State<AddItemDetail> {
               itemBuilder: (context, index) {
                 discountPriceController.add(TextEditingController());
 
-                dynamic amount = (double.parse(filterList![index].unitPrice.toString()) * double.parse(filterList![index].quantity.toString())-double.parse(discountPriceController[index].text=="" ? "0" : discountPriceController[index].text));
-                dynamic profit = ((double.parse(filterList![index].unitPrice!)-double.parse(filterList![index].costPrice.toString()))*(filterList![index].quantity!)-double.parse(discountPriceController[index].text=="" ? "0" : discountPriceController[index].text));
+                double amount = (double.parse(filterList![index].unitPrice.toString()) * double.parse(filterList![index].quantity.toString())-double.parse(discountPriceController[index].text=="" ? "0" : discountPriceController[index].text));
+                double profit = ((double.parse(filterList![index].unitPrice!)-double.parse(filterList![index].costPrice.toString()))*(filterList![index].quantity!)-double.parse(discountPriceController[index].text=="" ? "0" : discountPriceController[index].text));
                 return Padding(
                   padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.sp),
                         border:
-                            Border.all(color: AppColors.borderColor, width: 1),
+                        Border.all(color: AppColors.borderColor, width: 1),
                         color: AppColors.whiteColor),
                     child: Column(
                       children: [
@@ -608,7 +616,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Flexible(
@@ -623,9 +631,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             flex: 1,
                                             child: IconButton(
                                               splashColor:
-                                                  AppColors.transparent,
+                                              AppColors.transparent,
                                               highlightColor:
-                                                  AppColors.transparent,
+                                              AppColors.transparent,
                                               onPressed: () {
                                                 showDialog(
                                                   context: context,
@@ -633,14 +641,14 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                     return Dialog(
                                                         shape: RoundedRectangleBorder(
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
+                                                            BorderRadius
+                                                                .circular(
+                                                                10)),
                                                         elevation: 0,
                                                         insetPadding: EdgeInsets
                                                             .symmetric(
-                                                                horizontal:
-                                                                    12.sp),
+                                                            horizontal:
+                                                            12.sp),
                                                         child: itemDescription(
                                                             filterList![index]
                                                                 .productname
@@ -653,14 +661,14 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               },
                                               icon: Icon(Icons.info_outline,
                                                   color:
-                                                      AppColors.primaryColor),
+                                                  AppColors.primaryColor),
                                             ))
                                       ],
                                     ),
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblCostPrice,
                                             style: CustomTextStyle.commonText),
@@ -672,7 +680,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblSellingPrice,
                                             style: CustomTextStyle.commonText),
@@ -683,7 +691,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               border: Border.all(
                                                   width: 1,
                                                   color:
-                                                      AppColors.primaryColor),
+                                                  AppColors.primaryColor),
                                               color: AppColors.whiteColor,
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5.sp))),
@@ -695,9 +703,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                 absorbing: true,
                                                 child: TextField(
                                                   controller:
-                                                      sellingPriceController,
+                                                  sellingPriceController,
                                                   keyboardType:
-                                                      TextInputType.number,
+                                                  TextInputType.number,
                                                   decoration: InputDecoration.collapsed(
                                                       hintText: "£${double.parse(filterList![index].unitPrice.toString())}",
                                                       hintStyle: CustomTextStyle.labelFontHintText),
@@ -732,8 +740,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                 controller: discountPriceController[index] ,
                                                 keyboardType: TextInputType.number,
                                                 decoration: InputDecoration.collapsed(
-                                                        hintText: "£00.00",
-                                                        hintStyle: CustomTextStyle.labelFontHintText),
+                                                    hintText: "£00.00",
+                                                    hintStyle: CustomTextStyle.labelFontHintText),
                                                 textAlign: TextAlign.right,
                                               ),
                                             ),
@@ -744,11 +752,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblAmount,
                                             style: CustomTextStyle.commonText),
-                                        Text("£${amount.toString().substring(0,5)}",
+                                        Text("£${amount.formatAmount()}",
                                             style: CustomTextStyle
                                                 .labelBoldFontTextSmall)
                                       ],
@@ -756,11 +764,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(LabelString.lblProfit,
                                             style: CustomTextStyle.commonText),
-                                        Text("£${profit.toString().substring(0,4)}",
+                                        Text("£${profit.formatAmount()}",
                                             style: CustomTextStyle
                                                 .labelBoldFontTextSmall)
                                       ],
@@ -778,7 +786,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               padding: EdgeInsets.symmetric(horizontal: 13.sp),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextButton(
                                     onPressed: () {},
@@ -795,12 +803,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           return Dialog(
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
+                                                  BorderRadius.circular(
+                                                      10)),
                                               elevation: 0,
                                               insetPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 12.sp),
+                                              EdgeInsets.symmetric(
+                                                  horizontal: 12.sp),
                                               child: SelectLocation(
                                                   filterList![index].quantity));
                                         },
@@ -817,7 +825,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   horizontal: 8.sp, vertical: 3.sp),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Container(
@@ -825,7 +833,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       height: query.height * 0.06,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(10.sp),
+                                          BorderRadius.circular(10.sp),
                                           border: Border.all(
                                               width: 1,
                                               color: AppColors.primaryColor)),
@@ -834,7 +842,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             horizontal: 0.sp),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Expanded(
                                               child: IconButton(
@@ -874,7 +882,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   },
                                                   icon: Icon(Icons.add,
                                                       color:
-                                                          AppColors.blackColor,
+                                                      AppColors.blackColor,
                                                       size: 15.sp)),
                                             ),
                                           ],
@@ -915,15 +923,17 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             // });
 
                                             ProductsList productsList = ProductsList(
+                                              itemId: DateTime.now().microsecondsSinceEpoch.toString(),
                                               itemName: filterList![index].productname.toString(),
                                               costPrice: filterList![index].costPrice.toString(),
                                               sellingPrice: sellingPriceController.text.isEmpty
-                                                      ? filterList![index].unitPrice
-                                                      : sellingPriceController.text,
+                                                  ? filterList![index].unitPrice
+                                                  : sellingPriceController.text,
                                               discountPrice: discountPriceController[index].text.toString(),
                                               amountPrice: amount.toString(),
                                               profit: profit.toString(),
                                               quantity: filterList![index].quantity,
+                                              description: filterList![index].description
                                             );
 
                                             context.read<ProductListBloc>().add(
@@ -972,7 +982,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     splashColor: AppColors.transparent,
                     onPressed: () => Navigator.pop(context),
                     icon:
-                        Icon(Icons.close_rounded, color: AppColors.blackColor)),
+                    Icon(Icons.close_rounded, color: AppColors.blackColor)),
               ],
             ),
             SizedBox(height: 2.h),
