@@ -6,42 +6,42 @@ import 'package:http/http.dart' as http;
 import 'package:nssg/constants/strings.dart';
 
 import '../constants/constants.dart';
+import '../screens/qoute/add_quote/models/create_quote_response.dart';
 
 class HttpActions {
   String endPoint = Constants.of().endpoint;
 
-  Future<dynamic> postMethod(String url,
-      {dynamic data, Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> postMethod(String url, {dynamic data, Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = await getSessionData(headers ?? {});
-       String finalUrl =endPoint + url;
-      if(queryParams != null){
+      String finalUrl = endPoint + url;
+      if (queryParams != null) {
         queryParams.forEach((key, value) {
-          if(key == queryParams.keys.first){
+          if (key == queryParams.keys.first) {
             finalUrl = "$finalUrl?$key=$value";
-          }else{
+          } else {
             finalUrl = "$finalUrl&$key=$value";
           }
         });
       }
-      http.Response response = await http.post(Uri.parse(finalUrl),
-          body: data, headers: headers);
+      http.Response response = await http.post(Uri.parse(finalUrl), body: data, headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);
     }
   }
 
-  Future<dynamic> getMethod(String url, {Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> getMethod(String url,
+      {Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = await getSessionData(headers ?? {});
 
-      String finalUrl =endPoint + url;
-      if(queryParams != null){
+      String finalUrl = endPoint + url;
+      if (queryParams != null) {
         queryParams.forEach((key, value) {
-          if(key == queryParams.keys.first){
+          if (key == queryParams.keys.first) {
             finalUrl = "$finalUrl?$key=$value";
-          }else{
+          } else {
             finalUrl = "$finalUrl&$key=$value";
           }
         });
@@ -93,7 +93,8 @@ class HttpActions {
 
   Future<Map<String, String>> getSessionData(
       Map<String, String> headers) async {
-    headers["content-type"] = "application/json";
+   // headers["content-type"] = "application/json";
+    headers["content-type"] = "multipart/form-data";
     return headers;
   }
 
@@ -103,22 +104,30 @@ class HttpActions {
   }
 
   Future<dynamic> postMethodQueryParams(
-      {String? url,
-      dynamic queryParameters,
-      Map<String, String>? headers}) async {
+      String url, {dynamic data, Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
+
     if ((await checkConnection()) != ConnectivityResult.none) {
-
-      Map<String, String> queryParameters = {
-        'username': "dn@nssg.co.uk",
-        'password': "passwordController.text.trim()",
-        'accesskey': 'S8QzomH4Q4QYxaFb',
-      };
-
-
-      url = endPoint + queryParameters.toString();
       headers = await getSessionData(headers ?? {});
-      http.Response response = await http.post(Uri.parse(url), headers: headers);
-      return jsonDecode(utf8.decode(response.bodyBytes));
+      String finalUrl = endPoint + url;
+      var request = http.MultipartRequest('POST', Uri.parse(finalUrl));
+      request.fields.addAll(data);
+      //http.StreamedResponse response = await request.send();
+
+      var response = await request.send();
+
+
+      if (response.statusCode == 200) {
+        //print("@@@@@@@@@@@@@@@@@@@@@@@@ " + await response.stream.bytesToString());
+        var responsed = await http.Response.fromStream(response);
+        final responseData = json.decode(responsed.body);
+        return responseData;
+
+
+      } else {
+        print(response.reasonPhrase);
+      }
+
+
     } else {
       Future.error(ErrorString.noInternet);
     }

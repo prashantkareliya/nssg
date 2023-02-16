@@ -32,8 +32,6 @@ extension ExtString on String {
   String get formatAmount {
     return double.parse(this).toStringAsFixed(2);
   }
-
-
 }
 
 extension DoubleHelper on double{

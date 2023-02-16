@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/custom_textfield.dart';
@@ -5,44 +7,79 @@ import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/screens/qoute/models/products_list.dart';
+import 'package:nssg/screens/qoute/quote_datasource.dart';
+import 'package:nssg/screens/qoute/quote_repository.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/custom_appbar.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_radio_button.dart';
 import '../../components/custom_text_styles.dart';
+import '../../constants/constants.dart';
 import '../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 import 'package:collection/collection.dart';
+import '../../utils/helpers.dart';
 import '../../utils/widgetChange.dart';
 import 'add_item_detail.dart';
+import 'add_quote/add_quote_bloc_dir/add_quote_bloc.dart';
+import 'add_quote/models/create_quote_request.dart';
 
 class BuildItemDetail extends StatefulWidget {
   var eAmount;
   String? systemTypeSelect;
-
   String? quotePaymentSelection;
+  String? contactSelect;
+  String? premisesTypeSelect;
+  String? termsItemSelection;
+  String? gradeFireSelect;
+  String? signallingTypeSelect;
+  String? engineerNumbers;
+  String? timeType;
+  String? billStreet;
+  String? billCity;
+  String? billCountry;
+  String? billCode;
+  String? shipStreet;
+  String? shipCity;
+  String? shipCountry;
+  String? shipCode;
+  String? contactId;
+  String? contactCompany;
+  String? mobileNumber;
+  String? telephoneNumber;
 
-  BuildItemDetail(this.eAmount, this.systemTypeSelect, this.quotePaymentSelection, {super.key});
+  BuildItemDetail(this.eAmount, this.systemTypeSelect, this.quotePaymentSelection,
+      this.contactSelect, this.premisesTypeSelect, this.termsItemSelection,
+      this.gradeFireSelect, this.signallingTypeSelect, this.engineerNumbers,
+      this.timeType, this.billStreet, this.billCity, this.billCountry,
+      this.billCode, this.shipStreet, this.shipCity, this.shipCountry,
+      this.shipCode, this.contactId, this.contactCompany, this.mobileNumber,
+      this.telephoneNumber, {super.key});
 
   @override
   State<BuildItemDetail> createState() => _BuildItemDetailState();
 }
 
 class _BuildItemDetailState extends State<BuildItemDetail> {
-  List templateOptionList = [
-    LabelString.lblHideProductPrice,
-    LabelString.lblHideProduct,
-    LabelString.lblNone
-  ];
+  List templateOptionList = [LabelString.lblHideProductPrice, LabelString.lblHideProduct, LabelString.lblNone];
   List<RadioModel> templateOption = <RadioModel>[]; //step 1
 
   TextEditingController sellingPriceController = TextEditingController();
   TextEditingController discountPriceController = TextEditingController();
-
   TextEditingController depositAmountController = TextEditingController();
 
+  bool isLoading = false;
   var total = 0;
+  double subTotal = 0.0;
+  double disc = 0.0;
+  double profit = 0.0;
+  double grandTotal = 0.0;
+  double vatTotal = 0.0;
+
+  List<ProductsList> productListLocal = [];
+  String selectTemplateOption = '';
   @override
   void initState() {
     super.initState();
@@ -63,6 +100,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
     }
     //todo: call event(ClearProductToListEvent) after get success response
   }
+
+  AddQuoteBloc addQuoteBloc = AddQuoteBloc(QuoteRepository(quoteDatasource: QuoteDatasource()));
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -79,10 +118,32 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-        child: BlocConsumer<ProductListBloc, ProductListState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            return ListView(
+        child: BlocListener<AddQuoteBloc, AddQuoteState>(
+          bloc: addQuoteBloc,
+            listener: (context, state) {
+              if (state is FailAddQuote) {
+                Helpers.showSnackBar(context, state.error.toString());
+              }
+            },
+            child: BlocBuilder<AddQuoteBloc, AddQuoteState>(
+              bloc: addQuoteBloc,
+            builder: (context, state) {
+              if (state is LoadingAddQuote) {
+                isLoading = state.isBusy;
+              }
+              if (state is LoadedAddQuote) {
+                isLoading = false;
+              }
+              if (state is FailAddQuote) {
+                isLoading = false;
+              }
+
+            return BlocConsumer<ProductListBloc, ProductListState>(
+            listener: (context, state) {
+              productListLocal = state.productList;
+            },
+            builder: (context, state) {
+              return ListView(
               physics: const BouncingScrollPhysics(),
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -103,9 +164,9 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                       growable: false,
                       templateOptionList.length,
                           (index) {
-                        templateOption
-                            .add(RadioModel(false, templateOptionList[index]));
+                        templateOption.add(RadioModel(false, templateOptionList[index]));
                         Provider.of<WidgetChange>(context).isSelectTemplateOption;
+
                         return SizedBox(
                           height: 6.h,
                           child: InkWell(
@@ -115,9 +176,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                               for (var element in templateOption) {
                                 element.isSelected = false;
                               }
-                              Provider.of<WidgetChange>(context, listen: false)
-                                  .isTemplateOption();
+                              Provider.of<WidgetChange>(context, listen: false).isTemplateOption();
                               templateOption[index].isSelected = true;
+                              selectTemplateOption = templateOption[index].buttonText.toString().replaceAll(" ", "_");
+                              print(templateOption[index].buttonText.toString().replaceAll(" ", "_"));
                             },
                             child: RadioItem(templateOption[index]),
                           ),
@@ -127,14 +189,16 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                   ),
                 ),
                 SizedBox(height: 10.sp),
-
                 ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
                 //item list
                 SizedBox(height: query.height *0.15)
               ],
             );
           },
-        ),
+        );
+  },
+),
+),
       ),
 
       ///bottom sheet design
@@ -172,7 +236,9 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               child: CustomButton(
                 title: ButtonString.btnSubmit,
                 buttonColor: AppColors.primaryColor,
-                onClick: () {},
+                onClick: () => callCreateQuoteAPI(subTotal, grandTotal, disc,
+                    selectTemplateOption, vatTotal, profit,
+                    depositAmountController.text, productListLocal)
               ),
             )
           ],
@@ -370,9 +436,11 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   ///Design opened bottom sheet
   void modelBottomSheetMenu(Size query) {
     showModalBottomSheet(
+
         backgroundColor: AppColors.transparent,
         enableDrag: false,
         isDismissible: false,
+
         context: context,
         builder: (builder) {
           return Container(
@@ -382,9 +450,6 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
             child: BlocConsumer<ProductListBloc, ProductListState>(
               listener: (context, state) {},
               builder: (context, state) {
-                double subTotal = 0.0;
-                double disc = 0.0;
-                double profit = 0.0;
 
                 //total of amount
                 for(ProductsList p in state.productList){
@@ -393,10 +458,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                   profit += p.profit.formatDouble();
                 }
 
-
-
+                grandTotal = subTotal+(subTotal*0.2);
+                vatTotal = (subTotal*0.2);
                 //initial text for deposit textField
-                depositAmountController.text = (subTotal+(subTotal*0.2)).formatAmount() == "0.00" ? (double.parse(widget.eAmount)+(double.parse(widget.eAmount)*0.2)).formatAmount(): ((subTotal+(subTotal*0.2))+(double.parse(widget.eAmount)+(double.parse(widget.eAmount)*0.2))).formatAmount();
+                depositAmountController.text = (subTotal+(subTotal*0.2)).formatAmount();
                 return Container(
                     decoration: BoxDecoration(
                         color: AppColors.whiteColor,
@@ -414,7 +479,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(LabelString.lblShowAmount,
+                                Text(LabelString.lblHideAmount,
                                     style: CustomTextStyle.labelBoldFontText),
                                 SizedBox(width: 3.w),
                                 Image.asset(
@@ -426,20 +491,20 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                           ),
                         ),
                         //discount + amount = subtotal
-                        BottomSheetData(
-                            "Sub Total", (subTotal+disc).formatAmount()=="0.00" ? widget.eAmount : (double.parse(widget.eAmount)+((subTotal+disc))).formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(
+                            LabelString.lblSubTotal, (subTotal+disc).formatAmount(), CustomTextStyle.labelText),
 
                         //Entered by user in textField
-                        BottomSheetData(
-                            "Discount Amount", disc.formatAmount() == "0.00" ? "0": disc.formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(
+                            LabelString.lblDiscountAmount, disc.formatAmount(), CustomTextStyle.labelText),
 
                         //subTotal - discount = itemTotal
-                        BottomSheetData(
-                            "Items Total", subTotal.formatAmount() == "0.00" ? widget.eAmount : (double.parse(widget.eAmount)+subTotal).formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(
+                            LabelString.lblItemsTotal, subTotal.formatAmount(), CustomTextStyle.labelText),
 
                         //itemTotal * 0.2(Means 20%) = vat (20% vat on itemTotal)
-                        BottomSheetData(
-                            "Vat Total", (subTotal*0.2).formatAmount() == "0.00" ? (double.parse(widget.eAmount)*0.2).formatAmount() : ((subTotal*0.2)+(double.parse(widget.eAmount)*0.2)).formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(
+                            LabelString.lblVatTotal, vatTotal.formatAmount(), CustomTextStyle.labelText),
                         //show textField for enter deposit mount if user select deposit otherwise field is invisible
                         widget.quotePaymentSelection == "No deposit" ? Container() :
                         Padding(
@@ -447,7 +512,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Deposit Amount", style: CustomTextStyle.labelText),
+                              Text(LabelString.lblDepositAmount, style: CustomTextStyle.labelText),
                               Container(
                                 height: 4.h,
                                 width: 20.w,
@@ -467,7 +532,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                       controller: depositAmountController,
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration.collapsed(
-                                          hintText: "Deposit",
+                                          hintText: LabelString.lblDepositAmount,
                                           hintStyle: CustomTextStyle.labelFontHintText),
                                       textAlign: TextAlign.right,
 
@@ -479,19 +544,22 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                           ),
                         ),
                         //itemTotal + vatTotal = GrandTotal
-                        BottomSheetData(
-                            "Grand Total", (subTotal+(subTotal*0.2)).formatAmount() == "0.00" ? (double.parse(widget.eAmount)+(double.parse(widget.eAmount)*0.2)).formatAmount(): ((subTotal+(subTotal*0.2))+(double.parse(widget.eAmount)+(double.parse(widget.eAmount)*0.2))).formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(
+                            LabelString.lblGrandTotal, grandTotal.formatAmount(), CustomTextStyle.labelText),
 
                         //Sum of all profit amount
-                        BottomSheetData(
-                            "Total Profit", profit.formatAmount() , CustomTextStyle.labelText),
+                        BottomSheetDataTile(
+                            LabelString.lblTotalProfit, profit.formatAmount() , CustomTextStyle.labelText),
                         SizedBox(
                           width: query.width * 0.8,
                           height: query.height * 0.06,
                           child: CustomButton(
                             title: ButtonString.btnSubmit,
                             buttonColor: AppColors.primaryColor,
-                            onClick: () => Navigator.pop(context),
+                            onClick: () {
+                              Navigator.pop(context);
+                              callCreateQuoteAPI(subTotal, grandTotal, disc, selectTemplateOption, vatTotal, profit, depositAmountController.text, state.productList);
+                            },
                           ),
                         )
                       ],
@@ -501,15 +569,425 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
           );
         });
   }
+
+  Future<void> callCreateQuoteAPI(double subTotal, double grandTotal, double disc,
+      String selectTemplateOption, double vatTotal, double profit, String depositAmount,
+      List<ProductsList> productList ) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    //for create data in json format
+    CreateQuoteRequest createQuoteRequest = CreateQuoteRequest(
+        subject: "${widget.contactSelect}-${widget.systemTypeSelect}",
+        quotestage: "Processed",
+        contactId : widget.contactId,
+        subtotal : subTotal.toString(),
+        txtAdjustment : "0.00",
+        hdnGrandTotal : grandTotal.toString(),
+        hdnTaxType : "individual",
+        hdnDiscountPercent : "0.00",
+        hdnDiscountAmount : disc.toString(),
+        hdnSHAmount : "0.00",
+        assignedUserId : preferences.getString(PreferenceString.userId).toString(),
+        currencyId : "21x1",
+        conversionRate : "0.00",
+        billStreet : widget.billStreet,
+        shipStreet : widget.shipStreet,
+        billCity : widget.billCity,
+        shipCity : widget.shipCity,
+        billCountry : widget.billCountry,
+        shipCountry : widget.shipCountry,
+        billCode : widget.billCode,
+        shipCode : widget.shipCode ,
+        description : Message.descriptionForQuote,
+        termsConditions : widget.termsItemSelection == "50% Deposit Balance on Account(Agreed terms)"
+            ? Message.termsCondition1
+            : Message.termsCondition2,
+        preTaxTotal : vatTotal.toString(),
+        hdnSHPercent : "0",
+        siteAddressId : "", //todo: get this id when perform edit operation
+        quotesTerms : widget.termsItemSelection,
+        hdnprofitTotal : profit.toString(),
+        markup : "0.00",
+        issueNumber : "1",
+        gradeNumber : widget.gradeFireSelect,
+        systemType : widget.systemTypeSelect,
+        signallingType : widget.signallingTypeSelect,
+        premisesType : widget.premisesTypeSelect,
+        projectManager : preferences.getString(PreferenceString.userId).toString(),
+        quotesEmail : preferences.getString(PreferenceString.userName).toString(),
+        quotesTemplateOptions : selectTemplateOption,
+        quoteRelatedId : "0", //todo: get this field on edit operation
+        quotesCompany : widget.contactCompany,
+        installation : "0",
+        hdnsubTotal : subTotal.toString(),
+        hdndiscountTotal : disc.toString(),
+        quoteMobileNumber : widget.mobileNumber,
+        quoteTelephoneNumber : widget.telephoneNumber,
+        isQuotesConfirm : "0",
+        quotesPayment : widget.quotePaymentSelection,
+        isQuotesPaymentConfirm : "0",
+        quotesDepositeAmount : depositAmount,
+        quotesDepoReceivedAmount : "0.00",
+        quoteEmailReminder : "0",
+        quoteReminderEmailSentLog : "",
+        isKeyholderConfirm : "0",
+        isMaintenanceConConfirm : "0",
+        isPoliceAppliConfirm : "0",
+        quoteCorrespondencesDocs : "",
+        quoteQuoteType : "Installation",
+        quotesContractId : "",
+        quoteStopEmailDocReminder : "0",
+        quotePriorityLevel : "Normal",
+        quoteWorksSchedule : "2nd fix only",
+        quoteNoOfEngineer : widget.engineerNumbers,
+        quoteReqToCompleteWork : widget.timeType,
+        lineItems : List<LineItems>.generate(productList.length, (int index) {
+          return LineItems(
+            productid: "1",
+            sequenceNo: "2",
+            quantity: "3",
+            listprice: "4",
+            discountPercent: "5",
+            discountAmount: "6",
+            comment: "7",
+            description: "8",
+            incrementondel: "8",
+            tax1: "8",
+            tax2: "9",
+            tax3: "0",
+            productLocation: "9",
+            productLocationTitle: "9",
+            costprice: "9",
+            extQty: "9",
+            requiredDocument: "9",
+            proShortDescription: "9",
+          );
+        })
+    );
+
+
+
+
+
+
+    String jsonQuoteDetail = jsonEncode(createQuoteRequest);
+
+    debugPrint(" jsonQuoteDetail add ----- $jsonQuoteDetail");
+
+    Map<String, String> bodyData = {
+      'operation': "create",
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'element': jsonQuoteDetail,
+      'elementType': 'Quotes',
+      'appversion': Constants.of().appversion.toString(),
+    };
+
+    addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+  }
+}
+
+
+///Class for edit item
+class EditItem extends StatefulWidget {
+
+
+  final ProductsList productsList;
+
+  EditItem({Key? key, required this.productsList}) : super(key: key);
+
+  @override
+  State<EditItem> createState() => _EditItemState();
+}
+
+class _EditItemState extends State<EditItem> {
+
+
+  TextEditingController itemNameController = TextEditingController();
+  TextEditingController itemDescriptionController = TextEditingController();
+  TextEditingController itemCostPriceController = TextEditingController();
+  TextEditingController itemSellingPriceController = TextEditingController();
+  TextEditingController itemQuantityController = TextEditingController();
+  TextEditingController itemDiscountController = TextEditingController();
+
+  int? quantity = 1;
+  late ProductsList productsList;
+  @override
+  void initState() {
+    super.initState();
+    productsList = widget.productsList;
+    itemDescriptionController.text = widget.productsList.description.toString();
+    itemNameController.text = widget.productsList.itemName.toString();
+    itemCostPriceController.text = widget.productsList.costPrice.toString();
+    itemSellingPriceController.text = widget.productsList.sellingPrice.formatAmount();
+    itemQuantityController.text = widget.productsList.quantity.toString();
+    itemDiscountController.text = widget.productsList.discountPrice.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var query = MediaQuery.of(context).size;
+
+    final finalAmount = (double.parse(productsList.amountPrice!) -
+        (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
+
+    final finalProfit = (double.parse(productsList.profit!) -
+        (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 0.sp),
+      child: SizedBox(
+        height: query.height / 1.2,
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            SizedBox(height: 1.h),
+            Align(
+                alignment: Alignment.topRight,
+                child: InkWell(
+                    highlightColor: AppColors.transparent,
+                    splashColor: AppColors.transparent,
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(Icons.close_rounded,
+                        color: AppColors.blackColor))),
+            CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              obscureText: false,
+              hint: LabelString.lbItemName,
+              titleText: LabelString.lbItemName,
+              isRequired: false,
+              controller: itemNameController,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(LabelString.lblAttachmentDocument,
+                      style: CustomTextStyle.commonTextBlue),
+                ),
+                TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        ///Make new class for dialog
+                        return Dialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            elevation: 0,
+                            insetPadding:
+                            EdgeInsets.symmetric(horizontal: 12.sp),
+                            child: SelectLocation(productsList.quantity));
+                      },
+                    );
+                  },
+                  child: Text(LabelString.lblSelectLocation,
+                      style: CustomTextStyle.commonTextBlue),
+                ),
+              ],
+            ),
+            CustomTextField(
+                keyboardType: TextInputType.name,
+                readOnly: false,
+                controller: itemDescriptionController,
+                obscureText: false,
+                hint: LabelString.lbItemDescription,
+                titleText: LabelString.lbItemDescription,
+                minLines: 1,
+                maxLines: 4,
+                textInputAction: TextInputAction.none,
+                isRequired: false),
+            AbsorbPointer(
+              absorbing: true,
+              child: CustomTextField(
+                keyboardType: TextInputType.number,
+                readOnly: false,
+                controller: itemCostPriceController,
+                obscureText: false,
+                hint: LabelString.lblCostPricePound,
+                titleText: LabelString.lblCostPricePound,
+                isRequired: false,
+                maxLines: 1,
+                minLines: 1,
+                textInputAction: TextInputAction.next,
+              ),
+            ),
+            AbsorbPointer(
+              absorbing: true,
+              child: CustomTextField(
+                keyboardType: TextInputType.number,
+                readOnly: false,
+                controller: itemSellingPriceController,
+                obscureText: false,
+                hint: LabelString.lblSellingPricePound,
+                titleText: LabelString.lblSellingPricePound,
+                isRequired: false,
+                textInputAction: TextInputAction.next,
+
+              ),
+            ),
+            Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: CustomTextField(
+                      keyboardType: TextInputType.number,
+                      readOnly: true,
+                      controller: itemQuantityController,
+                      obscureText: false,
+                      hint: LabelString.lblQuantityEdit,
+                      titleText: LabelString.lblQuantityEdit,
+                      isRequired: false),
+                ),
+                SizedBox(width: 3.w),
+                Flexible(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: () {
+                      if (productsList.quantity! > 1) {
+                        setState(() {
+                          productsList.quantity = (productsList.quantity ?? 0) - 1;
+                          productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
+                          itemQuantityController.text = productsList.quantity.toString();
+
+                        });
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.sp),
+                          color: AppColors.primaryColor),
+                      child: Padding(
+                        padding: EdgeInsets.all(8.sp),
+                        child: Icon(Icons.remove, color: AppColors.whiteColor),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 3.w),
+                Flexible(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        productsList.quantity = (productsList.quantity ?? 0) + 1;
+                        productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
+                        itemQuantityController.text = productsList.quantity.toString();
+                      });
+
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.sp),
+                          color: AppColors.primaryColor),
+                      child: Padding(
+                        padding: EdgeInsets.all(8.sp),
+                        child: Icon(Icons.add, color: AppColors.whiteColor),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            CustomTextField(
+              keyboardType: TextInputType.number,
+              readOnly: false,
+              controller: itemDiscountController,
+              obscureText: false,
+              hint: LabelString.lblDiscountPound,
+              titleText: LabelString.lblDiscountPound,
+              isRequired: false,
+              onEditingComplete: () {
+                setState((){});
+              },
+              textInputAction: TextInputAction.next,
+
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                        text: "${LabelString.lblAmount} : ",
+                        style: CustomTextStyle.labelFontHintText,
+                        children: [
+                          TextSpan(
+                              text: finalAmount,
+                              style: CustomTextStyle.labelText)
+                        ]),
+                  ),
+                ),
+                Expanded(
+                  child: RichText(
+                    textAlign: TextAlign.start,
+                    text: TextSpan(
+                        text: "${LabelString.lblProfit} : ",
+                        style: CustomTextStyle.labelFontHintText,
+                        children: [
+                          TextSpan(
+                              text: finalProfit,
+                              //productsList.profit.formatAmount(),
+                              style: CustomTextStyle.labelText)
+                        ]),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 2.h),
+            SizedBox(
+                width: query.width,
+                height: query.height * 0.06,
+                child: CustomButton(
+                    title: ButtonString.btnAddProduct,
+                    onClick: () {
+                      context.read<ProductListBloc>().add(
+                          UpdateProductToListEvent(productsList: productsList.copyWith(
+                            profit:finalProfit,
+                            amountPrice: finalAmount,
+                            discountPrice : itemDiscountController.text,
+                          )));
+                      //productsList.discountPrice = itemDiscountController.text;
+                      /*productsList.discountPrice = (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text)).formatAmount();
+                      productsList.amountPrice = (double.parse(productsList.amountPrice!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
+                      productsList.profit =  (double.parse(productsList.profit!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
+                      productsList.quantity = quantity;*/
+/*
+
+                      ProductsList productsListUpdate = ProductsList(
+                        itemId: widget.productsList.itemId,
+                        itemName: itemNameController.text,
+                        costPrice: itemCostPriceController.text,
+                        sellingPrice: itemSellingPriceController.text,
+                        discountPrice: itemDiscountController.text.toString(),
+                        amountPrice: productsList.amountPrice.formatAmount(),
+                        profit: productsList.profit.formatAmount(),
+                        quantity: quantity,
+                        description: itemDescriptionController.text
+                      );
+*/
+
+                      Navigator.pop(context);
+                    })),
+            SizedBox(height: 1.h),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 ///Custom class for bottom sheet static design
-class BottomSheetData extends StatelessWidget {
+class BottomSheetDataTile extends StatelessWidget {
   String? keyText;
   String? valueText;
   TextStyle? textStyle;
 
-  BottomSheetData(this.keyText, this.valueText, this.textStyle, {super.key});
+  BottomSheetDataTile(this.keyText, this.valueText, this.textStyle, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -604,301 +1082,6 @@ class SelectLocation extends StatelessWidget {
                         title: ButtonString.btnSave, onClick: () {})),
               ],
             )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-///Class for edit item
-class EditItem extends StatefulWidget {
-
-
-  final ProductsList productsList;
-
-  EditItem({Key? key, required this.productsList}) : super(key: key);
-
-  @override
-  State<EditItem> createState() => _EditItemState();
-}
-
-class _EditItemState extends State<EditItem> {
-
-
-  TextEditingController itemNameController = TextEditingController();
-  TextEditingController itemDescriptionController = TextEditingController();
-  TextEditingController itemCostPriceController = TextEditingController();
-  TextEditingController itemSellingPriceController = TextEditingController();
-  TextEditingController itemQuantityController = TextEditingController();
-  TextEditingController itemDiscountController = TextEditingController();
-
-  int? quantity = 1;
-  late ProductsList productsList;
-  @override
-  void initState() {
-    super.initState();
-    print("22222222222222222222222222 ${widget.productsList.itemId}");
-    productsList = widget.productsList;
-    itemDescriptionController.text = widget.productsList.description.toString();
-    itemNameController.text = widget.productsList.itemName.toString();
-    itemCostPriceController.text = widget.productsList.costPrice.toString();
-    itemSellingPriceController.text = widget.productsList.sellingPrice.formatAmount();
-    itemQuantityController.text = widget.productsList.quantity.toString();
-    itemDiscountController.text = widget.productsList.discountPrice.toString();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var query = MediaQuery.of(context).size;
-    final finalAmount = (double.parse(productsList.amountPrice!) -
-        (itemDiscountController.text == ""
-            ? 0.0
-            : double.parse(
-            itemDiscountController.text)))
-        .formatAmount();
-
-    final finalProfit = (double.parse(productsList.profit!) -
-        (itemDiscountController.text == ""
-            ? 0.0
-            : double.parse(
-            itemDiscountController.text)))
-        .formatAmount();
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 0.sp),
-      child: SizedBox(
-        height: query.height / 1.2,
-        child: ListView(
-          physics: const BouncingScrollPhysics(),
-          children: [
-            SizedBox(height: 1.h),
-            Align(
-                alignment: Alignment.topRight,
-                child: InkWell(
-                    highlightColor: AppColors.transparent,
-                    splashColor: AppColors.transparent,
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.close_rounded,
-                        color: AppColors.blackColor))),
-            CustomTextField(
-              keyboardType: TextInputType.name,
-              readOnly: false,
-              obscureText: false,
-              hint: LabelString.lbItemName,
-              titleText: LabelString.lbItemName,
-              isRequired: false,
-              controller: itemNameController,
-              maxLines: 1,
-              minLines: 1,
-              textInputAction: TextInputAction.next,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {},
-                  child: Text(LabelString.lblAttachmentDocument,
-                      style: CustomTextStyle.commonTextBlue),
-                ),
-                TextButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        ///Make new class for dialog
-                        return Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            elevation: 0,
-                            insetPadding:
-                            EdgeInsets.symmetric(horizontal: 12.sp),
-                            child: SelectLocation(productsList.quantity));
-                      },
-                    );
-                  },
-                  child: Text(LabelString.lblSelectLocation,
-                      style: CustomTextStyle.commonTextBlue),
-                ),
-              ],
-            ),
-            CustomTextField(
-                keyboardType: TextInputType.name,
-                readOnly: false,
-                controller: itemDescriptionController,
-                obscureText: false,
-                hint: LabelString.lbItemDescription,
-                titleText: LabelString.lbItemDescription,
-                minLines: 1,
-                maxLines: 4,
-                textInputAction: TextInputAction.none,
-                isRequired: false),
-            CustomTextField(
-              keyboardType: TextInputType.number,
-              readOnly: false,
-              controller: itemCostPriceController,
-              obscureText: false,
-              hint: LabelString.lblCostPricePound,
-              titleText: LabelString.lblCostPricePound,
-              isRequired: false,
-              maxLines: 1,
-              minLines: 1,
-              textInputAction: TextInputAction.next,
-            ),
-            CustomTextField(
-                keyboardType: TextInputType.number,
-                readOnly: false,
-                controller: itemSellingPriceController,
-                obscureText: false,
-                hint: LabelString.lblSellingPricePound,
-                titleText: LabelString.lblSellingPricePound,
-                isRequired: false,
-              textInputAction: TextInputAction.next,
-
-            ),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: CustomTextField(
-                      keyboardType: TextInputType.number,
-                      readOnly: true,
-                      controller: itemQuantityController,
-                      obscureText: false,
-                      hint: LabelString.lblQuantityEdit,
-                      titleText: LabelString.lblQuantityEdit,
-                      isRequired: false),
-                ),
-                SizedBox(width: 3.w),
-                Flexible(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () {
-                      if (productsList.quantity! > 1) {
-                        setState(() {
-                          productsList.quantity = (productsList.quantity ?? 0) - 1;
-                          productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
-                          itemQuantityController.text = productsList.quantity.toString();
-
-                        });
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.sp),
-                          color: AppColors.primaryColor),
-                      child: Padding(
-                        padding: EdgeInsets.all(8.sp),
-                        child: Icon(Icons.remove, color: AppColors.whiteColor),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 3.w),
-                Flexible(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        productsList.quantity = (productsList.quantity ?? 0) + 1;
-                        productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
-                        itemQuantityController.text = productsList.quantity.toString();
-                        });
-
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.sp),
-                          color: AppColors.primaryColor),
-                      child: Padding(
-                        padding: EdgeInsets.all(8.sp),
-                        child: Icon(Icons.add, color: AppColors.whiteColor),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            CustomTextField(
-                keyboardType: TextInputType.number,
-                readOnly: false,
-                controller: itemDiscountController,
-                obscureText: false,
-                hint: LabelString.lblDiscountPound,
-                titleText: LabelString.lblDiscountPound,
-                isRequired: false,
-              onEditingComplete: () {
-                setState((){});
-              },
-              textInputAction: TextInputAction.next,
-
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                        text: "${LabelString.lblAmount} : ",
-                        style: CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: finalAmount,
-                              style: CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-                Expanded(
-                  child: RichText(
-                    textAlign: TextAlign.start,
-                    text: TextSpan(
-                        text: "${LabelString.lblProfit} : ",
-                        style: CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: finalProfit,
-                              //productsList.profit.formatAmount(),
-                              style: CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            SizedBox(
-                width: query.width,
-                height: query.height * 0.06,
-                child: CustomButton(
-                    title: ButtonString.btnAddProduct,
-                    onClick: () {
-                      context.read<ProductListBloc>().add(
-                          UpdateProductToListEvent(productsList: productsList.copyWith(
-                            profit:finalProfit,
-                            amountPrice: finalAmount,
-                            discountPrice : itemDiscountController.text,
-                          )));
-                      //productsList.discountPrice = itemDiscountController.text;
-                      /*productsList.discountPrice = (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text)).formatAmount();
-                      productsList.amountPrice = (double.parse(productsList.amountPrice!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
-                      productsList.profit =  (double.parse(productsList.profit!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
-                      productsList.quantity = quantity;*/
-/*
-
-                      ProductsList productsListUpdate = ProductsList(
-                        itemId: widget.productsList.itemId,
-                        itemName: itemNameController.text,
-                        costPrice: itemCostPriceController.text,
-                        sellingPrice: itemSellingPriceController.text,
-                        discountPrice: itemDiscountController.text.toString(),
-                        amountPrice: productsList.amountPrice.formatAmount(),
-                        profit: productsList.profit.formatAmount(),
-                        quantity: quantity,
-                        description: itemDescriptionController.text
-                      );
-*/
-
-                  Navigator.pop(context);
-                })),
-            SizedBox(height: 1.h),
           ],
         ),
       ),

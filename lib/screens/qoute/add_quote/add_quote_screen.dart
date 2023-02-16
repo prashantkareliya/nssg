@@ -45,6 +45,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
   List addressList = [];
 
   String? contactId;
+  String? contactCompany;
+  String? mobileNumber;
+  String? telephoneNumber;
   Future<dynamic>? getFields;
 
   //object for estimated installation amount
@@ -55,6 +58,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   String? timeType;
 
   //Radio selection strings
+  String contactSelect = "";
   String premisesTypeSelect = "";
   String systemTypeSelect = "";
   String gradeFireSelect = "";
@@ -308,10 +312,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   }));
 
                   matchesContact = matchesContact
-                      .where((element) => element
-                          .toLowerCase()
-                          .contains(textEditingValue.text.toLowerCase()))
-                      .toList();
+                      .where((element) => element.toLowerCase().contains(textEditingValue.text.toLowerCase())).toList();
                   return matchesContact;
                 }
               },
@@ -321,23 +322,20 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   if (selection ==
                       "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
                     contactId = contactData[i]["id"];
-
+                    contactCompany = contactData[i]["contact_company"];
+                    mobileNumber = contactData[i]["mobile"];
+                    telephoneNumber = contactData[i]["phone"];
+                    contactSelect = selection;
                     //When select contact, set address in fields
-                    invoiceAddressController.text =
-                        contactData[i]["mailingstreet"];
+                    invoiceAddressController.text = contactData[i]["mailingstreet"];
                     invoiceCityController.text = contactData[i]["mailingcity"];
-                    invoiceCountryController.text =
-                        contactData[i]["mailingcountry"];
+                    invoiceCountryController.text = contactData[i]["mailingcountry"];
                     invoicePostalController.text = contactData[i]["mailingzip"];
 
-                    installationAddressController.text =
-                        contactData[i]["otherstreet"];
-                    installationCityController.text =
-                        contactData[i]["othercity"];
-                    installationCountryController.text =
-                        contactData[i]["othercountry"];
-                    installationPostalController.text =
-                        contactData[i]["otherzip"];
+                    installationAddressController.text = contactData[i]["otherstreet"];
+                    installationCityController.text = contactData[i]["othercity"];
+                    installationCountryController.text = contactData[i]["othercountry"];
+                    installationPostalController.text = contactData[i]["otherzip"];
                   }
                 }
               },
@@ -364,8 +362,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       },
                     );
                   } else {
-                    Helpers.showSnackBar(context, ErrorString.selectOneContact,
-                        isError: true);
+                    Helpers.showSnackBar(context, ErrorString.selectOneContact, isError: true);
                   }
                 },
                 child: Padding(
@@ -437,18 +434,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         installationTiming[index].isSelected = true;
                         Provider.of<WidgetChange>(context, listen: false).isSetTime;
 
-                        if (stepOneData["quote_req_to_complete_work"][index]
-                                ["label"]
-                            .toString()
-                            .endsWith("Hours")) {
-                          timeType = stepOneData["quote_req_to_complete_work"]
-                                  [index]["label"]
-                              .toString();
+                        if (stepOneData["quote_req_to_complete_work"][index]["label"].toString().endsWith("Hours")) {
+                          timeType = stepOneData["quote_req_to_complete_work"][index]["label"].toString();
                           calculation();
                         } else {
-                          timeType = stepOneData["quote_req_to_complete_work"]
-                                  [index]["label"]
-                              .toString();
+                          timeType = stepOneData["quote_req_to_complete_work"][index]["label"].toString();
                           calculation();
                         }
                       },
@@ -523,11 +513,13 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         //next button
                         title: ButtonString.btnNext,
                         onClick: () {
-                          if (eAmount != "0.0") {
+                          if (eAmount != "0.0" && contactId !=null) {
                             FocusScope.of(context).unfocus();
                             pageController.nextPage(
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.decelerate);
+                          }else{
+                            Helpers.showSnackBar(context, ErrorString.selectOneContact, isError: true);
                           }
                         },
                         buttonColor: AppColors.primaryColor),
@@ -1539,7 +1531,14 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           //update button
                           title: ButtonString.btnNext,
                           onClick: () =>
-                              callNextScreen(context, BuildItemDetail(eAmount, systemTypeSelect,quotePaymentSelection)),
+                              callNextScreen(context, BuildItemDetail(
+                                  eAmount, systemTypeSelect, quotePaymentSelection,
+                                  contactSelect, premisesTypeSelect, termsItemSelection,
+                                  gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
+                                  invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
+                                  installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                                  contactId, contactCompany, mobileNumber, telephoneNumber
+                              )),
                           buttonColor: AppColors.primaryColor))
                 ],
               ),
@@ -1638,20 +1637,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
             //set address detail in field
             if (response.statusCode == 200) {
               if (autoCompleteType == "invoice") {
-                invoiceAddressController.text =
-                    "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                invoiceAddressController.text = "${responseJson["line_1"]}  ${responseJson["line_2"]}";
                 invoiceCityController.text = "${responseJson["town_or_city"]}";
                 invoiceCountryController.text = "${responseJson["county"]}";
                 invoicePostalController.text = "${responseJson["postcode"]}";
               } else {
-                installationAddressController.text =
-                    "${responseJson["line_1"]}  ${responseJson["line_2"]}";
-                installationCityController.text =
-                    "${responseJson["town_or_city"]}";
-                installationCountryController.text =
-                    "${responseJson["county"]}";
-                installationPostalController.text =
-                    "${responseJson["postcode"]}";
+                installationAddressController.text = "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                installationCityController.text = "${responseJson["town_or_city"]}";
+                installationCountryController.text = "${responseJson["county"]}";
+                installationPostalController.text = "${responseJson["postcode"]}";
               }
             } else {
               Helpers.showSnackBar(context, responseJson["Message"].toString());

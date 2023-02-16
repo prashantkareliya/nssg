@@ -188,11 +188,9 @@ class _AddContactPageState extends State<AddContactPage> {
               if (state is GetContactData) {
                 contactDetailData = state.contactData;
 
-                firstNameController.text =
-                    state.contactData.firstname.toString();
+                firstNameController.text = state.contactData.firstname.toString();
                 lastNameController.text = state.contactData.lastname.toString();
-                companyNameController.text =
-                    state.contactData.contactCompany.toString();
+                companyNameController.text = state.contactData.contactCompany.toString();
                 officePhoneController.text = state.contactData.phone.toString();
                 mobilePhoneController.text =
                     state.contactData.mobile.toString();

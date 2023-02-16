@@ -260,15 +260,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                             children: [
                                               SizedBox(height: 1.0.h),
                                               Text(
+
                                                   searchKey.isNotEmpty
-                                                      ? searchItemList![index]
-                                                          .subject
-                                                          .toString()
-                                                      : quoteItems![index]
-                                                          .subject
-                                                          .toString(),
-                                                  style: CustomTextStyle
-                                                      .labelMediumBoldFontText),
+                                                      ? searchItemList![index].subject.toString()
+                                                      : quoteItems![index].subject.toString(),
+
+                                                  style: CustomTextStyle.labelMediumBoldFontText),
                                               SizedBox(height: 2.0.h),
                                               Text(
                                                   searchKey.isNotEmpty
@@ -474,15 +471,15 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              BottomSheetData("Sub Total", "0",
+                              BottomSheetDataTile("Sub Total", "0",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetData("Discount Amount", "0.00",
+                              BottomSheetDataTile("Discount Amount", "0.00",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetData("Items Total", "0",
+                              BottomSheetDataTile("Items Total", "0",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetData("Vat Total", "0.00",
+                              BottomSheetDataTile("Vat Total", "0.00",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetData("Deposit Amount", "0.00",
+                              BottomSheetDataTile("Deposit Amount", "0.00",
                                   CustomTextStyle.labelFontHintText),
                               Divider(
                                   color: AppColors.hintFontColor,

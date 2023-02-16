@@ -13,6 +13,10 @@ class Message {
   static const String deleteContact = "Do you want to delete this contact?";
   static const String quoteExit = "Do you want to exit from this module?";
   static const String enterYourPasscodeToUnlock = "Enter your Passcode to unlock";
+
+  static const String descriptionForQuote = "Our lead times are 2 to 3 weeks from the date of your order.";
+  static const String termsCondition1 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. Deposit Payment Method: Bacs / Cheque / Debit Cards. Payment Terms : 50% Deposit and Remaining balance upon completion.";
+  static const String termsCondition2 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. Deposit Payment Method: Bacs / Cheque / Debit Cards. Payment Terms : 30 Days credit terms upon completion.";
 }
 
 //Label Strings
@@ -135,6 +139,13 @@ class LabelString {
   static const String lblDescription = "Description";
   static const String lblPersonalDetail = "Personal Detail";
   static const String lblProductDetail = "Product Detail";
+  static const String lblSubTotal = "Sub Total";
+  static const String lblDiscountAmount = "Discount Amount";
+  static const String lblItemsTotal = "Items Total";
+  static const String lblVatTotal = "Vat Total";
+  static const String lblDepositAmount = "Deposit Amount";
+  static const String lblGrandTotal = "Grand Total";
+  static const String lblTotalProfit = "Total Profit";
 }
 
 //Button Strings

@@ -77,10 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (state is LoginLoaded) {
             preferences.setPreference(PreferenceString.userId, state.userId);
-            preferences.setPreference(
-                PreferenceString.sessionName, state.sessionName);
-            preferences.setPreference(
-                PreferenceString.userName, state.userName);
+            preferences.setPreference(PreferenceString.sessionName, state.sessionName);
+            preferences.setPreference(PreferenceString.userName, state.userName);
+
             //Helpers.showSnackBar(context, state.msg.toString());
             moveToNextScreen();
           }
