@@ -88,6 +88,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
     if(productList ==null){
       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
           itemId:  "123456",
+          productId: "789",
           itemName: 'Installation (1st & 2nd fix)',
           costPrice: '80.00',
           sellingPrice: widget.eAmount,
@@ -124,6 +125,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               if (state is FailAddQuote) {
                 Helpers.showSnackBar(context, state.error.toString());
               }
+              if(state is LoadedAddQuote){
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              }
             },
             child: BlocBuilder<AddQuoteBloc, AddQuoteState>(
               bloc: addQuoteBloc,
@@ -132,6 +137,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 isLoading = state.isBusy;
               }
               if (state is LoadedAddQuote) {
+                Helpers.showSnackBar(context, "Quote added successfully!");
                 isLoading = false;
               }
               if (state is FailAddQuote) {
@@ -191,7 +197,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 SizedBox(height: 10.sp),
                 ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
                 //item list
-                SizedBox(height: query.height *0.15)
+                SizedBox(height: query.height *0.08)
               ],
             );
           },
@@ -204,7 +210,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
       ///bottom sheet design
       bottomSheet: Container(
         width: query.width,
-        height: query.height * 0.15,
+        height: query.height * 0.08,
         decoration: BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
@@ -230,7 +236,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 ],
               ),
             ),
-            SizedBox(
+            /*SizedBox(
               width: query.width * 0.8,
               height: query.height * 0.06,
               child: CustomButton(
@@ -240,7 +246,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                     selectTemplateOption, vatTotal, profit,
                     depositAmountController.text, productListLocal)
               ),
-            )
+            )*/
           ],
         ),
       ),
@@ -276,17 +282,19 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                        text: LabelString.lblItemName,
-                        style:
-                        CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: "\n${products.itemName}",
-                              style:
-                              CustomTextStyle.labelText)
-                        ]),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                          text: LabelString.lblItemName,
+                          style:
+                          CustomTextStyle.labelFontHintText,
+                          children: [
+                            TextSpan(
+                                text: "\n${products.itemName}",
+                                style:
+                                CustomTextStyle.labelText)
+                          ]),
+                    ),
                   ),
                   Column(
                     children: [
@@ -302,16 +310,16 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                     insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                     child: EditItem(productsList: products));
                               },
-                            ).then((value) {
-                              setState(() {});
-                            });
+                            );
                           },
                           child: Image.asset(ImageString.icEdit, height: 2.5.h)
 
                       ),
                       SizedBox(height: 1.5.h),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+
+                        },
                         child: Image.asset(ImageString.icDelete, height: 2.5.h),
                       )
                     ],
@@ -422,7 +430,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 ],
               ),
               SizedBox(height: 2.0.h),
-              Text(products.description.toString(),
+              Text(products.description.toString(), maxLines: 3,
                   style: CustomTextStyle.labelText),
               SizedBox(height: 1.h),
             ],
@@ -641,34 +649,27 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         quoteWorksSchedule : "2nd fix only",
         quoteNoOfEngineer : widget.engineerNumbers,
         quoteReqToCompleteWork : widget.timeType,
-        lineItems : List<LineItems>.generate(productList.length, (int index) {
-          return LineItems(
-            productid: "1",
-            sequenceNo: "2",
-            quantity: "3",
-            listprice: "4",
-            discountPercent: "5",
-            discountAmount: "6",
-            comment: "7",
-            description: "8",
-            incrementondel: "8",
-            tax1: "8",
-            tax2: "9",
-            tax3: "0",
-            productLocation: "9",
-            productLocationTitle: "9",
-            costprice: "9",
-            extQty: "9",
-            requiredDocument: "9",
-            proShortDescription: "9",
-          );
-        })
+        lineItems :  productList.map((e) => LineItems(
+          productid: e.productId,
+          sequenceNo: "2",
+          quantity: e.quantity.toString(),
+          listprice: e.amountPrice,
+          discountPercent: "00.00",
+          discountAmount: e.discountPrice,
+          comment: e.description,
+          description: "",
+          incrementondel: "0",
+          tax1: "20.00",
+          tax2: "",
+          tax3: "",
+          productLocation: "",
+          productLocationTitle: "",
+          costprice: e.costPrice,
+          extQty: "0",
+          requiredDocument: "Keyholder form###Maintenance contract###Police application###Direct Debit",
+          proShortDescription: e.description,
+        )).toList()
     );
-
-
-
-
-
 
     String jsonQuoteDetail = jsonEncode(createQuoteRequest);
 
@@ -951,26 +952,6 @@ class _EditItemState extends State<EditItem> {
                             amountPrice: finalAmount,
                             discountPrice : itemDiscountController.text,
                           )));
-                      //productsList.discountPrice = itemDiscountController.text;
-                      /*productsList.discountPrice = (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text)).formatAmount();
-                      productsList.amountPrice = (double.parse(productsList.amountPrice!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
-                      productsList.profit =  (double.parse(productsList.profit!) - (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
-                      productsList.quantity = quantity;*/
-/*
-
-                      ProductsList productsListUpdate = ProductsList(
-                        itemId: widget.productsList.itemId,
-                        itemName: itemNameController.text,
-                        costPrice: itemCostPriceController.text,
-                        sellingPrice: itemSellingPriceController.text,
-                        discountPrice: itemDiscountController.text.toString(),
-                        amountPrice: productsList.amountPrice.formatAmount(),
-                        profit: productsList.profit.formatAmount(),
-                        quantity: quantity,
-                        description: itemDescriptionController.text
-                      );
-*/
-
                       Navigator.pop(context);
                     })),
             SizedBox(height: 1.h),
@@ -1005,23 +986,88 @@ class BottomSheetDataTile extends StatelessWidget {
 }
 
 ///class for select location dialog
-class SelectLocation extends StatelessWidget {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
+class SelectLocation extends StatefulWidget {
 
   var quantity;
 
   SelectLocation(this.quantity, {super.key});
 
   @override
+  State<SelectLocation> createState() => _SelectLocationState();
+}
+
+class _SelectLocationState extends State<SelectLocation> {
+  var titleTECs = <TextEditingController>[];
+  var locationTECs = <TextEditingController>[];
+  var cards = <Card>[];
+
+  Card createCard() {
+    var titleController = TextEditingController();
+    var locationController = TextEditingController();
+
+    titleTECs.add(titleController);
+    locationTECs.add(locationController);
+
+    return Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text('Location ${cards.length + 1}'),
+          CustomTextField(
+            keyboardType: TextInputType.name,
+            readOnly: false,
+            controller: titleController,
+            obscureText: false,
+            hint: LabelString.lblTitle,
+            titleText: LabelString.lblTitle,
+            isRequired: false,
+            maxLines: 1,
+            minLines: 1,
+            textInputAction: TextInputAction.next,
+          ),
+          CustomTextField(
+              keyboardType: TextInputType.name,
+              readOnly: false,
+              controller: locationController,
+              obscureText: false,
+              hint: LabelString.lblLocation,
+              titleText: LabelString.lblLocation,
+              isRequired: false,
+              maxLines: 1,
+              minLines: 1,
+              textInputAction: TextInputAction.next),
+
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cards.add(createCard());
+  }
+
+  _onDone() {
+    List<PersonEntry> entries = [];
+    for (int i = 0; i < cards.length; i++) {
+      var title = titleTECs[i].text;
+      var location = locationTECs[i].text;
+      entries.add(PersonEntry(title, location));
+    }
+    Navigator.pop(context, entries);
+  }
+
+  @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
+
     return Padding(
       padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 15.sp),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
@@ -1031,40 +1077,21 @@ class SelectLocation extends StatelessWidget {
                     icon: Icon(Icons.close_rounded,
                         color: AppColors.blackColor))),
             SizedBox(
-              height: quantity == 1 ? query.height / 4 : query.height / 2,
+              height: cards.length == 1 ? query.height / 4 : query.height / 2,
               child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: quantity,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        CustomTextField(
-                          keyboardType: TextInputType.name,
-                          readOnly: false,
-                          controller: titleController,
-                          obscureText: false,
-                          hint: "${LabelString.lblTitle} ${index + 1}",
-                          titleText: LabelString.lblTitle,
-                          isRequired: false,
-                          maxLines: 1,
-                          minLines: 1,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        CustomTextField(
-                            keyboardType: TextInputType.name,
-                            readOnly: false,
-                            controller: locationController,
-                            obscureText: false,
-                            hint: "${LabelString.lblLocation} ${index + 1}",
-                            titleText: LabelString.lblLocation,
-                            isRequired: false,
-                            maxLines: 1,
-                            minLines: 1,
-                            textInputAction: TextInputAction.next),
-                      ],
-                    );
-                  }),
+                itemCount: cards.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return cards[index];
+                },
+              ),
+            ),
+            TextButton(
+              child:  widget.quantity != cards.length ? const Text('Add location') : const Text(''),
+              onPressed: () => setState(() {
+                if(widget.quantity != cards.length){
+                  cards.add(createCard());
+                }
+              }),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1079,12 +1106,23 @@ class SelectLocation extends StatelessWidget {
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
-                        title: ButtonString.btnSave, onClick: () {})),
+                        title: ButtonString.btnSave, onClick: _onDone)),
               ],
             )
           ],
         ),
       ),
     );
+  }
+}
+
+class PersonEntry {
+  final String title;
+  final String location;
+
+  PersonEntry(this.title, this.location);
+  @override
+  String toString() {
+    return 'title= $title, location= $location';
   }
 }

@@ -52,6 +52,7 @@ dependencies:
   #Animation
   flutter_staggered_animations: ^1.1.1
 
+
   #Storage
   shared_preferences: ^2.0.15
 

@@ -1,5 +1,7 @@
+
 class ProductsList {
   String? itemId;
+  String? productId;
   String? itemName;
   String? costPrice;
   String? sellingPrice;
@@ -9,8 +11,11 @@ class ProductsList {
   String? description;
   int? quantity;
 
+
+
   ProductsList copyWith({
     String? itemId,
+    String? productId,
     String? itemName,
     String? costPrice,
     String? sellingPrice,
@@ -22,6 +27,7 @@ class ProductsList {
   }) {
     return ProductsList(
       itemId: itemId ?? this.itemId,
+      productId: productId ?? this.productId,
       itemName: itemName ?? this.itemName,
       costPrice: costPrice ?? this.costPrice,
       sellingPrice: sellingPrice ?? this.sellingPrice,
@@ -35,6 +41,7 @@ class ProductsList {
 
   ProductsList(
       {this.itemId,
+        this.productId,
       this.itemName,
       this.costPrice,
       this.sellingPrice,
@@ -46,6 +53,7 @@ class ProductsList {
 
   ProductsList.fromJson(Map<String, dynamic> json) {
     itemId = json["itemId"];
+    productId = json["productId"];
     itemName = json['itemName'];
     costPrice = json['costPrice'];
     sellingPrice = json['sellingPrice'];
@@ -59,6 +67,7 @@ class ProductsList {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["itemId"] = itemId;
+    data["productId"] = productId;
     data['itemName'] = itemName;
     data['costPrice'] = costPrice;
     data['sellingPrice'] = sellingPrice;
@@ -70,3 +79,4 @@ class ProductsList {
     return data;
   }
 }
+

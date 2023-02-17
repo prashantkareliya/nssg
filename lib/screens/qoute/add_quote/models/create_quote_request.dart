@@ -291,6 +291,7 @@ class LineItems {
   String? extQty;
   String? requiredDocument;
   String? proShortDescription;
+  String? proName;
 
   LineItems(
       {this.productid,
@@ -310,7 +311,8 @@ class LineItems {
         this.costprice,
         this.extQty,
         this.requiredDocument,
-        this.proShortDescription});
+        this.proShortDescription,
+        this.proName});
 
   LineItems.fromJson(Map<String, dynamic> json) {
     productid = json['productid'];
@@ -331,6 +333,7 @@ class LineItems {
     extQty = json['ext_qty'];
     requiredDocument = json['required_document'];
     proShortDescription = json['pro_short_description'];
+    proName = json["prod_name"];
   }
 
   Map<String, dynamic> toJson() {
@@ -353,6 +356,7 @@ class LineItems {
     data['ext_qty'] = extQty;
     data['required_document'] = requiredDocument;
     data['pro_short_description'] = proShortDescription;
+    data['prod_name'] = proName;
     return data;
   }
 }

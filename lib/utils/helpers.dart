@@ -13,6 +13,7 @@ class Helpers {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
+          duration: const Duration(milliseconds: 800),
           backgroundColor: isError ? Colors.red : Colors.green,
           content: Text(
             msg,

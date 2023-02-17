@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/custom_appbar.dart';
@@ -44,7 +45,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
   List<Result>? filterList = [];
 
   TextEditingController sellingPriceController = TextEditingController();
-  //TextEditingController discountPriceController = TextEditingController();
   List<TextEditingController> discountPriceController = [];
 
   String manufactureSelect = "";
@@ -119,7 +119,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
         body: PageView(
           scrollDirection: Axis.horizontal,
           pageSnapping: true,
-          physics: const BouncingScrollPhysics(),
+          physics: manufactureSelect.isEmpty ? const NeverScrollableScrollPhysics(): const BouncingScrollPhysics(),
           controller: pageController,
           onPageChanged: (number) {},
           children: [
@@ -199,10 +199,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   alignment: WrapAlignment.center,
                   runSpacing: 14.sp,
                   children: List.generate(
-                    fieldsData["manufacturer"].length,
+                    fieldsData["product_manufacturer"].length,
                         (index) {
                       manufacturingType.add(RadioModel(
-                          false, fieldsData["manufacturer"][index]["label"]));
+                          false, fieldsData["product_manufacturer"][index]["label"]));
                       return InkWell(
                         onTap: () {
                           for (var element in manufacturingType) {
@@ -215,11 +215,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
                           if (manufactureSelect.isEmpty) {
                             manufactureSelect =
-                            fieldsData["manufacturer"][index]["label"];
+                            fieldsData["product_manufacturer"][index]["label"];
                           } else {
                             manufactureSelect = "";
                             manufactureSelect =
-                            fieldsData["manufacturer"][index]["label"];
+                            fieldsData["product_manufacturer"][index]["label"];
                           }
                           pageController.nextPage(
                               duration: const Duration(milliseconds: 500),
@@ -249,12 +249,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                         manufacturingType[index].isSelected
                                             ? AppColors.primaryColor
                                             : AppColors.blackColor,
-                                        itemName: fieldsData["manufacturer"]
+                                        itemName: fieldsData["product_manufacturer"]
                                         [index]["label"]
                                             .toString()),
                                     SizedBox(height: 1.h),
                                     Text(
-                                        fieldsData["manufacturer"][index]
+                                        fieldsData["product_manufacturer"][index]
                                         ["label"],
                                         style:
                                         manufacturingType[index].isSelected
@@ -440,10 +440,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     alignment: WrapAlignment.center,
                     runSpacing: 15.sp,
                     children: List.generate(
-                      stepThreeData["sub_category"].length,
+                      stepThreeData["product_prod_category"].length,
                           (index) {
                         categoryType.add(RadioModel(false,
-                            stepThreeData["sub_category"][index]["label"]));
+                            stepThreeData["product_prod_category"][index]["label"]));
 
                         return InkWell(
                           onTap: () {
@@ -458,11 +458,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                             filterList!.clear();
                             if (categorySelect.isEmpty) {
                               categorySelect =
-                              stepThreeData["sub_category"][index]["label"];
+                              stepThreeData["product_prod_category"][index]["label"];
                             } else {
                               categorySelect = "";
                               categorySelect =
-                              stepThreeData["sub_category"][index]["label"];
+                              stepThreeData["product_prod_category"][index]["label"];
                             }
 
                             if (categoryType.isNotEmpty) {
@@ -564,10 +564,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
             productItems = state.productList;
             filterList!.clear();
             for (var element in productItems!) {
-              if (element.manufacturer!.contains(manufactureSelect) &&
+              if (element.productManufacturer!.contains(manufactureSelect) &&
                   widget.systemTypeSelect!
                       .contains(systemTypeItemProductSelect) &&
-                  element.subCategory!.contains(categorySelect)) {
+                  element.productProdCategory!.contains(categorySelect)) {
                 filterList!.add(element);
               }
               //filterList!.add(element);
@@ -809,10 +809,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               insetPadding:
                                               EdgeInsets.symmetric(
                                                   horizontal: 12.sp),
-                                              child: SelectLocation(
-                                                  filterList![index].quantity));
+                                              child: SelectLocation(filterList![index].quantity));
                                         },
-                                      );
+                                      ).then((value){
+                                        print(value);
+                                      });
                                     },
                                     child: Text(LabelString.lblSelectLocation,
                                         style: CustomTextStyle.commonTextBlue),
@@ -924,6 +925,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
                                             ProductsList productsList = ProductsList(
                                               itemId: DateTime.now().microsecondsSinceEpoch.toString(),
+                                              productId: filterList![index].id.toString(),
                                               itemName: filterList![index].productname.toString(),
                                               costPrice: filterList![index].costPrice.toString(),
                                               sellingPrice: sellingPriceController.text.isEmpty
@@ -936,9 +938,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               description: filterList![index].description
                                             );
 
-                                            context.read<ProductListBloc>().add(
-                                                AddProductToListEvent(productsList: productsList));
+                                            context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
 
+                                            Helpers.showSnackBar(context, "Item Added",isError: false);
                                           }),
                                     ),
                                   ),

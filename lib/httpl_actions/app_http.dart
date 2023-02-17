@@ -117,12 +117,10 @@ class HttpActions {
 
 
       if (response.statusCode == 200) {
-        //print("@@@@@@@@@@@@@@@@@@@@@@@@ " + await response.stream.bytesToString());
+
         var responsed = await http.Response.fromStream(response);
         final responseData = json.decode(responsed.body);
         return responseData;
-
-
       } else {
         print(response.reasonPhrase);
       }

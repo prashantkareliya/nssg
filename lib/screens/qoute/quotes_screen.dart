@@ -348,7 +348,10 @@ class _QuoteScreenState extends State<QuoteScreen> {
     return FloatingActionButton(
         onPressed: () {
           context.read<ProductListBloc>().add(ClearProductToListEvent());
-          callNextScreen(context, AddQuotePage(true));
+          Navigator.push(context, MaterialPageRoute(builder:
+              (context)=> AddQuotePage(true),
+          )).then((value) => getQuote());
+
         },
         child: const Icon(Icons.add));
   }
@@ -449,9 +452,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           textColor: AppColors.blackColor,
                           collapsedBackgroundColor: AppColors.whiteColor,
                           title: Text(LabelString.lblProductDetail,
-                              style: Provider.of<WidgetChange>(context,
-                                          listen: true)
-                                      .isExpansionTwo
+                              style: Provider.of<WidgetChange>(context, listen: true).isExpansionTwo
                                   ? TextStyle(
                                       fontSize: 14.sp,
                                       color: AppColors.primaryColor,
@@ -471,15 +472,15 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              BottomSheetDataTile("Sub Total", "0",
+                              BottomSheetDataTile("Sub Total", dataQuote["hdnsubTotal"].toString().formatAmount,
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Discount Amount", "0.00",
+                              BottomSheetDataTile("Discount Amount", dataQuote["hdndiscountTotal"].toString().formatAmount,
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Items Total", "0",
+                              BottomSheetDataTile("Items Total", dataQuote["LineItems"].length.toString(),
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Vat Total", "0.00",
+                              BottomSheetDataTile("Vat Total", dataQuote["pre_tax_total"].toString().formatAmount,
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Deposit Amount", "0.00",
+                              BottomSheetDataTile("Deposit Amount", dataQuote["quotes_deposite_amount"].toString().formatAmount,
                                   CustomTextStyle.labelFontHintText),
                               Divider(
                                   color: AppColors.hintFontColor,
@@ -498,7 +499,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                             fontSize: 12.sp,
                                             color: AppColors.primaryColor,
                                             fontWeight: FontWeight.w500)),
-                                    Text("0",
+                                    Text(dataQuote["hdnprofitTotal"].toString().formatAmount,
                                         style: CustomTextStyle.commonTextBlue),
                                   ],
                                 ),
@@ -515,7 +516,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                             fontSize: 12.sp,
                                             color: AppColors.primaryColor,
                                             fontWeight: FontWeight.w500)),
-                                    Text("0",
+                                    Text(dataQuote["hdnGrandTotal"].toString().formatAmount,
                                         style: TextStyle(
                                             fontSize: 18.sp,
                                             color: AppColors.primaryColor,
@@ -575,8 +576,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                     children: [
                                       Flexible(
                                           flex: 4,
-                                          child: Text(
-                                              itemList[index]["prod_name"],
+                                          child: Text(index==0 ? "Installation (1st & 2nd fix)":
+                                              itemList[index]["prod_name"] ?? "No Name",
                                               style: CustomTextStyle
                                                   .labelBoldFontText)),
                                       Flexible(
@@ -599,11 +600,9 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                               horizontal: 12
                                                                   .sp),
                                                       child:
-                                                          itemDescription(
-                                                              itemList[index]
-                                                                  ["prod_name"],
-                                                              itemList[index]
-                                                                  ["comment"]));
+                                                          itemDescription(index==0 ? "Installation (1st & 2nd fix)":
+                                                              itemList[index]["prod_name"] ?? "No Name",
+                                                              itemList[index]["comment"] ?? ""));
                                                 },
                                               );
                                             },
@@ -816,7 +815,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
             SizedBox(height: 2.h),
             Text(productName, style: CustomTextStyle.labelBoldFontText),
             SizedBox(height: 3.h),
-            Text(description == "" ? LabelString.lblNoData : description,
+            Text(description,
                 style: CustomTextStyle.labelText),
           ],
         ),
