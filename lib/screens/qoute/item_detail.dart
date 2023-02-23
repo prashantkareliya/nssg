@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nssg/components/custom_textfield.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
@@ -16,6 +18,7 @@ import '../../components/custom_appbar.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_radio_button.dart';
 import '../../components/custom_text_styles.dart';
+import '../../components/toggle_switch.dart';
 import '../../constants/constants.dart';
 import '../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
@@ -50,13 +53,32 @@ class BuildItemDetail extends StatefulWidget {
   String? mobileNumber;
   String? telephoneNumber;
 
-  BuildItemDetail(this.eAmount, this.systemTypeSelect, this.quotePaymentSelection,
-      this.contactSelect, this.premisesTypeSelect, this.termsItemSelection,
-      this.gradeFireSelect, this.signallingTypeSelect, this.engineerNumbers,
-      this.timeType, this.billStreet, this.billCity, this.billCountry,
-      this.billCode, this.shipStreet, this.shipCity, this.shipCountry,
-      this.shipCode, this.contactId, this.contactCompany, this.mobileNumber,
-      this.telephoneNumber, {super.key});
+  var termsList;
+
+  BuildItemDetail(
+      this.eAmount,
+      this.systemTypeSelect,
+      this.quotePaymentSelection,
+      this.contactSelect,
+      this.premisesTypeSelect,
+      this.termsItemSelection,
+      this.gradeFireSelect,
+      this.signallingTypeSelect,
+      this.engineerNumbers,
+      this.timeType,
+      this.billStreet,
+      this.billCity,
+      this.billCountry,
+      this.billCode,
+      this.shipStreet,
+      this.shipCity,
+      this.shipCountry,
+      this.shipCode,
+      this.contactId,
+      this.contactCompany,
+      this.mobileNumber,
+      this.telephoneNumber, this.termsList,
+      {super.key});
 
   @override
   State<BuildItemDetail> createState() => _BuildItemDetailState();
@@ -79,6 +101,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   double vatTotal = 0.0;
 
   List<ProductsList> productListLocal = [];
+  List<String> userChecked = [];
+
   String selectTemplateOption = '';
   @override
   void initState() {
@@ -107,7 +131,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: AppColors.backWhiteColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: BaseAppBar(
         appBar: AppBar(),
         title: LabelString.lblItemDetail,
@@ -137,8 +161,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 isLoading = state.isBusy;
               }
               if (state is LoadedAddQuote) {
-                Helpers.showSnackBar(context, "Quote added successfully!");
                 isLoading = false;
+                Helpers.showSnackBar(context, "Quote added successfully!");
               }
               if (state is FailAddQuote) {
                 isLoading = false;
@@ -264,8 +288,93 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   //product list
   Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
     return Padding(
-      padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
-      child: Card(
+      padding: EdgeInsets.only(left: 6.sp, right: 6.sp),
+      child: Slidable(
+        key: const ValueKey(0),
+        startActionPane:  ActionPane(
+          motion: const ScrollMotion(),
+          extentRatio: 0.25,
+          children: [
+            SlidableAction(
+              borderRadius: BorderRadius.circular(12.0),
+              padding: EdgeInsets.zero,
+              autoClose: true,
+              onPressed: (context){
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    ///Make new class for dialog
+                    return Dialog(
+                        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
+                        elevation: 0,
+                        insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                        child: EditItem(productsList: products));
+                  });
+              },
+              backgroundColor: AppColors.backWhiteColor,
+              foregroundColor: AppColors.primaryColor,
+              icon: Icons.percent,
+              label: "Discount"),
+          ],
+        ),
+        endActionPane:  ActionPane(
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              borderRadius: BorderRadius.circular(12.0),
+              padding: EdgeInsets.zero,
+              onPressed: (context){
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    ///Make new class for dialog
+                    return Dialog(
+                        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
+                        elevation: 0,
+                        insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                        child: EditItem(productsList: products));
+                  });
+              },
+              autoClose: true,
+              backgroundColor: AppColors.backWhiteColor,
+              foregroundColor: Colors.green,
+              icon: Icons.edit,
+              label: 'Edit'),
+            SlidableAction(
+              borderRadius: BorderRadius.circular(12.0),
+              padding: EdgeInsets.zero,
+              autoClose: true,
+              onPressed: null,
+              backgroundColor: AppColors.backWhiteColor,
+              foregroundColor: AppColors.redColor,
+              icon: Icons.delete_outline,
+              label: 'Delete'),
+          ],
+        ),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.sp),
+            ),
+            child: Padding(
+              padding:EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${products.quantity} items",style: CustomTextStyle.commonText),
+                  SizedBox(height: 0.8.h),
+                  Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
+                  SizedBox(height: 0.4.h),
+                  Text("£${products.amountPrice}",style: CustomTextStyle.labelBoldFontTextSmall)
+                ],
+            ),
+            ),
+          ),
+        ),
+      )
+
+      /*Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.sp),
         ),
@@ -436,7 +545,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
             ],
           ),
         ),
-      ),
+      ),*/
     );
   }
 
@@ -448,11 +557,12 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         backgroundColor: AppColors.transparent,
         enableDrag: false,
         isDismissible: false,
+        isScrollControlled: true,
 
         context: context,
         builder: (builder) {
           return Container(
-            height: query.height * 0.45,
+            height: query.height * 0.8,
             color: Colors.transparent, //could change this to Color(0xFF737373),
             //so you don't have to change MaterialApp canvasColor
             child: BlocConsumer<ProductListBloc, ProductListState>(
@@ -478,6 +588,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                             topRight: Radius.circular(15.sp))),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 8.sp),
@@ -558,6 +669,56 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                         //Sum of all profit amount
                         BottomSheetDataTile(
                             LabelString.lblTotalProfit, profit.formatAmount() , CustomTextStyle.labelText),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 14.sp,vertical: 10.sp),
+                          child: Row(
+                            children: [
+                              ToggleSwitch((value) =>
+                                Provider.of<WidgetChange>(context, listen: false).isDepositAmount(value),
+                                  valueBool: Provider.of<WidgetChange>(context, listen: true).isDeposit),
+                              SizedBox(width: 5.w),
+                              Text(Provider.of<WidgetChange>(context, listen: true).isDeposit ? "Deposit" : "No Deposit", style: CustomTextStyle.labelText)
+                            ],
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
+                              child: Text(LabelString.lblTerms, style: CustomTextStyle.labelMediumBoldFontText),
+                            )),
+                       /* ...widget.termsList.map((index, e) {
+                          return  Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 14.sp,vertical: 10.sp),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ToggleSwitch((value) => Provider.of<WidgetChange>(context, listen: false).isTermsSelect(value),
+                                    valueBool: Provider.of<WidgetChange>(context, listen: false).isTermsBS),
+                                SizedBox(width: 5.w),
+                                Expanded(child: Text(e["label"].toString(), style: CustomTextStyle.labelText))
+                              ],
+                            ),
+                          );
+                        }).toList(),*/
+                        ...widget.termsList.asMap().map((i, element) => MapEntry(i, Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 14.sp,vertical: 10.sp),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ToggleSwitch((value) {
+                                Provider.of<WidgetChange>(context, listen: false).isTermsSelect(value);
+                              },
+                                  valueBool: Provider.of<WidgetChange>(context, listen: false).isTermsBS),
+                              SizedBox(width: 5.w),
+                              Expanded(child: Text(element["label"].toString(), style: CustomTextStyle.labelText))
+                            ],
+                          ),
+                        ),
+                      )).values.toList(),
+
                         SizedBox(
                           width: query.width * 0.8,
                           height: query.height * 0.06,
@@ -569,7 +730,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                               callCreateQuoteAPI(subTotal, grandTotal, disc, selectTemplateOption, vatTotal, profit, depositAmountController.text, state.productList);
                             },
                           ),
-                        )
+                        ),
+
                       ],
                     ));
               },
@@ -684,6 +846,18 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
     };
 
     addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+  }
+
+  void _onSelected(bool selected, String dataName) {
+    if (selected == true) {
+      setState(() {
+        userChecked.add(dataName);
+      });
+    } else {
+      setState(() {
+        userChecked.remove(dataName);
+      });
+    }
   }
 }
 

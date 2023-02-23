@@ -15,8 +15,10 @@ class AppColors {
   static Color primaryColorLawOpacityBack = const Color(0xFFE2E9F1);
   static Color fontColor = const Color(0xFF333333);
   static Color redColor = const Color(0xFFA41E1E);
+  static Color redColorSwitch = const Color(0xFFE9514E);
 
 
   static Color blueAccentColor = const Color(0xFF1E5CA4);
   static Color greenColor = const Color(0xFF0B702D);
+  static Color greenColorAccent = const Color(0xFF8BC24A);
 }

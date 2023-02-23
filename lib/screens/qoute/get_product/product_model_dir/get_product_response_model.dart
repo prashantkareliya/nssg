@@ -9,16 +9,16 @@ class GetProductData {
     if (json['result'] != null) {
       result = <Result>[];
       json['result'].forEach((v) {
-        result!.add(new Result.fromJson(v));
+        result!.add(Result.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.result != null) {
-      data['result'] = this.result!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    if (result != null) {
+      data['result'] = result!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -236,75 +236,75 @@ class Result {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['productname'] = this.productname;
-    data['product_no'] = this.productNo;
-    data['productcode'] = this.productcode;
-    data['discontinued'] = this.discontinued;
-    data['sales_start_date'] = this.salesStartDate;
-    data['sales_end_date'] = this.salesEndDate;
-    data['start_date'] = this.startDate;
-    data['expiry_date'] = this.expiryDate;
-    data['website'] = this.website;
-    data['vendor_id'] = this.vendorId;
-    data['mfr_part_no'] = this.mfrPartNo;
-    data['vendor_part_no'] = this.vendorPartNo;
-    data['serial_no'] = this.serialNo;
-    data['productsheet'] = this.productsheet;
-    data['glacct'] = this.glacct;
-    data['createdtime'] = this.createdtime;
-    data['modifiedtime'] = this.modifiedtime;
-    data['modifiedby'] = this.modifiedby;
-    data['unit_price'] = this.unitPrice;
-    data['commissionrate'] = this.commissionrate;
-    data['taxclass'] = this.taxclass;
-    data['usageunit'] = this.usageunit;
-    data['qty_per_unit'] = this.qtyPerUnit;
-    data['qtyinstock'] = this.qtyinstock;
-    data['reorderlevel'] = this.reorderlevel;
-    data['assigned_user_id'] = this.assignedUserId;
-    data['qtyindemand'] = this.qtyindemand;
-    data['imagename'] = this.imagename;
-    data['description'] = this.description;
-    data['cost_price'] = this.costPrice;
-    data['margin'] = this.margin;
-    data['product_data_sheet'] = this.productDataSheet;
-    data['make'] = this.make;
-    data['model'] = this.model;
-    data['maintenance_time'] = this.maintenanceTime;
-    data['service_interval'] = this.serviceInterval;
-    data['product_service'] = this.productService;
-    data['supplier_code'] = this.supplierCode;
-    data['install_time'] = this.installTime;
-    data['location'] = this.location;
-    data['security_grade'] = this.securityGrade;
-    data['product_amps'] = this.productAmps;
-    data['cf_844'] = this.cf844;
-    data['cf_846'] = this.cf846;
-    data['cf_848'] = this.cf848;
-    data['product_specification'] = this.productSpecification;
-    data['products_title'] = this.productsTitle;
-    data['product_ref'] = this.productRef;
-    data['product_maintenance_time'] = this.productMaintenanceTime;
-    data['product_type'] = this.productType;
-    data['product_barcode'] = this.productBarcode;
-    data['product_zoned_item'] = this.productZonedItem;
-    data['product_pow_supply_battery'] = this.productPowSupplyBattery;
-    data['product_sounder_indicator'] = this.productSounderIndicator;
-    data['product_control_equipment'] = this.productControlEquipment;
-    data['product_nss_keyholder_form'] = this.productNssKeyholderForm;
-    data['product_security_agree_form'] = this.productSecurityAgreeForm;
-    data['product_police_app_form'] = this.productPoliceAppForm;
-    data['product_direct_debit_form'] = this.productDirectDebitForm;
-    data['product_description_lock'] = this.productDescriptionLock;
-    data['pro_short_description'] = this.proShortDescription;
-    data['product_type_of_battery'] = this.productTypeOfBattery;
-    data['product_no_of_batteries'] = this.productNoOfBatteries;
-    data['product_system_types'] = this.productSystemTypes;
-    data['product_manufacturer'] = this.productManufacturer;
-    data['product_prod_category'] = this.productProdCategory;
-    data['id'] = this.id;
-    data['quantity'] = this.quantity;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['productname'] = productname;
+    data['product_no'] = productNo;
+    data['productcode'] = productcode;
+    data['discontinued'] = discontinued;
+    data['sales_start_date'] = salesStartDate;
+    data['sales_end_date'] = salesEndDate;
+    data['start_date'] = startDate;
+    data['expiry_date'] = expiryDate;
+    data['website'] = website;
+    data['vendor_id'] = vendorId;
+    data['mfr_part_no'] = mfrPartNo;
+    data['vendor_part_no'] = vendorPartNo;
+    data['serial_no'] = serialNo;
+    data['productsheet'] = productsheet;
+    data['glacct'] = glacct;
+    data['createdtime'] = createdtime;
+    data['modifiedtime'] = modifiedtime;
+    data['modifiedby'] = modifiedby;
+    data['unit_price'] = unitPrice;
+    data['commissionrate'] = commissionrate;
+    data['taxclass'] = taxclass;
+    data['usageunit'] = usageunit;
+    data['qty_per_unit'] = qtyPerUnit;
+    data['qtyinstock'] = qtyinstock;
+    data['reorderlevel'] = reorderlevel;
+    data['assigned_user_id'] = assignedUserId;
+    data['qtyindemand'] = qtyindemand;
+    data['imagename'] = imagename;
+    data['description'] = description;
+    data['cost_price'] = costPrice;
+    data['margin'] = margin;
+    data['product_data_sheet'] = productDataSheet;
+    data['make'] = make;
+    data['model'] = model;
+    data['maintenance_time'] = maintenanceTime;
+    data['service_interval'] = serviceInterval;
+    data['product_service'] = productService;
+    data['supplier_code'] = supplierCode;
+    data['install_time'] = installTime;
+    data['location'] = location;
+    data['security_grade'] = securityGrade;
+    data['product_amps'] = productAmps;
+    data['cf_844'] = cf844;
+    data['cf_846'] = cf846;
+    data['cf_848'] = cf848;
+    data['product_specification'] = productSpecification;
+    data['products_title'] = productsTitle;
+    data['product_ref'] = productRef;
+    data['product_maintenance_time'] = productMaintenanceTime;
+    data['product_type'] = productType;
+    data['product_barcode'] = productBarcode;
+    data['product_zoned_item'] = productZonedItem;
+    data['product_pow_supply_battery'] = productPowSupplyBattery;
+    data['product_sounder_indicator'] = productSounderIndicator;
+    data['product_control_equipment'] = productControlEquipment;
+    data['product_nss_keyholder_form'] = productNssKeyholderForm;
+    data['product_security_agree_form'] = productSecurityAgreeForm;
+    data['product_police_app_form'] = productPoliceAppForm;
+    data['product_direct_debit_form'] = productDirectDebitForm;
+    data['product_description_lock'] = productDescriptionLock;
+    data['pro_short_description'] = proShortDescription;
+    data['product_type_of_battery'] = productTypeOfBattery;
+    data['product_no_of_batteries'] = productNoOfBatteries;
+    data['product_system_types'] = productSystemTypes;
+    data['product_manufacturer'] = productManufacturer;
+    data['product_prod_category'] = productProdCategory;
+    data['id'] = id;
+    data['quantity'] = quantity;
     return data;
   }
 }

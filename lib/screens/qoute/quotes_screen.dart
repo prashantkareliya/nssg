@@ -7,6 +7,7 @@ import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
 import 'package:nssg/utils/extention_text.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -53,7 +54,6 @@ class _QuoteScreenState extends State<QuoteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var query = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.backWhiteColor,
@@ -228,88 +228,70 @@ class _QuoteScreenState extends State<QuoteScreen> {
                               curve: Curves.decelerate,
                               child: FadeInAnimation(
                                 child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 12.sp, right: 12.sp),
+                                  padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                                   child: Card(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(12.sp),
-                                    ),
-                                    elevation: 3,
+                                      borderRadius: BorderRadius.circular(12.sp)),
+                                    elevation: 2,
                                     child: InkWell(
                                       onTap: () {
                                         if(searchKey.isNotEmpty){
-                                          callNextScreen(context, QuoteDetail(searchItemList![index].id));
+                                          Navigator.push(
+                                              context, PageTransition(
+                                              type: PageTransitionType.rightToLeft,
+                                              child: QuoteDetail(searchItemList![index].id)));
+
+                                          //callNextScreen(context, QuoteDetail(searchItemList![index].id));
                                         }else{
-                                          callNextScreen(context, QuoteDetail(quoteItems![index].id));
+                                          Navigator.push(
+                                              context, PageTransition(
+                                              type: PageTransitionType.rightToLeft,
+                                              child: QuoteDetail(quoteItems![index].id)));
+
+                                         // callNextScreen(context, QuoteDetail(quoteItems![index].id));
                                         }
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
                                             color: AppColors.whiteColor,
-                                            borderRadius:
-                                                BorderRadius.circular(12.sp)),
+                                            borderRadius: BorderRadius.circular(12.sp)),
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
                                               vertical: 8.sp,
                                               horizontal: 15.sp),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               SizedBox(height: 1.0.h),
                                               Text(
-
                                                   searchKey.isNotEmpty
                                                       ? searchItemList![index].subject.toString()
                                                       : quoteItems![index].subject.toString(),
-
                                                   style: CustomTextStyle.labelMediumBoldFontText),
                                               SizedBox(height: 2.0.h),
                                               Text(
                                                   searchKey.isNotEmpty
-                                                      ? searchItemList![index]
-                                                          .quotesCompany
-                                                          .toString()
-                                                      : quoteItems![index]
-                                                          .quotesCompany
-                                                          .toString(),
-                                                  style: CustomTextStyle
-                                                      .labelText),
+                                                      ? searchItemList![index].quotesCompany.toString()
+                                                      : quoteItems![index].quotesCompany.toString(),
+                                                  style: CustomTextStyle.labelText),
                                               SizedBox(height: 0.5.h),
                                               Text.rich(
                                                 TextSpan(
-                                                  text: quoteItems![index]
-                                                      .quotesEmail
-                                                      .toString(),
-                                                  style:
-                                                      CustomTextStyle.labelText,
+                                                  text: quoteItems![index].quotesEmail.toString(),
+                                                  style: CustomTextStyle.labelText,
                                                   children: [
                                                     WidgetSpan(
-                                                        child: quoteItems![
-                                                                    index]
-                                                                .quoteMobileNumber!
-                                                                .isEmpty
+                                                        child: quoteItems![index].quoteMobileNumber!.isEmpty
                                                             ? Container()
                                                             : Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal: 8
-                                                                            .sp),
+                                                                padding: EdgeInsets.symmetric(horizontal: 8.sp),
                                                                 child: Container(
-                                                                    color: AppColors
-                                                                        .hintFontColor,
-                                                                    height:
-                                                                        2.0.h,
-                                                                    width: 0.5
-                                                                        .w))),
+                                                                    color: AppColors.hintFontColor,
+                                                                    height: 2.0.h, width: 0.5.w))),
                                                     TextSpan(
-                                                        text: quoteItems![index]
-                                                            .quoteMobileNumber
-                                                            .toString(),
-                                                        style: CustomTextStyle
-                                                            .labelText)
+                                                        text: quoteItems![index].quoteMobileNumber.toString(),
+                                                        style: CustomTextStyle.labelText)
                                                   ],
                                                 ),
                                               ),
@@ -318,8 +300,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                   searchKey.isNotEmpty
                                                       ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
                                                       : "${quoteItems![index].shipStreet} ${quoteItems![index].shipCode}",
-                                                  style: CustomTextStyle
-                                                      .labelText),
+                                                  style: CustomTextStyle.labelText),
                                               SizedBox(height: 2.0.h),
                                             ],
                                           ),
@@ -418,6 +399,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                     children: [
                       SizedBox(height: 2.h),
                       ExpansionTile(
+                        initiallyExpanded: false,
                         iconColor: AppColors.primaryColor,
                         onExpansionChanged: (value) {
                           Provider.of<WidgetChange>(context, listen: false).isExpansionTileFirst(value);
@@ -445,8 +427,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                       ExpansionTile(
                           iconColor: AppColors.primaryColor,
                           onExpansionChanged: (value) {
-                            Provider.of<WidgetChange>(context, listen: false)
-                                .isExpansionTileSecond(value);
+                            Provider.of<WidgetChange>(context, listen: false).isExpansionTileSecond(value);
                           },
                           initiallyExpanded: true,
                           textColor: AppColors.blackColor,
@@ -483,10 +464,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                               BottomSheetDataTile("Deposit Amount", dataQuote["quotes_deposite_amount"].toString().formatAmount,
                                   CustomTextStyle.labelFontHintText),
                               Divider(
-                                  color: AppColors.hintFontColor,
-                                  thickness: 1.sp,
-                                  endIndent: 8.sp,
-                                  indent: 8.sp),
+                                  color: AppColors.hintFontColor, thickness: 1.sp,
+                                  endIndent: 8.sp, indent: 8.sp),
                               Padding(
                                 padding:
                                     EdgeInsets.symmetric(horizontal: 14.sp),
@@ -508,8 +487,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                 padding:
                                     EdgeInsets.symmetric(horizontal: 14.sp),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Grand Total",
                                         style: TextStyle(
@@ -539,6 +517,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
     );
   }
 
+
   buildProductDetail(dataQuote, List<dynamic> itemList) {
     return Container(
       color: AppColors.primaryColorLawOpacityBack,
@@ -550,9 +529,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
             itemCount: itemList.length,
             itemBuilder: (context, index) {
               return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.sp),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
                 elevation: 3,
                 child: Column(
                   children: [
@@ -561,9 +538,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(left: 8.sp),
-                          child:
-                              Image.asset(ImageString.imgDemo, height: 80.sp),
-                        ),
+                          child: Image.asset(ImageString.imgDemo, height: 80.sp)),
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.only(right: 30.sp),
@@ -575,11 +550,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   child: Row(
                                     children: [
                                       Flexible(
-                                          flex: 4,
+                                          flex: 4, 
                                           child: Text(index==0 ? "Installation (1st & 2nd fix)":
                                               itemList[index]["prod_name"] ?? "No Name",
-                                              style: CustomTextStyle
-                                                  .labelBoldFontText)),
+                                              style: CustomTextStyle.labelBoldFontText)),
                                       Flexible(
                                         flex: 1,
                                         child: IconButton(

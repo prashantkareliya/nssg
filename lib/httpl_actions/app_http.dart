@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:nssg/constants/strings.dart';
 
 import '../constants/constants.dart';
-import '../screens/qoute/add_quote/models/create_quote_response.dart';
 
 class HttpActions {
   String endPoint = Constants.of().endpoint;
@@ -91,10 +90,34 @@ class HttpActions {
     }
   }
 
-  Future<Map<String, String>> getSessionData(
-      Map<String, String> headers) async {
-   // headers["content-type"] = "application/json";
-    headers["content-type"] = "multipart/form-data";
+  Future<dynamic> postMethodQueryParams(
+      String url, {dynamic data, Map<String,
+          String>? headers, Map<String, dynamic>? queryParams}) async {
+
+    if ((await checkConnection()) != ConnectivityResult.none) {
+      Map<String, String> headers = { "content-type": "multipart/form-data"};
+      String finalUrl = endPoint + url;
+      var request = http.MultipartRequest('POST', Uri.parse(finalUrl));
+      request.headers.addAll(headers);
+      request.fields.addAll(data);
+      //http.StreamedResponse response = await request.send();
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+
+        var responded = await http.Response.fromStream(response);
+        final responseData = json.decode(responded.body);
+        return responseData;
+      } else {
+        print(response.reasonPhrase);
+      }
+    } else {
+      Future.error(ErrorString.noInternet);
+    }
+  }
+
+  Future<Map<String, String>> getSessionData(Map<String, String> headers) async {
+    headers["content-type"] = "application/json";
     return headers;
   }
 
@@ -103,31 +126,5 @@ class HttpActions {
     return connectivityResult;
   }
 
-  Future<dynamic> postMethodQueryParams(
-      String url, {dynamic data, Map<String, String>? headers, Map<String, dynamic>? queryParams}) async {
-
-    if ((await checkConnection()) != ConnectivityResult.none) {
-      headers = await getSessionData(headers ?? {});
-      String finalUrl = endPoint + url;
-      var request = http.MultipartRequest('POST', Uri.parse(finalUrl));
-      request.fields.addAll(data);
-      //http.StreamedResponse response = await request.send();
-
-      var response = await request.send();
-
-
-      if (response.statusCode == 200) {
-
-        var responsed = await http.Response.fromStream(response);
-        final responseData = json.decode(responsed.body);
-        return responseData;
-      } else {
-        print(response.reasonPhrase);
-      }
-
-
-    } else {
-      Future.error(ErrorString.noInternet);
-    }
-  }
 }
+

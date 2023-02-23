@@ -192,30 +192,19 @@ class _AddContactPageState extends State<AddContactPage> {
                 lastNameController.text = state.contactData.lastname.toString();
                 companyNameController.text = state.contactData.contactCompany.toString();
                 officePhoneController.text = state.contactData.phone.toString();
-                mobilePhoneController.text =
-                    state.contactData.mobile.toString();
-                primaryEmailController.text =
-                    state.contactData.email.toString();
-                secondaryEmailController.text =
-                    state.contactData.secondaryemail.toString();
+                mobilePhoneController.text = state.contactData.mobile.toString();
+                primaryEmailController.text = state.contactData.email.toString();
+                secondaryEmailController.text = state.contactData.secondaryemail.toString();
 
-                invoiceAddressController.text =
-                    state.contactData.mailingstreet.toString();
-                invoiceCityController.text =
-                    state.contactData.mailingcity.toString();
-                invoiceCountryController.text =
-                    state.contactData.mailingcountry.toString();
-                invoicePostalController.text =
-                    state.contactData.mailingzip.toString();
+                invoiceAddressController.text = state.contactData.mailingstreet.toString();
+                invoiceCityController.text = state.contactData.mailingcity.toString();
+                invoiceCountryController.text = state.contactData.mailingcountry.toString();
+                invoicePostalController.text = state.contactData.mailingzip.toString();
 
-                installationAddressController.text =
-                    state.contactData.otherstreet.toString();
-                installationCityController.text =
-                    state.contactData.othercity.toString();
-                installationCountryController.text =
-                    state.contactData.othercountry.toString();
-                installationPostalController.text =
-                    state.contactData.otherzip.toString();
+                installationAddressController.text = state.contactData.otherstreet.toString();
+                installationCityController.text = state.contactData.othercity.toString();
+                installationCountryController.text = state.contactData.othercountry.toString();
+                installationPostalController.text = state.contactData.otherzip.toString();
               }
             },
             child: BlocBuilder<AddContactBloc, AddContactState>(
@@ -242,10 +231,7 @@ class _AddContactPageState extends State<AddContactPage> {
                       ? loadingView()
                       : PageView(
                           pageSnapping: true,
-                          physics: contactBasicDetailFormKey.currentState
-                                          ?.validate() ==
-                                      true ||
-                                  widget.contactId != "NoId"
+                          physics: contactBasicDetailFormKey.currentState ?.validate() == true || widget.contactId != "NoId"
                               ? const BouncingScrollPhysics()
                               : const NeverScrollableScrollPhysics(),
                           controller: pageController,
@@ -741,7 +727,7 @@ class _AddContactPageState extends State<AddContactPage> {
           if(responseJson["suggestions"]!=null){
             addressList = responseJson["suggestions"];
           }else{
-            /*if (mounted)*/ Helpers.showSnackBar(context, responseJson["Message"].toString());
+            if (mounted) Helpers.showSnackBar(context, responseJson["Message"].toString());
           }
           List<String> matchesAddress = <String>[];
           matchesAddress

@@ -19,6 +19,9 @@ class WidgetChange extends ChangeNotifier {
   bool isExpansionOne = false;
   bool isExpansionTwo = true;
 
+  bool isDeposit = false;
+  bool isTermsBS = false;
+
   var count = 1;
 
   String? updateContactId;
@@ -157,6 +160,16 @@ class WidgetChange extends ChangeNotifier {
   //For search in contact and quote listing page
   void updateSearch(String searchKey) {
     updateSearchText = searchKey;
+    notifyListeners();
+  }
+
+  void isDepositAmount(bool value) {
+    isDeposit = value;
+    notifyListeners();
+  }
+
+  void isTermsSelect(bool value) {
+   isTermsBS = value;
     notifyListeners();
   }
 }

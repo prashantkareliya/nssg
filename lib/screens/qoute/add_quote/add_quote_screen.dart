@@ -8,6 +8,7 @@ import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/contact/contact_screen.dart';
 import 'package:nssg/utils/widgetChange.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -137,41 +138,48 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       children: [
                         snapshot.data! <= 0
                             ? Container(width: 19.5.w)
-                            : RoundedContainer(
-                                containerText: "",
-                                stepText: snapshot.data.toString(),
-                                isEnable: false,
-                                isDone: true),
-                        RoundedContainer(
-                            containerText: (snapshot.data! + 1).toString(),
-                            stepText: (snapshot.data! + 1).toString(),
-                            isEnable: true,
-                            isDone: false),
-                        snapshot.data! >= 5
+                            : InkWell(
+                          onTap: () => pageController.jumpToPage(snapshot.data!-1),
+                              child: RoundedContainer(
+                                  containerText: "",
+                                  stepText: snapshot.data.toString(),
+                                  isEnable: false,
+                                  isDone: true),
+                            ),
+                        InkWell(
+                          onTap: () => pageController.jumpToPage(snapshot.data!),
+                          child: RoundedContainer(
+                              containerText: (snapshot.data! + 1).toString(),
+                              stepText: (snapshot.data! + 1).toString(),
+                              isEnable: true,
+                              isDone: false),
+                        ),
+                        snapshot.data! >= 3
                             ? Container()
-                            : RoundedContainer(
-                                containerText: (snapshot.data! + 2).toString(),
-                                stepText: (snapshot.data! + 2).toString(),
-                                isEnable: false,
-                                isDone: false)
+                            : InkWell(
+                          onTap: () => pageController.jumpToPage(snapshot.data!+1),
+                              child: RoundedContainer(
+                                  containerText: (snapshot.data! + 2).toString(),
+                                  stepText: (snapshot.data! + 2).toString(),
+                                  isEnable: false, isDone: false),
+                            )
                       ],
                     ),
                     SizedBox(height: 2.h),
+
                     //Linear progress indicator which set below steps container
                     StepProgressIndicator(
                       padding: 0.0,
-                      totalSteps: 6,
+                      totalSteps: 4,
                       size: 2.sp,
                       currentStep: snapshot.data!,
                       selectedColor: AppColors.primaryColor,
                       unselectedColor: AppColors.transparent,
                       customColor: (index) {
-                        if (index + 1 == snapshot.data) {
+                        if (index == snapshot.data) {
                           return AppColors.primaryColor;
                         } else {
-                          return index == 7
-                              ? AppColors.redColor
-                              : Colors.transparent;
+                          return index == 5 ? AppColors.redColor : Colors.transparent;
                         }
                       },
                     ),
@@ -182,17 +190,18 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          snapshot.data! == 5
+                          /*snapshot.data! == 5
                               ? Text(LabelString.lblAddressInformation,
                                   style: CustomTextStyle.labelBoldFontTextSmall)
-                              : Text(LabelString.lblQuoteDetails,
+                              : */
+                          Text(LabelString.lblQuoteDetails,
                                   style:
                                       CustomTextStyle.labelBoldFontTextSmall),
                           Row(
                             children: [
                               Text(LabelString.lblStep,
                                   style: CustomTextStyle.commonText),
-                              Text("${snapshot.data! + 1}/6",
+                              Text("${snapshot.data! + 1}/4",
                                   style: CustomTextStyle.commonTextBlue),
                             ],
                           )
@@ -228,16 +237,21 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         children: [
                           //Number of engineer, installation time step design
                           buildStepOne(context, query, fieldsData),
+
                           //System type design design
                           buildStepTwo(context, query, fieldsData),
+
                           //Premises type design
                           buildStepThree(context, query, fieldsData),
+
                           //Grade number, Signalling type design
                           buildStepFour(context, query, fieldsData),
+
                           //Quote payment, Terms design
-                          buildStepFive(context, query, fieldsData),
+                          //buildStepFive(context, query, fieldsData),
+
                           //Invoice and installation detail design
-                          buildStepSix(context, query),
+                         // buildStepSix(context, query),
                         ],
                       ),
                     ),
@@ -326,6 +340,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     mobileNumber = contactData[i]["mobile"];
                     telephoneNumber = contactData[i]["phone"];
                     contactSelect = selection;
+
                     //When select contact, set address in fields
                     invoiceAddressController.text = contactData[i]["mailingstreet"];
                     invoiceCityController.text = contactData[i]["mailingcity"];
@@ -349,18 +364,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 splashColor: AppColors.transparent,
                 onTap: () {
                   if (contactId != null) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            elevation: 0,
-                            insetPadding:
-                                EdgeInsets.symmetric(horizontal: 12.sp),
-                            child: ContactDetail(contactId));
-                      },
-                    );
+                    Navigator.push(
+                        context, PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: ContactDetail(contactId)));
                   } else {
                     Helpers.showSnackBar(context, ErrorString.selectOneContact, isError: true);
                   }
@@ -418,8 +425,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 (index) {
                   installationTiming.add(RadioModel(
                       false,
-                      stepOneData["quote_req_to_complete_work"][index]
-                          ["label"]));
+                      stepOneData["quote_req_to_complete_work"][index]["label"]));
                   return SizedBox(
                     height: 6.h,
                     child: InkWell(
@@ -559,36 +565,26 @@ class _AddQuotePageState extends State<AddQuotePage> {
   SingleChildScrollView buildStepTwo(BuildContext context, Size query, stepThreeData) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          SizedBox(height: 1.h),
-          Text(LabelString.lblSystemType,
-              textAlign: TextAlign.center,
-              style: CustomTextStyle.labelBoldFontTextSmall),
-          SizedBox(height: 2.h),
-          Wrap(
-            spacing: 15.sp,
-            direction: Axis.horizontal,
-            alignment: WrapAlignment.center,
-            runSpacing: 14.sp,
-            children: List.generate(
-              stepThreeData["system_type"].length - 9,
-                  (index) {
-                systemType.add(RadioModel(false, stepThreeData["system_type"][index]["label"]));
-                return Container(
-                  height: 16.h,
-                  width: query.width / 1.13,
-                  decoration: BoxDecoration(
-                      color: systemType[index].isSelected
-                          ? AppColors.primaryColorLawOpacity
-                          : AppColors.whiteColor,
-                      border: Border.all(
-                          color: systemType[index].isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.borderColor,
-                          width: 1),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: InkWell(
+      child: Padding(
+        padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(height: 1.h),
+            Text(LabelString.lblSystemType,
+                style: CustomTextStyle.labelBoldFontTextSmall),
+            SizedBox(height: 4.h),
+            Wrap(
+              spacing: 15.sp,
+              direction: Axis.horizontal,
+              alignment: WrapAlignment.spaceBetween,
+              runSpacing: 15.sp,
+              children: List.generate(
+                stepThreeData["system_type"].length-9,
+                    (index) {
+                  String systemTypeLabel = stepThreeData["system_type"][index]["label"].toString();
+                  systemType.add(RadioModel(false, stepThreeData["system_type"][index]["label"]));
+                  return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
                     onTap: () {
@@ -600,8 +596,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       systemType[index].isSelected = true;
                       Provider.of<WidgetChange>(context, listen: false).isSetSystem;
 
-                      systemTypeSelect =
-                      stepThreeData["system_type"][index]["label"];
+                      systemTypeSelect = stepThreeData["system_type"][index]["label"];
 
                       print(systemTypeSelect);
 
@@ -609,95 +604,114 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.decelerate);
                     },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgExtension(
-                                  itemName: stepThreeData["system_type"][index]["label"],
-                                  iconColor: systemType[index].isSelected
-                                      ? AppColors.primaryColor
-                                      : AppColors.blackColor),
-                              SizedBox(height: 1.h),
-                              SizedBox(
-                                width: query.width * 0.7,
-                                child: Text(
-                                    stepThreeData["system_type"][index]["label"],
-                                    textAlign: TextAlign.center,
-                                    style: systemType[index].isSelected
-                                        ? CustomTextStyle.commonTextBlue
-                                        : CustomTextStyle.commonText),
-                              )
-                            ]),
-                        Visibility(
-                          visible: systemType[index].isSelected ? true : false,
-                          child: Positioned(
-                            right: 10,
-                            top: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(80.0),
-                                  color: AppColors.greenColor),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Icon(Icons.done,
-                                    color: AppColors.whiteColor, size: 14.sp),
+                    child: Container(
+                      height: 15.h,
+                      width: 42.w,
+                      decoration: BoxDecoration(
+                          color: systemType[index].isSelected
+                              ? AppColors.primaryColorLawOpacity
+                              : AppColors.whiteColor,
+                          border: Border.all(
+                              color: systemType[index].isSelected
+                                  ? AppColors.primaryColor
+                                  : AppColors.borderColor,
+                              width: 1),
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 1.h),
+                                SvgExtension(
+                                    itemName: stepThreeData["system_type"][index]["label"],
+                                    iconColor: systemType[index].isSelected
+                                        ? AppColors.primaryColor
+                                        : AppColors.blackColor),
+                                SizedBox(
+                                  width: query.width * 0.3,
+                                  child: Text(
+                                    RegExp(":").hasMatch(systemTypeLabel) ?
+                                    systemTypeLabel.substring(0 ,systemTypeLabel.indexOf(":")+ 2).replaceAll(":", "") :
+                                    systemTypeLabel,
+
+                                      textAlign: TextAlign.center,
+                                      style: systemType[index].isSelected
+                                          ? CustomTextStyle.commonTextBlue
+                                          : CustomTextStyle.commonText),
+                                ),
+                                SizedBox(height: 1.h),
+                              ]),
+                          Visibility(
+                            visible: systemType[index].isSelected ? true : false,
+                            child: Positioned(
+                              right: 10,
+                              top: 5,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(80.0),
+                                    color: AppColors.greenColor),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Icon(Icons.done,
+                                      color: AppColors.whiteColor, size: 14.sp),
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                      width: query.width * 0.4,
-                      height: query.height * 0.06,
-                      child: BorderButton(
-                          btnString: ButtonString.btnPrevious,
-                          onClick: () {
-                            pageController.previousPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          })),
-                  SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                      //update button
-                        title: ButtonString.btnNext,
-                        onClick: () {
-                          if (systemTypeSelect ==
-                              "CCTV System: BS EN 62676-4:2015" ||
-                              systemTypeSelect ==
-                                  "Access Control: BS EN 50133" ||
-                              systemTypeSelect == "Keyholding Services") {
-
-                            pageController.animateToPage(4,  duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          } else {
-                            if (systemTypeSelect.isNotEmpty) {
-                              pageController.nextPage(
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 2.sp, vertical: 12.sp),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: query.width * 0.4,
+                        height: query.height * 0.06,
+                        child: BorderButton(
+                            btnString: ButtonString.btnPrevious,
+                            onClick: () {
+                              pageController.previousPage(
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.decelerate);
+                            })),
+                    /*SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: CustomButton(
+                        //update button
+                          title: ButtonString.btnNext,
+                          onClick: () {
+                            if (systemTypeSelect ==
+                                "CCTV System: BS EN 62676-4:2015" ||
+                                systemTypeSelect ==
+                                    "Access Control: BS EN 50133" ||
+                                systemTypeSelect == "Keyholding Services") {
+
+                              pageController.animateToPage(4,  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.decelerate);
+                            } else {
+                              if (systemTypeSelect.isNotEmpty) {
+                                pageController.nextPage(
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.decelerate);
+                              }
                             }
-                          }
-                        },
-                        buttonColor: AppColors.primaryColor),
-                  )
-                ]),
-          )
-        ],
+                          },
+                          buttonColor: AppColors.primaryColor),
+                    )*/
+                  ]),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -742,19 +756,14 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               systemTypeSelect == "Access Control: BS EN 50133" ||
                               systemTypeSelect == "Keyholding Services") {
 
-                            pageController.animateToPage(4,  duration: const Duration(milliseconds: 500),
+                            pageController.animateToPage(4,
+                                duration: const Duration(milliseconds: 500),
                                 curve: Curves.decelerate);
                           } else {
                             pageController.nextPage(
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.decelerate);
                           }
-
-                          /*if (premisesTypeSelect.isNotEmpty) {
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          }*/
                         },
                         child: Container(
                           height: 15.h,
@@ -881,10 +890,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
               style: CustomTextStyle.labelBoldFontTextSmall),
           SizedBox(height: 2.h),
           Wrap(
-            spacing: 10.sp,
+            spacing: 15.sp,
             direction: Axis.horizontal,
-            alignment: WrapAlignment.start,
-            runSpacing: 10.sp,
+            alignment: WrapAlignment.spaceBetween,
+            runSpacing: 15.sp,
             children: List.generate(
               systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
                   ? dataGrade.getRange(2, 7).toList().length
@@ -895,47 +904,49 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
                         ? dataGrade.getRange(2, 7).toList()[index]["label"]
                         : dataGrade[index]["label"]));
-                return Container(
-                  height: 15.h,
-                  width: 42.w,
-                  decoration: BoxDecoration(
-                      color: gradeAndFire[index].isSelected
-                          ? AppColors.primaryColorLawOpacity
-                          : AppColors.whiteColor,
-                      border: Border.all(
-                          color: gradeAndFire[index].isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.borderColor,
-                          width: 1),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: InkWell(
-                    splashColor: AppColors.transparent,
-                    highlightColor: AppColors.transparent,
-                    onTap: () {
+                return InkWell(
+                  splashColor: AppColors.transparent,
+                  highlightColor: AppColors.transparent,
+                  onTap: () {
 
-                      for (var element in gradeAndFire) {
-                        element.isSelected = false;
-                      }
+                    for (var element in gradeAndFire) {
+                      element.isSelected = false;
+                    }
 
-                      Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
-                      gradeAndFire[index].isSelected = true;
-                      Provider.of<WidgetChange>(context, listen: false).isSetGrade;
+                    Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
+                    gradeAndFire[index].isSelected = true;
+                    Provider.of<WidgetChange>(context, listen: false).isSetGrade;
 
-                      gradeFireSelect = dataGrade[index]["label"];
+                    gradeFireSelect = dataGrade[index]["label"];
 
-                      if (signallingTypeSelect.isNotEmpty) {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
-                      }
-                    },
+                    if (signallingTypeSelect.isNotEmpty) {
+                      pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.decelerate);
+                    }
+                  },
+                  child: Container(
+                    height: 15.h,
+                    width: 42.w,
+                    decoration: BoxDecoration(
+                        color: gradeAndFire[index].isSelected
+                            ? AppColors.primaryColorLawOpacity
+                            : AppColors.whiteColor,
+                        border: Border.all(
+                            color: gradeAndFire[index].isSelected
+                                ? AppColors.primaryColor
+                                : AppColors.borderColor,
+                            width: 1),
+                        borderRadius: BorderRadius.circular(10.0)),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               //Condition for skip grade and signalling type
+                              SizedBox(height: 1.h),
                               SvgExtension(
                                   itemName: systemTypeSelect ==
                                           "Fire System: BS 5839-1: 2017 + SP203-1"
@@ -954,7 +965,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                       : dataGrade[index]["label"],
                                   style: gradeAndFire[index].isSelected
                                       ? CustomTextStyle.commonTextBlue
-                                      : CustomTextStyle.commonText)
+                                      : CustomTextStyle.commonText),
+                              SizedBox(height: 1.h),
                             ]),
                         Visibility(
                           visible:
@@ -989,73 +1001,84 @@ class _AddQuotePageState extends State<AddQuotePage> {
           Wrap(
             spacing: 15.sp,
             direction: Axis.horizontal,
-            alignment: WrapAlignment.center,
-            runSpacing: 14.sp,
+            alignment: WrapAlignment.spaceBetween,
+            runSpacing: 15.sp,
             children: List.generate(
               // stepFourData["signalling_type"].length
               12,
               (index) {
-                signallingType.add(RadioModel(
-                    false, stepFourData["signalling_type"][index]["label"]));
-                return Container(
-                  height: 16.h,
-                  width: query.width / 1.13,
-                  decoration: BoxDecoration(
-                      color: signallingType[index].isSelected
-                          ? AppColors.primaryColorLawOpacity
-                          : AppColors.whiteColor,
-                      border: Border.all(
-                          color: signallingType[index].isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.borderColor,
-                          width: 1),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: InkWell(
-                    splashColor: AppColors.transparent,
-                    highlightColor: AppColors.transparent,
-                    onTap: () {
-                      for (var element in signallingType) {
-                        element.isSelected = false;
-                      }
+                signallingType.add(RadioModel(false, stepFourData["signalling_type"][index]["label"]));
+                return InkWell(
+                  splashColor: AppColors.transparent,
+                  highlightColor: AppColors.transparent,
+                  onTap: () {
+                    for (var element in signallingType) {
+                      element.isSelected = false;
+                    }
 
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSelectSignallingType();
-                      signallingType[index].isSelected = true;
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSetSignallingType;
+                    Provider.of<WidgetChange>(context, listen: false)
+                        .isSelectSignallingType();
+                    signallingType[index].isSelected = true;
+                    Provider.of<WidgetChange>(context, listen: false)
+                        .isSetSignallingType;
 
-                      signallingTypeSelect =
-                          stepFourData["signalling_type"][index]["label"];
+                    signallingTypeSelect =
+                        stepFourData["signalling_type"][index]["label"];
 
-                      if (gradeFireSelect.isNotEmpty) {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
-                      }
-                    },
+                    if (gradeFireSelect.isNotEmpty) {
+                      /*pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.decelerate);*/
+                      callNextScreen(context, BuildItemDetail(
+                      eAmount, systemTypeSelect, quotePaymentSelection,
+                      contactSelect, premisesTypeSelect, termsItemSelection,
+                      gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
+                      invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
+                      installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                      contactId, contactCompany, mobileNumber, telephoneNumber, stepFourData["quotes_terms"]
+                      ));
+                    }
+                  },
+                  child: Container(
+                    height: 15.h,
+                    width: 42.w,
+                    decoration: BoxDecoration(
+                        color: signallingType[index].isSelected
+                            ? AppColors.primaryColorLawOpacity
+                            : AppColors.whiteColor,
+                        border: Border.all(
+                            color: signallingType[index].isSelected
+                                ? AppColors.primaryColor
+                                : AppColors.borderColor,
+                            width: 1),
+                        borderRadius: BorderRadius.circular(10.0)),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              const Spacer(),
                               SvgExtension(
-                                  itemName: stepFourData["signalling_type"]
-                                      [index]["label"],
+                                  itemName: stepFourData["signalling_type"][index]["label"],
                                   iconColor: signallingType[index].isSelected
                                       ? AppColors.primaryColor
                                       : AppColors.blackColor),
                               SizedBox(height: 1.h),
-                              Text(
-                                  stepFourData["signalling_type"][index]
-                                      ["label"],
-                                  style: signallingType[index].isSelected
-                                      ? CustomTextStyle.commonTextBlue
-                                      : CustomTextStyle.commonText)
+                              SizedBox(
+                                width: query.width * 0.3,
+                                child: Text(stepFourData["signalling_type"][index]["label"],
+                                    textAlign: TextAlign.center,
+                                    maxLines: 3,
+                                    style: signallingType[index].isSelected
+                                        ? CustomTextStyle.commonTextBlue
+                                        : CustomTextStyle.commonText),
+                              ),
+                              const Spacer(),
                             ]),
                         Visibility(
-                          visible:
-                              signallingType[index].isSelected ? true : false,
+                          visible: signallingType[index].isSelected ? true : false,
                           child: Positioned(
                             right: 10,
                             top: 5,
@@ -1081,7 +1104,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
             child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
                       width: query.width * 0.4,
@@ -1093,7 +1116,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.decelerate);
                           })),
-                  SizedBox(
+                 /* SizedBox(
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
@@ -1108,7 +1131,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           }
                         },
                         buttonColor: AppColors.primaryColor),
-                  )
+                  )*/
                 ]),
           )
         ],
@@ -1117,8 +1140,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   ///step 5
-  SingleChildScrollView buildStepFive(
-      BuildContext context, Size query, stepFiveData) {
+  /*SingleChildScrollView buildStepFive(BuildContext context, Size query, stepFiveData) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -1262,9 +1284,17 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       termsItemSelection =
                           stepFiveData["quotes_terms"][index]["label"];
                       if (quotePaymentSelection.isNotEmpty) {
-                        pageController.nextPage(
+                       *//* pageController.nextPage(
                             duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
+                            curve: Curves.decelerate);*//*
+                        callNextScreen(context, BuildItemDetail(
+                        eAmount, systemTypeSelect, quotePaymentSelection,
+                        contactSelect, premisesTypeSelect, termsItemSelection,
+                        gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
+                        invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
+                        installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                        contactId, contactCompany, mobileNumber, telephoneNumber
+                        ));
                       }
                     },
                     child: Stack(
@@ -1318,7 +1348,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 15.sp),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
                     width: query.width * 0.4,
@@ -1341,7 +1371,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 curve: Curves.decelerate);
                           }
                         })),
-                SizedBox(
+                *//*SizedBox(
                   width: query.width * 0.4,
                   height: query.height * 0.06,
                   child: CustomButton(
@@ -1356,17 +1386,17 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         }
                       },
                       buttonColor: AppColors.primaryColor),
-                )
+                )*//*
               ],
             ),
           )
         ],
       ),
     );
-  }
+  }*/
 
   ///step 6
-  Padding buildStepSix(BuildContext context, Size query) {
+  /*Padding buildStepSix(BuildContext context, Size query) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.sp),
       child: SingleChildScrollView(
@@ -1547,10 +1577,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
         ),
       ),
     );
-  }
+  }*/
 
   //Autocomplete textField for fill address fields
-  Widget autoComplete(String autoCompleteType) {
+  /*Widget autoComplete(String autoCompleteType) {
     return Autocomplete(
       fieldViewBuilder: (context, textEditingController, focusNode,
           VoidCallback onFieldSubmitted) {
@@ -1562,7 +1592,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-              /*border: OutlineInputBorder(
+              *//*border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide:
                       BorderSide(width: 2, color: AppColors.primaryColor)),
@@ -1573,7 +1603,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),*/
+                      BorderSide(width: 2, color: AppColors.primaryColor)),*//*
               border: UnderlineInputBorder(
                   borderSide:
                       BorderSide(width: 1, color: AppColors.primaryColor)),
@@ -1613,7 +1643,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
           if(responseJson["suggestions"]!=null){
             addressList = responseJson["suggestions"];
           }else{
-            /*if (mounted)*/ Helpers.showSnackBar(context, responseJson["Message"].toString());
+            if (mounted) Helpers.showSnackBar(context, responseJson["Message"].toString());
           }
           List<String> matchesAddress = <String>[];
           matchesAddress
@@ -1654,10 +1684,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
         }
       },
     );
-  }
+  }*/
 
 //Method for copy - paste address fields
-  void copyAddressFields() {
+ /* void copyAddressFields() {
     Clipboard.setData(ClipboardData(text: invoiceAddressController.text))
         .then((value) => Clipboard.getData(Clipboard.kTextPlain).then(
               (value) {
@@ -1697,5 +1727,5 @@ class _AddQuotePageState extends State<AddQuotePage> {
         },
       ),
     );
-  }
+  }*/
 }

@@ -242,7 +242,7 @@ class _ContactScreenState extends State<ContactScreen> {
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             child: SlideAnimation(
-                              verticalOffset: 0.0,
+                              verticalOffset: 50.0,
                               curve: Curves.decelerate,
                               child: FadeInAnimation(
                                 child: Padding(
@@ -589,7 +589,6 @@ class ContactDetail extends StatelessWidget {
                 padding: EdgeInsets.only(left: 60.sp),
                 color: Colors.transparent,
                 child: Drawer(
-
                   child: FutureBuilder<dynamic>(
                     future: getDetail,
                     builder: (context, snapshot) {
@@ -610,15 +609,8 @@ class ContactDetail extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           IconButton(
-                                              onPressed: () {
-                                                callNextScreen(
-                                                    context,
-                                                    AddContactPage(
-                                                        id.toString()));
-                                              },
-                                              icon: Image.asset(
-                                                  ImageString.icEdit,
-                                                  height: 2.5.h)),
+                                              onPressed: () => callNextScreen(context, AddContactPage(id.toString())),
+                                              icon: Image.asset(ImageString.icEdit, height: 2.5.h)),
                                           SizedBox(height: 2.h),
                                           InkWell(
                                             onTap: () {
@@ -634,8 +626,7 @@ class ContactDetail extends StatelessWidget {
                                                     isDelete = true;
                                                     deleteContact(id.toString());
                                                     Navigator.pop(context);
-                                                    Navigator.pop(
-                                                        context, "delete");
+                                                    Navigator.pop(context, "delete");
                                                   },
                                                   () => Navigator.pop(
                                                       context), //No button
@@ -906,7 +897,8 @@ class ContactDetail extends StatelessWidget {
                             : Center(
                                 child: Text(ErrorString.deletedItemError,
                                     style: CustomTextStyle.labelText));
-                      } else if (snapshot.hasError) {
+                      }
+                      else if (snapshot.hasError) {
                         final message = HandleAPI.handleAPIError(snapshot.error);
                         return Text(message);
                       }

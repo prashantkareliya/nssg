@@ -48,6 +48,8 @@ dependencies:
   flutter_svg: ^1.1.6
   passcode_screen: ^2.0.1
   page_transition: ^2.0.9
+  flutter_slidable: ^2.0.0
+  flutter_switch: ^0.3.2
 
   #Animation
   flutter_staggered_animations: ^1.1.1
