@@ -636,8 +636,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     RegExp(":").hasMatch(systemTypeLabel) ?
                                     systemTypeLabel.substring(0 ,systemTypeLabel.indexOf(":")+ 2).replaceAll(":", "") :
                                     systemTypeLabel,
-
                                       textAlign: TextAlign.center,
+
                                       style: systemType[index].isSelected
                                           ? CustomTextStyle.commonTextBlue
                                           : CustomTextStyle.commonText),
@@ -716,7 +716,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
     );
   }
 
-  ///step 3
+  ///step 3 - Premises type
   Padding buildStepThree(context, Size query, stepTwoData) {
     return Padding(
       padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
@@ -756,9 +756,19 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               systemTypeSelect == "Access Control: BS EN 50133" ||
                               systemTypeSelect == "Keyholding Services") {
 
-                            pageController.animateToPage(4,
+                           /* pageController.animateToPage(4,
                                 duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
+                                curve: Curves.decelerate);*/
+
+                            callNextScreen(context, BuildItemDetail(
+                            eAmount, systemTypeSelect, quotePaymentSelection,
+                            contactSelect, premisesTypeSelect, termsItemSelection,
+                            gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
+                            invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
+                            installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                            contactId, contactCompany, mobileNumber, telephoneNumber, stepTwoData['quotes_terms']
+                            ));
+
                           } else {
                             pageController.nextPage(
                                 duration: const Duration(milliseconds: 500),
@@ -828,9 +838,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
             ],
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 2.sp, vertical: 12.sp),
+            padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
             child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
                       width: query.width * 0.4,
@@ -842,7 +852,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.decelerate);
                           })),
-                  SizedBox(
+                  /*SizedBox(
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
@@ -864,7 +874,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           }
                         },
                         buttonColor: AppColors.primaryColor),
-                  )
+                  )*/
                 ]),
           )
         ],
@@ -876,123 +886,135 @@ class _AddQuotePageState extends State<AddQuotePage> {
   SingleChildScrollView buildStepFour(context, Size query, stepFourData) {
     List dataGrade = stepFourData["grade_number"];
     //systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
-    //^This condition for showing fire or grade data(When use select FIRE system type)
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
         children: [
-          SizedBox(height: 1.h),
-          Text(
-              systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
-                  ? LabelString.lblFireSystem
-                  : LabelString.lblGradeNumber,
-              textAlign: TextAlign.center,
-              style: CustomTextStyle.labelBoldFontTextSmall),
-          SizedBox(height: 2.h),
-          Wrap(
-            spacing: 15.sp,
-            direction: Axis.horizontal,
-            alignment: WrapAlignment.spaceBetween,
-            runSpacing: 15.sp,
-            children: List.generate(
-              systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
-                  ? dataGrade.getRange(2, 7).toList().length
-                  : 2,
-              (index) {
-                gradeAndFire.add(RadioModel(
-                    false,
-                    systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
-                        ? dataGrade.getRange(2, 7).toList()[index]["label"]
-                        : dataGrade[index]["label"]));
-                return InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {
+          //show grade section only when system type contains "Intruder"
+          systemTypeSelect.contains("Intruder") ? Column(
+            children: [
+              SizedBox(height: 1.h),
+              Text(
+                  LabelString.lblGradeNumber,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyle.labelBoldFontTextSmall),
+              SizedBox(height: 2.h),
+              Wrap(
+                spacing: 15.sp,
+                direction: Axis.horizontal,
+                alignment: WrapAlignment.spaceBetween,
+                runSpacing: 15.sp,
+                children: List.generate(
+                  systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+                      ? dataGrade.getRange(2, 7).toList().length
+                      : 2,
+                      (index) {
+                    gradeAndFire.add(RadioModel(
+                        false,
+                        systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+                            ? dataGrade.getRange(2, 7).toList()[index]["label"]
+                            : dataGrade[index]["label"]));
+                    return InkWell(
+                      splashColor: AppColors.transparent,
+                      highlightColor: AppColors.transparent,
+                      onTap: () {
 
-                    for (var element in gradeAndFire) {
-                      element.isSelected = false;
-                    }
+                        for (var element in gradeAndFire) {
+                          element.isSelected = false;
+                        }
 
-                    Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
-                    gradeAndFire[index].isSelected = true;
-                    Provider.of<WidgetChange>(context, listen: false).isSetGrade;
+                        Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
+                        gradeAndFire[index].isSelected = true;
+                        Provider.of<WidgetChange>(context, listen: false).isSetGrade;
 
-                    gradeFireSelect = dataGrade[index]["label"];
+                        gradeFireSelect = dataGrade[index]["label"];
 
-                    if (signallingTypeSelect.isNotEmpty) {
-                      pageController.nextPage(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.decelerate);
-                    }
-                  },
-                  child: Container(
-                    height: 15.h,
-                    width: 42.w,
-                    decoration: BoxDecoration(
-                        color: gradeAndFire[index].isSelected
-                            ? AppColors.primaryColorLawOpacity
-                            : AppColors.whiteColor,
-                        border: Border.all(
+                        /*if (signallingTypeSelect.isNotEmpty) {
+                          pageController.nextPage(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.decelerate);
+                        }*/
+                        if(signallingTypeSelect.isNotEmpty && gradeFireSelect.isNotEmpty){
+                          callNextScreen(context, BuildItemDetail(
+                              eAmount, systemTypeSelect, quotePaymentSelection,
+                              contactSelect, premisesTypeSelect, termsItemSelection,
+                              gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
+                              invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
+                              installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                              contactId, contactCompany, mobileNumber, telephoneNumber, stepFourData["quotes_terms"]
+                          ));
+                        }
+                      },
+                      child: Container(
+                        height: 15.h,
+                        width: 42.w,
+                        decoration: BoxDecoration(
                             color: gradeAndFire[index].isSelected
-                                ? AppColors.primaryColor
-                                : AppColors.borderColor,
-                            width: 1),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              //Condition for skip grade and signalling type
-                              SizedBox(height: 1.h),
-                              SvgExtension(
-                                  itemName: systemTypeSelect ==
+                                ? AppColors.primaryColorLawOpacity
+                                : AppColors.whiteColor,
+                            border: Border.all(
+                                color: gradeAndFire[index].isSelected
+                                    ? AppColors.primaryColor
+                                    : AppColors.borderColor,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  //Condition for skip grade and signalling type
+                                  SizedBox(height: 1.h),
+                                  SvgExtension(
+                                      itemName: systemTypeSelect ==
                                           "Fire System: BS 5839-1: 2017 + SP203-1"
-                                      ? dataGrade.getRange(2, 7).toList()[index]
-                                          ["label"]
-                                      : dataGrade[index]["label"],
-                                  iconColor: gradeAndFire[index].isSelected
-                                      ? AppColors.primaryColor
-                                      : AppColors.blackColor),
-                              SizedBox(height: 1.h),
-                              Text(
-                                  systemTypeSelect ==
+                                          ? dataGrade.getRange(2, 7).toList()[index]
+                                      ["label"]
+                                          : dataGrade[index]["label"],
+                                      iconColor: gradeAndFire[index].isSelected
+                                          ? AppColors.primaryColor
+                                          : AppColors.blackColor),
+                                  SizedBox(height: 1.h),
+                                  Text(
+                                      systemTypeSelect ==
                                           "Fire System: BS 5839-1: 2017 + SP203-1"
-                                      ? dataGrade.getRange(2, 7).toList()[index]
-                                          ["label"]
-                                      : dataGrade[index]["label"],
-                                  style: gradeAndFire[index].isSelected
-                                      ? CustomTextStyle.commonTextBlue
-                                      : CustomTextStyle.commonText),
-                              SizedBox(height: 1.h),
-                            ]),
-                        Visibility(
-                          visible:
+                                          ? dataGrade.getRange(2, 7).toList()[index]
+                                      ["label"]
+                                          : dataGrade[index]["label"],
+                                      style: gradeAndFire[index].isSelected
+                                          ? CustomTextStyle.commonTextBlue
+                                          : CustomTextStyle.commonText),
+                                  SizedBox(height: 1.h),
+                                ]),
+                            Visibility(
+                              visible:
                               gradeAndFire[index].isSelected ? true : false,
-                          child: Positioned(
-                            right: 10,
-                            top: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(80.0),
-                                  color: AppColors.greenColor),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Icon(Icons.done,
-                                    color: AppColors.whiteColor, size: 14.sp),
+                              child: Positioned(
+                                right: 10,
+                                top: 5,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(80.0),
+                                      color: AppColors.greenColor),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(Icons.done,
+                                        color: AppColors.whiteColor, size: 14.sp),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ) : Container(),
           SizedBox(height: 2.h),
           Text(LabelString.lblSignallingType,
               textAlign: TextAlign.center,
@@ -1022,10 +1044,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     Provider.of<WidgetChange>(context, listen: false)
                         .isSetSignallingType;
 
-                    signallingTypeSelect =
-                        stepFourData["signalling_type"][index]["label"];
+                    signallingTypeSelect = stepFourData["signalling_type"][index]["label"];
 
-                    if (gradeFireSelect.isNotEmpty) {
+                    if (signallingTypeSelect.isNotEmpty) {
                       /*pageController.nextPage(
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.decelerate);*/

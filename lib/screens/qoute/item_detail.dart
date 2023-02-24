@@ -104,6 +104,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   List<String> userChecked = [];
 
   String selectTemplateOption = '';
+
+  String termsSelect = "";
+
+  String depositValue = "";
   @override
   void initState() {
     super.initState();
@@ -570,16 +574,17 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               builder: (context, state) {
 
                 //total of amount
-                for(ProductsList p in state.productList){
-                  subTotal += p.amountPrice.formatDouble();
-                  disc += (p.discountPrice == "" ? 0.0 : p.discountPrice.formatDouble());
-                  profit += p.profit.formatDouble();
-                }
+                  for(ProductsList p in state.productList){
+                    subTotal += p.amountPrice.formatDouble();
+                    disc += (p.discountPrice == "" ? 0.0 : p.discountPrice.formatDouble());
+                    profit += p.profit.formatDouble();
+                  }
 
-                grandTotal = subTotal+(subTotal*0.2);
-                vatTotal = (subTotal*0.2);
-                //initial text for deposit textField
-                depositAmountController.text = (subTotal+(subTotal*0.2)).formatAmount();
+                  grandTotal = subTotal+(subTotal*0.2);
+                  vatTotal = (subTotal*0.2);
+                  //initial text for deposit textField
+                  depositAmountController.text = (subTotal+(subTotal*0.2)).formatAmount();
+
                 return Container(
                     decoration: BoxDecoration(
                         color: AppColors.whiteColor,
@@ -625,7 +630,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                         BottomSheetDataTile(
                             LabelString.lblVatTotal, vatTotal.formatAmount(), CustomTextStyle.labelText),
                         //show textField for enter deposit mount if user select deposit otherwise field is invisible
-                        widget.quotePaymentSelection == "No deposit" ? Container() :
+                        Provider.of<WidgetChange>(context, listen: true).isDeposit ?
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 14.sp),
                           child: Row(
@@ -661,7 +666,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                               ),
                             ],
                           ),
-                        ),
+                        ) : Container(),
                         //itemTotal + vatTotal = GrandTotal
                         BottomSheetDataTile(
                             LabelString.lblGrandTotal, grandTotal.formatAmount(), CustomTextStyle.labelText),
@@ -673,8 +678,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                           padding: EdgeInsets.symmetric(horizontal: 14.sp,vertical: 10.sp),
                           child: Row(
                             children: [
-                              ToggleSwitch((value) =>
-                                Provider.of<WidgetChange>(context, listen: false).isDepositAmount(value),
+                              ToggleSwitch((value) {
+                                Provider.of<WidgetChange>(context, listen: false).isDepositAmount(value);
+                                depositValue = value.toString();
+                              },
                                   valueBool: Provider.of<WidgetChange>(context, listen: true).isDeposit),
                               SizedBox(width: 5.w),
                               Text(Provider.of<WidgetChange>(context, listen: true).isDeposit ? "Deposit" : "No Deposit", style: CustomTextStyle.labelText)
@@ -687,38 +694,24 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                               padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
                               child: Text(LabelString.lblTerms, style: CustomTextStyle.labelMediumBoldFontText),
                             )),
-                       /* ...widget.termsList.map((index, e) {
+                        ...widget.termsList.map((e) {
                           return  Padding(
                             padding: EdgeInsets.symmetric(horizontal: 14.sp,vertical: 10.sp),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ToggleSwitch((value) => Provider.of<WidgetChange>(context, listen: false).isTermsSelect(value),
-                                    valueBool: Provider.of<WidgetChange>(context, listen: false).isTermsBS),
+                                ToggleSwitch((value) {
+                                  Provider.of<WidgetChange>(context, listen: false).isTermsSelect(e['value']);
+                                  termsSelect = e['value'].toString();
+                                },
+                                    valueBool: e['value'] == Provider.of<WidgetChange>(context, listen: false).isTermsBS),
                                 SizedBox(width: 5.w),
                                 Expanded(child: Text(e["label"].toString(), style: CustomTextStyle.labelText))
                               ],
                             ),
                           );
-                        }).toList(),*/
-                        ...widget.termsList.asMap().map((i, element) => MapEntry(i, Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 14.sp,vertical: 10.sp),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ToggleSwitch((value) {
-                                Provider.of<WidgetChange>(context, listen: false).isTermsSelect(value);
-                              },
-                                  valueBool: Provider.of<WidgetChange>(context, listen: false).isTermsBS),
-                              SizedBox(width: 5.w),
-                              Expanded(child: Text(element["label"].toString(), style: CustomTextStyle.labelText))
-                            ],
-                          ),
-                        ),
-                      )).values.toList(),
-
+                        }).toList(),
                         SizedBox(
                           width: query.width * 0.8,
                           height: query.height * 0.06,
@@ -769,7 +762,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         billCode : widget.billCode,
         shipCode : widget.shipCode ,
         description : Message.descriptionForQuote,
-        termsConditions : widget.termsItemSelection == "50% Deposit Balance on Account(Agreed terms)"
+        termsConditions : termsSelect  == "50% Deposit Balance on Account(Agreed terms)"
             ? Message.termsCondition1
             : Message.termsCondition2,
         preTaxTotal : vatTotal.toString(),
@@ -794,7 +787,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         quoteMobileNumber : widget.mobileNumber,
         quoteTelephoneNumber : widget.telephoneNumber,
         isQuotesConfirm : "0",
-        quotesPayment : widget.quotePaymentSelection,
+        quotesPayment : Provider.of<WidgetChange>(context, listen: true).isDeposit ? "Deposit" : "No Deposit",
         isQuotesPaymentConfirm : "0",
         quotesDepositeAmount : depositAmount,
         quotesDepoReceivedAmount : "0.00",

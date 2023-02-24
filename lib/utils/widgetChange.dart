@@ -20,7 +20,7 @@ class WidgetChange extends ChangeNotifier {
   bool isExpansionTwo = true;
 
   bool isDeposit = false;
-  bool isTermsBS = false;
+  String isTermsBS = "";
 
   var count = 1;
 
@@ -168,7 +168,7 @@ class WidgetChange extends ChangeNotifier {
     notifyListeners();
   }
 
-  void isTermsSelect(bool value) {
+  void isTermsSelect(String value) {
    isTermsBS = value;
     notifyListeners();
   }

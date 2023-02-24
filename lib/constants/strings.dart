@@ -187,6 +187,7 @@ class ImageString {
   static const String icCompany = "assets/images/ic_company.svg";
   static const String icPhone = "assets/images/ic_phone.svg";
   static const String icAddress = "assets/images/ic_address.svg";
+  static const String icAddCart = "assets/images/ic_add_card.svg";
 }
 
 class PreferenceString {
