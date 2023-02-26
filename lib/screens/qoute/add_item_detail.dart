@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,11 +6,9 @@ import 'package:nssg/components/custom_appbar.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/screens/qoute/get_product/product_datasource.dart';
 import 'package:nssg/screens/qoute/models/products_list.dart';
-import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-import '../../components/custom_button.dart';
 import '../../components/custom_radio_button.dart';
 import '../../components/custom_text_styles.dart';
 import '../../components/global_api_call.dart';

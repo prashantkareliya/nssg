@@ -94,11 +94,11 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
   bool isLoading = false;
   var total = 0;
-  double subTotal = 0.0;
-  double disc = 0.0;
-  double profit = 0.0;
-  double grandTotal = 0.0;
-  double vatTotal = 0.0;
+  // double subTotal = 0.0;
+  // double disc = 0.0;
+  // double profit = 0.0;
+  // double grandTotal = 0.0;
+  // double vatTotal = 0.0;
 
   List<ProductsList> productListLocal = [];
   List<String> userChecked = [];
@@ -565,6 +565,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
         context: context,
         builder: (builder) {
+
           return Container(
             height: query.height * 0.8,
             color: Colors.transparent, //could change this to Color(0xFF737373),
@@ -572,7 +573,11 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
             child: BlocConsumer<ProductListBloc, ProductListState>(
               listener: (context, state) {},
               builder: (context, state) {
-
+                double subTotal = 0.0;
+                double disc = 0.0;
+                double profit = 0.0;
+                double grandTotal = 0.0;
+                double vatTotal = 0.0;
                 //total of amount
                   for(ProductsList p in state.productList){
                     subTotal += p.amountPrice.formatDouble();
@@ -1164,48 +1169,31 @@ class SelectLocation extends StatefulWidget {
 }
 
 class _SelectLocationState extends State<SelectLocation> {
-  var titleTECs = <TextEditingController>[];
   var locationTECs = <TextEditingController>[];
-  var cards = <Card>[];
+  var cards = <Column>[];
 
-  Card createCard() {
-    var titleController = TextEditingController();
+  Column createCard() {
     var locationController = TextEditingController();
 
-    titleTECs.add(titleController);
     locationTECs.add(locationController);
 
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text('Location ${cards.length + 1}'),
-          CustomTextField(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text('Location ${cards.length + 1}'),
+        CustomTextField(
             keyboardType: TextInputType.name,
             readOnly: false,
-            controller: titleController,
+            controller: locationController,
             obscureText: false,
-            hint: LabelString.lblTitle,
-            titleText: LabelString.lblTitle,
+            hint: LabelString.lblLocation,
+            titleText: LabelString.lblLocation,
             isRequired: false,
             maxLines: 1,
             minLines: 1,
-            textInputAction: TextInputAction.next,
-          ),
-          CustomTextField(
-              keyboardType: TextInputType.name,
-              readOnly: false,
-              controller: locationController,
-              obscureText: false,
-              hint: LabelString.lblLocation,
-              titleText: LabelString.lblLocation,
-              isRequired: false,
-              maxLines: 1,
-              minLines: 1,
-              textInputAction: TextInputAction.next),
+            textInputAction: TextInputAction.next),
 
-        ],
-      ),
+      ],
     );
   }
 
@@ -1216,12 +1204,9 @@ class _SelectLocationState extends State<SelectLocation> {
   }
 
   _onDone() {
-    List<PersonEntry> entries = [];
-    for (int i = 0; i < cards.length; i++) {
-      var title = titleTECs[i].text;
-      var location = locationTECs[i].text;
-      entries.add(PersonEntry(title, location));
-    }
+    List<PersonEntry> entries = locationTECs.map((e) => PersonEntry(e.text)).toList();
+
+    print("#################### $entries");
     Navigator.pop(context, entries);
   }
 
@@ -1232,6 +1217,7 @@ class _SelectLocationState extends State<SelectLocation> {
     return Padding(
       padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 15.sp),
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -1244,8 +1230,10 @@ class _SelectLocationState extends State<SelectLocation> {
                     icon: Icon(Icons.close_rounded,
                         color: AppColors.blackColor))),
             SizedBox(
-              height: cards.length == 1 ? query.height / 4 : query.height / 2,
+
+              height: cards.length == 7 ? query.height / 1.5 : null ,
               child: ListView.builder(
+                shrinkWrap: true,
                 itemCount: cards.length,
                 itemBuilder: (BuildContext context, int index) {
                   return cards[index];
@@ -1284,12 +1272,11 @@ class _SelectLocationState extends State<SelectLocation> {
 }
 
 class PersonEntry {
-  final String title;
   final String location;
 
-  PersonEntry(this.title, this.location);
+  PersonEntry(this.location);
   @override
   String toString() {
-    return 'title= $title, location= $location';
+    return  'location= $location';
   }
 }

@@ -179,7 +179,7 @@ class ImageString {
   static const String icDelete = "assets/images/ic_delete.png";
   static const String imgDemo = "assets/images/demo.png";
   static const String imgPlaceHolder = "assets/images/placeholder.svg";
-  static const String imgViewMore = "assets/images/viewMore.png";
+  static const String imgViewMore = "assets/images/viewmore.png";
   static const String imgCart = "assets/images/ic_cart.png";
   static const String imgAccordion = "assets/images/arrow_down.svg";
   static const String imgAccordionClose = "assets/images/arrow_down_close.svg";
