@@ -1231,7 +1231,6 @@ class _SelectLocationState extends State<SelectLocation> {
   _onDone() {
     List<PersonEntry> entries = locationTECs.map((e) => PersonEntry(e.text)).toList();
     print("#################### $entries");
-
     Navigator.pop(context, entries);
   }
 
