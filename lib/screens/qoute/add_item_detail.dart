@@ -51,6 +51,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
   List itemNumber = [0,1];
 
+  String? locations;
+
   @override
   void initState() {
     super.initState();
@@ -89,7 +91,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           elevation: 1,
           backgroundColor: AppColors.whiteColor,
           searchWidget: InkWell(
-              onTap: ()=> Navigator.pop(context),
+              onTap: ()=> Navigator.pop(context, locations),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -748,11 +750,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           amountPrice: amount.toString(),
                                           profit: profit.toString(),
                                           quantity: filterList![index].quantity,
-                                          description: filterList![index].description
+                                          description: filterList![index].description,
+                                        selectLocation: locations.toString()
                                       );
 
                                       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
-
                                       Helpers.showSnackBar(context, "Item Added",isError: false);
                                     },
                                     child: Container(
@@ -775,10 +777,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       return Dialog(
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                           insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                          child: SelectLocation(filterList![index].quantity));
+                                          child: SelectLocation(filterList![index].quantity, filterList![index].productname));
                                     },
                                   ).then((value){
-                                    print(value);
+                                      setState(() {
+                                        locations = value.locationItem.toString();
+                                      });
                                   });
                                 },
                                 child: Padding(

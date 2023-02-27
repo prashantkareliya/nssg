@@ -4,6 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:nssg/screens/qoute/models/products_list.dart';
 
+import '../item_detail.dart';
+
 part 'product_list_event.dart';
 part 'product_list_state.dart';
 

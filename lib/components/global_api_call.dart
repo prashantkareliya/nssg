@@ -32,8 +32,7 @@ Future<dynamic> getContactDetail(contactId) async {
         preferences.getString(PreferenceString.sessionName).toString(),
     'id': contactId.toString()
   };
-  final response = await HttpActions()
-      .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
+  final response = await HttpActions() .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
 
   debugPrint("getContactDetailApi --- $response");
   return response;

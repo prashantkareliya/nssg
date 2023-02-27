@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nssg/components/custom_textfield.dart';
-import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/screens/qoute/models/products_list.dart';
@@ -166,7 +165,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               }
               if (state is LoadedAddQuote) {
                 isLoading = false;
-                Helpers.showSnackBar(context, "Quote added successfully!");
+                //Helpers.showSnackBar(context, "Quote added successfully!");
+                showToast("Quote added successfully!");
               }
               if (state is FailAddQuote) {
                 isLoading = false;
@@ -283,7 +283,12 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
       ///Make new class and using pageView for add item detail
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            callNextScreen(context, AddItemDetail(widget.systemTypeSelect));
+            //callNextScreen(context, AddItemDetail(widget.systemTypeSelect));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) =>
+                    AddItemDetail(widget.systemTypeSelect))).then((value) {
+                      print(value);
+                    });
           },
           child: const Icon(Icons.add)),
     );
@@ -355,25 +360,39 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               label: 'Delete'),
           ],
         ),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.sp),
-            ),
-            child: Padding(
-              padding:EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("${products.quantity} items",style: CustomTextStyle.commonText),
-                  SizedBox(height: 0.8.h),
-                  Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
-                  SizedBox(height: 0.4.h),
-                  Text("£${products.amountPrice}",style: CustomTextStyle.labelBoldFontTextSmall)
-                ],
-            ),
-            ),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.sp),
+          ),
+          child: Padding(
+            padding:EdgeInsets.fromLTRB(0.sp, 3.sp, 0.sp, 3.sp),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(flex: 1,
+                          child: Image.asset("assets/images/demo.png", height: 8.h)),
+                      Expanded(flex: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(flex: 3,
+                                    child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
+                                Expanded(flex: 2,
+                                    child: Text("£${products.amountPrice}",style: CustomTextStyle.labelBoldFontTextSmall))
+                              ],
+                            ),
+                            Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
           ),
         ),
       )
@@ -683,13 +702,14 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                           padding: EdgeInsets.symmetric(horizontal: 14.sp,vertical: 10.sp),
                           child: Row(
                             children: [
+
                               ToggleSwitch((value) {
                                 Provider.of<WidgetChange>(context, listen: false).isDepositAmount(value);
                                 depositValue = value.toString();
                               },
-                                  valueBool: Provider.of<WidgetChange>(context, listen: true).isDeposit),
+                                  valueBool: Provider.of<WidgetChange>(context, listen: false).isDeposit),
                               SizedBox(width: 5.w),
-                              Text(Provider.of<WidgetChange>(context, listen: true).isDeposit ? "Deposit" : "No Deposit", style: CustomTextStyle.labelText)
+                              Text(Provider.of<WidgetChange>(context, listen: false).isDeposit ? "Deposit" : "No Deposit", style: CustomTextStyle.labelText)
                             ],
                           ),
                         ),
@@ -725,7 +745,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                             buttonColor: AppColors.primaryColor,
                             onClick: () {
                               Navigator.pop(context);
-                              callCreateQuoteAPI(subTotal, grandTotal, disc, selectTemplateOption, vatTotal, profit, depositAmountController.text, state.productList);
+                              callCreateQuoteAPI(subTotal, grandTotal, disc,
+                                  selectTemplateOption, vatTotal,
+                                  profit, depositAmountController.text, state.productList);
+
                             },
                           ),
                         ),
@@ -758,14 +781,14 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         assignedUserId : preferences.getString(PreferenceString.userId).toString(),
         currencyId : "21x1",
         conversionRate : "0.00",
-        billStreet : widget.billStreet,
-        shipStreet : widget.shipStreet,
-        billCity : widget.billCity,
-        shipCity : widget.shipCity,
-        billCountry : widget.billCountry,
-        shipCountry : widget.shipCountry,
-        billCode : widget.billCode,
-        shipCode : widget.shipCode ,
+        billStreet : widget.billStreet == "" ? " " : widget.billStreet,
+        shipStreet : widget.shipStreet == "" ? " " : widget.shipStreet,
+        billCity : widget.billCity == "" ? " " : widget.billCity,
+        shipCity : widget.shipCity == "" ? " " : widget.shipCity,
+        billCountry : widget.billCountry == "" ? " " : widget.billCountry,
+        shipCountry : widget.shipCountry == "" ? " " : widget.shipCountry,
+        billCode : widget.billCode == "" ? " " : widget.billCode,
+        shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         description : Message.descriptionForQuote,
         termsConditions : termsSelect  == "50% Deposit Balance on Account(Agreed terms)"
             ? Message.termsCondition1
@@ -792,7 +815,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         quoteMobileNumber : widget.mobileNumber,
         quoteTelephoneNumber : widget.telephoneNumber,
         isQuotesConfirm : "0",
-        quotesPayment : Provider.of<WidgetChange>(context, listen: true).isDeposit ? "Deposit" : "No Deposit",
+        quotesPayment : depositValue=="" ? "No Deposit" : depositValue,
         isQuotesPaymentConfirm : "0",
         quotesDepositeAmount : depositAmount,
         quotesDepoReceivedAmount : "0.00",
@@ -822,7 +845,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
           tax1: "20.00",
           tax2: "",
           tax3: "",
-          productLocation: "",
+          productLocation: e.selectLocation,
           productLocationTitle: "",
           costprice: e.costPrice,
           extQty: "0",
@@ -955,7 +978,7 @@ class _EditItemState extends State<EditItem> {
                             elevation: 0,
                             insetPadding:
                             EdgeInsets.symmetric(horizontal: 12.sp),
-                            child: SelectLocation(productsList.quantity));
+                            child: SelectLocation(productsList.quantity, productsList.itemName));
                       },
                     );
                   },
@@ -1162,7 +1185,9 @@ class SelectLocation extends StatefulWidget {
 
   var quantity;
 
-  SelectLocation(this.quantity, {super.key});
+  var productName;
+
+  SelectLocation(this.quantity, this.productName, {super.key});
 
   @override
   State<SelectLocation> createState() => _SelectLocationState();
@@ -1174,20 +1199,20 @@ class _SelectLocationState extends State<SelectLocation> {
 
   Column createCard() {
     var locationController = TextEditingController();
-
     locationTECs.add(locationController);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Text('Location ${cards.length + 1}'),
+
         CustomTextField(
             keyboardType: TextInputType.name,
             readOnly: false,
             controller: locationController,
             obscureText: false,
-            hint: LabelString.lblLocation,
-            titleText: LabelString.lblLocation,
+            hint: "${LabelString.lblLocation} ${cards.length + 1}",
+            titleText: "${LabelString.lblLocation} ${cards.length + 1}",
             isRequired: false,
             maxLines: 1,
             minLines: 1,
@@ -1205,8 +1230,8 @@ class _SelectLocationState extends State<SelectLocation> {
 
   _onDone() {
     List<PersonEntry> entries = locationTECs.map((e) => PersonEntry(e.text)).toList();
-
     print("#################### $entries");
+
     Navigator.pop(context, entries);
   }
 
@@ -1229,10 +1254,13 @@ class _SelectLocationState extends State<SelectLocation> {
                     onPressed: () => Navigator.pop(context),
                     icon: Icon(Icons.close_rounded,
                         color: AppColors.blackColor))),
+            Align(
+                alignment: Alignment.topLeft,
+                child: Text(widget.productName.toString(), style: CustomTextStyle.labelMediumBoldFontText)),
             SizedBox(
-
               height: cards.length == 7 ? query.height / 1.5 : null ,
               child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: cards.length,
                 itemBuilder: (BuildContext context, int index) {

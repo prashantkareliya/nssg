@@ -21,6 +21,8 @@ import '../../../components/custom_rounded_container.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../components/custom_textfield.dart';
 import '../../../components/global_api_call.dart';
+import '../../../constants/constants.dart';
+import '../../../httpl_actions/app_http.dart';
 import '../../../httpl_actions/handle_api_error.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
@@ -44,6 +46,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   StreamController<int> streamController = StreamController<int>.broadcast();
   List contactData = [];
   List addressList = [];
+  List siteAddressList = [];
 
   String? contactId;
   String? contactCompany;
@@ -67,6 +70,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
   String quotePaymentSelection = "";
   String termsItemSelection = "";
 
+  var dropdownvalue;
+
   @override
   void initState() {
     super.initState();
@@ -81,19 +86,35 @@ class _AddQuotePageState extends State<AddQuotePage> {
     print("contactData $contactData");
   }
 
+  Future getSiteAddressList() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': "retrieve_related",
+      'id': "12x5558",
+      'relatedType': "SitesAddress",
+      'relatedLabel': "Sites Address",
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+    };
+    final response = await HttpActions().getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
+    debugPrint("getContactDetailApiDropdown --- $response");
+
+    if (response["success"] == true) {
+        siteAddressList = response["result"];
+    }
+  }
+
   TextEditingController invoiceSearchController = TextEditingController();
 
   //Address information's textField controllers(invoice Address)
-  TextEditingController invoiceAddressController = TextEditingController();
-  TextEditingController invoiceCityController = TextEditingController();
-  TextEditingController invoiceCountryController = TextEditingController();
-  TextEditingController invoicePostalController = TextEditingController();
-
-  //Address information's textField controllers(installation Address)
-  TextEditingController installationAddressController = TextEditingController();
-  TextEditingController installationCityController = TextEditingController();
-  TextEditingController installationCountryController = TextEditingController();
-  TextEditingController installationPostalController = TextEditingController();
+    String invoiceAddressController = "";
+    String invoiceCityController = "";
+    String invoiceCountryController = "";
+    String invoicePostalController = "";
+    String installationAddressController = "";
+    String installationCityController = "";
+    String installationCountryController = "";
+    String installationPostalController = "";
 
 
   //This lists for add quote dropdown fields
@@ -332,9 +353,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               },
               onSelected: (selection) async {
                 FocusScope.of(context).unfocus();
+                getSiteAddressList();
                 for (int i = 0; i < contactData.length; i++) {
-                  if (selection ==
-                      "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
+                  if (selection == "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
                     contactId = contactData[i]["id"];
                     contactCompany = contactData[i]["contact_company"];
                     mobileNumber = contactData[i]["mobile"];
@@ -342,15 +363,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     contactSelect = selection;
 
                     //When select contact, set address in fields
-                    invoiceAddressController.text = contactData[i]["mailingstreet"];
-                    invoiceCityController.text = contactData[i]["mailingcity"];
-                    invoiceCountryController.text = contactData[i]["mailingcountry"];
-                    invoicePostalController.text = contactData[i]["mailingzip"];
+                    invoiceAddressController = contactData[i]["mailingstreet"];
+                    invoiceCityController = contactData[i]["mailingcity"];
+                    invoiceCountryController = contactData[i]["mailingcountry"];
+                    invoicePostalController = contactData[i]["mailingzip"];
 
-                    installationAddressController.text = contactData[i]["otherstreet"];
-                    installationCityController.text = contactData[i]["othercity"];
-                    installationCountryController.text = contactData[i]["othercountry"];
-                    installationPostalController.text = contactData[i]["otherzip"];
+                    installationAddressController = contactData[i]["otherstreet"];
+                    installationCityController = contactData[i]["othercity"];
+                    installationCountryController = contactData[i]["othercountry"];
+                    installationPostalController = contactData[i]["otherzip"];
                   }
                 }
               },
@@ -379,10 +400,32 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 ),
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
+            DropdownButton<String>(
+              itemHeight: 60.0,
+              style: CustomTextStyle.labelBoldFontText,
+              elevation: 0,
+              icon: Icon(Icons.arrow_drop_down_rounded, size: 24.sp),
+              iconEnabledColor: AppColors.blackColor,
+              iconDisabledColor: AppColors.hintFontColor,
+              underline: Container(height: 1.0, color: AppColors.primaryColor),
+              isDense: false,
+              isExpanded: true,
+              hint: Text(LabelString.lblSelectSiteAddress, style: CustomTextStyle.labelFontHintText),
+              items: siteAddressList.map((item) {
+                return DropdownMenuItem(
+                  value: item['address'].toString(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0, left: 5.0),
+                    child: Text(item['address'].toString(), style: CustomTextStyle.labelFontText),
+                  ));
+              }).toList(),
+              onChanged: (newVal) => dropdownvalue = newVal,
+              value: dropdownvalue),
+            SizedBox(height: 2.h),
             Text(LabelString.lblNumberOfEngineer,
                 style: CustomTextStyle.labelFontText),
-            SizedBox(height: 1.5.h),
+            SizedBox(height: 1.0.h),
             //Number of engineer
             Wrap(
               spacing: 5,
@@ -413,10 +456,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 },
               ),
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 1.5.h),
             Text(LabelString.lblInstallationHours,
                 style: CustomTextStyle.labelFontText),
-            SizedBox(height: 1.5.h),
+            SizedBox(height: 1.0.h),
             //Installation Hours,
             Wrap(
               spacing: 5,
@@ -454,15 +497,13 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 },
               ),
             ),
-            SizedBox(height: 2.5.h),
-
+            SizedBox(height: 2.0.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
                   height: 20,
                   width: 20,
-
                   child: Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       shape: RoundedRectangleBorder(
@@ -481,7 +522,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 )
               ],
             ),
-            SizedBox(height: 1.5.h),
+            SizedBox(height: 1.0.h),
 
             //Estimated installation amount text
             RichText(
@@ -497,7 +538,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             fontWeight: FontWeight.bold))
                   ]),
             ),
-            SizedBox(height: query.height * 0.08),
+            SizedBox(height: query.height * 0.03),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.sp),
               child: Row(
@@ -764,8 +805,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             eAmount, systemTypeSelect, quotePaymentSelection,
                             contactSelect, premisesTypeSelect, termsItemSelection,
                             gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
-                            invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
-                            installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                            invoiceAddressController, invoiceCityController, invoiceCountryController, invoicePostalController,
+                            installationAddressController, installationCityController, installationCountryController, installationPostalController,
                             contactId, contactCompany, mobileNumber, telephoneNumber, stepTwoData['quotes_terms']
                             ));
 
@@ -939,8 +980,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               eAmount, systemTypeSelect, quotePaymentSelection,
                               contactSelect, premisesTypeSelect, termsItemSelection,
                               gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
-                              invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
-                              installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                              invoiceAddressController, invoiceCityController, invoiceCountryController, invoicePostalController,
+                              installationAddressController, installationCityController, installationCountryController, installationPostalController,
                               contactId, contactCompany, mobileNumber, telephoneNumber, stepFourData["quotes_terms"]
                           ));
                         }
@@ -1054,8 +1095,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       eAmount, systemTypeSelect, quotePaymentSelection,
                       contactSelect, premisesTypeSelect, termsItemSelection,
                       gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType,
-                      invoiceAddressController.text, invoiceCityController.text, invoiceCountryController.text, invoicePostalController.text,
-                      installationAddressController.text, installationCityController.text, installationCountryController.text, installationPostalController.text,
+                      invoiceAddressController, invoiceCityController, invoiceCountryController, invoicePostalController,
+                      installationAddressController, installationCityController, installationCountryController, installationPostalController,
                       contactId, contactCompany, mobileNumber, telephoneNumber, stepFourData["quotes_terms"]
                       ));
                     }
