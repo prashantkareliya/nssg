@@ -752,7 +752,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           profit: profit.toString(),
                                           quantity: filterList![index].quantity,
                                           description: filterList![index].description,
-                                        selectLocation: locList![index].toString()
+                                        selectLocation: (filterList![index].locationList ?? []).join('###')
                                       );
 
                                       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
@@ -777,14 +777,19 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     builder: (context) {
                                       ///Make new class for dialog
                                       return Dialog(
-
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                           insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                          child: SelectLocation(filterList![index].quantity, filterList![index].productname));
+                                          child: SelectLocation(filterList![index].quantity,
+                                              filterList![index].productname, filterList![index].locationList));
                                     },
                                   ).then((value){
-                                    if(value!= null){
-                                      locList!.add(value.toString());
+                                    print("@@@@@@@@@@@@@@@@@ $value");
+                                    if(value is List){
+                                      Result r  = filterList![index];
+                                      r.locationList = value as List<String>;
+                                      filterList![index] = r;
+                                     // filterList![index].locationList = value as List<String>;
+                                      setState(() { });
                                     }
                                   });
                                 },

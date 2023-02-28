@@ -28,6 +28,8 @@ import '../../utils/widgetChange.dart';
 import 'add_item_detail.dart';
 import 'add_quote/add_quote_bloc_dir/add_quote_bloc.dart';
 import 'add_quote/models/create_quote_request.dart';
+import 'get_product/product_model_dir/get_product_response_model.dart' as product;
+
 
 class BuildItemDetail extends StatefulWidget {
   var eAmount;
@@ -1026,7 +1028,7 @@ class _EditItemState extends State<EditItem> {
                             elevation: 0,
                             insetPadding:
                             EdgeInsets.symmetric(horizontal: 12.sp),
-                            child: SelectLocation(productsList.quantity, productsList.itemName));
+                            child: SelectLocation(productsList.quantity, productsList.itemName, productsList.locationList));
                       },
                     );
                   },
@@ -1359,21 +1361,43 @@ class PersonEntry {
 
 class SelectLocation extends StatefulWidget {
   var quantity;
-
   var productName;
+  List<String>? locations;
+  SelectLocation(this.quantity, this.productName, this.locations, {super.key});
 
-  SelectLocation(this.quantity, this.productName, {super.key});
   @override
   State<SelectLocation> createState() => _SelectLocationState();
 }
 
 class _SelectLocationState extends State<SelectLocation> {
 
-  List<TextEditingController>? textControllers = [];
+  List<TextEditingController> textControllers = [];
   List<TextField> fields = [];
+
+  @override
+  void initState() {
+    super.initState();
+    for(String s in widget.locations ?? []){
+      final controller = TextEditingController(text: s);
+      final field = TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: "Location ${textControllers!.length + 1}",
+          labelText: "Location ${textControllers!.length + 1}",
+        ),
+      );
+
+      if(textControllers!.length != widget.quantity){
+        setState(() {
+          textControllers!.add(controller);
+          fields.add(field);
+        });
+      }
+    }
+  }
   @override
   void dispose() {
-    for (final controller in textControllers!) {
+    for (final controller in textControllers) {
       controller.dispose();
     }
     super.dispose();
@@ -1453,11 +1477,12 @@ class _SelectLocationState extends State<SelectLocation> {
                     height: query.height * 0.06,
                     child: CustomButton(
                         title: ButtonString.btnSave, onClick: (){
-                      String text = textControllers!.where((element) {
+                      Navigator.pop(context, textControllers.map((e) => e.text).toList());
+                      /*String text = textControllers!.where((element) {
                         return element.text != "";
                       }).fold("", (acc, element) => acc += "${element.text}###");
-                        Navigator.pop(context, text);
-                        print(text);
+                        Navigator.pop(context, textControllers!.map((e) => e).toList());
+                        print("@@@@@@@@@@@@@@@@@@@@@@@@@@   $text");*/
                     })),
               ],
             ),
@@ -1467,4 +1492,3 @@ class _SelectLocationState extends State<SelectLocation> {
     );
   }
 }
-///9023144266

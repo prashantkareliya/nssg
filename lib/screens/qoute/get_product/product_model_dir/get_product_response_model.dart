@@ -93,6 +93,7 @@ class Result {
   String? productProdCategory;
   String? id;
   int? quantity;
+  List<String>? locationList;
 
   Result(
       {this.productname,
@@ -162,7 +163,8 @@ class Result {
         this.productManufacturer,
         this.productProdCategory,
         this.id,
-        this.quantity});
+        this.quantity,
+        this.locationList = const []});
 
   Result.fromJson(Map<String, dynamic> json) {
     productname = json['productname'];
@@ -233,6 +235,7 @@ class Result {
     productProdCategory = json['product_prod_category'];
     id = json['id'];
     quantity = json['quantity'] ?? 1;
+    locationList = json['locationList'];
   }
 
   Map<String, dynamic> toJson() {
@@ -305,6 +308,7 @@ class Result {
     data['product_prod_category'] = productProdCategory;
     data['id'] = id;
     data['quantity'] = quantity;
+    data['locationList'] = locationList;
     return data;
   }
 }
