@@ -162,6 +162,7 @@ class ButtonString {
   static const String btnUpdate = "Update";
   static const String btnSave = "Save";
   static const String btnAddProduct = "Add Product";
+  static const String btnAddLocation = "Add Location";
 }
 
 //Image path Strings
@@ -189,6 +190,9 @@ class ImageString {
   static const String icPhone = "assets/images/ic_phone.svg";
   static const String icAddress = "assets/images/ic_address.svg";
   static const String icAddCart = "assets/images/ic_add_card.svg";
+  static const String icDeleteProd = "assets/images/ic_delete.svg";
+  static const String icEditProd = "assets/images/ic_edit.svg";
+  static const String icDiscount = "assets/images/ic_discount.svg";
 }
 
 class PreferenceString {

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nssg/components/custom_textfield.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
@@ -297,102 +298,149 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   //product list
   Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
     return Padding(
-      padding: EdgeInsets.only(left: 6.sp, right: 6.sp),
-      child: Slidable(
-        key: const ValueKey(0),
-        startActionPane:  ActionPane(
-          motion: const ScrollMotion(),
-          extentRatio: 0.25,
-          children: [
-            SlidableAction(
-              borderRadius: BorderRadius.circular(12.0),
-              padding: EdgeInsets.zero,
-              autoClose: true,
-              onPressed: (context){
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    ///Make new class for dialog
-                    return Dialog(
-                        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
-                        elevation: 0,
-                        insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                        child: EditItem(productsList: products));
-                  });
-              },
-              backgroundColor: AppColors.backWhiteColor,
-              foregroundColor: AppColors.primaryColor,
-              icon: Icons.percent,
-              label: "Discount"),
-          ],
+      padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 0,bottom: 0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+              color: AppColors.backWhiteColor
         ),
-        endActionPane:  ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              borderRadius: BorderRadius.circular(12.0),
-              padding: EdgeInsets.zero,
-              onPressed: (context){
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    ///Make new class for dialog
-                    return Dialog(
-                        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
-                        elevation: 0,
-                        insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                        child: EditItem(productsList: products));
-                  });
-              },
-              autoClose: true,
-              backgroundColor: AppColors.backWhiteColor,
-              foregroundColor: Colors.green,
-              icon: Icons.edit,
-              label: 'Edit'),
-            SlidableAction(
-              borderRadius: BorderRadius.circular(12.0),
-              padding: EdgeInsets.zero,
-              autoClose: true,
-              onPressed: null,
-              backgroundColor: AppColors.backWhiteColor,
-              foregroundColor: AppColors.redColor,
-              icon: Icons.delete_outline,
-              label: 'Delete'),
-          ],
-        ),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.sp),
+        child: Slidable(
+          key: const ValueKey(0),
+          startActionPane:  ActionPane(
+            motion: const ScrollMotion(),
+            extentRatio: 0.2,
+            children: [
+              CustomSlidableAction(
+                borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(10.0),
+                    topLeft: Radius.circular(10.0)),
+                padding: EdgeInsets.zero,
+                autoClose: true,
+                onPressed: (context){
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      ///Make new class for dialog
+                      return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          elevation: 0,
+                          insetPadding: EdgeInsets.zero,
+                          child: EditItem(productsList: products));
+                    });
+                },
+                backgroundColor: AppColors.backWhiteColor,
+                foregroundColor: AppColors.primaryColor,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(ImageString.icDiscount,
+                        color: AppColors.primaryColor,
+                        fit: BoxFit.fill,height: 2.5.h),
+                    SizedBox(height: 0.8.h),
+                    Text("Discount", style: TextStyle(
+                        fontSize: 10.sp,
+                        color: AppColors.primaryColor),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
-          child: Padding(
-            padding:EdgeInsets.fromLTRB(0.sp, 3.sp, 0.sp, 3.sp),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+          endActionPane:  ActionPane(
+            extentRatio: 0.4,
+            motion: const ScrollMotion(),
+            children: [
+              CustomSlidableAction(
+                padding: EdgeInsets.zero,
+                onPressed: (context){
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      ///Make new class for dialog
+                      return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          elevation: 0,
+                          insetPadding: EdgeInsets.zero,
+                          child: EditItem(productsList: products));
+                    });
+                },
+                autoClose: true,
+                backgroundColor: AppColors.backWhiteColor,
+                foregroundColor: Colors.green,
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(flex: 1,
-                          child: Image.asset("assets/images/demo.png", height: 8.h)),
-                      Expanded(flex: 3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(flex: 3,
-                                    child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
-                                Expanded(flex: 2,
-                                    child: Text("£${products.amountPrice}",style: CustomTextStyle.labelBoldFontTextSmall))
-                              ],
-                            ),
-                            Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
-                          ],
-                        ),
-                      ),
+                      SvgPicture.asset(ImageString.icEditProd,
+                          color: AppColors.greenColorAccent, fit: BoxFit.fill,height: 2.5.h),
+                      SizedBox(height: 0.8.h),
+                      Text("Edit", style: TextStyle(
+                          fontSize: 10.sp,
+                          color: AppColors.greenColorAccent))
                     ],
-                  ),
+                  )),
+              CustomSlidableAction(
+                borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0)),
+                padding: EdgeInsets.zero,
+                autoClose: true,
+                onPressed: null,
+                backgroundColor: AppColors.backWhiteColor,
+                foregroundColor: AppColors.redColor,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(ImageString.icDeleteProd,
+                        color: AppColors.redColor, fit: BoxFit.fill,height: 2.5.h),
+                    SizedBox(height: 0.8.h),
+                    Text("Delete", style: TextStyle(
+                      fontSize: 10.sp,
+                      color: AppColors.redColor),
+                    )
+                  ],
                 ),
+              ),
+            ],
+          ),
+          child: Card(
+            elevation: 2.0,
+            margin: EdgeInsets.zero,
+            color: AppColors.whiteColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.sp),
+            ),
+            child: Padding(
+              padding:EdgeInsets.fromLTRB(0.sp, 3.sp, 0.sp, 3.sp),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(flex: 1,
+                            child: Image.asset("assets/images/demo.png", height: 8.h)),
+                        Expanded(flex: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(flex: 3,
+                                      child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
+                                  Expanded(flex: 2,
+                                      child: Text("£${products.amountPrice}", style: CustomTextStyle.labelBoldFontTextSmall))
+                                ],
+                              ),
+                              Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+            ),
           ),
         ),
       )
@@ -1181,6 +1229,7 @@ class BottomSheetDataTile extends StatelessWidget {
 }
 
 ///class for select location dialog
+/*
 class SelectLocation extends StatefulWidget {
 
   var quantity;
@@ -1304,6 +1353,118 @@ class PersonEntry {
   PersonEntry(this.location);
   @override
   String toString() {
-    return  'location= $location';
+    return location;
+  }
+}*/
+
+class SelectLocation extends StatefulWidget {
+  var quantity;
+
+  var productName;
+
+  SelectLocation(this.quantity, this.productName, {super.key});
+  @override
+  State<SelectLocation> createState() => _SelectLocationState();
+}
+
+class _SelectLocationState extends State<SelectLocation> {
+
+  List<TextEditingController>? textControllers = [];
+  List<TextField> fields = [];
+  @override
+  void dispose() {
+    for (final controller in textControllers!) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  Widget _addTile() {
+    return ElevatedButton(
+      onPressed: fields.length == widget.quantity ? null : () {
+        final controller = TextEditingController();
+        final field = TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: "Location ${textControllers!.length + 1}",
+            labelText: "Location ${textControllers!.length + 1}",
+          ),
+        );
+
+        if(textControllers!.length != widget.quantity){
+          setState(() {
+            textControllers!.add(controller);
+            fields.add(field);
+          });
+        }
+      },
+      child: Text(ButtonString.btnAddLocation, style: CustomTextStyle.buttonText),
+    );
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    var query = MediaQuery.of(context).size;
+    return Padding(
+        padding: const EdgeInsets.all(12.0),
+        child:  Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget> [
+            Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                    highlightColor: AppColors.transparent,
+                    splashColor: AppColors.transparent,
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close_rounded,
+                        color: AppColors.blackColor))),
+            Align(alignment: Alignment.topLeft,
+                child: Text(widget.productName, style: CustomTextStyle.labelBoldFontText)),
+
+            SizedBox(
+                height: fields.length >= 7 ? MediaQuery.of(context).size.height / 2.0 : null ,
+                child: ListView.builder(
+
+                  shrinkWrap: true,
+              itemCount: fields.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.all(5),
+                  child: fields[index],
+                );
+              },
+            )),
+            SizedBox(height: 2.h),
+            _addTile(),
+            SizedBox(height: 2.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: BorderButton(
+                        btnString: ButtonString.btnCancel,
+                        onClick: () => Navigator.pop(context))),
+                SizedBox(
+                    width: query.width * 0.4,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                        title: ButtonString.btnSave, onClick: (){
+                      String text = textControllers!.where((element) {
+                        return element.text != "";
+                      }).fold("", (acc, element) => acc += "${element.text}###");
+                        Navigator.pop(context, text);
+                        print(text);
+                    })),
+              ],
+            ),
+
+          ],
+        )
+    );
   }
 }
+///9023144266

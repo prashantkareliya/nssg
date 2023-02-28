@@ -247,8 +247,6 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                               context, PageTransition(
                                               type: PageTransitionType.rightToLeft,
                                               child: QuoteDetail(quoteItems![index].id)));
-
-                                         // callNextScreen(context, QuoteDetail(quoteItems![index].id));
                                         }
                                       },
                                       child: Container(
@@ -651,20 +649,33 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           ),
                           TextButton(
                             onPressed: () {
-                              /* showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    ///Make new class for dialog
-                                                    return Dialog(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(10)),
-                                                        elevation: 0,
-                                                        insetPadding: EdgeInsets.symmetric(
-                                                            horizontal: 12.sp),
-                                                        child: SelectLocation());
-                                                  },
-                                                );*/
+                              showDialog(
+                                 context: context,
+                                 builder: (context) {
+                                 return Dialog(
+                                 shape: RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.circular(10)),
+                                     elevation: 0,
+                                 insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                     child: Column(
+                                       mainAxisSize: MainAxisSize.min,
+                                       children: [
+                                         Align(
+                                           alignment: Alignment.topRight,
+                                           child: IconButton(icon: Icon(Icons.close, color: AppColors.blackColor),
+                                               onPressed: () => Navigator.pop(context),padding: EdgeInsets.zero,splashRadius: 10.0,),
+                                         ),
+                                         Text("Locations - ", style: CustomTextStyle.labelBoldFontText),
+                                         Padding(
+                                           padding: const EdgeInsets.all(8.0),
+                                           child: Text(
+                                               itemList[index]["product_location"].toString().replaceAll("###", "\n-\n"),
+                                               style: CustomTextStyle.labelBoldFontTextSmall),
+                                         ),
+                                       ],
+                                     ));
+                                 },
+                              );
                             },
                             child: Text(LabelString.lblViewLocation,
                                 style: CustomTextStyle.commonTextBlue),

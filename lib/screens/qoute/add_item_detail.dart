@@ -41,6 +41,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
   List<Result>? productItems = [];
   List<Result>? filterList = [];
+  List<String>? locList = [];
 
   TextEditingController sellingPriceController = TextEditingController();
   List<TextEditingController> discountPriceController = [];
@@ -751,7 +752,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           profit: profit.toString(),
                                           quantity: filterList![index].quantity,
                                           description: filterList![index].description,
-                                        selectLocation: locations.toString()
+                                        selectLocation: locList![index].toString()
                                       );
 
                                       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
@@ -771,18 +772,20 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               InkWell(
                                 onTap: () {
                                   showDialog(
+                                    barrierDismissible: true,
                                     context: context,
                                     builder: (context) {
                                       ///Make new class for dialog
                                       return Dialog(
+
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                           insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
                                           child: SelectLocation(filterList![index].quantity, filterList![index].productname));
                                     },
                                   ).then((value){
-                                      setState(() {
-                                        locations = value.locationItem.toString();
-                                      });
+                                    if(value!= null){
+                                      locList!.add(value.toString());
+                                    }
                                   });
                                 },
                                 child: Padding(
