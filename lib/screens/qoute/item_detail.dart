@@ -300,7 +300,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
   //product list
   Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
     return Padding(
-      padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 0,bottom: 0),
+      padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 5,bottom: 5),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
@@ -797,7 +797,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                               Navigator.pop(context);
                               callCreateQuoteAPI(subTotal, grandTotal, disc,
                                   selectTemplateOption, vatTotal,
-                                  profit, depositAmountController.text, state.productList);
+                                  profit, depositAmountController.text, state.productList,
+                                  depositValue, termsSelect);
 
                             },
                           ),
@@ -813,7 +814,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
   Future<void> callCreateQuoteAPI(double subTotal, double grandTotal, double disc,
       String selectTemplateOption, double vatTotal, double profit, String depositAmount,
-      List<ProductsList> productList ) async {
+      List<ProductsList> productList, String depositValue, String termsSelect ) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     //for create data in json format
@@ -865,7 +866,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         quoteMobileNumber : widget.mobileNumber,
         quoteTelephoneNumber : widget.telephoneNumber,
         isQuotesConfirm : "0",
-        quotesPayment : depositValue=="" ? "No Deposit" : depositValue,
+        quotesPayment : depositValue== "false" || depositValue== "" ? "No Deposit" : "Deposit",
         isQuotesPaymentConfirm : "0",
         quotesDepositeAmount : depositAmount,
         quotesDepoReceivedAmount : "0.00",
@@ -1030,7 +1031,16 @@ class _EditItemState extends State<EditItem> {
                             EdgeInsets.symmetric(horizontal: 12.sp),
                             child: SelectLocation(productsList.quantity, productsList.itemName, productsList.locationList));
                       },
-                    );
+                    ).then((value) {
+                      print("@@@@@@ Add location dialog @@@@@@@@@@@ $value");
+                      if(value != null){
+                        if(value is List){
+                          ProductsList p  = productsList;
+                          p.locationList = value as List<String>;
+                          productsList = p;
+                        }
+                      }
+                    });
                   },
                   child: Text(LabelString.lblSelectLocation,
                       style: CustomTextStyle.commonTextBlue),
@@ -1196,6 +1206,7 @@ class _EditItemState extends State<EditItem> {
                             profit:finalProfit,
                             amountPrice: finalAmount,
                             discountPrice : itemDiscountController.text,
+                              selectLocation: (productsList.locationList ?? []).join('###')
                           )));
                       Navigator.pop(context);
                     })),
@@ -1372,25 +1383,26 @@ class SelectLocation extends StatefulWidget {
 class _SelectLocationState extends State<SelectLocation> {
 
   List<TextEditingController> textControllers = [];
-  List<TextField> fields = [];
+  //List<TextField> fields = [];
+
 
   @override
   void initState() {
     super.initState();
     for(String s in widget.locations ?? []){
       final controller = TextEditingController(text: s);
-      final field = TextField(
+      TextField(
         controller: controller,
         decoration: InputDecoration(
-          hintText: "Location ${textControllers!.length + 1}",
-          labelText: "Location ${textControllers!.length + 1}",
+          hintText: "Location ${textControllers.length}",
+          labelText: "Location ${textControllers.length}",
         ),
       );
 
-      if(textControllers!.length != widget.quantity){
+      if(textControllers.length != widget.quantity){
         setState(() {
-          textControllers!.add(controller);
-          fields.add(field);
+          textControllers.add(controller);
+          /*fields.add(field);*/
         });
       }
     }
@@ -1403,28 +1415,28 @@ class _SelectLocationState extends State<SelectLocation> {
     super.dispose();
   }
 
-  Widget _addTile() {
+  /*Widget _addTile() {
     return ElevatedButton(
       onPressed: fields.length == widget.quantity ? null : () {
         final controller = TextEditingController();
         final field = TextField(
           controller: controller,
           decoration: InputDecoration(
-            hintText: "Location ${textControllers!.length + 1}",
-            labelText: "Location ${textControllers!.length + 1}",
+            hintText: "Location ${textControllers.length + 1}",
+            labelText: "Location ${textControllers.length + 1}",
           ),
         );
 
-        if(textControllers!.length != widget.quantity){
+        if(textControllers.length != widget.quantity){
           setState(() {
-            textControllers!.add(controller);
+            textControllers.add(controller);
             fields.add(field);
           });
         }
       },
       child: Text(ButtonString.btnAddLocation, style: CustomTextStyle.buttonText),
     );
-  }
+  }*/
 
 
   @override
@@ -1432,62 +1444,77 @@ class _SelectLocationState extends State<SelectLocation> {
     var query = MediaQuery.of(context).size;
     return Padding(
         padding: const EdgeInsets.all(12.0),
-        child:  Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget> [
-            Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                    highlightColor: AppColors.transparent,
-                    splashColor: AppColors.transparent,
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.close_rounded,
-                        color: AppColors.blackColor))),
-            Align(alignment: Alignment.topLeft,
-                child: Text(widget.productName, style: CustomTextStyle.labelBoldFontText)),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget> [
+              Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                      highlightColor: AppColors.transparent,
+                      splashColor: AppColors.transparent,
+                      onPressed: () => Navigator.pop(context, "cancel"),
+                      icon: Icon(Icons.close_rounded,
+                          color: AppColors.blackColor))),
+              Align(alignment: Alignment.topLeft,
+                  child: Text(widget.productName, style: CustomTextStyle.labelBoldFontText)),
 
-            SizedBox(
-                height: fields.length >= 7 ? MediaQuery.of(context).size.height / 2.0 : null ,
-                child: ListView.builder(
+             /* SizedBox(
+                  height: fields.length >= 7 ? MediaQuery.of(context).size.height / 2.0 : null ,
+                  child: ListView.builder(
 
-                  shrinkWrap: true,
-              itemCount: fields.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.all(5),
-                  child: fields[index],
-                );
-              },
-            )),
-            SizedBox(height: 2.h),
-            _addTile(),
-            SizedBox(height: 2.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: BorderButton(
-                        btnString: ButtonString.btnCancel,
-                        onClick: () => Navigator.pop(context))),
-                SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                        title: ButtonString.btnSave, onClick: (){
-                      Navigator.pop(context, textControllers.map((e) => e.text).toList());
-                      /*String text = textControllers!.where((element) {
-                        return element.text != "";
-                      }).fold("", (acc, element) => acc += "${element.text}###");
-                        Navigator.pop(context, textControllers!.map((e) => e).toList());
-                        print("@@@@@@@@@@@@@@@@@@@@@@@@@@   $text");*/
-                    })),
-              ],
-            ),
+                    shrinkWrap: true,
+                itemCount: fields.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.all(5),
+                    child: fields[index],
+                  );
+                },
+              )),*/
+              SizedBox(height: 2.h),
+              ListView.builder(
+                shrinkWrap: true,
+                  itemCount: widget.quantity,
+                  itemBuilder: (context,index){
+                    textControllers.add(TextEditingController());
+                    return TextField(
+                      controller: textControllers[index],
+                      decoration: InputDecoration(
+                        hintText: "Location ${index+1}",
+                        labelText: "Location ${index+1}",
+                      ),
+                    );
+                  }),
+              SizedBox(height: 2.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: BorderButton(
+                          btnString: ButtonString.btnCancel,
+                          onClick: () => Navigator.pop(context))),
+                  SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: CustomButton(
+                          title: ButtonString.btnSave, onClick: (){
+                        Navigator.pop(context, textControllers.map((e) => e.text).toList());
+                        /*String text = textControllers!.where((element) {
+                          return element.text != "";
+                        }).fold("", (acc, element) => acc += "${element.text}###");
+                          Navigator.pop(context, textControllers!.map((e) => e).toList());
+                          print("@@@@@@@@@@@@@@@@@@@@@@@@@@   $text");*/
+                      })),
+                ],
+              ),
 
-          ],
+            ],
+          ),
         )
     );
   }

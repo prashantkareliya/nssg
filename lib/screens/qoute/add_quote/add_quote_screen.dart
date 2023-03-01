@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nssg/components/svg_extension.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
@@ -26,14 +27,22 @@ import '../../../httpl_actions/app_http.dart';
 import '../../../httpl_actions/handle_api_error.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
+import '../../../utils/preferences.dart';
 import '../../../utils/widgets.dart';
+import '../../contact/contact_datasource.dart';
+import '../../contact/contact_repository.dart';
+import '../../contact/get_contact/contact_bloc_dir/get_contact_bloc.dart';
+import '../../contact/get_contact/contact_model_dir/get_contact_response_model.dart';
 import '../item_detail.dart';
 import 'package:http/http.dart' as http;
 
 class AddQuotePage extends StatefulWidget {
   bool isBack;
 
-  AddQuotePage(this.isBack, {Key? key}) : super(key: key);
+  String? firstName;
+  String? lastName;
+
+  AddQuotePage(this.isBack, this.firstName, this.lastName, {Key? key}) : super(key: key);
 
   @override
   State<AddQuotePage> createState() => _AddQuotePageState();
@@ -44,7 +53,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
   //For manage stem container number
   StreamController<int> streamController = StreamController<int>.broadcast();
-  List contactData = [];
+  List<Result>? contactItems = []; //this list for API call
+  List contactData = []; // this list for set data in contact
   List addressList = [];
   List siteAddressList = [];
 
@@ -53,6 +63,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   String? mobileNumber;
   String? telephoneNumber;
   Future<dynamic>? getFields;
+
 
   //object for estimated installation amount
   String? eAmount = "0.0";
@@ -75,15 +86,29 @@ class _AddQuotePageState extends State<AddQuotePage> {
   @override
   void initState() {
     super.initState();
-    getContactList();
+   getContactList();
   }
 
-  //Method for get contact list from SharedPreferences
+  GetContactBloc contactBloc = GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
+  bool isLoading = false;
+
+  //In this method Calling get contact API
   getContactList() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': 'query',
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'query': Constants.of().apiKeyContact, //2017
+      'module_name': 'Contacts'};
+    contactBloc.add(GetContactListEvent(queryParameters));
+  }
+
+  //In this set contact list for select contact field
+  getContact() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? contact = preferences.getString(PreferenceString.contactList);
     contactData = jsonDecode(contact!);
-    print("contactData $contactData");
   }
 
   Future getSiteAddressList() async {
@@ -128,6 +153,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   List<RadioModel> quotePayment = <RadioModel>[]; //step 5
   List<RadioModel> termsList = <RadioModel>[]; //step 5
 
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -143,7 +169,24 @@ class _AddQuotePageState extends State<AddQuotePage> {
         searchWidget: Container(),
         titleTextStyle: CustomTextStyle.labelBoldFontText,
       ),
-      body: Column(
+      body: BlocListener<GetContactBloc, GetContactState>(
+        bloc: contactBloc,
+        listener: (context, state) {
+         if (state is ContactLoadFail) {
+           Helpers.showSnackBar(context, state.error.toString());
+         }
+         if (state is ContactsLoaded) {
+           contactItems = state.contactList;
+           isDelete = false;
+           preferences.setPreference(PreferenceString.contactList, jsonEncode(state.contactList));
+           getContact();
+         }
+       },
+
+        child: BlocBuilder<GetContactBloc, GetContactState>(
+          bloc: contactBloc,
+          builder: (context, state) {
+        return Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
@@ -285,7 +328,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
               },
           ),
         ],
-      ),
+      );
+  },
+),
+),
     );
   }
 
@@ -300,9 +346,13 @@ class _AddQuotePageState extends State<AddQuotePage> {
           children: [
             //Design Auto filled contact
             Autocomplete(
+              initialValue: widget.isBack ? const TextEditingValue(text: "") : TextEditingValue(text: "${widget.firstName} ${widget.lastName}"),
               fieldViewBuilder: (context, textEditingController, focusNode,
                   VoidCallback onFieldSubmitted) {
                 return TextField(
+                  autofocus: true,
+                  enabled: true,
+
                   style: TextStyle(color: AppColors.blackColor),
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.next,
@@ -310,8 +360,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   keyboardType: TextInputType.name,
                   cursorColor: AppColors.blackColor,
                   decoration: InputDecoration(
-                      suffixIcon:
-                          Icon(Icons.search, color: AppColors.blackColor),
+                      suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           borderSide: BorderSide(
@@ -329,7 +378,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       contentPadding: EdgeInsets.only(left: 12.sp),
                       hintText: LabelString.lblTypeToSearch,
                       hintStyle: CustomTextStyle.labelFontHintText,
-                      counterText: ""),
+                      counterText: "",
+                  ),
                   controller: textEditingController,
                   focusNode: focusNode,
                   onEditingComplete: () {},
@@ -341,7 +391,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   return const Iterable<String>.empty();
                 } else {
                   List<String> matchesContact = <String>[];
-
                   matchesContact.addAll(contactData.map((e) {
                     return "${e["firstname"].toString()} ${e["lastname"].toString()}";
                   }));

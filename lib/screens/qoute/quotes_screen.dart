@@ -328,7 +328,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
         onPressed: () {
           context.read<ProductListBloc>().add(ClearProductToListEvent());
           Navigator.push(context, MaterialPageRoute(builder:
-              (context)=> AddQuotePage(true),
+              (context)=> AddQuotePage(true, "", ""),
           )).then((value) => getQuote());
 
         },
@@ -368,7 +368,7 @@ class QuoteDetail extends StatefulWidget {
 
 class _QuoteDetailState extends State<QuoteDetail> {
   Future<dynamic>? getDetail;
-
+//881976
   @override
   Widget build(BuildContext context) {
     getDetail = getContactDetail(widget.id);
@@ -703,17 +703,14 @@ class _QuoteDetailState extends State<QuoteDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 1.0.h),
-            Text(dataQuote["subject"].toString(),
-                style: CustomTextStyle.labelMediumBoldFontText),
+            Text(dataQuote["subject"].toString(), style: CustomTextStyle.labelMediumBoldFontText),
             SizedBox(height: 1.0.h),
-            Text(dataQuote["quotes_company"].toString(),
-                style: CustomTextStyle.labelText),
+            Text(dataQuote["quotes_company"].toString(), style: CustomTextStyle.labelText),
             SizedBox(height: 0.5.h),
             Row(
               children: [
                 Flexible(
-                  child: Text(dataQuote["quotes_email"],
-                      style: CustomTextStyle.labelText),
+                  child: Text(dataQuote["quotes_email"], style: CustomTextStyle.labelText),
                 ),
                 dataQuote["quote_mobile_number"] == ""
                     ? Container()
@@ -721,24 +718,24 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         padding: EdgeInsets.symmetric(horizontal: 8.sp),
                         child: Container(
                             color: AppColors.hintFontColor,
-                            height: 2.0.h,
-                            width: 0.5.w),
-                      ),
-                Text(dataQuote["quote_mobile_number"],
-                    style: CustomTextStyle.labelText),
+                            height: 2.0.h, width: 0.5.w)),
+                Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText),
               ],
             ),
             SizedBox(height: 1.5.h),
             QuoteTileField(
                 LabelString.lblPremisesType, dataQuote["premises_type"]),
-            QuoteTileField(LabelString.lblSystemType, dataQuote["system_type"]),
+            QuoteTileField(
+                LabelString.lblSystemType, dataQuote["system_type"]),
             QuoteTileField(
                 LabelString.lblGradeNumber, dataQuote["grade_number"]),
             QuoteTileField(
                 LabelString.lblSignallingType, dataQuote["signalling_type"]),
             QuoteTileField(
                 LabelString.lblQuotePayment, dataQuote["quotes_payment"]),
-            QuoteTileField(LabelString.lblTerms, dataQuote["quotes_terms"]),
+            QuoteTileField(
+                LabelString.lblTerms, dataQuote["terms_conditions"],textAlign: TextAlign.justify),
+
             SizedBox(height: 1.5.h),
             RichText(
               text: TextSpan(

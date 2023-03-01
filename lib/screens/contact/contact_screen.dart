@@ -209,8 +209,7 @@ class _ContactScreenState extends State<ContactScreen> {
         if (state is ContactsLoaded) {
           contactItems = state.contactList;
           isDelete = false;
-          preferences.setPreference(
-              PreferenceString.contactList, jsonEncode(state.contactList));
+          preferences.setPreference(PreferenceString.contactList, jsonEncode(state.contactList));
         }
       },
       child: BlocBuilder<GetContactBloc, GetContactState>(
@@ -894,9 +893,26 @@ class ContactDetail extends StatelessWidget {
                                   ),
                                 ),
                               )
-                            : Center(
-                                child: Text(ErrorString.deletedItemError,
-                                    style: CustomTextStyle.labelText));
+                            : Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: Icon(Icons.close_rounded,
+                                          color: AppColors.blackColor),
+                                      highlightColor:
+                                      AppColors.transparent,
+                                      splashColor: AppColors.transparent),
+                                ),
+                                SizedBox(height: 5.h),
+                                Text(ErrorString.deletedItemError,
+                                    style: CustomTextStyle.labelMediumBoldFontText),
+                              ],
+                            );
                       }
                       else if (snapshot.hasError) {
                         final message = HandleAPI.handleAPIError(snapshot.error);

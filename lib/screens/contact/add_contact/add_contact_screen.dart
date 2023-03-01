@@ -627,7 +627,7 @@ class _AddContactPageState extends State<AddContactPage> {
                             createContactApiCall();
                             Navigator.pop(context);
                             Navigator.pop(context);
-                            callNextScreen(context, AddQuotePage(true));
+                            callNextScreen(context, AddQuotePage(false, firstNameController.text, lastNameController.text));
                           },
 
                           //No button//

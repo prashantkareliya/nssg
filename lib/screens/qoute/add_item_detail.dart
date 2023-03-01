@@ -780,17 +780,19 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                           insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
                                           child: SelectLocation(filterList![index].quantity,
-                                              filterList![index].productname, filterList![index].locationList));
+                                              filterList![index].productname,
+                                              filterList![index].locationList));
                                     },
                                   ).then((value){
-                                    print("@@@@@@@@@@@@@@@@@ $value");
-                                    if(value is List){
-                                      Result r  = filterList![index];
-                                      r.locationList = value as List<String>;
-                                      filterList![index] = r;
-                                     // filterList![index].locationList = value as List<String>;
-                                      setState(() { });
+                                    print("@@@@@ add location product @@@@@@@@@@@@ $value");
+                                    if(value != null){
+                                      if(value is List){
+                                        Result r  = filterList![index];
+                                        r.locationList = value as List<String>;
+                                        filterList![index] = r;
+                                      }
                                     }
+
                                   });
                                 },
                                 child: Padding(
