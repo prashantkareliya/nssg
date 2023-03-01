@@ -368,7 +368,6 @@ class QuoteDetail extends StatefulWidget {
 
 class _QuoteDetailState extends State<QuoteDetail> {
   Future<dynamic>? getDetail;
-//881976
   @override
   Widget build(BuildContext context) {
     getDetail = getContactDetail(widget.id);

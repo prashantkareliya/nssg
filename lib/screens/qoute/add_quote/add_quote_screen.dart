@@ -20,7 +20,6 @@ import '../../../components/custom_button.dart';
 import '../../../components/custom_radio_button.dart';
 import '../../../components/custom_rounded_container.dart';
 import '../../../components/custom_text_styles.dart';
-import '../../../components/custom_textfield.dart';
 import '../../../components/global_api_call.dart';
 import '../../../constants/constants.dart';
 import '../../../httpl_actions/app_http.dart';
@@ -34,7 +33,6 @@ import '../../contact/contact_repository.dart';
 import '../../contact/get_contact/contact_bloc_dir/get_contact_bloc.dart';
 import '../../contact/get_contact/contact_model_dir/get_contact_response_model.dart';
 import '../item_detail.dart';
-import 'package:http/http.dart' as http;
 
 class AddQuotePage extends StatefulWidget {
   bool isBack;
