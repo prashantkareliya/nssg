@@ -447,28 +447,32 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 ),
               ),
             ),
-            SizedBox(height: 2.h),
-            DropdownButton<String>(
-              itemHeight: 60.0,
-              style: CustomTextStyle.labelBoldFontText,
-              elevation: 0,
-              icon: Icon(Icons.arrow_drop_down_rounded, size: 24.sp),
-              iconEnabledColor: AppColors.blackColor,
-              iconDisabledColor: AppColors.hintFontColor,
-              underline: Container(height: 1.0, color: AppColors.primaryColor),
-              isDense: false,
-              isExpanded: true,
-              hint: Text(LabelString.lblSelectSiteAddress, style: CustomTextStyle.labelFontHintText),
-              items: siteAddressList.map((item) {
-                return DropdownMenuItem(
-                  value: item['address'].toString(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0, left: 5.0),
-                    child: Text(item['address'].toString(), style: CustomTextStyle.labelFontText),
-                  ));
-              }).toList(),
-              onChanged: (newVal) => dropdownvalue = newVal,
-              value: dropdownvalue),
+            //if site will not empty then shows dropdown otherwise it will be hide.
+            if(siteAddressList.isNotEmpty) Padding(
+              padding: EdgeInsets.only(top: 10.sp),
+              child: DropdownButton<String>(
+                itemHeight: 60.0,
+                style: CustomTextStyle.labelBoldFontText,
+                elevation: 0,
+                icon: Icon(Icons.arrow_drop_down_rounded, size: 24.sp),
+                iconEnabledColor: AppColors.blackColor,
+                iconDisabledColor: AppColors.hintFontColor,
+                underline: Container(height: 1.0, color: AppColors.primaryColor),
+                isDense: false,
+                isExpanded: true,
+                hint: Text(LabelString.lblSelectSiteAddress,
+                    style: CustomTextStyle.labelFontHintText),
+                items: siteAddressList.map((item) {
+                  return DropdownMenuItem(
+                    value: item['address'].toString(),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0, left: 5.0),
+                      child: Text(item['address'].toString(),
+                          style: CustomTextStyle.labelFontText)));
+                }).toList(),
+                onChanged: (newVal) => dropdownvalue = newVal,
+                value: dropdownvalue),
+            ),
             SizedBox(height: 2.h),
             Text(LabelString.lblNumberOfEngineer,
                 style: CustomTextStyle.labelFontText),
