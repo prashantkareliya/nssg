@@ -1,4 +1,3 @@
-
 class ProductsList {
   String? itemId;
   String? productId;
@@ -30,17 +29,17 @@ class ProductsList {
     List<String>? locationList
   }) {
     return ProductsList(
-      itemId: itemId ?? this.itemId,
-      productId: productId ?? this.productId,
-      itemName: itemName ?? this.itemName,
-      costPrice: costPrice ?? this.costPrice,
-      sellingPrice: sellingPrice ?? this.sellingPrice,
-      discountPrice: discountPrice ?? this.discountPrice,
-      amountPrice: amountPrice ?? this.amountPrice,
-      profit: profit ?? this.profit,
-      description: description ?? this.description,
-      quantity: quantity ?? this.quantity,
-      selectLocation: selectLocation ?? this.selectLocation,
+        itemId: itemId ?? this.itemId,
+        productId: productId ?? this.productId,
+        itemName: itemName ?? this.itemName,
+        costPrice: costPrice ?? this.costPrice,
+        sellingPrice: sellingPrice ?? this.sellingPrice,
+        discountPrice: discountPrice ?? this.discountPrice,
+        amountPrice: amountPrice ?? this.amountPrice,
+        profit: profit ?? this.profit,
+        description: description ?? this.description,
+        quantity: quantity ?? this.quantity,
+        selectLocation: selectLocation ?? this.selectLocation,
         locationList: locationList ?? this.locationList
     );
   }
@@ -48,14 +47,14 @@ class ProductsList {
   ProductsList(
       {this.itemId,
         this.productId,
-      this.itemName,
-      this.costPrice,
-      this.sellingPrice,
-      this.discountPrice,
-      this.amountPrice,
-      this.profit,
-      this.description,
-      this.quantity,
+        this.itemName,
+        this.costPrice,
+        this.sellingPrice,
+        this.discountPrice,
+        this.amountPrice,
+        this.profit,
+        this.description,
+        this.quantity,
         this.selectLocation,
         this.locationList = const []});
 
@@ -91,4 +90,3 @@ class ProductsList {
     return data;
   }
 }
-

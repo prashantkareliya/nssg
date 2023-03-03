@@ -270,7 +270,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                               Navigator.push(
                                                       context, PageTransition(
                                                           type: PageTransitionType.rightToLeft,
-                                                          child: ContactDetail(setContactId))).then((value) {
+                                                          child: ContactDetail(setContactId, "contact"))).then((value) {
                                                 if (value == "delete") {
                                                   getContact();
                                                 }
@@ -567,7 +567,9 @@ class ContactTileField extends StatelessWidget {
 class ContactDetail extends StatelessWidget {
   var id;
 
-  ContactDetail(this.id, {Key? key}) : super(key: key);
+  String? quote;
+
+  ContactDetail(this.id, this.quote, {Key? key}) : super(key: key);
 
   Future<dynamic>? getDetail;
 
@@ -611,7 +613,7 @@ class ContactDetail extends StatelessWidget {
                                               onPressed: () => callNextScreen(context, AddContactPage(id.toString())),
                                               icon: Image.asset(ImageString.icEdit, height: 2.5.h)),
                                           SizedBox(height: 2.h),
-                                          InkWell(
+                                          if (quote != "quote") InkWell(
                                             onTap: () {
                                               //Dialog to confirm delete contact or not
                                               showDialog(

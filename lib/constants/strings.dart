@@ -17,6 +17,8 @@ class Message {
   static const String descriptionForQuote = "Our lead times are 2 to 3 weeks from the date of your order.";
   static const String termsCondition1 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. Deposit Payment Method: Bacs / Cheque / Debit Cards. Payment Terms : 50% Deposit and Remaining balance upon completion.";
   static const String termsCondition2 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. Deposit Payment Method: Bacs / Cheque / Debit Cards. Payment Terms : 30 Days credit terms upon completion.";
+  static const String addEngineerAndHours = "Add the Number of Engineer & Hours";
+  static const String quoteEstimation = "for quote estimation";
 }
 
 //Label Strings
@@ -163,6 +165,8 @@ class ButtonString {
   static const String btnSave = "Save";
   static const String btnAddProduct = "Add Product";
   static const String btnAddLocation = "Add Location";
+  static const String btnQuoteDetail = "Quote Detail";
+  static const String btnEmailShare = "Email Share";
 }
 
 //Image path Strings
@@ -190,6 +194,7 @@ class ImageString {
   static const String icPhone = "assets/images/ic_phone.svg";
   static const String icAddress = "assets/images/ic_address.svg";
   static const String icAddCart = "assets/images/ic_add_card.svg";
+  static const String icAddCartGreen = "assets/images/ic_cart_green.svg";
   static const String icDeleteProd = "assets/images/ic_delete.svg";
   static const String icEditProd = "assets/images/ic_edit.svg";
   static const String icDiscount = "assets/images/ic_discount.svg";

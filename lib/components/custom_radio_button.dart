@@ -22,8 +22,7 @@ class RadioItem extends StatelessWidget {
       margin: EdgeInsets.only(top: 4.sp, bottom: 4.sp, right: 6.sp),
 
       decoration: BoxDecoration(
-          color:
-          item.isSelected ? AppColors.primaryColor : AppColors.transparent,
+          color: item.isSelected ? AppColors.primaryColor : AppColors.transparent,
           border: Border.all(width: 1.0, color: AppColors.primaryColor),
           borderRadius: BorderRadius.all(Radius.circular(5.sp))),
       child: Column(

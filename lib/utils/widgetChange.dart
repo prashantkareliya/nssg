@@ -21,6 +21,7 @@ class WidgetChange extends ChangeNotifier {
 
   bool isDeposit = false;
   String isTermsBS = "";
+  String pageNo = "";
 
   var count = 1;
 
@@ -170,6 +171,11 @@ class WidgetChange extends ChangeNotifier {
 
   void isTermsSelect(String value) {
    isTermsBS = value;
+    notifyListeners();
+  }
+
+  void pageNumber(String number) {
+    pageNo = number;
     notifyListeners();
   }
 }

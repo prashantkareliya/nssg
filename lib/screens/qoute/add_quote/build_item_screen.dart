@@ -1,37 +1,43 @@
 import 'dart:convert';
+import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nssg/components/custom_textfield.dart';
+import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
-import 'package:nssg/screens/qoute/models/products_list.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
+import 'package:nssg/screens/qoute/quotes_screen.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../components/custom_appbar.dart';
-import '../../components/custom_button.dart';
-import '../../components/custom_radio_button.dart';
-import '../../components/custom_text_styles.dart';
-import '../../components/toggle_switch.dart';
-import '../../constants/constants.dart';
-import '../../utils/app_colors.dart';
+import '../../../components/custom_appbar.dart';
+import '../../../components/custom_button.dart';
+import '../../../components/custom_radio_button.dart';
+import '../../../components/custom_text_styles.dart';
+import '../../../components/toggle_switch.dart';
+import '../../../constants/constants.dart';
+import '../../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 import 'package:collection/collection.dart';
-import '../../utils/helpers.dart';
-import '../../utils/widgetChange.dart';
-import 'add_item_detail.dart';
-import 'add_quote/add_quote_bloc_dir/add_quote_bloc.dart';
-import 'add_quote/models/create_quote_request.dart';
-import 'get_product/product_model_dir/get_product_response_model.dart' as product;
+import '../../../utils/helpers.dart';
+import '../../../utils/widgetChange.dart';
+import '../models/products_list.dart';
+import 'add_item_screen.dart';
+import 'add_quote_bloc_dir/add_quote_bloc.dart';
+import 'edit_item_dialog.dart';
+import 'models/create_quote_request.dart';
+
+import 'quote_estimation_dialog.dart';
+import '../get_product/product_model_dir/get_product_response_model.dart' as product;
 
 
-class BuildItemDetail extends StatefulWidget {
+///Third step to create quote
+class BuildItemScreen extends StatefulWidget {
   var eAmount;
   String? systemTypeSelect;
   String? quotePaymentSelection;
@@ -57,7 +63,11 @@ class BuildItemDetail extends StatefulWidget {
 
   var termsList;
 
-  BuildItemDetail(
+  String? contactEmail;
+
+  String? siteAddress;
+
+  BuildItemScreen(
       this.eAmount,
       this.systemTypeSelect,
       this.quotePaymentSelection,
@@ -79,14 +89,15 @@ class BuildItemDetail extends StatefulWidget {
       this.contactId,
       this.contactCompany,
       this.mobileNumber,
-      this.telephoneNumber, this.termsList,
+      this.telephoneNumber,
+      this.termsList, this.contactEmail, this.siteAddress,
       {super.key});
 
   @override
-  State<BuildItemDetail> createState() => _BuildItemDetailState();
+  State<BuildItemScreen> createState() => _BuildItemScreenState();
 }
 
-class _BuildItemDetailState extends State<BuildItemDetail> {
+class _BuildItemScreenState extends State<BuildItemScreen> {
   List templateOptionList = [LabelString.lblHideProductPrice, LabelString.lblHideProduct, LabelString.lblNone];
   List<RadioModel> templateOption = <RadioModel>[]; //step 1
 
@@ -96,24 +107,18 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
   bool isLoading = false;
   var total = 0;
-  // double subTotal = 0.0;
-  // double disc = 0.0;
-  // double profit = 0.0;
-  // double grandTotal = 0.0;
-  // double vatTotal = 0.0;
 
   List<ProductsList> productListLocal = [];
   List<String> userChecked = [];
 
   String selectTemplateOption = '';
-
   String termsSelect = "";
-
   String depositValue = "";
+  String defaultItemPrice = "450";
   @override
   void initState() {
     super.initState();
-    var profit = (double.parse(widget.eAmount) - 80.0).formatAmount();
+    var profit = (double.parse("0") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
     if(productList ==null){
       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
@@ -156,8 +161,24 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 Helpers.showSnackBar(context, state.error.toString());
               }
               if(state is LoadedAddQuote){
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                /*Navigator.of(context).pop();
+                Navigator.of(context).pop();*/
+                print(state.quoteId);
+
+                showDialog(
+                    context: context,
+                    barrierDismissible: false,
+
+                    builder: (context) {
+                      return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          elevation: 0,
+                          insetAnimationCurve: Curves.decelerate,
+                          insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                          child: ThankYouScreen(state.quoteId.toString()),
+                      );
+                    });
               }
             },
             child: BlocBuilder<AddQuoteBloc, AddQuoteState>(
@@ -168,8 +189,10 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
               }
               if (state is LoadedAddQuote) {
                 isLoading = false;
-                //Helpers.showSnackBar(context, "Quote added successfully!");
-                showToast("Quote added successfully!");
+
+                // Helpers.showSnackBar(context, "Quote added successfully!");
+
+
               }
               if (state is FailAddQuote) {
                 isLoading = false;
@@ -226,6 +249,8 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                   ),
                 ),
                 SizedBox(height: 10.sp),
+                quoteEstimationWidget(query),
+                SizedBox(height: 10.sp),
                 ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
                 //item list
                 SizedBox(height: query.height *0.08)
@@ -267,17 +292,6 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                 ],
               ),
             ),
-            /*SizedBox(
-              width: query.width * 0.8,
-              height: query.height * 0.06,
-              child: CustomButton(
-                title: ButtonString.btnSubmit,
-                buttonColor: AppColors.primaryColor,
-                onClick: () => callCreateQuoteAPI(subTotal, grandTotal, disc,
-                    selectTemplateOption, vatTotal, profit,
-                    depositAmountController.text, productListLocal)
-              ),
-            )*/
           ],
         ),
       ),
@@ -287,14 +301,103 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             //callNextScreen(context, AddItemDetail(widget.systemTypeSelect));
-            Navigator.push(context,
+           Navigator.push(context,
                 MaterialPageRoute(builder: (context) =>
-                    AddItemDetail(widget.systemTypeSelect))).then((value) {
+                    AddItemDetail(widget.eAmount,
+                        widget.systemTypeSelect,
+                        widget.quotePaymentSelection,
+                        widget.contactSelect,
+                        widget.premisesTypeSelect,
+                        widget.termsItemSelection,
+                        widget.gradeFireSelect,
+                        widget.signallingTypeSelect,
+                        widget.engineerNumbers,
+                        widget.timeType,
+                        widget.billStreet,
+                        widget.billCity,
+                        widget.billCountry,
+                        widget.billCode,
+                        widget.shipStreet,
+                        widget.shipCity,
+                        widget.shipCountry,
+                        widget.shipCode,
+                        widget.contactId,
+                        widget.contactCompany,
+                        widget.mobileNumber,
+                        widget.telephoneNumber,
+                        widget.termsList,
+                      widget.contactEmail,
+                      widget.siteAddress
+                    ))).then((value) {
                       print(value);
                     });
           },
           child: const Icon(Icons.add)),
     );
+  }
+
+  Padding quoteEstimationWidget(Size query) {
+    return Padding(
+      padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 5,bottom: 5),
+      child: Container(width: query.width, height: query.height * 0.08,
+          decoration: BoxDecoration(
+              border: Border.all(color: AppColors.primaryColor,width: 1),
+              borderRadius: BorderRadius.circular(12.0),
+              color: AppColors.whiteColor),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: query.height,
+                color: AppColors.primaryColorLawOpacity,
+                child: IconButton(onPressed: (){},
+                    icon: Icon(Icons.info_outline, color: AppColors.primaryColor)),
+                      ),
+                      SizedBox(width: 3.w),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                              text: "${Message.addEngineerAndHours} ",
+                              style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.normal,
+                                  fontStyle: FontStyle.normal,
+                                  color: AppColors.primaryColor,
+                                  decoration: TextDecoration.underline),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  showDialog(
+
+                                      context: context,
+
+                                      builder: (context) {
+                                        ///Make new class for dialog
+                                        return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10)),
+                                            elevation: 0,
+                                            insetAnimationCurve: Curves.decelerate,
+                                            insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                            child: const QuoteEstimation());
+                                      });
+                                },
+                              children: [
+                                TextSpan(
+                                    text: Message.quoteEstimation,
+                                    style: TextStyle(
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.normal,
+                                        color: AppColors.blackColor,
+                                        decoration: TextDecoration.none))
+                              ]),
+                        ),
+                      ),
+                    ],
+                  )
+                ),
+              );
   }
 
   //product list
@@ -432,7 +535,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                   Expanded(flex: 3,
                                       child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
                                   Expanded(flex: 2,
-                                      child: Text("£${products.amountPrice}", style: CustomTextStyle.labelBoldFontTextSmall))
+                                      child: Text("£${products.amountPrice.formatAmount()}", style: CustomTextStyle.labelBoldFontTextSmall))
                                 ],
                               ),
                               Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
@@ -446,179 +549,6 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
           ),
         ),
       )
-
-      /*Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.sp),
-        ),
-        elevation: 3,
-        child: Padding(
-          padding:
-          EdgeInsets.fromLTRB(12.sp, 10.sp, 10.sp, 10.sp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 1.h),
-              Row(
-                mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                          text: LabelString.lblItemName,
-                          style:
-                          CustomTextStyle.labelFontHintText,
-                          children: [
-                            TextSpan(
-                                text: "\n${products.itemName}",
-                                style:
-                                CustomTextStyle.labelText)
-                          ]),
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                ///Make new class for dialog
-                                return Dialog(
-                                    shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
-                                    elevation: 0,
-                                    insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                    child: EditItem(productsList: products));
-                              },
-                            );
-                          },
-                          child: Image.asset(ImageString.icEdit, height: 2.5.h)
-
-                      ),
-                      SizedBox(height: 1.5.h),
-                      InkWell(
-                        onTap: () {
-
-                        },
-                        child: Image.asset(ImageString.icDelete, height: 2.5.h),
-                      )
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(height: 1.5.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                          text: LabelString.lblCostPricePound,
-                          style: CustomTextStyle
-                              .labelFontHintText,
-                          children: [
-                            TextSpan(
-                                text:
-                                '\n${products.costPrice}',
-                                style:
-                                CustomTextStyle.labelText)
-                          ]),
-                    ),
-                  ),
-                  Expanded(
-                    child: RichText(
-                      textAlign: TextAlign.start,
-                      text: TextSpan(
-                          text: LabelString.lblSellingPricePound,
-                          style: CustomTextStyle
-                              .labelFontHintText,
-                          children: [
-                            TextSpan(
-                                text:
-                                "\n${double.parse(products.sellingPrice.toString())}",
-                                style:
-                                CustomTextStyle.labelText)
-                          ]),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 1.5.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                          text:
-                          "${LabelString.lblQuantity} : ",
-                          style: CustomTextStyle
-                              .labelFontHintText,
-                          children: [
-                            TextSpan(
-                                text: '${products.quantity ?? "1"}',
-                                style:
-                                CustomTextStyle.labelText)
-                          ]),
-                    ),
-                  ),
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                          text: LabelString.lblDiscountPound,
-                          style: CustomTextStyle
-                              .labelFontHintText,
-                          children: [
-                            TextSpan(
-                                text: products.discountPrice,
-                                style:
-                                CustomTextStyle.labelText)
-                          ]),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 1.5.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                          text: "${LabelString.lblAmount} : ",
-                          style: CustomTextStyle
-                              .labelFontHintText,
-                          children: [
-                            TextSpan(
-                                text: products.amountPrice.formatAmount(),
-                                style:
-                                CustomTextStyle.labelText)
-                          ]),
-                    ),
-                  ),
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                          text: "${LabelString.lblProfit} : ",
-                          style: CustomTextStyle
-                              .labelFontHintText,
-                          children: [
-                            TextSpan(
-                                text: products.profit.formatAmount(),
-                                style:
-                                CustomTextStyle.labelText)
-                          ]),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 2.0.h),
-              Text(products.description.toString(), maxLines: 3,
-                  style: CustomTextStyle.labelText),
-              SizedBox(height: 1.h),
-            ],
-          ),
-        ),
-      ),*/
     );
   }
 
@@ -799,7 +729,6 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
                                   selectTemplateOption, vatTotal,
                                   profit, depositAmountController.text, state.productList,
                                   depositValue, termsSelect);
-
                             },
                           ),
                         ),
@@ -846,7 +775,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
             : Message.termsCondition2,
         preTaxTotal : vatTotal.toString(),
         hdnSHPercent : "0",
-        siteAddressId : "", //todo: get this id when perform edit operation
+        siteAddressId : widget.siteAddress,
         quotesTerms : widget.termsItemSelection,
         hdnprofitTotal : profit.toString(),
         markup : "0.00",
@@ -856,7 +785,7 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
         signallingType : widget.signallingTypeSelect,
         premisesType : widget.premisesTypeSelect,
         projectManager : preferences.getString(PreferenceString.userId).toString(),
-        quotesEmail : preferences.getString(PreferenceString.userName).toString(),
+        quotesEmail : widget.contactEmail,
         quotesTemplateOptions : selectTemplateOption,
         quoteRelatedId : "0", //todo: get this field on edit operation
         quotesCompany : widget.contactCompany,
@@ -919,304 +848,65 @@ class _BuildItemDetailState extends State<BuildItemDetail> {
 
     addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
   }
-
-  void _onSelected(bool selected, String dataName) {
-    if (selected == true) {
-      setState(() {
-        userChecked.add(dataName);
-      });
-    } else {
-      setState(() {
-        userChecked.remove(dataName);
-      });
-    }
-  }
 }
 
+class ThankYouScreen extends StatelessWidget {
+  String quoteId;
 
-///Class for edit item
-class EditItem extends StatefulWidget {
-
-
-  final ProductsList productsList;
-
-  EditItem({Key? key, required this.productsList}) : super(key: key);
-
-  @override
-  State<EditItem> createState() => _EditItemState();
-}
-
-class _EditItemState extends State<EditItem> {
-
-
-  TextEditingController itemNameController = TextEditingController();
-  TextEditingController itemDescriptionController = TextEditingController();
-  TextEditingController itemCostPriceController = TextEditingController();
-  TextEditingController itemSellingPriceController = TextEditingController();
-  TextEditingController itemQuantityController = TextEditingController();
-  TextEditingController itemDiscountController = TextEditingController();
-
-  int? quantity = 1;
-  late ProductsList productsList;
-  @override
-  void initState() {
-    super.initState();
-    productsList = widget.productsList;
-    itemDescriptionController.text = widget.productsList.description.toString();
-    itemNameController.text = widget.productsList.itemName.toString();
-    itemCostPriceController.text = widget.productsList.costPrice.toString();
-    itemSellingPriceController.text = widget.productsList.sellingPrice.formatAmount();
-    itemQuantityController.text = widget.productsList.quantity.toString();
-    itemDiscountController.text = widget.productsList.discountPrice.toString();
-  }
+  ThankYouScreen(this.quoteId, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
-
-    final finalAmount = (double.parse(productsList.amountPrice!) -
-        (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
-
-    final finalProfit = (double.parse(productsList.profit!) -
-        (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 0.sp),
-      child: SizedBox(
-        height: query.height / 1.2,
-        child: ListView(
-          physics: const BouncingScrollPhysics(),
-          children: [
-            SizedBox(height: 1.h),
-            Align(
-                alignment: Alignment.topRight,
-                child: InkWell(
-                    highlightColor: AppColors.transparent,
-                    splashColor: AppColors.transparent,
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.close_rounded,
-                        color: AppColors.blackColor))),
-            CustomTextField(
-              keyboardType: TextInputType.name,
-              readOnly: false,
-              obscureText: false,
-              hint: LabelString.lbItemName,
-              titleText: LabelString.lbItemName,
-              isRequired: false,
-              controller: itemNameController,
-              maxLines: 1,
-              minLines: 1,
-              textInputAction: TextInputAction.next,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SizedBox(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          SizedBox(height: 3.h),
+          Column(
+            children: [
+              Icon(Icons.cloud_done_outlined,size: 25.sp),
+              Text("Thank you", style: CustomTextStyle.labelMediumBoldFontText),
+              Text("Your quote has been created successfully!", style: CustomTextStyle.commonText),
+            ],
+          ),
+          SizedBox(height: 3.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.sp),
+            child: Column(
               children: [
-                TextButton(
-                  onPressed: () {},
-                  child: Text(LabelString.lblAttachmentDocument,
-                      style: CustomTextStyle.commonTextBlue),
-                ),
-                TextButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) {
-                        ///Make new class for dialog
-                        return Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            elevation: 0,
-                            insetPadding:
-                            EdgeInsets.symmetric(horizontal: 12.sp),
-                            child: SelectLocation(productsList.quantity, productsList.itemName, productsList.locationList));
-                      },
-                    ).then((value) {
-                      print("@@@@@@ Add location dialog @@@@@@@@@@@ $value");
-                      if(value != null){
-                        if(value is List){
-                          ProductsList p  = productsList;
-                          p.locationList = value as List<String>;
-                          productsList = p;
-                        }
-                      }
-                    });
-                  },
-                  child: Text(LabelString.lblSelectLocation,
-                      style: CustomTextStyle.commonTextBlue),
-                ),
-              ],
-            ),
-            CustomTextField(
-                keyboardType: TextInputType.name,
-                readOnly: false,
-                controller: itemDescriptionController,
-                obscureText: false,
-                hint: LabelString.lbItemDescription,
-                titleText: LabelString.lbItemDescription,
-                minLines: 1,
-                maxLines: 4,
-                textInputAction: TextInputAction.none,
-                isRequired: false),
-            AbsorbPointer(
-              absorbing: true,
-              child: CustomTextField(
-                keyboardType: TextInputType.number,
-                readOnly: false,
-                controller: itemCostPriceController,
-                obscureText: false,
-                hint: LabelString.lblCostPricePound,
-                titleText: LabelString.lblCostPricePound,
-                isRequired: false,
-                maxLines: 1,
-                minLines: 1,
-                textInputAction: TextInputAction.next,
-              ),
-            ),
-            AbsorbPointer(
-              absorbing: true,
-              child: CustomTextField(
-                keyboardType: TextInputType.number,
-                readOnly: false,
-                controller: itemSellingPriceController,
-                obscureText: false,
-                hint: LabelString.lblSellingPricePound,
-                titleText: LabelString.lblSellingPricePound,
-                isRequired: false,
-                textInputAction: TextInputAction.next,
-
-              ),
-            ),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: CustomTextField(
-                      keyboardType: TextInputType.number,
-                      readOnly: true,
-                      controller: itemQuantityController,
-                      obscureText: false,
-                      hint: LabelString.lblQuantityEdit,
-                      titleText: LabelString.lblQuantityEdit,
-                      isRequired: false),
-                ),
-                SizedBox(width: 3.w),
-                Flexible(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () {
-                      if (productsList.quantity! > 1) {
-                        setState(() {
-                          productsList.quantity = (productsList.quantity ?? 0) - 1;
-                          productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
-                          itemQuantityController.text = productsList.quantity.toString();
-
-                        });
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.sp),
-                          color: AppColors.primaryColor),
-                      child: Padding(
-                        padding: EdgeInsets.all(8.sp),
-                        child: Icon(Icons.remove, color: AppColors.whiteColor),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 3.w),
-                Flexible(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        productsList.quantity = (productsList.quantity ?? 0) + 1;
-                        productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
-                        itemQuantityController.text = productsList.quantity.toString();
-                      });
-
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.sp),
-                          color: AppColors.primaryColor),
-                      child: Padding(
-                        padding: EdgeInsets.all(8.sp),
-                        child: Icon(Icons.add, color: AppColors.whiteColor),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            CustomTextField(
-              keyboardType: TextInputType.number,
-              readOnly: false,
-              controller: itemDiscountController,
-              obscureText: false,
-              hint: LabelString.lblDiscountPound,
-              titleText: LabelString.lblDiscountPound,
-              isRequired: false,
-              onEditingComplete: () {
-                setState((){});
-              },
-              textInputAction: TextInputAction.next,
-
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                        text: "${LabelString.lblAmount} : ",
-                        style: CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: finalAmount,
-                              style: CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-                Expanded(
-                  child: RichText(
-                    textAlign: TextAlign.start,
-                    text: TextSpan(
-                        text: "${LabelString.lblProfit} : ",
-                        style: CustomTextStyle.labelFontHintText,
-                        children: [
-                          TextSpan(
-                              text: finalProfit,
-                              //productsList.profit.formatAmount(),
-                              style: CustomTextStyle.labelText)
-                        ]),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            SizedBox(
-                width: query.width,
-                height: query.height * 0.06,
-                child: CustomButton(
-                    title: ButtonString.btnAddProduct,
+                SizedBox(
+                  width: query.width * 0.8,
+                  height: query.height * 0.06,
+                  child: CustomButton(
+                    title: ButtonString.btnQuoteDetail,
+                    buttonColor: AppColors.primaryColor,
                     onClick: () {
-                      context.read<ProductListBloc>().add(
-                          UpdateProductToListEvent(productsList: productsList.copyWith(
-                            profit:finalProfit,
-                            amountPrice: finalAmount,
-                            discountPrice : itemDiscountController.text,
-                              selectLocation: (productsList.locationList ?? []).join('###')
-                          )));
                       Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      removeAndCallNextScreen(context, QuoteDetail(quoteId));
                     })),
-            SizedBox(height: 1.h),
-          ],
-        ),
+                SizedBox(height: 1.h),
+                SizedBox(
+                  width: query.width * 0.8,
+                  height: query.height * 0.06,
+                  child: CustomButton(
+                    title: ButtonString.btnEmailShare,
+                    buttonColor: AppColors.primaryColor,
+                    onClick: () {})),
+              ],
+            ),
+          ),
+          SizedBox(height: 2.h),
+        ],
       ),
     );
   }
 }
+
+
 
 ///Custom class for bottom sheet static design
 class BottomSheetDataTile extends StatelessWidget {
@@ -1237,285 +927,6 @@ class BottomSheetDataTile extends StatelessWidget {
           Text(valueText!, style: textStyle),
         ],
       ),
-    );
-  }
-}
-
-///class for select location dialog
-/*
-class SelectLocation extends StatefulWidget {
-
-  var quantity;
-
-  var productName;
-
-  SelectLocation(this.quantity, this.productName, {super.key});
-
-  @override
-  State<SelectLocation> createState() => _SelectLocationState();
-}
-
-class _SelectLocationState extends State<SelectLocation> {
-  var locationTECs = <TextEditingController>[];
-  var cards = <Column>[];
-
-  Column createCard() {
-    var locationController = TextEditingController();
-    locationTECs.add(locationController);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-
-        CustomTextField(
-            keyboardType: TextInputType.name,
-            readOnly: false,
-            controller: locationController,
-            obscureText: false,
-            hint: "${LabelString.lblLocation} ${cards.length + 1}",
-            titleText: "${LabelString.lblLocation} ${cards.length + 1}",
-            isRequired: false,
-            maxLines: 1,
-            minLines: 1,
-            textInputAction: TextInputAction.next),
-
-      ],
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    cards.add(createCard());
-  }
-
-  _onDone() {
-    List<PersonEntry> entries = locationTECs.map((e) => PersonEntry(e.text)).toList();
-    print("#################### $entries");
-    Navigator.pop(context, entries);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var query = MediaQuery.of(context).size;
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 15.sp),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                    highlightColor: AppColors.transparent,
-                    splashColor: AppColors.transparent,
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.close_rounded,
-                        color: AppColors.blackColor))),
-            Align(
-                alignment: Alignment.topLeft,
-                child: Text(widget.productName.toString(), style: CustomTextStyle.labelMediumBoldFontText)),
-            SizedBox(
-              height: cards.length == 7 ? query.height / 1.5 : null ,
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: cards.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return cards[index];
-                },
-              ),
-            ),
-            TextButton(
-              child:  widget.quantity != cards.length ? const Text('Add location') : const Text(''),
-              onPressed: () => setState(() {
-                if(widget.quantity != cards.length){
-                  cards.add(createCard());
-                }
-              }),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: BorderButton(
-                        btnString: ButtonString.btnCancel,
-                        onClick: () => Navigator.pop(context))),
-                SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                        title: ButtonString.btnSave, onClick: _onDone)),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class PersonEntry {
-  final String location;
-
-  PersonEntry(this.location);
-  @override
-  String toString() {
-    return location;
-  }
-}*/
-
-class SelectLocation extends StatefulWidget {
-  var quantity;
-  var productName;
-  List<String>? locations;
-  SelectLocation(this.quantity, this.productName, this.locations, {super.key});
-
-  @override
-  State<SelectLocation> createState() => _SelectLocationState();
-}
-
-class _SelectLocationState extends State<SelectLocation> {
-
-  List<TextEditingController> textControllers = [];
-  //List<TextField> fields = [];
-
-
-  @override
-  void initState() {
-    super.initState();
-    for(String s in widget.locations ?? []){
-      final controller = TextEditingController(text: s);
-      TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: "Location ${textControllers.length}",
-          labelText: "Location ${textControllers.length}",
-        ),
-      );
-
-      if(textControllers.length != widget.quantity){
-        setState(() {
-          textControllers.add(controller);
-          /*fields.add(field);*/
-        });
-      }
-    }
-  }
-  @override
-  void dispose() {
-    for (final controller in textControllers) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
-
-  /*Widget _addTile() {
-    return ElevatedButton(
-      onPressed: fields.length == widget.quantity ? null : () {
-        final controller = TextEditingController();
-        final field = TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: "Location ${textControllers.length + 1}",
-            labelText: "Location ${textControllers.length + 1}",
-          ),
-        );
-
-        if(textControllers.length != widget.quantity){
-          setState(() {
-            textControllers.add(controller);
-            fields.add(field);
-          });
-        }
-      },
-      child: Text(ButtonString.btnAddLocation, style: CustomTextStyle.buttonText),
-    );
-  }*/
-
-
-  @override
-  Widget build(BuildContext context) {
-    var query = MediaQuery.of(context).size;
-    return Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget> [
-              Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                      highlightColor: AppColors.transparent,
-                      splashColor: AppColors.transparent,
-                      onPressed: () => Navigator.pop(context, "cancel"),
-                      icon: Icon(Icons.close_rounded,
-                          color: AppColors.blackColor))),
-              Align(alignment: Alignment.topLeft,
-                  child: Text(widget.productName, style: CustomTextStyle.labelBoldFontText)),
-
-             /* SizedBox(
-                  height: fields.length >= 7 ? MediaQuery.of(context).size.height / 2.0 : null ,
-                  child: ListView.builder(
-
-                    shrinkWrap: true,
-                itemCount: fields.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.all(5),
-                    child: fields[index],
-                  );
-                },
-              )),*/
-              SizedBox(height: 2.h),
-              ListView.builder(
-                shrinkWrap: true,
-                  itemCount: widget.quantity,
-                  itemBuilder: (context,index){
-                    textControllers.add(TextEditingController());
-                    return TextField(
-                      controller: textControllers[index],
-                      decoration: InputDecoration(
-                        hintText: "Location ${index+1}",
-                        labelText: "Location ${index+1}",
-                      ),
-                    );
-                  }),
-              SizedBox(height: 2.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                      width: query.width * 0.4,
-                      height: query.height * 0.06,
-                      child: BorderButton(
-                          btnString: ButtonString.btnCancel,
-                          onClick: () => Navigator.pop(context))),
-                  SizedBox(
-                      width: query.width * 0.4,
-                      height: query.height * 0.06,
-                      child: CustomButton(
-                          title: ButtonString.btnSave, onClick: (){
-                        Navigator.pop(context, textControllers.map((e) => e.text).toList());
-                        /*String text = textControllers!.where((element) {
-                          return element.text != "";
-                        }).fold("", (acc, element) => acc += "${element.text}###");
-                          Navigator.pop(context, textControllers!.map((e) => e).toList());
-                          print("@@@@@@@@@@@@@@@@@@@@@@@@@@   $text");*/
-                      })),
-                ],
-              ),
-
-            ],
-          ),
-        )
     );
   }
 }

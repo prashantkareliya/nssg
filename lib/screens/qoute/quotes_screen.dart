@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
@@ -26,7 +25,7 @@ import '../contact/contact_screen.dart';
 import 'bloc/product_list_bloc.dart';
 import 'get_quote/quote_bloc_dir/get_quote_bloc.dart';
 import 'get_quote/quote_model_dir/get_quote_response_model.dart';
-import 'item_detail.dart';
+import 'add_quote/build_item_screen.dart';
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({Key? key}) : super(key: key);
@@ -368,6 +367,7 @@ class QuoteDetail extends StatefulWidget {
 
 class _QuoteDetailState extends State<QuoteDetail> {
   Future<dynamic>? getDetail;
+
   @override
   Widget build(BuildContext context) {
     getDetail = getContactDetail(widget.id);
@@ -405,16 +405,14 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         collapsedBackgroundColor: AppColors.whiteColor,
                         title: Text(LabelString.lblPersonalDetail,
                             style:
-                                Provider.of<WidgetChange>(context, listen: true)
-                                        .isExpansionOne
+                                Provider.of<WidgetChange>(context, listen: true).isExpansionOne
                                     ? TextStyle(
                                         fontSize: 14.sp,
                                         color: AppColors.primaryColor,
                                         fontWeight: FontWeight.bold)
                                     : CustomTextStyle.labelBoldFontText),
                         trailing: SvgPicture.asset(
-                            Provider.of<WidgetChange>(context, listen: true)
-                                    .isExpansionOne
+                            Provider.of<WidgetChange>(context, listen: true).isExpansionOne
                                 ? ImageString.imgAccordion
                                 : ImageString.imgAccordionClose),
                         backgroundColor: AppColors.whiteColor,
@@ -450,15 +448,17 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              BottomSheetDataTile("Sub Total", dataQuote["hdnsubTotal"].toString().formatAmount,
+                              BottomSheetDataTile("Sub Total", "£${dataQuote["hdnsubTotal"].toString().formatAmount}",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Discount Amount", dataQuote["hdndiscountTotal"].toString().formatAmount,
+                              BottomSheetDataTile("Discount Amount", "£${dataQuote["hdndiscountTotal"].toString().formatAmount}",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Items Total", dataQuote["LineItems"].length.toString(),
+
+                              //Item total which is subtotal minus discount amount
+                              BottomSheetDataTile("Items Total", "£${(dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble()).toString().formatAmount}",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Vat Total", dataQuote["pre_tax_total"].toString().formatAmount,
+                              BottomSheetDataTile("Vat Total", "£${dataQuote["pre_tax_total"].toString().formatAmount}",
                                   CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Deposit Amount", dataQuote["quotes_deposite_amount"].toString().formatAmount,
+                              BottomSheetDataTile("Deposit Amount", "£${dataQuote["quotes_deposite_amount"].toString().formatAmount}",
                                   CustomTextStyle.labelFontHintText),
                               Divider(
                                   color: AppColors.hintFontColor, thickness: 1.sp,
@@ -475,7 +475,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                             fontSize: 12.sp,
                                             color: AppColors.primaryColor,
                                             fontWeight: FontWeight.w500)),
-                                    Text(dataQuote["hdnprofitTotal"].toString().formatAmount,
+                                    Text("£${dataQuote["hdnprofitTotal"].toString().formatAmount}",
                                         style: CustomTextStyle.commonTextBlue),
                                   ],
                                 ),
@@ -491,7 +491,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                             fontSize: 12.sp,
                                             color: AppColors.primaryColor,
                                             fontWeight: FontWeight.w500)),
-                                    Text(dataQuote["hdnGrandTotal"].toString().formatAmount,
+                                    Text("£${dataQuote["hdnGrandTotal"].toString().formatAmount}",
                                         style: TextStyle(
                                             fontSize: 18.sp,
                                             color: AppColors.primaryColor,
@@ -559,17 +559,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                 context: context,
                                                 builder: (context) {
                                                   return Dialog(
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
+                                                      shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(10)),
                                                       elevation: 0,
-                                                      insetPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 12
-                                                                  .sp),
+                                                      insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                                       child:
                                                           itemDescription(index==0 ? "Installation (1st & 2nd fix)":
                                                               itemList[index]["prod_name"] ?? "No Name",
@@ -584,33 +577,23 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   ),
                                 ),
                                 ContactTileField(
-                                    LabelString.lblCostPrice,
-                                    (double.parse(itemList[index]["costprice"]))
-                                        .toString(),
+                                    LabelString.lblCostPrice, "£${(double.parse(itemList[index]["costprice"]))}",
                                     textAlign: TextAlign.end),
                                 //Use listPrice as sellingPrice
                                 ContactTileField(
                                     LabelString.lblSellingPrice,
-                                    (double.parse(itemList[index]["listprice"]))
-                                        .toString(),
+                                    "£${(double.parse(itemList[index]["listprice"]))}",
                                     textAlign: TextAlign.end),
                                 ContactTileField(
                                     LabelString.lblDiscount,
-                                    (double.parse(
-                                            itemList[index]["discount_amount"])
-                                        .toString()),
+                                    "£${double.parse(itemList[index]["discount_amount"])}",
                                     textAlign: TextAlign.end),
 
                                 ///Amount calculation
                                 //(listPrice * quantity)- discount
                                 ContactTileField(
                                     LabelString.lblAmount,
-                                    ((double.parse(itemList[index]
-                                                    ["listprice"])) *
-                                                (double.parse(itemList[index]
-                                                    ["quantity"])) -
-                                            (double.parse(itemList[index]
-                                                ["discount_amount"])))
+                                    "£${((double.parse(itemList[index]["listprice"])) *(double.parse(itemList[index]["quantity"])) -(double.parse(itemList[index]["discount_amount"])))}"
                                         .toString(),
                                     textAlign: TextAlign.end),
 
@@ -618,18 +601,13 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                 //(listPrice-costPrice)*quantity
                                 ContactTileField(
                                     LabelString.lblProfit,
-                                    ((double.parse(itemList[index]
-                                                    ["listprice"]) -
-                                                double.parse(itemList[index]
-                                                    ["costprice"])) *
-                                            double.parse(itemList[index]["quantity"])).formatAmount(),
+                                    "£${((double.parse(itemList[index]["listprice"]) - double.parse(itemList[index]["costprice"])) *double.parse(itemList[index]["quantity"])).formatAmount()}",
                                     textAlign: TextAlign.end),
 
-                                ContactTileField(
+                                /*ContactTileField(
                                     LabelString.lblQuantity,
-                                    (double.parse(itemList[index]["quantity"]))
-                                        .toString(),
-                                    textAlign: TextAlign.end),
+                                    (double.parse(itemList[index]["quantity"])).toString(),
+                                    textAlign: TextAlign.end),*/
                               ],
                             ),
                           ),
@@ -732,9 +710,21 @@ class _QuoteDetailState extends State<QuoteDetail> {
                 LabelString.lblSignallingType, dataQuote["signalling_type"]),
             QuoteTileField(
                 LabelString.lblQuotePayment, dataQuote["quotes_payment"]),
-            QuoteTileField(
-                LabelString.lblTerms, dataQuote["terms_conditions"],textAlign: TextAlign.justify),
 
+            SizedBox(height: 1.5.h),
+            RichText(
+              text: TextSpan(
+                  text: "${LabelString.lblTerms} : ",
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w500),
+                  children: [
+                    TextSpan(
+                        text: "\n${dataQuote["terms_conditions"]}",
+                        style: CustomTextStyle.labelText)
+                  ]),
+            ),
             SizedBox(height: 1.5.h),
             RichText(
               text: TextSpan(

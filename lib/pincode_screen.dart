@@ -92,9 +92,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                     cancelCallback: _onPasscodeCancelled,
                     digits: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
                     passwordDigits: 4,
-                    cancelButton: Text("",
-                      style: CustomTextStyle.labelText,
-                    ),
+                    cancelButton: Text("", style: CustomTextStyle.labelText),
                   ),
                   Visibility(
                     visible: isLoading,
@@ -105,10 +103,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                           child: Container(
                             height: MediaQuery.of(context).size.height,
                             width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-
-                              borderRadius: BorderRadius.circular(10.0)
-                            ),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
                             child: loadingView(),
                           ),
                         )),

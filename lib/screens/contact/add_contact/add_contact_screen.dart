@@ -148,31 +148,6 @@ class _AddContactPageState extends State<AddContactPage> {
                                 isDone: false)
                       ],
                     ),
-
-                    //basic or address information label
-                    /*Padding(
-                      padding:
-                          EdgeInsets.only(left: 10.sp, right: 10.sp, top: 8.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          (snapshot1.data! + 1) == 1
-                              ? Text(LabelString.lblBasicInformation,
-                                  style: CustomTextStyle.labelBoldFontTextSmall)
-                              : Text(LabelString.lblAddressInformation,
-                                  style:
-                                      CustomTextStyle.labelBoldFontTextSmall),
-                          Row(
-                            children: [
-                              Text(LabelString.lblStep,
-                                  style: CustomTextStyle.commonText),
-                              Text("${snapshot1.data! + 1}/2",
-                                  style: CustomTextStyle.commonTextBlue),
-                            ],
-                          )
-                        ],
-                      ),
-                    )*/
                   ],
                 );
               },

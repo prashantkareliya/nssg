@@ -1,39 +1,89 @@
-/*
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nssg/components/custom_appbar.dart';
+import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/screens/qoute/get_product/product_datasource.dart';
-import 'package:nssg/screens/qoute/models/products_list.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-import '../../components/custom_radio_button.dart';
-import '../../components/custom_text_styles.dart';
-import '../../components/global_api_call.dart';
-import '../../components/svg_extension.dart';
-import '../../constants/constants.dart';
-import '../../constants/strings.dart';
-import '../../httpl_actions/handle_api_error.dart';
-import '../../utils/app_colors.dart';
-import '../../utils/helpers.dart';
-import '../../utils/widgetChange.dart';
-import '../../utils/widgets.dart';
-import 'get_product/product_bloc_dir/get_product_bloc.dart';
-import 'get_product/product_model_dir/get_product_response_model.dart';
-import 'get_product/product_repository.dart';
+import '../../../components/custom_radio_button.dart';
+import '../../../components/custom_text_styles.dart';
+import '../../../components/global_api_call.dart';
+import '../../../components/svg_extension.dart';
+import '../../../constants/constants.dart';
+import '../../../constants/strings.dart';
+import '../../../httpl_actions/handle_api_error.dart';
+import '../../../utils/app_colors.dart';
+import '../../../utils/helpers.dart';
+import '../../../utils/widgetChange.dart';
+import '../../../utils/widgets.dart';
+import '../get_product/product_bloc_dir/get_product_bloc.dart';
+import '../get_product/product_model_dir/get_product_response_model.dart';
+import '../get_product/product_repository.dart';
+import '../models/products_list.dart';
 import 'build_item_screen.dart';
+import 'select_location_dialog.dart';
 
-///Class for add item detail
+///Second step to create quote
 class AddItemDetail extends StatefulWidget {
+  var eAmount;
   String? systemTypeSelect;
+  String? quotePaymentSelection;
+  String? contactSelect;
+  String? premisesTypeSelect;
+  String? termsItemSelection;
+  String? gradeFireSelect;
+  String? signallingTypeSelect;
+  String? engineerNumbers;
+  String? timeType;
+  String? billStreet;
+  String? billCity;
+  String? billCountry;
+  String? billCode;
+  String? shipStreet;
+  String? shipCity;
+  String? shipCountry;
+  String? shipCode;
+  String? contactId;
+  String? contactCompany;
+  String? mobileNumber;
+  String? telephoneNumber;
 
-  AddItemDetail(this.systemTypeSelect, {Key? key}) : super(key: key);
+  var termsList;
+
+  String? contactEmail;
+
+  String? siteAddress;
+
+  AddItemDetail(this.eAmount,
+      this.systemTypeSelect,
+      this.quotePaymentSelection,
+      this.contactSelect,
+      this.premisesTypeSelect,
+      this.termsItemSelection,
+      this.gradeFireSelect,
+      this.signallingTypeSelect,
+      this.engineerNumbers,
+      this.timeType,
+      this.billStreet,
+      this.billCity,
+      this.billCountry,
+      this.billCode,
+      this.shipStreet,
+      this.shipCity,
+      this.shipCountry,
+      this.shipCode,
+      this.contactId,
+      this.contactCompany,
+      this.mobileNumber,
+      this.telephoneNumber, this.termsList, this.contactEmail, this.siteAddress,
+      {super.key});
 
   @override
-  State<AddItemDetail> createState() => _AddItemDetailState();
+  State<AddItemDetail> createState() => _AddItemDetailState(eAmount, systemTypeSelect, quotePaymentSelection, contactSelect, premisesTypeSelect, termsItemSelection, gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType, billStreet, billCity, billCountry, billCode, shipStreet, shipCity, shipCountry, shipCode, contactId, contactCompany, mobileNumber, telephoneNumber, termsList,contactEmail, siteAddress);
 }
 
 class _AddItemDetailState extends State<AddItemDetail> {
@@ -50,10 +100,61 @@ class _AddItemDetailState extends State<AddItemDetail> {
   String manufactureSelect = "";
   String systemTypeItemProductSelect = "";
   String categorySelect = "";
+  String page = "";
 
   List itemNumber = [0,1];
 
   String? locations;
+  var eAmount;
+  String? systemTypeSelect;
+  String? quotePaymentSelection;
+  String? contactSelect;
+  String? premisesTypeSelect;
+  String? termsItemSelection;
+  String? gradeFireSelect;
+  String? signallingTypeSelect;
+  String? engineerNumbers;
+  String? timeType;
+  String? billStreet;
+  String? billCity;
+  String? billCountry;
+  String? billCode;
+  String? shipStreet;
+  String? shipCity;
+  String? shipCountry;
+  String? shipCode;
+  String? contactId;
+  String? contactCompany;
+  String? mobileNumber;
+  String? telephoneNumber;
+
+  var termsList;
+
+  String? contactEmail;
+
+  String? siteAddress;
+  _AddItemDetailState(this.eAmount,
+      this.systemTypeSelect,
+      this.quotePaymentSelection,
+      this.contactSelect,
+      this.premisesTypeSelect,
+      this.termsItemSelection,
+      this.gradeFireSelect,
+      this.signallingTypeSelect,
+      this.engineerNumbers,
+      this.timeType,
+      this.billStreet,
+      this.billCity,
+      this.billCountry,
+      this.billCode,
+      this.shipStreet,
+      this.shipCity,
+      this.shipCountry,
+      this.shipCode,
+      this.contactId,
+      this.contactCompany,
+      this.mobileNumber,
+      this.telephoneNumber, this.termsList, this.contactEmail, this.siteAddress);
 
   @override
   void initState() {
@@ -92,15 +193,19 @@ class _AddItemDetailState extends State<AddItemDetail> {
           isBack: true,
           elevation: 1,
           backgroundColor: AppColors.whiteColor,
-          searchWidget: InkWell(
-              onTap: ()=> Navigator.pop(context, locations),
-              child: Stack(
+          searchWidget: page == "2" ? InkWell(
+              onTap: () {
+                //Navigator.pop(context, locations);
+                callNextScreen(context, BuildItemScreen(eAmount, systemTypeSelect, quotePaymentSelection, contactSelect, premisesTypeSelect, termsItemSelection, gradeFireSelect, signallingTypeSelect, engineerNumbers, timeType, billStreet, billCity, billCountry, billCode, shipStreet, shipCity, shipCountry, shipCode, contactId, contactCompany, mobileNumber, telephoneNumber, termsList, contactEmail, siteAddress));
+              },
+              child:  Stack(
                 alignment: Alignment.center,
                 children: [
                   Padding(
                     padding:  EdgeInsets.only(right: 20.sp),
                     child: Image.asset(ImageString.imgCart, width: 6.w),
                   ),
+
                   itemNumber.isEmpty ? Container() : Positioned(
                     top: 12,
                     right: 15,
@@ -111,11 +216,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                       child: Center(child: Text(
                           itemNumber.length.toString(),
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.whiteColor,fontSize: 8.sp))),),
+                          style: TextStyle(color: AppColors.whiteColor,fontSize: 8.sp)))),
                   ),
-
                 ],
-              )),
+              ),
+    ):Container(),
           titleTextStyle: CustomTextStyle.labelBoldFontText,
         ),
         body: PageView(
@@ -123,7 +228,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
           pageSnapping: true,
           physics: manufactureSelect.isEmpty ? const NeverScrollableScrollPhysics(): const BouncingScrollPhysics(),
           controller: pageController,
-          onPageChanged: (number) {},
+          onPageChanged: (number) {
+            Provider.of<WidgetChange>(context, listen: false).pageNumber(number.toString());
+            page = Provider.of<WidgetChange>(context, listen: false).pageNo;
+          },
           children: [
             // manufacturing view
             buildStepZeroItem(context, query),
@@ -138,41 +246,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
             buildStepThreeItem(context, query)
           ],
         )
-
-      */
-/*FutureBuilder<dynamic>(
-        future: getItemDetailFields,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var fieldsData = snapshot.data["result"];
-            return PageView(
-              scrollDirection: Axis.horizontal,
-              pageSnapping: true,
-              physics: const BouncingScrollPhysics(),
-              controller: pageController,
-              onPageChanged: (number) {},
-              children: [
-                // manufacturing view
-                buildStepZeroItem(context, query, fieldsData),
-
-                // systemType view
-                //buildStepOneItem(context, query, fieldsData),
-
-                // category view
-                buildStepTwoItem(context, query),
-
-                //products view
-                //buildStepThreeItem(context, query)
-              ],
-            );
-          } else if (snapshot.hasError) {
-            final message = HandleAPI.handleAPIError(snapshot.error);
-            return Text(message);
-          }
-          return SizedBox(height: 70.h, child: loadingView());
-        },
-      ),*//*
-
     );
   }
 
@@ -180,8 +253,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
   buildStepZeroItem(context, Size query) {
     Provider.of<WidgetChange>(context).isSelectManufacture;
     return FutureBuilder<dynamic>(
-      future: getItemFields(
-          widget.systemTypeSelect == "Intruder & Hold Up Alarm: PD6662:2017"
+      future: getItemFields(widget.systemTypeSelect == "Intruder & Hold Up Alarm: PD6662:2017"
               ? widget.systemTypeSelect.toString().replaceAll("&", "%26")
               : widget.systemTypeSelect.toString().replaceAll("+", " "),
           ""),
@@ -315,120 +387,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
       },
     );
   }
-
-  // Design manufacture view
-  ///step 2
-  */
-/*SingleChildScrollView buildStepOneItem(context, Size query, stepTwoData) {
-    Provider.of<WidgetChange>(context, listen: false)
-        .isSelectSystemTypeItemDetail;
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.sp),
-            child: Text(LabelString.lblSystemType,
-                style: CustomTextStyle.labelBoldFontText),
-          ),
-          Wrap(
-            spacing: 15.sp,
-            direction: Axis.horizontal,
-            alignment: WrapAlignment.center,
-            runSpacing: 14.sp,
-            children: List.generate(
-              stepTwoData["productcategory"].length,
-                  (index) {
-                systemTypeItem.add(RadioModel(
-                    false, stepTwoData["productcategory"][index]["label"]));
-                return Container(
-                  height: 15.h,
-                  width: query.width / 1.13,
-                  decoration: BoxDecoration(
-                      color: systemTypeItem[index].isSelected
-                          ? AppColors.primaryColorLawOpacity
-                          : AppColors.whiteColor,
-                      border: Border.all(
-                          color: systemTypeItem[index].isSelected
-                              ? AppColors.primaryColor
-                              : AppColors.borderColor,
-                          width: 1),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: InkWell(
-                    onTap: () {
-                      for (var element in systemTypeItem) {
-                        element.isSelected = false;
-                      }
-
-                      Provider.of<WidgetChange>(context, listen: false)
-                          .isSystemTypeItemDetail();
-                      systemTypeItem[index].isSelected = true;
-
-                      filterList!.clear();
-                      if (systemTypeItemProductSelect.isEmpty) {
-                        systemTypeItemProductSelect =
-                        stepTwoData["productcategory"][index]["label"];
-                      } else {
-                        systemTypeItemProductSelect = "";
-                        systemTypeItemProductSelect =
-                        stepTwoData["productcategory"][index]["label"];
-                      }
-
-                      if (systemTypeItem.isNotEmpty) {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
-                      }
-                    },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgExtension(
-                                  iconColor: systemTypeItem[index].isSelected
-                                      ? AppColors.primaryColor
-                                      : AppColors.blackColor,
-                                  itemName: stepTwoData["productcategory"]
-                                  [index]["label"]),
-                              SizedBox(height: 1.h),
-                              Text(
-                                  stepTwoData["productcategory"][index]
-                                  ["label"],
-                                  style: systemTypeItem[index].isSelected
-                                      ? CustomTextStyle.commonTextBlue
-                                      : CustomTextStyle.commonText)
-                            ]),
-                        Visibility(
-                          visible:
-                          systemTypeItem[index].isSelected ? true : false,
-                          child: Positioned(
-                            right: 10,
-                            top: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(80.0),
-                                  color: AppColors.greenColor),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Icon(Icons.done,
-                                    color: AppColors.whiteColor, size: 14.sp),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }*//*
-
 
   // Design system type view
   ///step 3
@@ -644,8 +602,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: filterList![index].productname.toString(),
-                                      style: CustomTextStyle.labelBoldFontText),
+                                        text: filterList![index].productname.toString(),
+                                        style: CustomTextStyle.labelBoldFontText),
                                     WidgetSpan(
                                       child:  InkWell(
                                         splashColor: AppColors.transparent,
@@ -672,36 +630,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   ],
                                 ),
                               ),
-                            */
-/*  Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(filterList![index].productname.toString(),
-                                      style: CustomTextStyle.labelBoldFontText),
-                                  InkWell(
-                                    splashColor: AppColors.transparent,
-                                    highlightColor: AppColors.transparent,
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10)),
-                                              elevation: 0,
-                                              insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                              child: itemDescription(
-                                                  filterList![index].productname.toString(),
-                                                  filterList![index].description.toString()));
-                                        },
-                                      );
-                                    },
-                                    child: Icon(Icons.info_outline, color: AppColors.primaryColor),
-                                  )
-                                ],
-                              ),*//*
-
                               SizedBox(height: 2.h),
                               Row(
                                 children: [
@@ -709,36 +637,36 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     width: query.width * 0.40,
                                     height: 5.h,
                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0),
-                                      border: Border.all(color: AppColors.primaryColor,width: 1),
-                                      color: AppColors.primaryColor),
+                                        border: Border.all(color: AppColors.primaryColor,width: 1),
+                                        color: AppColors.primaryColor),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
                                       children: [
                                         InkWell(
-                                          onTap: (){
-                                            if (filterList![index].quantity! >= 2) {
-                                              Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                                              filterList![index].quantity = filterList![index].quantity! - 1;
-                                            }
-                                            itemNumber.remove(filterList![index].id);
-                                          },
+                                            onTap: (){
+                                              if (filterList![index].quantity! >= 2) {
+                                                Provider.of<WidgetChange>(context, listen: false).incrementCounter();
+                                                filterList![index].quantity = filterList![index].quantity! - 1;
+                                              }
+                                              itemNumber.remove(filterList![index].id);
+                                            },
                                             child: Icon(Icons.remove,color: AppColors.whiteColor, size: 12.sp)),
 
                                         Container(
-                                          color: AppColors.whiteColor,
-                                          width: query.width *  0.18,
-                                          height: query.height,
-                                          child: Center(
-                                            child: Text(
-                                                "${filterList![index].quantity}",
-                                                style: CustomTextStyle.labelBoldFontText))),
+                                            color: AppColors.whiteColor,
+                                            width: query.width *  0.18,
+                                            height: query.height,
+                                            child: Center(
+                                                child: Text(
+                                                    "${filterList![index].quantity}",
+                                                    style: CustomTextStyle.labelBoldFontText))),
                                         InkWell(
-                                          onTap: () {
-                                            Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                                            filterList![index].quantity = filterList![index].quantity! + 1;
-                                            itemNumber.add(filterList![index].id);
-                                          },
+                                            onTap: () {
+                                              Provider.of<WidgetChange>(context, listen: false).incrementCounter();
+                                              filterList![index].quantity = filterList![index].quantity! + 1;
+                                              itemNumber.add(filterList![index].id);
+                                            },
                                             child: Icon(Icons.add,color: AppColors.whiteColor, size: 12.sp))
                                       ],
                                     ),
@@ -759,13 +687,22 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           profit: profit.toString(),
                                           quantity: filterList![index].quantity,
                                           description: filterList![index].description,
-                                        selectLocation: (filterList![index].locationList ?? []).join('###')
+                                          selectLocation: (filterList![index].locationList ?? []).join('###')
                                       );
 
                                       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
                                       Helpers.showSnackBar(context, "Item Added",isError: false);
                                     },
-                                    child: Container(
+                                    child: /*isItemAdd ? Container(
+                                        height: 5.h,
+                                        width: 10.w,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            border: Border.all(color: AppColors.greenColorAccent,width: 1),
+                                            color: AppColors.greenColorAccent),
+                                        child: SvgPicture.asset(ImageString.icAddCartGreen, fit: BoxFit.none))
+                                        : */
+                                    Container(
                                         height: 5.h,
                                         width: 10.w,
                                         decoration: BoxDecoration(
@@ -811,218 +748,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
                             ],
                           ),
                         )
-                        */
-/* Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset("assets/images/demo.png", height: 12.h),
-                            Padding(
-                              padding: EdgeInsets.only(right: 10.sp),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                      filterList![index].productname.toString(),
-                                      style: CustomTextStyle.labelBoldFontText),
-                                  IconButton(
-                                    splashColor: AppColors.transparent,
-                                    highlightColor: AppColors.transparent,
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10)),
-                                              elevation: 0,
-                                              insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                              child: itemDescription(
-                                                  filterList![index].productname.toString(),
-                                                  filterList![index].description.toString()));
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(Icons.info_outline,
-                                        color: AppColors.primaryColor),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 1.h),
-                        Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 13.sp),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                        LabelString.lblAttachmentDocument,
-                                        style: CustomTextStyle.commonTextBlue),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          ///Make new class for dialog
-                                          return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      10)),
-                                              elevation: 0,
-                                              insetPadding:
-                                              EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: SelectLocation(filterList![index].quantity));
-                                        },
-                                      ).then((value){
-                                        print(value);
-                                      });
-                                    },
-                                    child: Text(LabelString.lblSelectLocation,
-                                        style: CustomTextStyle.commonTextBlue),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8.sp, vertical: 3.sp),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      width: query.width * 0.4,
-                                      height: query.height * 0.06,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(10.sp),
-                                          border: Border.all(
-                                              width: 1,
-                                              color: AppColors.primaryColor)),
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 0.sp),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Expanded(
-                                              child: IconButton(
-                                                  onPressed: () {
-                                                    if (filterList![index].quantity! >= 2) {
-                                                      Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                                                      filterList![index].quantity = filterList![index].quantity! - 1;
-                                                    }
-                                                    itemNumber.remove(filterList![index].id);
-                                                  },
-                                                  icon: Icon(Icons.remove,
-                                                      color: AppColors.blackColor,
-                                                      size: 15.sp)),
-                                            ),
-                                            Container(
-                                                height: query.height * 0.06,
-                                                color: AppColors.primaryColor,
-                                                width: 0.3.w),
-                                            Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 15.sp),
-                                                child: Text(
-                                                    "${filterList![index].quantity}",
-                                                    style: CustomTextStyle
-                                                        .labelBoldFontText)),
-                                            Container(
-                                                height: query.height * 0.06,
-                                                color: AppColors.primaryColor,
-                                                width: 0.3.w),
-                                            Expanded(
-                                              child: IconButton(
-                                                  onPressed: () {
-                                                    Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                                                    filterList![index].quantity = filterList![index].quantity! + 1;
-                                                    itemNumber.add(filterList![index].id);
-
-                                                  },
-                                                  icon: Icon(Icons.add,
-                                                      color:
-                                                      AppColors.blackColor,
-                                                      size: 15.sp)),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 6.w),
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: query.height * 0.06,
-                                      child: CustomButton(
-                                          title: "Add to Cart",
-                                          buttonColor: AppColors.primaryColor,
-                                          onClick: () {
-                                            // products.add({
-                                            //   "itemName": filterList![index]
-                                            //       .productname
-                                            //       .toString(),
-                                            //   "costPrice": filterList![index]
-                                            //       .costPrice
-                                            //       .toString(),
-                                            //   "sellingPrice":
-
-                                            //       sellingPriceController
-                                            //               .text.isEmpty
-                                            //           ? filterList![index]
-                                            //               .unitPrice
-                                            //           : sellingPriceController
-                                            //               .text,
-                                            //   "discountPrice":
-                                            //       discountPriceController.text
-                                            //           .toString(),
-                                            //   "amountPrice": filterList![index]
-                                            //       .unitPrice
-                                            //       .toString(),
-                                            //   "profit": "29.50",
-                                            // });
-
-                                            ProductsList productsList = ProductsList(
-                                              itemId: DateTime.now().microsecondsSinceEpoch.toString(),
-                                              productId: filterList![index].id.toString(),
-                                              itemName: filterList![index].productname.toString(),
-                                              costPrice: filterList![index].costPrice.toString(),
-                                              sellingPrice: sellingPriceController.text.isEmpty
-                                                  ? filterList![index].unitPrice
-                                                  : sellingPriceController.text,
-                                              discountPrice: discountPriceController[index].text.toString(),
-                                              amountPrice: amount.toString(),
-                                              profit: profit.toString(),
-                                              quantity: filterList![index].quantity,
-                                              description: filterList![index].description
-                                            );
-
-                                            context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
-
-                                            Helpers.showSnackBar(context, "Item Added",isError: false);
-                                          }),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 1.h),*//*
-
                       ],
                     ),
                   ),
@@ -1071,4 +796,3 @@ class _AddItemDetailState extends State<AddItemDetail> {
     );
   }
 }
-*/
