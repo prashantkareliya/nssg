@@ -16,6 +16,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     on<ClearProductToListEvent>((event, emit) {
       emit(state.copyWith(productList: []));
     });
+    on<DeleteProductToListEvent>(_deleteProductToList);
 
   }
 
@@ -31,6 +32,14 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
     final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId);
     products[index] = event.productsList;
+    emit(state.copyWith(productList: products));
+  }
+
+  FutureOr<void> _deleteProductToList(DeleteProductToListEvent event, Emitter<ProductListState> emit) {
+    List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
+
+    final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId);
+    products.removeAt(index);
     emit(state.copyWith(productList: products));
   }
 }

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:nssg/components/custom_textfield.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
@@ -21,11 +23,13 @@ import '../../../components/custom_radio_button.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../components/toggle_switch.dart';
 import '../../../constants/constants.dart';
+import '../../../httpl_actions/app_http.dart';
 import '../../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 import 'package:collection/collection.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
+import '../../dashboard/root_screen.dart';
 import '../models/products_list.dart';
 import 'add_item_screen.dart';
 import 'add_quote_bloc_dir/add_quote_bloc.dart';
@@ -115,21 +119,24 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   String termsSelect = "";
   String depositValue = "";
   String defaultItemPrice = "450";
+
+  String? itemAmount;
+
   @override
   void initState() {
     super.initState();
     var profit = (double.parse("0") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
-    if(productList ==null){
+    if(productList == null){
       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
           itemId:  "123456",
           productId: "789",
           itemName: 'Installation (1st & 2nd fix)',
           costPrice: '80.00',
-          sellingPrice: widget.eAmount,
+          sellingPrice: defaultItemPrice,
           quantity: 1,
           discountPrice: "0",
-          amountPrice: widget.eAmount,
+          amountPrice: defaultItemPrice,
           profit: profit,
           description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
       )));
@@ -138,6 +145,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   }
 
   AddQuoteBloc addQuoteBloc = AddQuoteBloc(QuoteRepository(quoteDatasource: QuoteDatasource()));
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -168,7 +176,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 showDialog(
                     context: context,
                     barrierDismissible: false,
-
                     builder: (context) {
                       return Dialog(
                           shape: RoundedRectangleBorder(
@@ -176,7 +183,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           elevation: 0,
                           insetAnimationCurve: Curves.decelerate,
                           insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                          child: ThankYouScreen(state.quoteId.toString()),
+                          child: ThankYouScreen(state.quoteId.toString(), widget.contactEmail),
                       );
                     });
               }
@@ -189,10 +196,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               }
               if (state is LoadedAddQuote) {
                 isLoading = false;
-
                 // Helpers.showSnackBar(context, "Quote added successfully!");
-
-
               }
               if (state is FailAddQuote) {
                 isLoading = false;
@@ -275,8 +279,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            InkWell(
-              onTap: () => modelBottomSheetMenu(query),
+            TextButton(
+              onPressed: () => modelBottomSheetMenu(query),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -287,8 +291,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   SizedBox(width: 3.w),
                   Image.asset(
                     ImageString.icShowAmount,
-                    height: 2.h,
-                  )
+                    height: 2.h)
                 ],
               ),
             ),
@@ -359,12 +362,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         child: RichText(
                           text: TextSpan(
                               text: "${Message.addEngineerAndHours} ",
-                              style: TextStyle(
+                              style: GoogleFonts.roboto(textStyle: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.normal,
                                   fontStyle: FontStyle.normal,
                                   color: AppColors.primaryColor,
-                                  decoration: TextDecoration.underline),
+                                  decoration: TextDecoration.underline)),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   showDialog(
@@ -379,18 +382,32 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                             elevation: 0,
                                             insetAnimationCurve: Curves.decelerate,
                                             insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                            child: const QuoteEstimation());
+                                            child: QuoteEstimation());
+                                      }).then((value) {
+                                        var profit = (double.parse("0") - 80.0).formatAmount();
+                                          context.read<ProductListBloc>().add(UpdateProductToListEvent(productsList: ProductsList(
+                                        itemId:  "123456",
+                                        productId: "789",
+                                        itemName: 'Installation (1st & 2nd fix)',
+                                        costPrice: '80.00',
+                                        sellingPrice: value.toString(),
+                                        quantity: 1,
+                                        discountPrice: "0",
+                                        amountPrice: value.toString(),
+                                        profit: profit,
+                                        description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
+                                    )));
                                       });
                                 },
                               children: [
                                 TextSpan(
                                     text: Message.quoteEstimation,
-                                    style: TextStyle(
+                                    style: GoogleFonts.roboto(textStyle: TextStyle(
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.normal,
                                         fontStyle: FontStyle.normal,
                                         color: AppColors.blackColor,
-                                        decoration: TextDecoration.none))
+                                        decoration: TextDecoration.none)))
                               ]),
                         ),
                       ),
@@ -402,6 +419,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
   //product list
   Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
+    itemAmount = products.amountPrice.toString();
     return Padding(
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 5,bottom: 5),
       child: Container(
@@ -436,18 +454,34 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 },
                 backgroundColor: AppColors.backWhiteColor,
                 foregroundColor: AppColors.primaryColor,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(ImageString.icDiscount,
-                        color: AppColors.primaryColor,
-                        fit: BoxFit.fill,height: 2.5.h),
-                    SizedBox(height: 0.8.h),
-                    Text("Discount", style: TextStyle(
-                        fontSize: 10.sp,
-                        color: AppColors.primaryColor),
-                    )
-                  ],
+                child: TextButton(
+                  onPressed: (){
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          ///Make new class for dialog
+                          return Dialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              elevation: 0,
+                              insetPadding: EdgeInsets.zero,
+                              child: DiscountDialog(products));
+                        }).then((value) {
+                          itemAmount = (double.parse(products.amountPrice.toString()) - double.parse(value.toString())).formatAmount();
+                          setState(() {});
+                        });
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(ImageString.icDiscount,
+                          color: AppColors.primaryColor,
+                          fit: BoxFit.fill,height: 2.5.h),
+                      SizedBox(height: 0.8.h),
+                      Text("Discount", style: GoogleFonts.roboto(textStyle: TextStyle(
+                          fontSize: 10.sp, color: AppColors.primaryColor)),)
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -480,9 +514,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       SvgPicture.asset(ImageString.icEditProd,
                           color: AppColors.greenColorAccent, fit: BoxFit.fill,height: 2.5.h),
                       SizedBox(height: 0.8.h),
-                      Text("Edit", style: TextStyle(
-                          fontSize: 10.sp,
-                          color: AppColors.greenColorAccent))
+                      Text("Edit", style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                            fontSize: 10.sp,
+                            color: AppColors.greenColorAccent)
+                      ),
+                      )
                     ],
                   )),
               CustomSlidableAction(
@@ -500,9 +537,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                     SvgPicture.asset(ImageString.icDeleteProd,
                         color: AppColors.redColor, fit: BoxFit.fill,height: 2.5.h),
                     SizedBox(height: 0.8.h),
-                    Text("Delete", style: TextStyle(
-                      fontSize: 10.sp,
-                      color: AppColors.redColor),
+                    Text("Delete", style: GoogleFonts.roboto(
+                        textStyle :TextStyle(
+                            fontSize: 10.sp,
+                            color: AppColors.redColor)
+                    ),
                     )
                   ],
                 ),
@@ -535,7 +574,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   Expanded(flex: 3,
                                       child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
                                   Expanded(flex: 2,
-                                      child: Text("£${products.amountPrice.formatAmount()}", style: CustomTextStyle.labelBoldFontTextSmall))
+                                      child: Text("£$itemAmount",
+                                          style: CustomTextStyle.labelBoldFontTextSmall))
                                 ],
                               ),
                               Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
@@ -552,11 +592,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     );
   }
 
+
+
   ///Method for open bottom sheet
   ///Design opened bottom sheet
   void modelBottomSheetMenu(Size query) {
     showModalBottomSheet(
-
         backgroundColor: AppColors.transparent,
         enableDrag: false,
         isDismissible: false,
@@ -601,8 +642,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 8.sp),
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -775,7 +816,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             : Message.termsCondition2,
         preTaxTotal : vatTotal.toString(),
         hdnSHPercent : "0",
-        siteAddressId : widget.siteAddress,
+        siteAddressId : widget.siteAddress == "" ? "" : widget.siteAddress,
         quotesTerms : widget.termsItemSelection,
         hdnprofitTotal : profit.toString(),
         markup : "0.00",
@@ -853,7 +894,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 class ThankYouScreen extends StatelessWidget {
   String quoteId;
 
-  ThankYouScreen(this.quoteId, {Key? key}) : super(key: key);
+  String? contactEmail;
+  List<String> contactList = [];
+  ThankYouScreen(this.quoteId, this.contactEmail, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -892,11 +935,28 @@ class ThankYouScreen extends StatelessWidget {
                 SizedBox(
                   width: query.width * 0.8,
                   height: query.height * 0.06,
-                  child: CustomButton(
-                    title: ButtonString.btnEmailShare,
-                    buttonColor: AppColors.primaryColor,
-                    onClick: () {})),
-              ],
+                    child: ElevatedButton(
+                    onPressed: (){
+                      if(contactList.isEmpty){
+                        contactList.add(contactEmail.toString());
+                      }
+                      print(contactList);
+                      sendEmail(contactList, context);
+
+                    },
+                    clipBehavior: Clip.hardEdge,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor.withOpacity(0.20),
+                      splashFactory: NoSplash.splashFactory,
+                      shadowColor: AppColors.transparent,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    ),
+                    child: Text(ButtonString.btnEmailShare,
+                        style:  GoogleFonts.roboto(
+                        textStyle: TextStyle(fontSize: 12.sp, color: AppColors.primaryColor),
+                  )),
+                    ))],
             ),
           ),
           SizedBox(height: 2.h),
@@ -904,9 +964,29 @@ class ThankYouScreen extends StatelessWidget {
       ),
     );
   }
+
+  //call API for send quotation to contact's email Id
+  Future<void> sendEmail(List<String> contactList, BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    Map<String, dynamic> queryParameters = {
+      'operation': "mail_send_with_attch",
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'id': quoteId.toString(),
+      'toEmail': contactList
+    };
+    final response = await HttpActions().getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
+
+    debugPrint("send email response  --- $response");
+    if(response["success"]==true){
+      showToast("Mail sent successfully");
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pop(context);
+      removeAndCallNextScreen(context, const RootScreen());
+    }
+    return response;
+  }
 }
-
-
 
 ///Custom class for bottom sheet static design
 class BottomSheetDataTile extends StatelessWidget {
@@ -930,3 +1010,4 @@ class BottomSheetDataTile extends StatelessWidget {
     );
   }
 }
+

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
@@ -406,10 +407,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         title: Text(LabelString.lblPersonalDetail,
                             style:
                                 Provider.of<WidgetChange>(context, listen: true).isExpansionOne
-                                    ? TextStyle(
-                                        fontSize: 14.sp,
-                                        color: AppColors.primaryColor,
-                                        fontWeight: FontWeight.bold)
+                                    ? GoogleFonts.roboto(textStyle: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.bold))
                                     : CustomTextStyle.labelBoldFontText),
                         trailing: SvgPicture.asset(
                             Provider.of<WidgetChange>(context, listen: true).isExpansionOne
@@ -429,10 +430,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           collapsedBackgroundColor: AppColors.whiteColor,
                           title: Text(LabelString.lblProductDetail,
                               style: Provider.of<WidgetChange>(context, listen: true).isExpansionTwo
-                                  ? TextStyle(
-                                      fontSize: 14.sp,
-                                      color: AppColors.primaryColor,
-                                      fontWeight: FontWeight.bold)
+                                  ? GoogleFonts.roboto(textStyle: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold))
                                   : CustomTextStyle.labelBoldFontText),
                           backgroundColor: AppColors.whiteColor,
                           trailing: SvgPicture.asset(
@@ -471,10 +472,12 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Total Profit",
-                                        style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: AppColors.primaryColor,
-                                            fontWeight: FontWeight.w500)),
+                                        style: GoogleFonts.roboto(
+                                          textStyle: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: AppColors.primaryColor,
+                                              fontWeight: FontWeight.w500)
+                                        )),
                                     Text("£${dataQuote["hdnprofitTotal"].toString().formatAmount}",
                                         style: CustomTextStyle.commonTextBlue),
                                   ],
@@ -487,15 +490,19 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text("Grand Total",
-                                        style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: AppColors.primaryColor,
-                                            fontWeight: FontWeight.w500)),
+                                        style: GoogleFonts.roboto(
+                                          textStyle: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: AppColors.primaryColor,
+                                              fontWeight: FontWeight.w500)
+                                        )),
                                     Text("£${dataQuote["hdnGrandTotal"].toString().formatAmount}",
-                                        style: TextStyle(
-                                            fontSize: 18.sp,
-                                            color: AppColors.primaryColor,
-                                            fontWeight: FontWeight.bold)),
+                                        style: GoogleFonts.roboto(
+                                          textStyle: TextStyle(
+                                              fontSize: 18.sp,
+                                              color: AppColors.primaryColor,
+                                              fontWeight: FontWeight.bold)
+                                        )),
                                   ],
                                 ),
                               )
@@ -548,7 +555,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                     children: [
                                       Flexible(
                                           flex: 4, 
-                                          child: Text(index==0 ? "Installation (1st & 2nd fix)":
+                                          child: Text(index==itemList.length-1 ? "Installation (1st & 2nd fix)":
                                               itemList[index]["prod_name"] ?? "No Name",
                                               style: CustomTextStyle.labelBoldFontText)),
                                       Flexible(
@@ -564,7 +571,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                       elevation: 0,
                                                       insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                                       child:
-                                                          itemDescription(index==0 ? "Installation (1st & 2nd fix)":
+                                                          itemDescription(index==itemList.last ? "Installation (1st & 2nd fix)":
                                                               itemList[index]["prod_name"] ?? "No Name",
                                                               itemList[index]["comment"] ?? ""));
                                                 },
@@ -577,31 +584,34 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   ),
                                 ),
                                 ContactTileField(
-                                    LabelString.lblCostPrice, "£${(double.parse(itemList[index]["costprice"]))}",
+                                    LabelString.lblCostPrice, "£${itemList[index]["costprice"].toString().formatAmount}",
                                     textAlign: TextAlign.end),
                                 //Use listPrice as sellingPrice
                                 ContactTileField(
                                     LabelString.lblSellingPrice,
-                                    "£${(double.parse(itemList[index]["listprice"]))}",
+                                    "£${itemList[index]["listprice"].toString().formatAmount}",
                                     textAlign: TextAlign.end),
                                 ContactTileField(
                                     LabelString.lblDiscount,
-                                    "£${double.parse(itemList[index]["discount_amount"])}",
+                                    "£${itemList[index]["discount_amount"].toString().formatAmount}",
                                     textAlign: TextAlign.end),
 
                                 ///Amount calculation
                                 //(listPrice * quantity)- discount
                                 ContactTileField(
                                     LabelString.lblAmount,
-                                    "£${((double.parse(itemList[index]["listprice"])) *(double.parse(itemList[index]["quantity"])) -(double.parse(itemList[index]["discount_amount"])))}"
-                                        .toString(),
+                                    "£${((double.parse(itemList[index]["listprice"])) *
+                                        (double.parse(itemList[index]["quantity"])) -
+                                        (double.parse(itemList[index]["discount_amount"]))).formatAmount()}",
                                     textAlign: TextAlign.end),
 
                                 ///Profit calculation
                                 //(listPrice-costPrice)*quantity
                                 ContactTileField(
                                     LabelString.lblProfit,
-                                    "£${((double.parse(itemList[index]["listprice"]) - double.parse(itemList[index]["costprice"])) *double.parse(itemList[index]["quantity"])).formatAmount()}",
+                                    "£${((double.parse(itemList[index]["listprice"]) -
+                                        double.parse(itemList[index]["costprice"])) *
+                                        double.parse(itemList[index]["quantity"])).formatAmount()}",
                                     textAlign: TextAlign.end),
 
                                 /*ContactTileField(
@@ -715,10 +725,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
             RichText(
               text: TextSpan(
                   text: "${LabelString.lblTerms} : ",
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(textStyle: TextStyle(
                       fontSize: 12.sp,
                       color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w500),
+                      fontWeight: FontWeight.w500)),
                   children: [
                     TextSpan(
                         text: "\n${dataQuote["terms_conditions"]}",
@@ -729,10 +739,12 @@ class _QuoteDetailState extends State<QuoteDetail> {
             RichText(
               text: TextSpan(
                   text: "${LabelString.lblInstallationAddress} : ",
-                  style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w500),
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w500)
+                  ),
                   children: [
                     TextSpan(
                         text:
@@ -744,10 +756,11 @@ class _QuoteDetailState extends State<QuoteDetail> {
             RichText(
               text: TextSpan(
                   text: "${LabelString.lblInvoiceAddress} : ",
-                  style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w500),
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w500)),
                   children: [
                     TextSpan(
                         text:
@@ -813,10 +826,11 @@ class QuoteTileField extends StatelessWidget {
         children: [
           Expanded(
             child: Text("$field :",
-                style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w500)),
+                style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w500))),
           ),
           Expanded(
               child: Text(

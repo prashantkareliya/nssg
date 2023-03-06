@@ -149,6 +149,7 @@ class LabelString {
   static const String lblGrandTotal = "Grand Total";
   static const String lblTotalProfit = "Total Profit";
   static const String lblSelectSiteAddress = "Select Site Address";
+  static const String lblAddDiscount = "Add Discount";
 }
 
 //Button Strings
@@ -165,8 +166,8 @@ class ButtonString {
   static const String btnSave = "Save";
   static const String btnAddProduct = "Add Product";
   static const String btnAddLocation = "Add Location";
-  static const String btnQuoteDetail = "Quote Detail";
-  static const String btnEmailShare = "Email Share";
+  static const String btnQuoteDetail = "View Detail";
+  static const String btnEmailShare = "Share Quote Email?";
 }
 
 //Image path Strings

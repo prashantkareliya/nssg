@@ -48,6 +48,7 @@ class ResponseStatus {
 
 class ApiEndPoint {
   static const String loginApi = "login_webservice.php";
+  static const String mainApiEnd = "webservice.php";
   static const String getContactListApi = "webservice.php";
   static const String getQuoteListApi = "webservice.php";
   static const String getProductListApi = "webservice.php";

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/screens/contact/contact_datasource.dart';
 import 'package:nssg/screens/contact/contact_repository.dart';
@@ -652,10 +653,12 @@ class ContactDetail extends StatelessWidget {
                                       Text(
                                           "${dataContact["firstname"].toString().isNotEmpty ? dataContact["firstname"].toString().capitalize() : dataContact["firstname"]} "
                                           "${dataContact["lastname"].toString().isNotEmpty ? dataContact["lastname"].toString().capitalize() : dataContact["lastname"]}",
-                                          style: TextStyle(
+                                          style: GoogleFonts.roboto(textStyle: TextStyle(
                                               fontSize: 20.sp,
                                               color: AppColors.fontColor,
-                                              fontWeight: FontWeight.w500)),
+                                              fontWeight: FontWeight.w500))
+
+                                      ),
                                       SizedBox(height: 3.h),
                                       Row(
                                         crossAxisAlignment:
@@ -725,21 +728,19 @@ class ContactDetail extends StatelessWidget {
                                             child: RichText(
                                               text: TextSpan(
                                                   text: LabelString.lblInstallationAddress,
-                                                  style: TextStyle(
+                                                  style: GoogleFonts.roboto(textStyle: TextStyle(
                                                       fontSize: 14.sp,
                                                       color: AppColors.primaryColor,
-                                                      fontWeight: FontWeight.bold),
+                                                      fontWeight: FontWeight.bold)),
                                                   children: [
                                                     TextSpan(
                                                         text:
                                                             "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
-                                                        style: TextStyle(
+                                                        style: GoogleFonts.roboto(textStyle: TextStyle(
                                                             height: 1.5,
                                                             fontSize: 12.sp,
-                                                            color: AppColors
-                                                                .blackColor,
-                                                            fontWeight: FontWeight
-                                                                .normal))
+                                                            color: AppColors.blackColor,
+                                                            fontWeight: FontWeight.normal)))
                                                   ]),
                                             ),
                                           )
@@ -756,19 +757,19 @@ class ContactDetail extends StatelessWidget {
                                             child: RichText(
                                               text: TextSpan(
                                                   text: LabelString.lblInvoiceAddress,
-                                                  style: TextStyle(
+                                                  style: GoogleFonts.roboto(textStyle: TextStyle(
                                                       fontSize: 14.sp,
                                                       color: AppColors.primaryColor,
-                                                      fontWeight: FontWeight.bold),
+                                                      fontWeight: FontWeight.bold)),
                                                   children: [
                                                     TextSpan(
                                                         text:
                                                             "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, ${dataContact["othercountry"]}, ${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
-                                                        style: TextStyle(
+                                                        style: GoogleFonts.roboto(textStyle: TextStyle(
                                                             height: 1.5,
                                                             fontSize: 12.sp,
                                                             color: AppColors.blackColor,
-                                                            fontWeight: FontWeight.normal))
+                                                            fontWeight: FontWeight.normal)))
                                                   ]),
                                             ),
                                           )

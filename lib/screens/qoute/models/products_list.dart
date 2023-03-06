@@ -9,6 +9,7 @@ class ProductsList {
   String? profit;
   String? description;
   int? quantity;
+  bool? itemAdd;
   String? selectLocation;
   List<String>? locationList;
 
@@ -25,6 +26,7 @@ class ProductsList {
     String? profit,
     String? description,
     int? quantity,
+    bool? itemAdd,
     String? selectLocation,
     List<String>? locationList
   }) {
@@ -39,6 +41,7 @@ class ProductsList {
         profit: profit ?? this.profit,
         description: description ?? this.description,
         quantity: quantity ?? this.quantity,
+        itemAdd: itemAdd ?? this.itemAdd,
         selectLocation: selectLocation ?? this.selectLocation,
         locationList: locationList ?? this.locationList
     );
@@ -55,6 +58,7 @@ class ProductsList {
         this.profit,
         this.description,
         this.quantity,
+        this.itemAdd,
         this.selectLocation,
         this.locationList = const []});
 
@@ -69,6 +73,7 @@ class ProductsList {
     profit = json['profit'];
     description = json['description'];
     quantity = json['quantity'];
+    itemAdd = json['itemAdd'];
     selectLocation = json['selectLocation'];
     locationList = json['locationList'];
   }
@@ -85,6 +90,7 @@ class ProductsList {
     data['profit'] = profit;
     data['description'] = description;
     data['quantity'] = quantity;
+    data['itemAdd'] = itemAdd;
     data['selectLocation'] = selectLocation;
     data['locationList'] = locationList;
     return data;

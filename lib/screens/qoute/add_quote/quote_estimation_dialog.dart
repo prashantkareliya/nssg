@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:nssg/utils/helpers.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../../components/custom_button.dart';
@@ -13,7 +15,8 @@ import '../../../utils/widgets.dart';
 
 
 class QuoteEstimation extends StatefulWidget {
-  const QuoteEstimation({Key? key}) : super(key: key);
+
+  QuoteEstimation({Key? key}) : super(key: key);
 
   @override
   State<QuoteEstimation> createState() => _QuoteEstimationState();
@@ -29,9 +32,12 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
   String? eAmount = "0.0";
   String? timeType;
 
+  get productsList => null;
+
   @override
   Widget build(BuildContext context) {
     getFields = getQuoteFields("Quotes");
+
     return FutureBuilder<dynamic>(
         future: getFields,
         builder: (context, snapshot) {
@@ -160,10 +166,10 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                         children: [
                           TextSpan(
                               text: "£$eAmount",
-                              style: TextStyle(
+                              style: GoogleFonts.roboto(textStyle: TextStyle(
                                   fontSize: 18.sp,
                                   color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold))
+                                  fontWeight: FontWeight.bold)))
                         ]),
                   ),
 
@@ -176,7 +182,11 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                       //next button
                         title: ButtonString.btnSubmit,
                         onClick: () {
-                         
+                          if(eAmount != "0.0"){
+                            Navigator.pop(context, eAmount);
+                          }else{
+                            showToast("Please select required fields");
+                          }
                         },
                         buttonColor: AppColors.primaryColor),
                   ),

@@ -20,3 +20,9 @@ class UpdateProductToListEvent extends ProductListEvent {
 class ClearProductToListEvent extends ProductListEvent {
 
 }
+
+class DeleteProductToListEvent extends ProductListEvent {
+  final ProductsList productsList;
+
+  DeleteProductToListEvent({required this.productsList});
+}

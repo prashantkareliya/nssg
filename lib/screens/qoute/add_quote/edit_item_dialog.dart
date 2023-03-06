@@ -240,7 +240,6 @@ class _EditItemState extends State<EditItem> {
                 setState((){});
               },
               textInputAction: TextInputAction.next,
-
             ),
             Row(
               children: [
@@ -281,6 +280,8 @@ class _EditItemState extends State<EditItem> {
                     onClick: () {
                       context.read<ProductListBloc>().add(
                           UpdateProductToListEvent(productsList: productsList.copyWith(
+                            itemName: itemNameController.text,
+                              description: itemDescriptionController.text,
                               profit:finalProfit,
                               amountPrice: finalAmount,
                               discountPrice : itemDiscountController.text,
@@ -293,5 +294,93 @@ class _EditItemState extends State<EditItem> {
         ),
       ),
     );
+  }
+}
+
+
+class DiscountDialog extends StatefulWidget {
+  ProductsList? productsList;
+
+  DiscountDialog(this.productsList, {Key? key}) : super(key: key);
+
+  @override
+  State<DiscountDialog> createState() => _DiscountDialogState();
+}
+
+class _DiscountDialogState extends State<DiscountDialog> {
+
+  late ProductsList productsList;
+  TextEditingController discController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    productsList = widget.productsList!;
+    discController.text = productsList.discountPrice.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var query = MediaQuery.of(context).size;
+
+    final finalAmount = (double.parse(productsList.amountPrice!) -
+        (discController.text == "" ? 0.0 : double.parse(discController.text))).formatAmount();
+
+    final finalProfit = (double.parse(productsList.profit!) -
+        (discController.text == "" ? 0.0 : double.parse(discController.text))).formatAmount();
+
+    return SizedBox(
+        width: query.width / 1.1,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 1.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 12.sp),
+                  child: Text(LabelString.lblAddDiscount, style: CustomTextStyle.labelBoldFontText),
+                ),
+                IconButton(onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.close_rounded, color: AppColors.blackColor),
+                  splashColor: AppColors.transparent,
+                  highlightColor: AppColors.transparent,)
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.sp),
+              child: CustomTextField(
+                  keyboardType: TextInputType.number,
+                  readOnly: false,
+                  controller: discController,
+                  obscureText: false,
+                  hint: LabelString.lblAddDiscount,
+                  titleText: LabelString.lblAddDiscount,
+                  maxLines: 1,
+                  minLines: 1,
+                  textInputAction: TextInputAction.next,
+                  isRequired: false),
+            ),
+            SizedBox(height: 1.h),
+            SizedBox(
+                width: query.width * 0.4,
+                height: query.height * 0.06,
+                child: CustomButton(
+                    title: ButtonString.btnSubmit, onClick: () {
+                  context.read<ProductListBloc>().add(
+                      UpdateProductToListEvent(productsList: productsList.copyWith(
+                          itemName: productsList.itemName.toString(),
+                          description: productsList.description.toString(),
+                          profit: finalProfit,
+                          amountPrice: finalAmount,
+                          discountPrice : discController.text,
+                          selectLocation: (productsList.locationList ?? []).join('###'))));
+                    Navigator.pop(context, discController.text);
+                  //Navigator.pop(context);
+                })),
+            SizedBox(height: 3.h)
+          ],
+        ));
   }
 }
