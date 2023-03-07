@@ -332,14 +332,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           manufacturingType[index].isSelected
                                               ? AppColors.primaryColor
                                               : AppColors.blackColor,
-                                          itemName: fieldsData["product_manufacturer"]
-                                          [index]["label"].toString()),
+                                          itemName: fieldsData["product_manufacturer"][index]["label"].toString()),
                                       SizedBox(height: 1.h),
                                       SizedBox(
                                         width: query.width * 0.3,
                                         child: Text(
-                                            fieldsData["product_manufacturer"][index]
-                                            ["label"], textAlign: TextAlign.center,
+                                            fieldsData["product_manufacturer"][index]["label"],
+                                            textAlign: TextAlign.center,
                                             style: manufacturingType[index].isSelected
                                                 ? CustomTextStyle.commonTextBlue
                                                 : CustomTextStyle.commonText),
@@ -354,14 +353,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     top: 5,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(80.0),
+                                          borderRadius: BorderRadius.circular(80.0),
                                           color: AppColors.greenColor),
                                       child: Padding(
                                         padding: const EdgeInsets.all(2.0),
                                         child: Icon(Icons.done,
-                                            color: AppColors.whiteColor,
-                                            size: 14.sp),
+                                            color: AppColors.whiteColor, size: 14.sp),
                                       ),
                                     ),
                                   ),
@@ -628,7 +625,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               Row(
                                 children: [
                                   Container(
-                                    width: query.width * 0.40,
+                                  //  width: query.width * 0.40,
                                     height: 5.h,
                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0),
                                         border: Border.all(color: AppColors.primaryColor,width: 1),
@@ -637,8 +634,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
                                       children: [
-                                        InkWell(
-                                            onTap: (){
+                                        IconButton(
+                                            onPressed: (){
                                               filterList![index].isItemAdded = false;
                                               if (filterList![index].quantity! >= 2) {
                                                 Provider.of<WidgetChange>(context, listen: false).incrementCounter();
@@ -646,33 +643,34 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               }
                                               itemNumber.remove(filterList![index].id);
                                             },
-                                            child: Icon(Icons.remove,color: AppColors.whiteColor, size: 12.sp)),
+                                            icon: Icon(Icons.remove,color: AppColors.whiteColor, size: 12.sp)),
 
                                         Container(
                                             color: AppColors.whiteColor,
-                                            width: query.width *  0.18,
+                                            width: query.width *  0.15,
                                             height: query.height,
                                             child: Center(
                                                 child: Text(
                                                     "${filterList![index].quantity}",
                                                     style: CustomTextStyle.labelBoldFontText))),
-                                        InkWell(
-                                            onTap: () {
+                                        IconButton(
+                                            onPressed: () {
                                               filterList![index].isItemAdded = false;
                                               Provider.of<WidgetChange>(context, listen: false).incrementCounter();
                                               filterList![index].quantity = filterList![index].quantity! + 1;
                                               itemNumber.add(filterList![index].id);
                                             },
-                                            child: Icon(Icons.add,color: AppColors.whiteColor, size: 12.sp))
+                                            icon: Icon(Icons.add,color: AppColors.whiteColor, size: 12.sp))
                                       ],
                                     ),
                                   ),
-                                  SizedBox(width: 5.w),
+                                  SizedBox(width: 3.w),
                                   InkWell(
                                     onTap: filterList![index].isItemAdded == true ? null : () {
                                       setState(() {
                                         filterList![index].isItemAdded = true;
                                       });
+
                                       ProductsList productsList = ProductsList(
                                           itemId: DateTime.now().microsecondsSinceEpoch.toString(),
                                           productId: filterList![index].id.toString(),
@@ -735,7 +733,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                         filterList![index] = r;
                                       }
                                     }
-
                                   });
                                 },
                                 child: Padding(

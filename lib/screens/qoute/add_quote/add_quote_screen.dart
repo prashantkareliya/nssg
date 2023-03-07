@@ -363,11 +363,13 @@ class _AddQuotePageState extends State<AddQuotePage> {
           children: [
             //Design Auto filled contact
             Autocomplete(
-              initialValue: widget.isBack ? null :
-              TextEditingValue(text: "${widget.firstName} ${widget.lastName}"),
+              //initialValue: widget.isBack ? null : TextEditingValue(text: "${widget.firstName!.trim()} ${widget.lastName!.trim()}"),
               fieldViewBuilder: (context, textEditingController, focusNode,
                   VoidCallback onFieldSubmitted) {
+                FocusNode focus = focusNode;
+                widget.isBack ? null : textEditingController.text = "${widget.firstName!.trim()} ${widget.lastName!.trim()}";
                 return TextField(
+
                   autofocus: widget.isBack ? false : true,
                   style: TextStyle(color: AppColors.blackColor),
                   textCapitalization: TextCapitalization.none,
@@ -395,12 +397,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     hintText: LabelString.lblTypeToSearch,
                     hintStyle: CustomTextStyle.labelFontHintText,
                     counterText: "",
+
                   ),
                   controller: textEditingController,
-                  focusNode: focusNode,
+                  focusNode: focus,
                   onEditingComplete: () {},
-                  onSubmitted: (String value) {
-
+                  onSubmitted: (String value) {},
+                  onChanged: (value){
+                    focus = focusNode;
+                    focus.requestFocus();
                   },
                 );
               },
@@ -410,13 +415,12 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 } else {
                   List<String> matchesContact = <String>[];
                   matchesContact.addAll(contactData.map((e) {
-                    return "${e["firstname"].toString()} ${e["lastname"]
-                        .toString()}";
+                    return "${e["firstname"].trim()} ${e["lastname"].trim()}";
                   }));
 
                   matchesContact = matchesContact
                       .where((element) => element.toLowerCase().contains(
-                      textEditingValue.text.toLowerCase())).toList();
+                      textEditingValue.text.toLowerCase().trim())).toList();
                   return matchesContact;
                 }
               },
@@ -492,12 +496,16 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       style: CustomTextStyle.labelFontHintText),
                   items: siteAddressList.map((item) {
                     return DropdownMenuItem(
-                        value: item['address'].toString(),
+                        value: item['id'].toString(),
                         child: Text(item['address'].toString().replaceAll(
                             "\n", ", "),
                             style: CustomTextStyle.labelFontText));
                   }).toList(),
-                  onChanged: (newVal) => dropdownvalue = newVal,
+                  onChanged: (newVal) {
+                    setState(() {
+                      dropdownvalue = newVal;
+                    });
+                  },
                   value: dropdownvalue),
             ),
             SizedBox(height: 2.0.h),
@@ -757,7 +765,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                           .replaceAll(":", "") :
                                       systemTypeLabel,
                                       textAlign: TextAlign.center,
-
                                       style: systemType[index].isSelected
                                           ? CustomTextStyle.commonTextBlue
                                           : CustomTextStyle.commonText),

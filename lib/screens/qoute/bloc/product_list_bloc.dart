@@ -37,7 +37,6 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
 
   FutureOr<void> _deleteProductToList(DeleteProductToListEvent event, Emitter<ProductListState> emit) {
     List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
-
     final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId);
     products.removeAt(index);
     emit(state.copyWith(productList: products));

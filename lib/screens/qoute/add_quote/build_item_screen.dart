@@ -120,7 +120,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   String depositValue = "";
   String defaultItemPrice = "450";
 
-  String? itemAmount;
+  //String? itemAmount;
 
   @override
   void initState() {
@@ -169,8 +169,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 Helpers.showSnackBar(context, state.error.toString());
               }
               if(state is LoadedAddQuote){
-                /*Navigator.of(context).pop();
-                Navigator.of(context).pop();*/
                 print(state.quoteId);
 
                 showDialog(
@@ -355,8 +353,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 height: query.height,
                 color: AppColors.primaryColorLawOpacity,
                 child: IconButton(onPressed: (){},
-                    icon: Icon(Icons.info_outline, color: AppColors.primaryColor)),
-                      ),
+                    icon: Icon(Icons.info_outline, color: AppColors.primaryColor))),
                       SizedBox(width: 3.w),
                       Expanded(
                         child: RichText(
@@ -419,7 +416,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
   //product list
   Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
-    itemAmount = products.amountPrice.toString();
+    //itemAmount = products.amountPrice.toString();
     return Padding(
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 5,bottom: 5),
       child: Container(
@@ -441,47 +438,28 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 autoClose: true,
                 onPressed: (context){
                   showDialog(
-                    context: context,
-                    builder: (context) {
-                      ///Make new class for dialog
-                      return Dialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          elevation: 0,
-                          insetPadding: EdgeInsets.zero,
-                          child: EditItem(productsList: products));
-                    });
+                      context: context,
+                      builder: (context) {
+                        ///Make new class for dialog
+                        return Dialog(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            elevation: 0,
+                            insetPadding: EdgeInsets.zero,
+                            child: DiscountDialog(productsList: products));
+                      });
                 },
                 backgroundColor: AppColors.backWhiteColor,
                 foregroundColor: AppColors.primaryColor,
-                child: TextButton(
-                  onPressed: (){
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          ///Make new class for dialog
-                          return Dialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              elevation: 0,
-                              insetPadding: EdgeInsets.zero,
-                              child: DiscountDialog(products));
-                        }).then((value) {
-                          itemAmount = (double.parse(products.amountPrice.toString()) - double.parse(value.toString())).formatAmount();
-                          setState(() {});
-                        });
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(ImageString.icDiscount,
-                          color: AppColors.primaryColor,
-                          fit: BoxFit.fill,height: 2.5.h),
-                      SizedBox(height: 0.8.h),
-                      Text("Discount", style: GoogleFonts.roboto(textStyle: TextStyle(
-                          fontSize: 10.sp, color: AppColors.primaryColor)),)
-                    ],
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(ImageString.icDiscount,
+                        color: AppColors.primaryColor,
+                        fit: BoxFit.fill, height: 2.5.h),
+                    SizedBox(height: 0.8.h),
+                    Text("Discount", style: GoogleFonts.roboto(textStyle: TextStyle(
+                        fontSize: 10.sp, color: AppColors.primaryColor)),)
+                  ],
                 ),
               ),
             ],
@@ -574,7 +552,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   Expanded(flex: 3,
                                       child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
                                   Expanded(flex: 2,
-                                      child: Text("£$itemAmount",
+                                      child: Text("£${products.amountPrice.toString().formatAmount}",
                                           style: CustomTextStyle.labelBoldFontTextSmall))
                                 ],
                               ),
@@ -942,7 +920,6 @@ class ThankYouScreen extends StatelessWidget {
                       }
                       print(contactList);
                       sendEmail(contactList, context);
-
                     },
                     clipBehavior: Clip.hardEdge,
                     style: ElevatedButton.styleFrom(
@@ -1010,4 +987,3 @@ class BottomSheetDataTile extends StatelessWidget {
     );
   }
 }
-

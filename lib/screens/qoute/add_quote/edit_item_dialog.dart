@@ -299,9 +299,9 @@ class _EditItemState extends State<EditItem> {
 
 
 class DiscountDialog extends StatefulWidget {
-  ProductsList? productsList;
+  final ProductsList productsList;
 
-  DiscountDialog(this.productsList, {Key? key}) : super(key: key);
+  DiscountDialog({Key? key, required this.productsList}) : super(key: key);
 
   @override
   State<DiscountDialog> createState() => _DiscountDialogState();
@@ -309,14 +309,14 @@ class DiscountDialog extends StatefulWidget {
 
 class _DiscountDialogState extends State<DiscountDialog> {
 
-  late ProductsList productsList;
   TextEditingController discController = TextEditingController();
+  late ProductsList productsList;
 
   @override
   void initState() {
     super.initState();
-    productsList = widget.productsList!;
-    discController.text = productsList.discountPrice.toString();
+    productsList = widget.productsList;
+    discController.text = widget.productsList.discountPrice.toString();
   }
 
   @override
@@ -359,7 +359,10 @@ class _DiscountDialogState extends State<DiscountDialog> {
                   titleText: LabelString.lblAddDiscount,
                   maxLines: 1,
                   minLines: 1,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
+                  onEditingComplete: (){
+                    setState(() {});
+                  },
                   isRequired: false),
             ),
             SizedBox(height: 1.h),
@@ -370,13 +373,13 @@ class _DiscountDialogState extends State<DiscountDialog> {
                     title: ButtonString.btnSubmit, onClick: () {
                   context.read<ProductListBloc>().add(
                       UpdateProductToListEvent(productsList: productsList.copyWith(
-                          itemName: productsList.itemName.toString(),
-                          description: productsList.description.toString(),
+                          itemName: widget.productsList.itemName.toString(),
+                          description: widget.productsList.description.toString(),
                           profit: finalProfit,
                           amountPrice: finalAmount,
                           discountPrice : discController.text,
                           selectLocation: (productsList.locationList ?? []).join('###'))));
-                    Navigator.pop(context, discController.text);
+                    Navigator.pop(context, double.parse(discController.text));
                   //Navigator.pop(context);
                 })),
             SizedBox(height: 3.h)

@@ -555,8 +555,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                     children: [
                                       Flexible(
                                           flex: 4, 
-                                          child: Text(index==itemList.length-1 ? "Installation (1st & 2nd fix)":
-                                              itemList[index]["prod_name"] ?? "No Name",
+                                          child: Text(
+                                              itemList[index]["prod_name"] ?? "Installation (1st & 2nd fix)",
                                               style: CustomTextStyle.labelBoldFontText)),
                                       Flexible(
                                         flex: 1,
@@ -571,8 +571,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                       elevation: 0,
                                                       insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                                       child:
-                                                          itemDescription(index==itemList.last ? "Installation (1st & 2nd fix)":
-                                                              itemList[index]["prod_name"] ?? "No Name",
+                                                          itemDescription(itemList[index]["prod_name"] ?? "Installation (1st & 2nd fix)",
                                                               itemList[index]["comment"] ?? ""));
                                                 },
                                               );
