@@ -368,9 +368,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   showDialog(
-
                                       context: context,
-
                                       builder: (context) {
                                         ///Make new class for dialog
                                         return Dialog(
@@ -381,20 +379,22 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                             insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                             child: QuoteEstimation());
                                       }).then((value) {
-                                        var profit = (double.parse("0") - 80.0).formatAmount();
+                                        print(value);
+                                        if(value != null){
+                                          var profit = (double.parse("0") - 80.0).formatAmount();
                                           context.read<ProductListBloc>().add(UpdateProductToListEvent(productsList: ProductsList(
-                                        itemId:  "123456",
-                                        productId: "789",
-                                        itemName: 'Installation (1st & 2nd fix)',
-                                        costPrice: '80.00',
-                                        sellingPrice: value.toString(),
-                                        quantity: 1,
-                                        discountPrice: "0",
-                                        amountPrice: value.toString(),
-                                        profit: profit,
-                                        description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
-                                    )));
-                                      });
+                                              itemId:  "123456",
+                                              productId: "789",
+                                              itemName: 'Installation (1st & 2nd fix)',
+                                              costPrice: '80.00',
+                                              sellingPrice: value.toString(),
+                                              quantity: 1,
+                                              discountPrice: "0",
+                                              amountPrice: value.toString(),
+                                              profit: profit,
+                                              description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
+                                          )));
+                                        }});
                                 },
                               children: [
                                 TextSpan(
@@ -425,7 +425,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               color: AppColors.backWhiteColor
         ),
         child: Slidable(
-          key: const ValueKey(0),
+          key: ValueKey(products.itemId),
           startActionPane:  ActionPane(
             motion: const ScrollMotion(),
             extentRatio: 0.2,
@@ -446,6 +446,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             elevation: 0,
                             insetPadding: EdgeInsets.zero,
                             child: DiscountDialog(productsList: products));
+                      }).then((value) {
+                        setState(() {});
                       });
                 },
                 backgroundColor: AppColors.backWhiteColor,
@@ -506,7 +508,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                     topRight: Radius.circular(10.0)),
                 padding: EdgeInsets.zero,
                 autoClose: true,
-                onPressed: null,
+                onPressed: (value){
+                  print(value);
+                  setState(() {
+                    state.productList.remove(products);
+                  });
+                },
                 backgroundColor: AppColors.backWhiteColor,
                 foregroundColor: AppColors.redColor,
                 child: Column(
@@ -518,9 +525,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                     Text("Delete", style: GoogleFonts.roboto(
                         textStyle :TextStyle(
                             fontSize: 10.sp,
-                            color: AppColors.redColor)
+                            color: AppColors.redColor)),
                     ),
-                    )
                   ],
                 ),
               ),
@@ -552,7 +558,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   Expanded(flex: 3,
                                       child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
                                   Expanded(flex: 2,
-                                      child: Text("£${products.amountPrice.toString().formatAmount}",
+                                      child: Text("£${products.amountPrice.toString()}",
                                           style: CustomTextStyle.labelBoldFontTextSmall))
                                 ],
                               ),

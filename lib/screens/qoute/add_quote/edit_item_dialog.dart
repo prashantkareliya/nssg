@@ -301,7 +301,7 @@ class _EditItemState extends State<EditItem> {
 class DiscountDialog extends StatefulWidget {
   final ProductsList productsList;
 
-  DiscountDialog({Key? key, required this.productsList}) : super(key: key);
+  const DiscountDialog({Key? key, required this.productsList}) : super(key: key);
 
   @override
   State<DiscountDialog> createState() => _DiscountDialogState();
@@ -359,12 +359,9 @@ class _DiscountDialogState extends State<DiscountDialog> {
                   titleText: LabelString.lblAddDiscount,
                   maxLines: 1,
                   minLines: 1,
-                  textInputAction: TextInputAction.done,
-                  onEditingComplete: (){
-                    setState(() {});
-                  },
-                  isRequired: false),
-            ),
+                  textInputAction: TextInputAction.none,
+                  onEditingComplete: (){},
+                  isRequired: false)),
             SizedBox(height: 1.h),
             SizedBox(
                 width: query.width * 0.4,
@@ -379,7 +376,8 @@ class _DiscountDialogState extends State<DiscountDialog> {
                           amountPrice: finalAmount,
                           discountPrice : discController.text,
                           selectLocation: (productsList.locationList ?? []).join('###'))));
-                    Navigator.pop(context, double.parse(discController.text));
+                  setState(() {});
+                    Navigator.pop(context, discController.text);
                   //Navigator.pop(context);
                 })),
             SizedBox(height: 3.h)

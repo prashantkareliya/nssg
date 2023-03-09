@@ -648,18 +648,6 @@ class _AddContactPageState extends State<AddContactPage> {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-              /*border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),*/
               border: UnderlineInputBorder(
                   borderSide:
                       BorderSide(width: 1, color: AppColors.primaryColor)),

@@ -195,6 +195,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
           elevation: 1,
           backgroundColor: AppColors.whiteColor,
           searchWidget: page == "2" ? InkWell(
+            splashColor: AppColors.transparent,
+            highlightColor: AppColors.transparent,
               onTap: () {
                 //Navigator.pop(context, locations);
                 callNextScreen(context, BuildItemScreen(eAmount, systemTypeSelect, quotePaymentSelection, contactSelect,
@@ -220,7 +222,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                       child: Center(child: Text(
                           itemNumber.length.toString(),
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.roboto(textStyle: TextStyle(color: AppColors.whiteColor,fontSize: 8.sp))))),
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                              color: AppColors.whiteColor,fontSize: 8.sp))))),
                   ),
                 ],
               ),
@@ -276,7 +279,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   Text(LabelString.lblManufacturing,
                       style: CustomTextStyle.labelBoldFontText),
                   SizedBox(height: 4.h),
-
                   Wrap(
                     spacing: 15.sp,
                     direction: Axis.horizontal,
@@ -369,7 +371,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                         );
                       },
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
