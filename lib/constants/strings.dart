@@ -23,7 +23,7 @@ class Message {
 
 //Label Strings
 class LabelString {
-  static const String nssg = "NSSG";
+  static const String nssg = "Are you sure?";
   static const String yes = "Yes";
   static const String no = "No";
   static const String noRecordFound = "No Record Found";

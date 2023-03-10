@@ -9,6 +9,19 @@ class AddProductToListEvent extends ProductListEvent {
   AddProductToListEvent({required this.productsList});
 }
 
+class RemoveProductFromCardByIdEvent extends ProductListEvent {
+  final String productId;
+
+  RemoveProductFromCardByIdEvent({required this.productId});
+}
+
+class UpdateProductQuantityByIdEvent extends ProductListEvent {
+  final String productId;
+  final int quantity;
+
+  UpdateProductQuantityByIdEvent(
+      {required this.productId, required this.quantity});
+}
 
 class UpdateProductToListEvent extends ProductListEvent {
   final ProductsList productsList;
@@ -16,10 +29,7 @@ class UpdateProductToListEvent extends ProductListEvent {
   UpdateProductToListEvent({required this.productsList});
 }
 
-
-class ClearProductToListEvent extends ProductListEvent {
-
-}
+class ClearProductToListEvent extends ProductListEvent {}
 
 class DeleteProductToListEvent extends ProductListEvent {
   final ProductsList productsList;

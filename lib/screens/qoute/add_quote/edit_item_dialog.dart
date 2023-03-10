@@ -14,8 +14,6 @@ import 'select_location_dialog.dart';
 
 ///Class for edit item
 class EditItem extends StatefulWidget {
-
-
   final ProductsList productsList;
 
   EditItem({Key? key, required this.productsList}) : super(key: key);
@@ -25,8 +23,6 @@ class EditItem extends StatefulWidget {
 }
 
 class _EditItemState extends State<EditItem> {
-
-
   TextEditingController itemNameController = TextEditingController();
   TextEditingController itemDescriptionController = TextEditingController();
   TextEditingController itemCostPriceController = TextEditingController();
@@ -43,7 +39,8 @@ class _EditItemState extends State<EditItem> {
     itemDescriptionController.text = widget.productsList.description.toString();
     itemNameController.text = widget.productsList.itemName.toString();
     itemCostPriceController.text = widget.productsList.costPrice.toString();
-    itemSellingPriceController.text = widget.productsList.sellingPrice.formatAmount();
+    itemSellingPriceController.text =
+        widget.productsList.sellingPrice.formatAmount();
     itemQuantityController.text = widget.productsList.quantity.toString();
     itemDiscountController.text = widget.productsList.discountPrice.toString();
   }
@@ -53,10 +50,16 @@ class _EditItemState extends State<EditItem> {
     var query = MediaQuery.of(context).size;
 
     final finalAmount = (double.parse(productsList.amountPrice!) -
-        (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
+            (itemDiscountController.text == ""
+                ? 0.0
+                : double.parse(itemDiscountController.text)))
+        .formatAmount();
 
     final finalProfit = (double.parse(productsList.profit!) -
-        (itemDiscountController.text == "" ? 0.0 : double.parse(itemDiscountController.text))).formatAmount();
+            (itemDiscountController.text == ""
+                ? 0.0
+                : double.parse(itemDiscountController.text)))
+        .formatAmount();
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 0.sp),
@@ -106,14 +109,17 @@ class _EditItemState extends State<EditItem> {
                                 borderRadius: BorderRadius.circular(10)),
                             elevation: 0,
                             insetPadding:
-                            EdgeInsets.symmetric(horizontal: 12.sp),
-                            child: SelectLocation(productsList.quantity, productsList.itemName, productsList.locationList));
+                                EdgeInsets.symmetric(horizontal: 12.sp),
+                            child: SelectLocation(
+                                productsList.quantity,
+                                productsList.itemName,
+                                productsList.locationList));
                       },
                     ).then((value) {
-                      print("@@@@@@ Add location dialog @@@@@@@@@@@ $value");
-                      if(value != null){
-                        if(value is List){
-                          ProductsList p  = productsList;
+
+                      if (value != null) {
+                        if (value is List) {
+                          ProductsList p = productsList;
                           p.locationList = value as List<String>;
                           productsList = p;
                         }
@@ -162,7 +168,6 @@ class _EditItemState extends State<EditItem> {
                 titleText: LabelString.lblSellingPricePound,
                 isRequired: false,
                 textInputAction: TextInputAction.next,
-
               ),
             ),
             Row(
@@ -185,10 +190,14 @@ class _EditItemState extends State<EditItem> {
                     onTap: () {
                       if (productsList.quantity! > 1) {
                         setState(() {
-                          productsList.quantity = (productsList.quantity ?? 0) - 1;
-                          productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
-                          itemQuantityController.text = productsList.quantity.toString();
-
+                          productsList.quantity =
+                              (productsList.quantity ?? 0) - 1;
+                          productsList.amountPrice =
+                              ((productsList.quantity ?? 0) *
+                                      productsList.sellingPrice.formatDouble())
+                                  .formatAmount();
+                          itemQuantityController.text =
+                              productsList.quantity.toString();
                         });
                       }
                     },
@@ -209,11 +218,15 @@ class _EditItemState extends State<EditItem> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        productsList.quantity = (productsList.quantity ?? 0) + 1;
-                        productsList.amountPrice = ((productsList.quantity ?? 0) * productsList.sellingPrice.formatDouble()).formatAmount();
-                        itemQuantityController.text = productsList.quantity.toString();
+                        productsList.quantity =
+                            (productsList.quantity ?? 0) + 1;
+                        productsList.amountPrice =
+                            ((productsList.quantity ?? 0) *
+                                    productsList.sellingPrice.formatDouble())
+                                .formatAmount();
+                        itemQuantityController.text =
+                            productsList.quantity.toString();
                       });
-
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -237,7 +250,7 @@ class _EditItemState extends State<EditItem> {
               titleText: LabelString.lblDiscountPound,
               isRequired: false,
               onEditingComplete: () {
-                setState((){});
+                setState(() {});
               },
               textInputAction: TextInputAction.next,
             ),
@@ -279,14 +292,16 @@ class _EditItemState extends State<EditItem> {
                     title: ButtonString.btnAddProduct,
                     onClick: () {
                       context.read<ProductListBloc>().add(
-                          UpdateProductToListEvent(productsList: productsList.copyWith(
-                            itemName: itemNameController.text,
-                              description: itemDescriptionController.text,
-                              profit:finalProfit,
-                              amountPrice: finalAmount,
-                              discountPrice : itemDiscountController.text,
-                              selectLocation: (productsList.locationList ?? []).join('###')
-                          )));
+                          UpdateProductToListEvent(
+                              productsList: productsList.copyWith(
+                                  itemName: itemNameController.text,
+                                  description: itemDescriptionController.text,
+                                  profit: finalProfit,
+                                  amountPrice: finalAmount,
+                                  discountPrice: itemDiscountController.text,
+                                  selectLocation:
+                                      (productsList.locationList ?? [])
+                                          .join('###'))));
                       Navigator.pop(context);
                     })),
             SizedBox(height: 1.h),
@@ -297,18 +312,16 @@ class _EditItemState extends State<EditItem> {
   }
 }
 
-
 class DiscountDialog extends StatefulWidget {
   final ProductsList productsList;
 
-  const DiscountDialog({Key? key, required this.productsList}) : super(key: key);
+  DiscountDialog({Key? key, required this.productsList}) : super(key: key);
 
   @override
   State<DiscountDialog> createState() => _DiscountDialogState();
 }
 
 class _DiscountDialogState extends State<DiscountDialog> {
-
   TextEditingController discController = TextEditingController();
   late ProductsList productsList;
 
@@ -323,12 +336,6 @@ class _DiscountDialogState extends State<DiscountDialog> {
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
 
-    final finalAmount = (double.parse(productsList.amountPrice!) -
-        (discController.text == "" ? 0.0 : double.parse(discController.text))).formatAmount();
-
-    final finalProfit = (double.parse(productsList.profit!) -
-        (discController.text == "" ? 0.0 : double.parse(discController.text))).formatAmount();
-
     return SizedBox(
         width: query.width / 1.1,
         child: Column(
@@ -340,12 +347,15 @@ class _DiscountDialogState extends State<DiscountDialog> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 12.sp),
-                  child: Text(LabelString.lblAddDiscount, style: CustomTextStyle.labelBoldFontText),
+                  child: Text(LabelString.lblAddDiscount,
+                      style: CustomTextStyle.labelBoldFontText),
                 ),
-                IconButton(onPressed: () => Navigator.pop(context),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
                   icon: Icon(Icons.close_rounded, color: AppColors.blackColor),
                   splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,)
+                  highlightColor: AppColors.transparent,
+                )
               ],
             ),
             Padding(
@@ -359,27 +369,47 @@ class _DiscountDialogState extends State<DiscountDialog> {
                   titleText: LabelString.lblAddDiscount,
                   maxLines: 1,
                   minLines: 1,
-                  textInputAction: TextInputAction.none,
-                  onEditingComplete: (){},
-                  isRequired: false)),
+                  textInputAction: TextInputAction.done,
+                  onEditingComplete: () {
+                    setState(() {});
+                  },
+                  isRequired: false),
+            ),
             SizedBox(height: 1.h),
             SizedBox(
                 width: query.width * 0.4,
                 height: query.height * 0.06,
                 child: CustomButton(
-                    title: ButtonString.btnSubmit, onClick: () {
-                  context.read<ProductListBloc>().add(
-                      UpdateProductToListEvent(productsList: productsList.copyWith(
-                          itemName: widget.productsList.itemName.toString(),
-                          description: widget.productsList.description.toString(),
-                          profit: finalProfit,
-                          amountPrice: finalAmount,
-                          discountPrice : discController.text,
-                          selectLocation: (productsList.locationList ?? []).join('###'))));
-                  setState(() {});
-                    Navigator.pop(context, discController.text);
-                  //Navigator.pop(context);
-                })),
+                    title: ButtonString.btnSubmit,
+                    onClick: () {
+                      final finalAmount =
+                          (double.parse(productsList.amountPrice!) -
+                                  (discController.text == ""
+                                      ? 0.0
+                                      : double.parse(discController.text)))
+                              .formatAmount();
+
+                      final finalProfit = (double.parse(productsList.profit!) -
+                              (discController.text == ""
+                                  ? 0.0
+                                  : double.parse(discController.text)))
+                          .formatAmount();
+                      context.read<ProductListBloc>().add(
+                          UpdateProductToListEvent(
+                              productsList: productsList.copyWith(
+                                  itemName:
+                                      widget.productsList.itemName.toString(),
+                                  description: widget.productsList.description
+                                      .toString(),
+                                  profit: finalProfit,
+                                  amountPrice: finalAmount,
+                                  discountPrice: discController.text,
+                                  selectLocation:
+                                      (productsList.locationList ?? [])
+                                          .join('###'))));
+                      Navigator.pop(context, double.parse(discController.text));
+                      //Navigator.pop(context);
+                    })),
             SizedBox(height: 3.h)
           ],
         ));

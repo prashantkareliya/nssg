@@ -12,9 +12,12 @@ class LoadingAddContact extends AddContactState {
 }
 
 class LoadedAddContact extends AddContactState {
-  final String? contactDetail;
+  var contactDetail;
+  final bool isPositive;
+  final String? contactId;
 
-  LoadedAddContact({this.contactDetail});
+  LoadedAddContact(
+      {this.contactDetail, required this.isPositive, this.contactId});
 }
 
 class FailAddContact extends AddContactState {
@@ -23,14 +26,14 @@ class FailAddContact extends AddContactState {
   FailAddContact({this.error});
 }
 
-class UpdatedContactData extends AddContactState{
+class UpdatedContactData extends AddContactState {
   final String? updateContactDetail;
 
   UpdatedContactData({this.updateContactDetail});
 }
 
 // ignore: must_be_immutable
-class GetContactData extends AddContactState{
+class GetContactData extends AddContactState {
   var contactData;
 
   GetContactData({this.contactData});

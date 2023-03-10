@@ -4,11 +4,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'package:nssg/constants/navigation.dart';
+import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+
 import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/custom_dialog.dart';
@@ -16,14 +19,12 @@ import '../../../components/custom_rounded_container.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../components/custom_textfield.dart';
 import '../../../constants/constants.dart';
-import '../../../constants/navigation.dart';
 import '../../../constants/strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
 import '../../../utils/widgets.dart';
 import '../../dashboard/root_screen.dart';
-import '../../qoute/add_quote/add_quote_screen.dart';
 import '../contact_datasource.dart';
 import '../contact_repository.dart';
 import 'add_contact_bloc_dir/add_contact_bloc.dart';
@@ -160,26 +161,57 @@ class _AddContactPageState extends State<AddContactPage> {
               if (state is FailAddContact) {
                 Helpers.showSnackBar(context, state.error.toString());
               }
+              if (state is LoadedAddContact) {
+                if (state.isPositive) {
+                  print(state.contactDetail);
+                  callNextScreen(
+                      context,
+                      AddQuotePage(
+                        false,
+                        firstNameController.text,
+                        lastNameController.text,
+                        contactId: state.contactId,
+                        contactDetail: state.contactDetail
+                      ));
+                } else {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (c) => const RootScreen()),
+                      (route) => false);
+                }
+              }
               if (state is GetContactData) {
                 contactDetailData = state.contactData;
 
-                firstNameController.text = state.contactData.firstname.toString();
+                firstNameController.text =
+                    state.contactData.firstname.toString();
                 lastNameController.text = state.contactData.lastname.toString();
-                companyNameController.text = state.contactData.contactCompany.toString();
+                companyNameController.text =
+                    state.contactData.contactCompany.toString();
                 officePhoneController.text = state.contactData.phone.toString();
-                mobilePhoneController.text = state.contactData.mobile.toString();
-                primaryEmailController.text = state.contactData.email.toString();
-                secondaryEmailController.text = state.contactData.secondaryemail.toString();
+                mobilePhoneController.text =
+                    state.contactData.mobile.toString();
+                primaryEmailController.text =
+                    state.contactData.email.toString();
+                secondaryEmailController.text =
+                    state.contactData.secondaryemail.toString();
 
-                invoiceAddressController.text = state.contactData.mailingstreet.toString();
-                invoiceCityController.text = state.contactData.mailingcity.toString();
-                invoiceCountryController.text = state.contactData.mailingcountry.toString();
-                invoicePostalController.text = state.contactData.mailingzip.toString();
+                invoiceAddressController.text =
+                    state.contactData.mailingstreet.toString();
+                invoiceCityController.text =
+                    state.contactData.mailingcity.toString();
+                invoiceCountryController.text =
+                    state.contactData.mailingcountry.toString();
+                invoicePostalController.text =
+                    state.contactData.mailingzip.toString();
 
-                installationAddressController.text = state.contactData.otherstreet.toString();
-                installationCityController.text = state.contactData.othercity.toString();
-                installationCountryController.text = state.contactData.othercountry.toString();
-                installationPostalController.text = state.contactData.otherzip.toString();
+                installationAddressController.text =
+                    state.contactData.otherstreet.toString();
+                installationCityController.text =
+                    state.contactData.othercity.toString();
+                installationCountryController.text =
+                    state.contactData.othercountry.toString();
+                installationPostalController.text =
+                    state.contactData.otherzip.toString();
               }
             },
             child: BlocBuilder<AddContactBloc, AddContactState>(
@@ -206,7 +238,10 @@ class _AddContactPageState extends State<AddContactPage> {
                       ? loadingView()
                       : PageView(
                           pageSnapping: true,
-                          physics: contactBasicDetailFormKey.currentState ?.validate() == true || widget.contactId != "NoId"
+                          physics: contactBasicDetailFormKey.currentState
+                                          ?.validate() ==
+                                      true ||
+                                  widget.contactId != "NoId"
                               ? const BouncingScrollPhysics()
                               : const NeverScrollableScrollPhysics(),
                           controller: pageController,
@@ -599,23 +634,30 @@ class _AddContactPageState extends State<AddContactPage> {
 
                           //Yes button//
                           () {
-                            createContactApiCall();
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            callNextScreen(context, AddQuotePage(false, firstNameController.text, lastNameController.text));
+                            // createContactApiCall();
+                            Navigator.pop(context, true);
+                            // Navigator.pop(context);
+                            // callNextScreen(
+                            //     context,
+                            //     AddQuotePage(false, firstNameController.text,
+                            //         lastNameController.text));
                           },
 
                           //No button//
                           () {
-                            createContactApiCall();
-                            Navigator.pop(context);
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (c) => const RootScreen()),
-                                (route) => false);
+                            // createContactApiCall();
+                            Navigator.pop(context, false);
+                            // Navigator.of(context).pushAndRemoveUntil(
+                            //     MaterialPageRoute(
+                            //         builder: (c) => const RootScreen()),
+                            //     (route) => false);
                           },
                         ),
-                      );
+                      ).then((value) {
+                        if (value is bool) {
+                          createContactApiCall(value);
+                        }
+                      });
                     },
                     title: ButtonString.btnSubmit)
                 : CustomButton(
@@ -648,6 +690,18 @@ class _AddContactPageState extends State<AddContactPage> {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
+              /*border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide:
+                      BorderSide(width: 2, color: AppColors.primaryColor)),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide:
+                      BorderSide(width: 2, color: AppColors.primaryColor)),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide:
+                      BorderSide(width: 2, color: AppColors.primaryColor)),*/
               border: UnderlineInputBorder(
                   borderSide:
                       BorderSide(width: 1, color: AppColors.primaryColor)),
@@ -659,7 +713,8 @@ class _AddContactPageState extends State<AddContactPage> {
                       BorderSide(width: 1, color: AppColors.primaryColor)),
               filled: true,
               fillColor: Colors.white,
-              contentPadding: EdgeInsets.only(left: 12.sp, top: 12.sp,bottom: 12),
+              contentPadding:
+                  EdgeInsets.only(left: 12.sp, top: 12.sp, bottom: 12),
               hintText: LabelString.lblTypeToSearch,
               hintStyle: CustomTextStyle.labelFontHintText,
               counterText: "",
@@ -687,10 +742,11 @@ class _AddContactPageState extends State<AddContactPage> {
                 'Content-Type': 'application/json; charset=UTF-8'
               });
           final responseJson = json.decode(response.body);
-          if(responseJson["suggestions"]!=null){
+          if (responseJson["suggestions"] != null) {
             addressList = responseJson["suggestions"];
-          }else{
-            if (mounted) Helpers.showSnackBar(context, responseJson["Message"].toString());
+          } else {
+            if (mounted)
+              Helpers.showSnackBar(context, responseJson["Message"].toString());
           }
           List<String> matchesAddress = <String>[];
           matchesAddress
@@ -782,7 +838,7 @@ class _AddContactPageState extends State<AddContactPage> {
   }
 
   //calling create contact API
-  void createContactApiCall() async {
+  void createContactApiCall(bool isPositive) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     //for create data in json format
@@ -815,7 +871,7 @@ class _AddContactPageState extends State<AddContactPage> {
       'elementType': 'Contacts',
     };
 
-    addContactBloc.add(AddContactDetailEvent(queryParameters));
+    addContactBloc.add(AddContactDetailEvent(queryParameters, isPositive));
   }
 
   Future<void> getContactDetailApi() async {

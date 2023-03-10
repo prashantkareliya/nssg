@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+
 import '../../contact_repository.dart';
 
 part 'add_contact_event.dart';
-
 part 'add_contact_state.dart';
 
 class AddContactBloc extends Bloc<AddContactEvent, AddContactState> {
@@ -33,7 +33,10 @@ class AddContactBloc extends Bloc<AddContactEvent, AddContactState> {
 
     response.when(success: (success) {
       emit(LoadingAddContact(false));
-      emit(LoadedAddContact(contactDetail: success.result.toString()));
+      emit(LoadedAddContact(
+          contactDetail: success.result,
+          isPositive: event.isPositive,
+          contactId: success.result?.id));
     }, failure: (failure) {
       emit(LoadingAddContact(false));
       emit(FailAddContact(error: failure.toString()));
