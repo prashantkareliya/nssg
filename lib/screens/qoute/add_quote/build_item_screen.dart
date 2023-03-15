@@ -4,10 +4,11 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nssg/components/custom_textfield.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
@@ -29,8 +30,10 @@ import 'package:sizer/sizer.dart';
 import 'package:collection/collection.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
+import '../../../utils/widgets.dart';
 import '../../dashboard/root_screen.dart';
 import '../models/products_list.dart';
+import '../send_email.dart';
 import 'add_item_screen.dart';
 import 'add_quote_bloc_dir/add_quote_bloc.dart';
 import 'edit_item_dialog.dart';
@@ -125,7 +128,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   @override
   void initState() {
     super.initState();
-    var profit = (double.parse("0") - 80.0).formatAmount();
+   /* var profit = (double.parse("0") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
     if(productList == null){
       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
@@ -140,7 +143,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           profit: profit,
           description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
       )));
-    }
+    }*/
     //todo: call event(ClearProductToListEvent) after get success response
   }
 
@@ -181,7 +184,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           elevation: 0,
                           insetAnimationCurve: Curves.decelerate,
                           insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                          child: ThankYouScreen(state.quoteId.toString(), widget.contactEmail),
+                          child: ThankYouScreen(state.quoteId.toString(), widget.contactEmail.toString()),
                       );
                     });
               }
@@ -253,7 +256,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 SizedBox(height: 10.sp),
                 quoteEstimationWidget(query),
                 SizedBox(height: 10.sp),
-                ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
+                ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList().reversed,
                 //item list
                 SizedBox(height: query.height *0.08)
               ],
@@ -368,9 +371,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   showDialog(
-
                                       context: context,
-
                                       builder: (context) {
                                         ///Make new class for dialog
                                         return Dialog(
@@ -417,6 +418,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   //product list
   Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
     //itemAmount = products.amountPrice.toString();
+    final List<ShakeConstant> shakeList;
+
     return Padding(
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 5,bottom: 5),
       child: Container(
@@ -459,7 +462,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         color: AppColors.primaryColor,
                         fit: BoxFit.fill, height: 2.5.h),
                     SizedBox(height: 0.8.h),
-                    Text("Discount", style: GoogleFonts.roboto(textStyle: TextStyle(
+                    Text(LabelString.lblDiscount, style: GoogleFonts.roboto(textStyle: TextStyle(
                         fontSize: 10.sp, color: AppColors.primaryColor)),)
                   ],
                 ),
@@ -494,7 +497,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       SvgPicture.asset(ImageString.icEditProd,
                           color: AppColors.greenColorAccent, fit: BoxFit.fill,height: 2.5.h),
                       SizedBox(height: 0.8.h),
-                      Text("Edit", style: GoogleFonts.roboto(
+                      Text(ButtonString.btnEdit, style: GoogleFonts.roboto(
                         textStyle: TextStyle(
                             fontSize: 10.sp,
                             color: AppColors.greenColorAccent)
@@ -508,7 +511,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                     topRight: Radius.circular(10.0)),
                 padding: EdgeInsets.zero,
                 autoClose: true,
-                onPressed: null,
+                onPressed: (value){
+                  setState(() {
+                    state.productList.remove(products);
+                  });
+                },
                 backgroundColor: AppColors.backWhiteColor,
                 foregroundColor: AppColors.redColor,
                 child: Column(
@@ -517,11 +524,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                     SvgPicture.asset(ImageString.icDeleteProd,
                         color: AppColors.redColor, fit: BoxFit.fill,height: 2.5.h),
                     SizedBox(height: 0.8.h),
-                    Text("Delete", style: GoogleFonts.roboto(
+                    Text(ButtonString.btnDelete, style: GoogleFonts.roboto(
                         textStyle :TextStyle(
                             fontSize: 10.sp,
-                            color: AppColors.redColor)
-                    ),
+                            color: AppColors.redColor)),
                     )
                   ],
                 ),
@@ -531,42 +537,50 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           child: Card(
             elevation: 2.0,
             margin: EdgeInsets.zero,
-            color: AppColors.whiteColor,
+            color: products.itemName!.contains("Installation") ?
+            AppColors.primaryColorLawOpacityBack : AppColors.whiteColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.sp),
             ),
             child: Padding(
               padding:EdgeInsets.fromLTRB(0.sp, 3.sp, 0.sp, 3.sp),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(flex: 1,
-                            child: Image.asset("assets/images/demo.png", height: 8.h)),
-                        Expanded(flex: 3,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(flex: 1,
+                        child: Image.asset("assets/images/demo.png", height: 8.h)),
+                    Expanded(flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(flex: 3,
-                                      child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
-                                  Expanded(flex: 2,
-                                      child: Text("£${products.amountPrice.toString().formatAmount}",
-                                          style: CustomTextStyle.labelBoldFontTextSmall))
-                                ],
-                              ),
-                              Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
+                              Expanded(flex: 3,
+                                  child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
+                              Expanded(flex: 2,
+                                  child: Text("£${products.amountPrice.toString().formatAmount}",
+                                      style:  GoogleFonts.roboto(
+                                          textStyle: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.normal,
+                                              color: AppColors.primaryColor))))
                             ],
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 1.h),
+                          Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
+                ),
+              ),
             ),
-          ),
+          )
+          
         ),
       )
     );
@@ -710,7 +724,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               },
                                   valueBool: Provider.of<WidgetChange>(context, listen: false).isDeposit),
                               SizedBox(width: 5.w),
-                              Text(Provider.of<WidgetChange>(context, listen: false).isDeposit ? "Deposit" : "No Deposit", style: CustomTextStyle.labelText)
+                              Text(Provider.of<WidgetChange>(context, listen: false).isDeposit ? LabelString.lblDeposit : LabelString.lblNoDeposit, style: CustomTextStyle.labelText)
                             ],
                           ),
                         ),
@@ -871,12 +885,27 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   }
 }
 
-class ThankYouScreen extends StatelessWidget {
+class ThankYouScreen extends StatefulWidget {
+  String quoteId;
+
+  String contactEmail;
+
+  ThankYouScreen(this.quoteId, this.contactEmail, {Key? key}) : super(key: key);
+
+  @override
+  State<ThankYouScreen> createState() => _ThankYouScreenState(quoteId, contactEmail);
+}
+
+class _ThankYouScreenState extends State<ThankYouScreen> {
   String quoteId;
 
   String? contactEmail;
   List<String> contactList = [];
-  ThankYouScreen(this.quoteId, this.contactEmail, {Key? key}) : super(key: key);
+
+  bool isLoading = false;
+
+  _ThankYouScreenState(this.quoteId, this.contactEmail);
+
 
   @override
   Widget build(BuildContext context) {
@@ -887,83 +916,75 @@ class ThankYouScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           SizedBox(height: 3.h),
-          Column(
+         Column(
             children: [
-              Icon(Icons.cloud_done_outlined,size: 25.sp),
-              Text("Thank you", style: CustomTextStyle.labelMediumBoldFontText),
-              Text("Your quote has been created successfully!", style: CustomTextStyle.commonText),
+              Lottie.asset('assets/lottie/created.json', height: 15.h,  reverse: false, repeat: false),
+              Text(LabelString.lblThankYou, style: CustomTextStyle.labelMediumBoldFontText),
+              Text(Message.quoteCreateSuccessfully, style: CustomTextStyle.commonText),
             ],
           ),
           SizedBox(height: 3.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.sp),
-            child: Column(
+            child:  isLoading ? SizedBox(
+                height: query.height * 0.12,
+                width: query.width * 0.8,
+                child: loadingView()) :
+            Column(
               children: [
                 SizedBox(
-                  width: query.width * 0.8,
-                  height: query.height * 0.06,
-                  child: CustomButton(
-                    title: ButtonString.btnQuoteDetail,
-                    buttonColor: AppColors.primaryColor,
-                    onClick: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      removeAndCallNextScreen(context, QuoteDetail(quoteId));
-                    })),
+                    width: query.width * 0.8,
+                    height: query.height * 0.06,
+                    child: CustomButton(
+                        title: ButtonString.btnQuoteDetail,
+                        buttonColor: AppColors.primaryColor,
+                        onClick: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          removeAndCallNextScreen(context, QuoteDetail(quoteId));
+                        })),
                 SizedBox(height: 1.h),
-                SizedBox(
-                  width: query.width * 0.8,
-                  height: query.height * 0.06,
+               SizedBox(
+                    width: query.width * 0.8,
+                    height: query.height * 0.06,
                     child: ElevatedButton(
-                    onPressed: (){
-                      if(contactList.isEmpty){
-                        contactList.add(contactEmail.toString());
-                      }
-                      print(contactList);
-                      sendEmail(contactList, context);
-                    },
-                    clipBehavior: Clip.hardEdge,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor.withOpacity(0.20),
-                      splashFactory: NoSplash.splashFactory,
-                      shadowColor: AppColors.transparent,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    ),
-                    child: Text(ButtonString.btnEmailShare,
-                        style:  GoogleFonts.roboto(
-                        textStyle: TextStyle(fontSize: 12.sp, color: AppColors.primaryColor),
-                  )),
-                    ))],
+                      onPressed: (){
+                        Navigator.pop(context);
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return Dialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                elevation: 0,
+                                insetAnimationCurve: Curves.decelerate,
+                                insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                child: SendEmail(contactList, quoteId, contactEmail, "create"),
+                              );
+                            });
+                        //sendEmail(contactList, context);
+                      },
+                      clipBehavior: Clip.hardEdge,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor.withOpacity(0.20),
+                        splashFactory: NoSplash.splashFactory,
+                        shadowColor: AppColors.transparent,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      ),
+                      child: Text(ButtonString.btnEmailShare,
+                          style:  GoogleFonts.roboto(
+                            textStyle: TextStyle(fontSize: 12.sp, color: AppColors.primaryColor),
+                          )),
+                    )),],
             ),
           ),
           SizedBox(height: 2.h),
         ],
       ),
     );
-  }
-
-  //call API for send quotation to contact's email Id
-  Future<void> sendEmail(List<String> contactList, BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    Map<String, dynamic> queryParameters = {
-      'operation': "mail_send_with_attch",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
-      'id': quoteId.toString(),
-      'toEmail': contactList
-    };
-    final response = await HttpActions().getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
-
-    debugPrint("send email response  --- $response");
-    if(response["success"]==true){
-      showToast("Mail sent successfully");
-      Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.pop(context);
-      removeAndCallNextScreen(context, const RootScreen());
-    }
-    return response;
   }
 }
 

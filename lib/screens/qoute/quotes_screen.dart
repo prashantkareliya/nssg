@@ -1,11 +1,15 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
+import 'package:nssg/screens/qoute/send_email.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -13,10 +17,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
+import '../../components/custom_button.dart';
 import '../../components/custom_text_styles.dart';
 import '../../components/global_api_call.dart';
 import '../../constants/constants.dart';
 import '../../constants/strings.dart';
+import '../../httpl_actions/app_http.dart';
 import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helpers.dart';
@@ -311,6 +317,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             ),
                           );
                         },
+
                         separatorBuilder: (BuildContext context, int index) {
                           return Container(height: 10.sp);
                         },
@@ -368,156 +375,199 @@ class QuoteDetail extends StatefulWidget {
 
 class _QuoteDetailState extends State<QuoteDetail> {
   Future<dynamic>? getDetail;
+  var dataQuote;
+  List<String> contactList = [];
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     getDetail = getContactDetail(widget.id);
+    var query = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColors.backWhiteColor,
       appBar: BaseAppBar(
         appBar: AppBar(),
         title: LabelString.lblQuoteDetail,
+        titleTextStyle: CustomTextStyle.labelBoldFontText,
         isBack: true,
         elevation: 1,
         backgroundColor: AppColors.whiteColor,
-        searchWidget: Container(),
-        titleTextStyle: CustomTextStyle.labelBoldFontText,
-      ),
-      body: FutureBuilder<dynamic>(
-          future: getDetail,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var dataQuote = snapshot.data["result"];
-              List<dynamic> itemList = dataQuote["LineItems"];
-              return SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 2.h),
-                      ExpansionTile(
-                        initiallyExpanded: false,
-                        iconColor: AppColors.primaryColor,
-                        onExpansionChanged: (value) {
-                          Provider.of<WidgetChange>(context, listen: false).isExpansionTileFirst(value);
-                        },
-                        textColor: AppColors.blackColor,
-                        collapsedBackgroundColor: AppColors.whiteColor,
-                        title: Text(LabelString.lblPersonalDetail,
-                            style:
-                                Provider.of<WidgetChange>(context, listen: true).isExpansionOne
-                                    ? GoogleFonts.roboto(textStyle: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold))
-                                    : CustomTextStyle.labelBoldFontText),
-                        trailing: SvgPicture.asset(
-                            Provider.of<WidgetChange>(context, listen: true).isExpansionOne
-                                ? ImageString.imgAccordion
-                                : ImageString.imgAccordionClose),
-                        backgroundColor: AppColors.whiteColor,
-                        children: [buildPersonalDetail(dataQuote)],
-                      ),
-                      SizedBox(height: 2.h),
-                      ExpansionTile(
-                          iconColor: AppColors.primaryColor,
-                          onExpansionChanged: (value) {
-                            Provider.of<WidgetChange>(context, listen: false).isExpansionTileSecond(value);
-                          },
-                          initiallyExpanded: true,
-                          textColor: AppColors.blackColor,
-                          collapsedBackgroundColor: AppColors.whiteColor,
-                          title: Text(LabelString.lblProductDetail,
-                              style: Provider.of<WidgetChange>(context, listen: true).isExpansionTwo
-                                  ? GoogleFonts.roboto(textStyle: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold))
-                                  : CustomTextStyle.labelBoldFontText),
-                          backgroundColor: AppColors.whiteColor,
-                          trailing: SvgPicture.asset(
-                              Provider.of<WidgetChange>(context, listen: true)
-                                      .isExpansionTwo
-                                  ? ImageString.imgAccordion
-                                  : ImageString.imgAccordionClose),
-                          children: [buildProductDetail(dataQuote, itemList)]),
-                      SizedBox(height: 2.h),
-                      Container(
-                          height: 28.h,
-                          color: Colors.transparent,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              BottomSheetDataTile("Sub Total", "£${dataQuote["hdnsubTotal"].toString().formatAmount}",
-                                  CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Discount Amount", "£${dataQuote["hdndiscountTotal"].toString().formatAmount}",
-                                  CustomTextStyle.labelFontHintText),
+        searchWidget: IconButton(
+            highlightColor: AppColors.transparent,
+            splashColor: AppColors.transparent,
+          onPressed: () {
 
-                              //Item total which is subtotal minus discount amount
-                              BottomSheetDataTile("Items Total", "£${(dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble()).toString().formatAmount}",
-                                  CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Vat Total", "£${dataQuote["pre_tax_total"].toString().formatAmount}",
-                                  CustomTextStyle.labelFontHintText),
-                              BottomSheetDataTile("Deposit Amount", "£${dataQuote["quotes_deposite_amount"].toString().formatAmount}",
-                                  CustomTextStyle.labelFontHintText),
-                              Divider(
-                                  color: AppColors.hintFontColor, thickness: 1.sp,
-                                  endIndent: 8.sp, indent: 8.sp),
-                              Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 14.sp),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Total Profit",
-                                        style: GoogleFonts.roboto(
-                                          textStyle: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: AppColors.primaryColor,
-                                              fontWeight: FontWeight.w500)
-                                        )),
-                                    Text("£${dataQuote["hdnprofitTotal"].toString().formatAmount}",
-                                        style: CustomTextStyle.commonTextBlue),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 14.sp),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Grand Total",
-                                        style: GoogleFonts.roboto(
-                                          textStyle: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: AppColors.primaryColor,
-                                              fontWeight: FontWeight.w500)
-                                        )),
-                                    Text("£${dataQuote["hdnGrandTotal"].toString().formatAmount}",
-                                        style: GoogleFonts.roboto(
-                                          textStyle: TextStyle(
-                                              fontSize: 18.sp,
-                                              color: AppColors.primaryColor,
-                                              fontWeight: FontWeight.bold)
-                                        )),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ))
-                    ],
-                  ),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              final message = HandleAPI.handleAPIError(snapshot.error);
-              return Text(message);
-            }
-            return loadingView();
-          }),
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    elevation: 0,
+                    insetAnimationCurve: Curves.decelerate,
+                    insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                    child: SendEmail(contactList, widget.id, dataQuote["quotes_email"], ""),
+                  );
+                });
+
+          },
+          icon: Icon(Icons.email, color: AppColors.blackColor)),
+
+      ),
+      body: Stack(
+         children: [
+           FutureBuilder<dynamic>(
+               future: getDetail,
+               builder: (context, snapshot) {
+                 if (snapshot.hasData) {
+                   dataQuote = snapshot.data["result"];
+                   List<dynamic> itemList = dataQuote["LineItems"];
+                   return SingleChildScrollView(
+                     physics: const BouncingScrollPhysics(),
+                     child: Padding(
+                       padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                       child: Column(
+                         children: [
+                           SizedBox(height: 2.h),
+                           ExpansionTile(
+                             initiallyExpanded: false,
+                             iconColor: AppColors.primaryColor,
+                             onExpansionChanged: (value) {
+                               Provider.of<WidgetChange>(context, listen: false).isExpansionTileFirst(value);
+                             },
+                             textColor: AppColors.blackColor,
+                             collapsedBackgroundColor: AppColors.whiteColor,
+                             title: Text(LabelString.lblPersonalDetail,
+                                 style:
+                                 Provider.of<WidgetChange>(context, listen: true).isExpansionOne
+                                     ? GoogleFonts.roboto(textStyle: TextStyle(
+                                     fontSize: 14.sp,
+                                     color: AppColors.primaryColor,
+                                     fontWeight: FontWeight.bold))
+                                     : CustomTextStyle.labelBoldFontText),
+                             trailing: SvgPicture.asset(
+                                 Provider.of<WidgetChange>(context, listen: true).isExpansionOne
+                                     ? ImageString.imgAccordion
+                                     : ImageString.imgAccordionClose),
+                             backgroundColor: AppColors.whiteColor,
+                             children: [buildPersonalDetail(dataQuote)],
+                           ),
+                           SizedBox(height: 2.h),
+                           ExpansionTile(
+                               iconColor: AppColors.primaryColor,
+                               onExpansionChanged: (value) {
+                                 Provider.of<WidgetChange>(context, listen: false).isExpansionTileSecond(value);
+                               },
+                               initiallyExpanded: true,
+                               textColor: AppColors.blackColor,
+                               collapsedBackgroundColor: AppColors.whiteColor,
+                               title: Text(LabelString.lblProductDetail,
+                                   style: Provider.of<WidgetChange>(context, listen: true).isExpansionTwo
+                                       ? GoogleFonts.roboto(textStyle: TextStyle(
+                                       fontSize: 14.sp,
+                                       color: AppColors.primaryColor,
+                                       fontWeight: FontWeight.bold))
+                                       : CustomTextStyle.labelBoldFontText),
+                               backgroundColor: AppColors.whiteColor,
+                               trailing: SvgPicture.asset(
+                                   Provider.of<WidgetChange>(context, listen: true)
+                                       .isExpansionTwo
+                                       ? ImageString.imgAccordion
+                                       : ImageString.imgAccordionClose),
+                               children: [buildProductDetail(dataQuote, itemList)]),
+                           SizedBox(height: 2.h),
+                           Container(
+                               height: 28.h,
+                               color: Colors.transparent,
+                               child: Column(
+                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                 children: [
+                                   BottomSheetDataTile("Sub Total", "£${dataQuote["hdnsubTotal"].toString().formatAmount}",
+                                       CustomTextStyle.labelFontHintText),
+                                   BottomSheetDataTile("Discount Amount", "£${dataQuote["hdndiscountTotal"].toString().formatAmount}",
+                                       CustomTextStyle.labelFontHintText),
+
+                                   //Item total which is subtotal minus discount amount
+                                   BottomSheetDataTile("Items Total", "£${(dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble()).toString().formatAmount}",
+                                       CustomTextStyle.labelFontHintText),
+                                   BottomSheetDataTile("Vat Total", "£${dataQuote["pre_tax_total"].toString().formatAmount}",
+                                       CustomTextStyle.labelFontHintText),
+                                   BottomSheetDataTile("Deposit Amount", "£${dataQuote["quotes_deposite_amount"].toString().formatAmount}",
+                                       CustomTextStyle.labelFontHintText),
+                                   Divider(
+                                       color: AppColors.hintFontColor, thickness: 1.sp,
+                                       endIndent: 8.sp, indent: 8.sp),
+                                   Padding(
+                                     padding:
+                                     EdgeInsets.symmetric(horizontal: 14.sp),
+                                     child: Row(
+                                       mainAxisAlignment:
+                                       MainAxisAlignment.spaceBetween,
+                                       children: [
+                                         Text("Total Profit",
+                                             style: GoogleFonts.roboto(
+                                                 textStyle: TextStyle(
+                                                     fontSize: 12.sp,
+                                                     color: AppColors.primaryColor,
+                                                     fontWeight: FontWeight.w500)
+                                             )),
+                                         Text("£${dataQuote["hdnprofitTotal"].toString().formatAmount}",
+                                             style: CustomTextStyle.commonTextBlue),
+                                       ],
+                                     ),
+                                   ),
+                                   Padding(
+                                     padding:
+                                     EdgeInsets.symmetric(horizontal: 14.sp),
+                                     child: Row(
+                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                       children: [
+                                         Text("Grand Total",
+                                             style: GoogleFonts.roboto(
+                                                 textStyle: TextStyle(
+                                                     fontSize: 12.sp,
+                                                     color: AppColors.primaryColor,
+                                                     fontWeight: FontWeight.w500)
+                                             )),
+                                         Text("£${dataQuote["hdnGrandTotal"].toString().formatAmount}",
+                                             style: GoogleFonts.roboto(
+                                                 textStyle: TextStyle(
+                                                     fontSize: 18.sp,
+                                                     color: AppColors.primaryColor,
+                                                     fontWeight: FontWeight.bold)
+                                             )),
+                                       ],
+                                     ),
+                                   )
+                                 ],
+                               ))
+                         ],
+                       ),
+                     ),
+                   );
+                 } else if (snapshot.hasError) {
+                   final message = HandleAPI.handleAPIError(snapshot.error);
+                   return Text(message);
+                 }
+                 return loadingView();
+               }),
+           Visibility(
+             visible: isLoading,
+               child: Align(
+               alignment: Alignment.center,
+               child: BackdropFilter(
+                 filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                 child: Container(
+                   height: query.height,
+                   width: query.width,
+                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                   child: loadingView(),
+                 )
+               ))),
+
+         ],
+      )
     );
   }
 
@@ -532,6 +582,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: itemList.length,
             itemBuilder: (context, index) {
+
               return Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
                 elevation: 3,
@@ -633,7 +684,9 @@ class _QuoteDetailState extends State<QuoteDetail> {
                             child: Text(LabelString.lblAttachedDocument,
                                 style: CustomTextStyle.commonTextBlue),
                           ),
-                          TextButton(
+
+                          //View location button will be visible only when user had entered location
+                          if(itemList[index]["product_location"] != "") TextButton(
                             onPressed: () {
                               showDialog(
                                  context: context,
@@ -649,7 +702,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                          Align(
                                            alignment: Alignment.topRight,
                                            child: IconButton(icon: Icon(Icons.close, color: AppColors.blackColor),
-                                               onPressed: () => Navigator.pop(context),padding: EdgeInsets.zero,splashRadius: 10.0,),
+                                               onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero,splashRadius: 10.0,),
                                          ),
                                          Text("Locations - ", style: CustomTextStyle.labelBoldFontText),
                                          Padding(
@@ -698,16 +751,13 @@ class _QuoteDetailState extends State<QuoteDetail> {
                 Flexible(
                   child: Text(dataQuote["quotes_email"], style: CustomTextStyle.labelText),
                 ),
-                dataQuote["quote_mobile_number"] == ""
-                    ? Container()
+                dataQuote["quote_mobile_number"] == "" ? Container()
                     : Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.sp),
                         child: Container(
                             color: AppColors.hintFontColor,
                             height: 2.0.h, width: 0.5.w)),
-                Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText),
-              ],
-            ),
+                Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText)]),
             SizedBox(height: 1.5.h),
             QuoteTileField(
                 LabelString.lblPremisesType, dataQuote["premises_type"]),
@@ -762,8 +812,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         fontWeight: FontWeight.w500)),
                   children: [
                     TextSpan(
-                        text:
-                            "\n${dataQuote["ship_street"]}, ${dataQuote["ship_city"]}, ${dataQuote["ship_state"]}, ${dataQuote["ship_country"]}, ${dataQuote["ship_code"]}",
+                        text: "\n${dataQuote["ship_street"]}, ${dataQuote["ship_city"]}, ${dataQuote["ship_state"]}, ${dataQuote["ship_country"]}, ${dataQuote["ship_code"]}",
                         style: CustomTextStyle.labelText)
                   ]),
             ),
@@ -835,8 +884,7 @@ class QuoteTileField extends StatelessWidget {
               child: Text(
                   textAlign: textAlign,
                   fieldDetail!,
-                  style: CustomTextStyle.labelText)),
-        ],
+                  style: CustomTextStyle.labelText))],
       ),
     );
   }

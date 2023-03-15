@@ -42,9 +42,9 @@ class ValidationDialog extends StatelessWidget {
             Column(
               children: <Widget>[
                 SizedBox(height: 4.h),
-                Text(LabelString.nssg,
+               /* Text(LabelString.nssg,
                     style: CustomTextStyle.labelBoldFontTextBlue),
-                SizedBox(height: 2.h),
+                SizedBox(height: 2.h),*/
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25.sp),
                     child: Text(msg,

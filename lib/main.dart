@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         child: BlocProvider(
           create: (context) => ProductListBloc(),
           child: MaterialApp(
+
             title: 'National Security System ',
             theme: ThemeData(
                 colorScheme: ColorScheme.fromSwatch().copyWith(

@@ -96,3 +96,4 @@ class ProductsList {
     return data;
   }
 }
+

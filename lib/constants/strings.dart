@@ -9,7 +9,7 @@ class ErrorString {
 }
 
 class Message {
-  static const String createQoute = "Do you want to create new quote now?";
+  static const String createQoute = "Would you like to create a quote for this contact now?";
   static const String deleteContact = "Do you want to delete this contact?";
   static const String quoteExit = "Do you want to exit from this module?";
   static const String enterYourPasscodeToUnlock = "Enter your Passcode to unlock";
@@ -19,6 +19,8 @@ class Message {
   static const String termsCondition2 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. Deposit Payment Method: Bacs / Cheque / Debit Cards. Payment Terms : 30 Days credit terms upon completion.";
   static const String addEngineerAndHours = "Add the Number of Engineer & Hours";
   static const String quoteEstimation = "for quote estimation";
+  static const String quoteCreateSuccessfully = "Your quote has been created successfully!";
+  static const String quoteEmailSentMessage= "Quote has been sent successfully to";
 }
 
 //Label Strings
@@ -139,7 +141,7 @@ class LabelString {
   static const String lblViewAddress = "View Address";
   static const String lblEstimationAmount = "Estimated Installation amount";
   static const String lblDescription = "Description";
-  static const String lblPersonalDetail = "Personal Detail";
+  static const String lblPersonalDetail = "Customer Details";
   static const String lblProductDetail = "Product Detail";
   static const String lblSubTotal = "Sub Total";
   static const String lblDiscountAmount = "Discount Amount";
@@ -150,6 +152,11 @@ class LabelString {
   static const String lblTotalProfit = "Total Profit";
   static const String lblSelectSiteAddress = "Select Site Address";
   static const String lblAddDiscount = "Add Discount";
+  static const String lblQuoteEmail = "Quote Email";
+  static const String lblOk = "OK";
+  static const String lblThankYou = "Thank you";
+  static const String lblDeposit = "Deposit";
+  static const String lblNoDeposit = "No Deposit";
 }
 
 //Button Strings
@@ -168,6 +175,7 @@ class ButtonString {
   static const String btnAddLocation = "Add Location";
   static const String btnQuoteDetail = "View Detail";
   static const String btnEmailShare = "Share Quote Email?";
+  static const String btnViewCart = "View Cart";
 }
 
 //Image path Strings

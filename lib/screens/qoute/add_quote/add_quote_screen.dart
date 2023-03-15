@@ -111,7 +111,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   GetContactBloc contactBloc =
-      GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
+  GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
   bool isLoading = false;
 
   //In this method Calling get contact API
@@ -121,7 +121,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
     Map<String, dynamic> queryParameters = {
       'operation': 'query',
       'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyContact, //2017
       'module_name': 'Contacts'
     };
@@ -142,11 +142,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "retrieve_related",
-      'id': "12x5558",
+      'id': widget.isBack ? contactId : widget.contactId.toString(),//"12x5558",
       'relatedType': "SitesAddress",
       'relatedLabel': "Sites Address",
       'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      preferences.getString(PreferenceString.sessionName).toString(),
     };
     final response = await HttpActions()
         .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
@@ -158,6 +158,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   TextEditingController invoiceSearchController = TextEditingController();
+
 
   //Address information's textField controllers(invoice Address)
   String invoiceAddress = "";
@@ -224,32 +225,32 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         children: [
                           //Round Container with step number
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              snapshot.data! <= 0
-                                  ? Container(width: 19.5.w)
-                                  : InkWell(
-                                      onTap: () => pageController.jumpToPage(snapshot.data! - 1),
-                                      child: RoundedContainer(
-                                          containerText: "",
-                                          stepText: snapshot.data.toString(),
-                                          isEnable: false,
-                                          isDone: true)),
-                              InkWell(
-                                onTap: () => pageController.jumpToPage(snapshot.data!),
-                                child: RoundedContainer(
-                                    containerText: (snapshot.data! + 1).toString(),
-                                    stepText: (snapshot.data! + 1).toString(),
-                                    isEnable: true,
-                                    isDone: false)),
-                              snapshot.data! >= 2 ? Container()
-                                  : InkWell(
-                                      onTap: () => pageController.jumpToPage(snapshot.data! + 1),
-                                      child: RoundedContainer(
-                                          containerText: (snapshot.data! + 2).toString(),
-                                          stepText: (snapshot.data! + 2).toString(),
-                                          isEnable: false,
-                                          isDone: false))]),
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                snapshot.data! <= 0
+                                    ? Container(width: 19.5.w)
+                                    : InkWell(
+                                    onTap: () => pageController.jumpToPage(snapshot.data! - 1),
+                                    child: RoundedContainer(
+                                        containerText: "",
+                                        stepText: snapshot.data.toString(),
+                                        isEnable: false,
+                                        isDone: true)),
+                                InkWell(
+                                    onTap: () => pageController.jumpToPage(snapshot.data!),
+                                    child: RoundedContainer(
+                                        containerText: (snapshot.data! + 1).toString(),
+                                        stepText: (snapshot.data! + 1).toString(),
+                                        isEnable: true,
+                                        isDone: false)),
+                                snapshot.data! >= 2 ? Container()
+                                    : InkWell(
+                                    onTap: () => pageController.jumpToPage(snapshot.data! + 1),
+                                    child: RoundedContainer(
+                                        containerText: (snapshot.data! + 2).toString(),
+                                        stepText: (snapshot.data! + 2).toString(),
+                                        isEnable: false,
+                                        isDone: false))]),
                           SizedBox(height: 2.h),
 
                           //Linear progress indicator which set below steps container
@@ -352,6 +353,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
   //Premises type and select contact
   Padding buildStepOne(BuildContext context, Size query, stepOneData) {
+    ValueNotifier<bool> notifier = ValueNotifier(false);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
       child: SingleChildScrollView(
@@ -364,7 +366,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               initialValue: widget.isBack
                   ? null
                   : TextEditingValue(
-                      text: "${widget.firstName} ${widget.lastName}"),
+                  text: "${widget.firstName} ${widget.lastName}"),
               fieldViewBuilder: (context, textEditingController, focusNode,
                   VoidCallback onFieldSubmitted) {
                 FocusNode focus = focusNode;
@@ -418,8 +420,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
                   matchesContact = matchesContact
                       .where((element) => element
-                          .toLowerCase()
-                          .contains(textEditingValue.text.toLowerCase().trim()))
+                      .toLowerCase()
+                      .contains(textEditingValue.text.toLowerCase().trim()))
                       .toList();
                   return matchesContact;
                 }
@@ -489,7 +491,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     iconEnabledColor: AppColors.blackColor,
                     iconDisabledColor: AppColors.hintFontColor,
                     underline:
-                        Container(height: 1.0, color: AppColors.primaryColor),
+                    Container(height: 1.0, color: AppColors.primaryColor),
                     isDense: false,
                     isExpanded: true,
                     hint: Text(LabelString.lblSelectSiteAddress,
@@ -519,7 +521,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               runSpacing: 15.sp,
               children: List.generate(
                 stepOneData["premises_type"].length,
-                (index) {
+                    (index) {
                   premisesType.add(RadioModel(
                       false, stepOneData["premises_type"][index]["label"]));
                   return InkWell(
@@ -531,11 +533,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       }
                       // Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
                       premisesType[index].isSelected = true;
-                      setState(() {});
                       // Provider.of<WidgetChange>(context, listen: false).isSetPremises;
 
                       premisesTypeSelect = stepOneData["premises_type"][index]["label"];
-
+                      notifier.value = !notifier.value;
 
                       if (contactId != null) {
                         pageController.nextPage(
@@ -543,58 +544,64 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             curve: Curves.decelerate);
                       }
                     },
-                    child: Container(
-                      height: 15.h,
-                      width: 42.w,
-                      decoration: BoxDecoration(
-                          color: premisesType[index].isSelected
-                              ? AppColors.primaryColorLawOpacity
-                              : AppColors.whiteColor,
-                          border: Border.all(
-                              color: premisesType[index].isSelected
-                                  ? AppColors.primaryColor
-                                  : AppColors.borderColor,
-                              width: 1),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgExtension(
-                                    iconColor: premisesType[index].isSelected
+                    child: ValueListenableBuilder(
+                        valueListenable: notifier,
+                        builder: (BuildContext context, bool val, Widget? child) {
+                          return Container(
+                            height: 15.h,
+                            width: 42.w,
+                            decoration: BoxDecoration(
+                                color: premisesType[index].isSelected
+                                    ? AppColors.primaryColorLawOpacity
+                                    : AppColors.whiteColor,
+                                border: Border.all(
+                                    color: premisesType[index].isSelected
                                         ? AppColors.primaryColor
-                                        : AppColors.blackColor,
-                                    itemName: premisesType[index].buttonText),
-                                SizedBox(height: 1.h),
-                                Text(premisesType[index].buttonText,
-                                    style: premisesType[index].isSelected
-                                        ? CustomTextStyle.commonTextBlue
-                                        : CustomTextStyle.commonText)
-                              ]),
-                          Visibility(
-                            visible:
-                                premisesType[index].isSelected ? true : false,
-                            child: Positioned(
-                              right: 10,
-                              top: 5,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(80.0),
-                                    color: AppColors.greenColor),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Icon(Icons.done,
-                                      color: AppColors.whiteColor, size: 14.sp),
-                                ),
-                              ),
+                                        : AppColors.borderColor,
+                                    width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SvgExtension(
+                                          iconColor: premisesType[index].isSelected
+                                              ? AppColors.primaryColor
+                                              : AppColors.blackColor,
+                                          itemName: premisesType[index].buttonText),
+                                      SizedBox(height: 1.h),
+                                      Text(premisesType[index].buttonText,
+                                          style: premisesType[index].isSelected
+                                              ? CustomTextStyle.commonTextBlue
+                                              : CustomTextStyle.commonText)
+                                    ]),
+                                Visibility(
+                                  visible:
+                                  premisesType[index].isSelected ? true : false,
+                                  child: Positioned(
+                                    right: 10,
+                                    top: 5,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(80.0),
+                                          color: AppColors.greenColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Icon(Icons.done,
+                                            color: AppColors.whiteColor, size: 14.sp),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                    ),
+                          );
+                        }),
+
+
                   );
                 },
               ),
@@ -610,7 +617,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
-                        //cancel button
+                      //cancel button
                         title: ButtonString.btnCancel,
                         onClick: () => Navigator.of(context).pop(),
                         buttonColor: AppColors.redColor),
@@ -619,7 +626,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     width: query.width * 0.4,
                     height: query.height * 0.06,
                     child: CustomButton(
-                        //next button
+                      //next button
                         title: ButtonString.btnNext,
                         onClick: () {
                           if (contactId != null) {
@@ -645,8 +652,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   ///step 2- system type
-  SingleChildScrollView buildStepTwo(
-      BuildContext context, Size query, stepTwoData) {
+  SingleChildScrollView buildStepTwo(BuildContext context, Size query, stepTwoData) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
@@ -665,9 +671,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
               runSpacing: 15.sp,
               children: List.generate(
                 stepTwoData["system_type"].length - 9,
-                (index) {
+                    (index) {
                   String systemTypeLabel =
-                      stepTwoData["system_type"][index]["label"].toString();
+                  stepTwoData["system_type"][index]["label"].toString();
                   systemType.add(RadioModel(
                       false, stepTwoData["system_type"][index]["label"]));
                   return InkWell(
@@ -685,7 +691,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       //  Provider.of<WidgetChange>(context, listen: false).isSetSystem;
 
                       systemTypeSelect =
-                          stepTwoData["system_type"][index]["label"];
+                      stepTwoData["system_type"][index]["label"];
 
                       print(systemTypeSelect);
                       if (systemTypeSelect.contains("CCTV") ||
@@ -748,7 +754,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 SizedBox(height: 1.h),
                                 SvgExtension(
                                     itemName: stepTwoData["system_type"][index]
-                                        ["label"],
+                                    ["label"],
                                     iconColor: systemType[index].isSelected
                                         ? AppColors.primaryColor
                                         : AppColors.blackColor),
@@ -757,11 +763,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   child: Text(
                                       RegExp(":").hasMatch(systemTypeLabel)
                                           ? systemTypeLabel
-                                              .substring(
-                                                  0,
-                                                  systemTypeLabel.indexOf(":") +
-                                                      2)
-                                              .replaceAll(":", "")
+                                          .substring(
+                                          0,
+                                          systemTypeLabel.indexOf(":") +
+                                              2)
+                                          .replaceAll(":", "")
                                           : systemTypeLabel,
                                       textAlign: TextAlign.center,
                                       style: systemType[index].isSelected
@@ -772,7 +778,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               ]),
                           Visibility(
                             visible:
-                                systemType[index].isSelected ? true : false,
+                            systemType[index].isSelected ? true : false,
                             child: Positioned(
                               right: 10,
                               top: 5,
@@ -815,6 +821,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   ///step 3 Grade - Signalling type selection
   SingleChildScrollView buildStepThree(context, Size query, stepThreeData) {
     List dataGrade = stepThreeData["grade_number"];
+    ValueNotifier<bool> notifier = ValueNotifier(false);
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -822,156 +829,158 @@ class _AddQuotePageState extends State<AddQuotePage> {
           //show grade section only when system type contains "Intruder"
           systemTypeSelect.contains("Intruder")
               ? Column(
-                  children: [
-                    SizedBox(height: 1.h),
-                    Text(LabelString.lblGradeNumber,
-                        textAlign: TextAlign.center,
-                        style: CustomTextStyle.labelBoldFontTextSmall),
-                    SizedBox(height: 2.h),
-                    Wrap(
-                      spacing: 15.sp,
-                      direction: Axis.horizontal,
-                      alignment: WrapAlignment.spaceBetween,
-                      runSpacing: 15.sp,
-                      children: List.generate(
-                        systemTypeSelect ==
-                                "Fire System: BS 5839-1: 2017 + SP203-1"
-                            ? dataGrade.getRange(2, 7).toList().length
-                            : 2,
-                        (index) {
-                          gradeAndFire.add(RadioModel(
-                              false,
-                              systemTypeSelect ==
-                                      "Fire System: BS 5839-1: 2017 + SP203-1"
-                                  ? dataGrade.getRange(2, 7).toList()[index]
-                                      ["label"]
-                                  : dataGrade[index]["label"]));
-                          return InkWell(
-                            splashColor: AppColors.transparent,
-                            highlightColor: AppColors.transparent,
-                            onTap: () {
-                              for (var element in gradeAndFire) {
-                                element.isSelected = false;
-                              }
+            children: [
+              SizedBox(height: 1.h),
+              Text(LabelString.lblGradeNumber,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyle.labelBoldFontTextSmall),
+              SizedBox(height: 2.h),
+              Wrap(
+                spacing: 15.sp,
+                direction: Axis.horizontal,
+                alignment: WrapAlignment.spaceBetween,
+                runSpacing: 15.sp,
+                children: List.generate(
+                  systemTypeSelect ==
+                      "Fire System: BS 5839-1: 2017 + SP203-1"
+                      ? dataGrade.getRange(2, 7).toList().length : 2,
+                      (index) {
 
-                              // Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
-                              gradeAndFire[index].isSelected = true;
-                              setState(() {});
-                              // Provider.of<WidgetChange>(context, listen: false).isSetGrade;
+                    gradeAndFire.add(RadioModel(false,systemTypeSelect ==
+                        "Fire System: BS 5839-1: 2017 + SP203-1"
+                            ? dataGrade.getRange(2, 7).toList()[index]["label"]
+                            : dataGrade[index]["label"]));
+                    return InkWell(
+                      splashColor: AppColors.transparent,
+                      highlightColor: AppColors.transparent,
+                      onTap: () {
+                        for (var element in gradeAndFire) {
+                          element.isSelected = false;
+                        }
 
-                              gradeFireSelect = dataGrade[index]["label"];
+                        // Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
+                        gradeAndFire[index].isSelected = true;
+                        notifier.value = !notifier.value;
+                        // Provider.of<WidgetChange>(context, listen: false).isSetGrade;
 
-                              if (signallingTypeSelect.isNotEmpty &&
-                                  gradeFireSelect.isNotEmpty) {
-                                callNextScreen(
-                                    context,
-                                    AddItemDetail(
-                                        eAmount,
-                                        systemTypeSelect,
-                                        quotePaymentSelection,
-                                        contactSelect,
-                                        premisesTypeSelect,
-                                        termsItemSelection,
-                                        gradeFireSelect,
-                                        signallingTypeSelect,
-                                        engineerNumbers,
-                                        timeType,
-                                        invoiceAddress,
-                                        invoiceCity,
-                                        invoiceCountry,
-                                        invoicePostal,
-                                        installationAddress,
-                                        installationCity,
-                                        installationCountry,
-                                        installationPostal,
-                                        contactId,
-                                        contactCompany,
-                                        mobileNumber,
-                                        telephoneNumber,
-                                        stepThreeData['quotes_terms'],
-                                        contactEmail,
-                                        dropdownvalue));
-                              }
-                            },
-                            child: Container(
-                              height: 15.h,
-                              width: 42.w,
-                              decoration: BoxDecoration(
-                                  color: gradeAndFire[index].isSelected
-                                      ? AppColors.primaryColorLawOpacity
-                                      : AppColors.whiteColor,
-                                  border: Border.all(
-                                      color: gradeAndFire[index].isSelected
-                                          ? AppColors.primaryColor
-                                          : AppColors.borderColor,
-                                      width: 1),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        //Condition for skip grade and signalling type
-                                        SizedBox(height: 1.h),
-                                        SvgExtension(
-                                            itemName: systemTypeSelect ==
-                                                    "Fire System: BS 5839-1: 2017 + SP203-1"
-                                                ? dataGrade
-                                                    .getRange(2, 7)
-                                                    .toList()[index]["label"]
-                                                : dataGrade[index]["label"],
-                                            iconColor:
-                                                gradeAndFire[index].isSelected
-                                                    ? AppColors.primaryColor
-                                                    : AppColors.blackColor),
-                                        SizedBox(height: 1.h),
-                                        Text(
-                                            systemTypeSelect ==
-                                                    "Fire System: BS 5839-1: 2017 + SP203-1"
-                                                ? dataGrade
-                                                    .getRange(2, 7)
-                                                    .toList()[index]["label"]
-                                                : dataGrade[index]["label"],
-                                            style: gradeAndFire[index]
-                                                    .isSelected
-                                                ? CustomTextStyle.commonTextBlue
-                                                : CustomTextStyle.commonText),
-                                        SizedBox(height: 1.h),
-                                      ]),
-                                  Visibility(
-                                    visible: gradeAndFire[index].isSelected
-                                        ? true
-                                        : false,
-                                    child: Positioned(
-                                      right: 10,
-                                      top: 5,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(80.0),
-                                            color: AppColors.greenColor),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Icon(Icons.done,
-                                              color: AppColors.whiteColor,
-                                              size: 14.sp),
-                                        ),
+                        gradeFireSelect = dataGrade[index]["label"];
+
+                        if (signallingTypeSelect.isNotEmpty &&
+                            gradeFireSelect.isNotEmpty) {
+                          callNextScreen(
+                              context,
+                              AddItemDetail(
+                                  eAmount,
+                                  systemTypeSelect,
+                                  quotePaymentSelection,
+                                  contactSelect,
+                                  premisesTypeSelect,
+                                  termsItemSelection,
+                                  gradeFireSelect,
+                                  signallingTypeSelect,
+                                  engineerNumbers,
+                                  timeType,
+                                  invoiceAddress,
+                                  invoiceCity,
+                                  invoiceCountry,
+                                  invoicePostal,
+                                  installationAddress,
+                                  installationCity,
+                                  installationCountry,
+                                  installationPostal,
+                                  contactId,
+                                  contactCompany,
+                                  mobileNumber,
+                                  telephoneNumber,
+                                  stepThreeData['quotes_terms'],
+                                  contactEmail,
+                                  dropdownvalue));
+                        }
+                      },
+                      child: ValueListenableBuilder(
+                        valueListenable: notifier,
+                        builder:  (BuildContext context, bool val, Widget? child) {
+                          return Container(
+                            height: 15.h,
+                            width: 42.w,
+                            decoration: BoxDecoration(
+                                color: gradeAndFire[index].isSelected
+                                    ? AppColors.primaryColorLawOpacity
+                                    : AppColors.whiteColor,
+                                border: Border.all(
+                                    color: gradeAndFire[index].isSelected
+                                        ? AppColors.primaryColor
+                                        : AppColors.borderColor,
+                                    width: 1),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Column(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    children: [
+                                      //Condition for skip grade and signalling type
+                                      SizedBox(height: 1.h),
+                                      SvgExtension(
+                                          itemName: systemTypeSelect ==
+                                              "Fire System: BS 5839-1: 2017 + SP203-1"
+                                              ? dataGrade
+                                              .getRange(2, 7)
+                                              .toList()[index]["label"]
+                                              : dataGrade[index]["label"],
+                                          iconColor:
+                                          gradeAndFire[index].isSelected
+                                              ? AppColors.primaryColor
+                                              : AppColors.blackColor),
+                                      SizedBox(height: 1.h),
+                                      Text(
+                                          systemTypeSelect ==
+                                              "Fire System: BS 5839-1: 2017 + SP203-1"
+                                              ? dataGrade
+                                              .getRange(2, 7)
+                                              .toList()[index]["label"]
+                                              : dataGrade[index]["label"],
+                                          style: gradeAndFire[index]
+                                              .isSelected
+                                              ? CustomTextStyle.commonTextBlue
+                                              : CustomTextStyle.commonText),
+                                      SizedBox(height: 1.h),
+                                    ]),
+                                Visibility(
+                                  visible: gradeAndFire[index].isSelected
+                                      ? true
+                                      : false,
+                                  child: Positioned(
+                                    right: 10,
+                                    top: 5,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(80.0),
+                                          color: AppColors.greenColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Icon(Icons.done,
+                                            color: AppColors.whiteColor,
+                                            size: 14.sp),
                                       ),
                                     ),
-                                  )
-                                ],
-                              ),
+                                  ),
+                                )
+                              ],
                             ),
                           );
                         },
-                      ),
-                    ),
-                  ],
-                )
+                      )
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
               : Container(),
           SizedBox(height: 2.h),
           Text(LabelString.lblSignallingType,
@@ -986,9 +995,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
             children: List.generate(
               // stepFourData["signalling_type"].length
               12,
-              (index) {
-                signallingType.add(RadioModel(
-                    false, stepThreeData["signalling_type"][index]["label"]));
+                  (index) {
+
+                    signallingType.add(RadioModel(false, stepThreeData["signalling_type"][index]["label"]));
                 return InkWell(
                   splashColor: AppColors.transparent,
                   highlightColor: AppColors.transparent,
@@ -999,11 +1008,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
                     //Provider.of<WidgetChange>(context, listen: false).isSelectSignallingType();
                     signallingType[index].isSelected = true;
-                    setState(() {});
+                    notifier.value = !notifier.value;
                     //Provider.of<WidgetChange>(context, listen: false).isSetSignallingType;
-
-                    signallingTypeSelect =
-                        stepThreeData["signalling_type"][index]["label"];
+                    signallingTypeSelect = stepThreeData["signalling_type"][index]["label"];
 
                     if (signallingTypeSelect.isNotEmpty) {
                       callNextScreen(
@@ -1036,68 +1043,74 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               dropdownvalue));
                     }
                   },
-                  child: Container(
-                    height: 15.h,
-                    width: 42.w,
-                    decoration: BoxDecoration(
-                        color: signallingType[index].isSelected
-                            ? AppColors.primaryColorLawOpacity
-                            : AppColors.whiteColor,
-                        border: Border.all(
+                  child: ValueListenableBuilder(
+                    valueListenable : notifier,
+                    builder: (BuildContext context, bool val, Widget? child){
+                      return Container(
+                        height: 15.h,
+                        width: 42.w,
+                        decoration: BoxDecoration(
                             color: signallingType[index].isSelected
-                                ? AppColors.primaryColor
-                                : AppColors.borderColor,
-                            width: 1),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Spacer(),
-                              SvgExtension(
-                                  itemName: stepThreeData["signalling_type"]
+                                ? AppColors.primaryColorLawOpacity
+                                : AppColors.whiteColor,
+                            border: Border.all(
+                                color: signallingType[index].isSelected
+                                    ? AppColors.primaryColor
+                                    : AppColors.borderColor,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Spacer(),
+                                  SvgExtension(
+                                      itemName: stepThreeData["signalling_type"]
                                       [index]["label"],
-                                  iconColor: signallingType[index].isSelected
-                                      ? AppColors.primaryColor
-                                      : AppColors.blackColor),
-                              SizedBox(height: 1.h),
-                              SizedBox(
-                                width: query.width * 0.3,
-                                child: Text(
-                                    stepThreeData["signalling_type"][index]
+                                      iconColor: signallingType[index].isSelected
+                                          ? AppColors.primaryColor
+                                          : AppColors.blackColor),
+                                  SizedBox(height: 1.h),
+                                  SizedBox(
+                                    width: query.width * 0.3,
+                                    child: Text(
+                                        stepThreeData["signalling_type"][index]
                                         ["label"],
-                                    textAlign: TextAlign.center,
-                                    maxLines: 3,
-                                    style: signallingType[index].isSelected
-                                        ? CustomTextStyle.commonTextBlue
-                                        : CustomTextStyle.commonText),
-                              ),
-                              const Spacer(),
-                            ]),
-                        Visibility(
-                          visible:
+                                        textAlign: TextAlign.center,
+                                        maxLines: 3,
+                                        style: signallingType[index].isSelected
+                                            ? CustomTextStyle.commonTextBlue
+                                            : CustomTextStyle.commonText),
+                                  ),
+                                  const Spacer(),
+                                ]),
+                            Visibility(
+                              visible:
                               signallingType[index].isSelected ? true : false,
-                          child: Positioned(
-                            right: 10,
-                            top: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(80.0),
-                                  color: AppColors.greenColor),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Icon(Icons.done,
-                                    color: AppColors.whiteColor, size: 14.sp),
+                              child: Positioned(
+                                right: 10,
+                                top: 5,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(80.0),
+                                      color: AppColors.greenColor),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(Icons.done,
+                                        color: AppColors.whiteColor, size: 14.sp),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  )
+
                 );
               },
             ),
