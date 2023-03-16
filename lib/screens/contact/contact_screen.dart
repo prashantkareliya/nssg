@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/screens/contact/contact_datasource.dart';
 import 'package:nssg/screens/contact/contact_repository.dart';
@@ -492,13 +493,19 @@ class _ContactScreenState extends State<ContactScreen> {
   }
 
   //Add contact button
-  FloatingActionButton buildAddContactButton(BuildContext context) {
-    return FloatingActionButton(
-        onPressed: () {
-          // callNextScreen(context, AddContactBasicInformationPage("NoId"));
-          callNextScreen(context, AddContactPage("NoId"));
-        },
-        child: const Icon(Icons.add));
+  SizedBox buildAddContactButton(BuildContext context) {
+    return SizedBox(
+      height: 8.h,
+      child: FittedBox(
+          child:  FloatingActionButton.small(
+            elevation: 0,
+              onPressed: () {
+                callNextScreen(context, AddContactPage("NoId"));
+              },
+              child: Lottie.asset('assets/lottie/adding.json'))
+      ),
+    );
+
   }
 
   //call API method for get contact list
@@ -717,35 +724,7 @@ class ContactDetail extends StatelessWidget {
                                                       CustomTextStyle.labelText))
                                         ],
                                       ),
-                                      divider(),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SvgPicture.asset(
-                                              ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
-                                          Expanded(
-                                            child: RichText(
-                                              text: TextSpan(
-                                                  text: LabelString.lblInstallationAddress,
-                                                  style: GoogleFonts.roboto(textStyle: TextStyle(
-                                                      fontSize: 14.sp,
-                                                      color: AppColors.primaryColor,
-                                                      fontWeight: FontWeight.bold)),
-                                                  children: [
-                                                    TextSpan(
-                                                        text:
-                                                            "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
-                                                        style: GoogleFonts.roboto(textStyle: TextStyle(
-                                                            height: 1.5,
-                                                            fontSize: 12.sp,
-                                                            color: AppColors.blackColor,
-                                                            fontWeight: FontWeight.normal)))
-                                                  ]),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+
                                       divider(),
                                       Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -776,122 +755,35 @@ class ContactDetail extends StatelessWidget {
                                         ],
                                       ),
                                       divider(),
-                                      /*SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  ContactTileField(LabelString.lblFullName,
-                                      "${dataContact["firstname"]} ${dataContact["lastname"]}"),
-                                  ContactTileField(LabelString.lblCompany,
-                                      dataContact["contact_company"]),
-                                  ContactTileField(LabelString.lblOfficePhone,
-                                      dataContact["phone"]),
-                                  ContactTileField(LabelString.lblMobilePhone,
-                                      dataContact["mobile"]),
-                                  ContactTileField(
-                                      LabelString.lblPrimaryEmail,
-                                      dataContact["email"]),
-                                  ContactTileField(
-                                      LabelString.lblSecondaryEmail,
-                                      dataContact["secondaryemail"]),
-                                ],
-                              ),
-                              Flexible(
-                                flex: 1,
-                                child: Column(
-                                  children: [
-
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.sp),
-                                child: Text(
-                                    LabelString.lblInstallationAddressDetails,
-                                    style: CustomTextStyle.labelBoldFontTextBlue),
-                              ),
-                              Row(
-                                children: [
-                                  Flexible(
-                                    flex: 5,
-                                    child: Column(
-                                      children: [
-                                        ContactTileField(LabelString.lblAddress,
-                                            dataContact["mailingstreet"]),
-                                        ContactTileField(LabelString.lblCity,
-                                            dataContact["mailingcity"]),
-                                        ContactTileField(LabelString.lblCountry,
-                                            dataContact["mailingcountry"]),
-                                        ContactTileField(LabelString.lblPostalCode,
-                                            dataContact["mailingzip"]),
-                                      ],
-                                    ),
-                                  ),
-                                  Flexible(
-                                    flex: 1,
-                                    child: Column(
-                                      children: [
-                                        Image.asset(ImageString.icEdit,
-                                            color: AppColors.transparent,
-                                            height: 2.5.h),
-                                        SizedBox(height: 2.h),
-                                        Image.asset(ImageString.icDelete,
-                                            color: AppColors.transparent,
-                                            height: 2.5.h),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.sp),
-                                child: Text(LabelString.lblInvoiceAddressDetails,
-                                    style: CustomTextStyle.labelBoldFontTextBlue),
-                              ),
-                              Row(
-                                children: [
-                                  Flexible(
-                                    flex: 5,
-                                    child: Column(
-                                      children: [
-                                        ContactTileField(LabelString.lblAddress,
-                                            dataContact["otherstreet"]),
-                                        ContactTileField(LabelString.lblCity,
-                                            dataContact["othercity"]),
-                                        ContactTileField(LabelString.lblCountry,
-                                            dataContact["othercountry"]),
-                                        ContactTileField(LabelString.lblPostalCode,
-                                            dataContact["otherzip"]),
-                                      ],
-                                    ),
-                                  ),
-                                  Flexible(
-                                    flex: 1,
-                                    child: Column(
-                                      children: [
-                                        Image.asset(ImageString.icEdit,
-                                            color: AppColors.transparent,
-                                            height: 2.5.h),
-                                        SizedBox(height: 2.h),
-                                        Image.asset(ImageString.icDelete,
-                                            color: AppColors.transparent,
-                                            height: 2.5.h),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(height: 1.5.h),
-                            ],
-                          ),
-                        ),
-                      ),*/
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              ImageString.icAddress,height: 2.h,color: AppColors.primaryColor),
+                                          SizedBox(width: 2.w),
+                                          Expanded(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  text: LabelString.lblInstallationAddress,
+                                                  style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                      fontSize: 14.sp,
+                                                      color: AppColors.primaryColor,
+                                                      fontWeight: FontWeight.bold)),
+                                                  children: [
+                                                    TextSpan(
+                                                        text:
+                                                        "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
+                                                        style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                            height: 1.5,
+                                                            fontSize: 12.sp,
+                                                            color: AppColors.blackColor,
+                                                            fontWeight: FontWeight.normal)))
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      divider(),
                                     ],
                                   ),
                                 ),

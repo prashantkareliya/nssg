@@ -56,6 +56,7 @@ dependencies:
   flutter_shake_animated: ^0.0.5
 
 
+
   #Storage
   shared_preferences: ^2.0.15
 

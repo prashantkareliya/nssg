@@ -321,17 +321,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               //System type selection design
                               buildStepTwo(context, query, fieldsData),
 
-                              //Premises type design
-                              //buildStepThree(context, query, fieldsData),
-
                               //Grade - Signalling type design
                               buildStepThree(context, query, fieldsData),
 
-                              //Quote payment, Terms design
-                              //buildStepFive(context, query, fieldsData),
 
-                              //Invoice and installation detail design
-                              // buildStepSix(context, query),
                             ],
                           ),
                         ),
@@ -498,9 +491,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         style: CustomTextStyle.labelFontHintText),
                     items: siteAddressList.map((item) {
                       return DropdownMenuItem(
-                          value: item['id'].toString(),
-                          child: Text(
-                              item['address'].toString().replaceAll("\n", ", "),
+                          value: item["id"].toString(), //"${item['address']+","} ${item["city"] + ","} ${item["country"]+","} ${item["postcode"] + ","} ",
+                          child: Text("${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
                               style: CustomTextStyle.labelFontText));
                     }).toList(),
                     onChanged: (newVal) {
@@ -537,7 +529,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
                       premisesTypeSelect = stepOneData["premises_type"][index]["label"];
                       notifier.value = !notifier.value;
-
                       if (contactId != null) {
                         pageController.nextPage(
                             duration: const Duration(milliseconds: 500),
@@ -600,8 +591,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             ),
                           );
                         }),
-
-
                   );
                 },
               ),

@@ -25,9 +25,9 @@ class SvgExtension extends StatelessWidget {
   Widget build(BuildContext context) {
     itemName = itemNameText(itemName!);
     return SvgPicture.network(
-        "${ImageBaseUrl.imageBaseUrl}${itemName?.toLowerCase()}.svg",
+        "${ImageBaseUrl.imageBaseUrl}${itemName?.toLowerCase()}.svg", height: 4.5.h,
         color: iconColor,
         placeholderBuilder: (BuildContext context) =>
-            SvgPicture.asset(ImageString.imgPlaceHolder, height: 5.h));
+            SvgPicture.asset(ImageString.imgPlaceHolder, height: 5.5.h));
   }
 }

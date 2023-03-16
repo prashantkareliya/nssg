@@ -200,8 +200,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
   void initState() {
     super.initState();
     getProduct();
-
-    var profit = (double.parse("0") - 80.0).formatAmount();
+    var profit = (double.parse("450") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
     if(productList == null){
       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
@@ -214,7 +213,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
           discountPrice: "0",
           amountPrice: "450",
           profit: profit,
-          description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
+          description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
+          productImage: ImageString.imgDemo
       )));
     }
   }
@@ -379,11 +379,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               manufactureSelect = "";
                               manufactureSelect = fieldsData["product_manufacturer"][index]["label"];
                             }
-
                             pageController.nextPage(
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.decelerate);
-
                           },
                           child: Container(
                             height: 15.h,
@@ -402,30 +400,23 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               alignment: Alignment.center,
                               children: [
                                 Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(height: 1.h),
                                       SvgExtension(
-                                          iconColor: manufacturingType[index]
-                                                  .isSelected
+                                          iconColor: manufacturingType[index].isSelected
                                               ? AppColors.primaryColor
                                               : AppColors.blackColor,
                                           itemName:
-                                              fieldsData["product_manufacturer"]
-                                                      [index]["label"]
-                                                  .toString()),
+                                              fieldsData["product_manufacturer"][index]["label"].toString()),
                                       SizedBox(height: 1.h),
                                       SizedBox(
                                         width: query.width * 0.3,
                                         child: Text(
-                                            fieldsData["product_manufacturer"]
-                                                [index]["label"],
+                                            fieldsData["product_manufacturer"][index]["label"],
                                             textAlign: TextAlign.center,
-                                            style: manufacturingType[index]
-                                                    .isSelected
+                                            style: manufacturingType[index].isSelected
                                                 ? CustomTextStyle.commonTextBlue
                                                 : CustomTextStyle.commonText),
                                       ),
@@ -488,6 +479,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
             /*if(stepThreeData["product_prod_category"].length == 0){
               pageController.jumpToPage(2);
             }*/
+
             return SingleChildScrollView(
               child: Padding(
                 padding:
@@ -499,16 +491,18 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     Text(LabelString.lblCategory,
                         style: CustomTextStyle.labelBoldFontText),
                     SizedBox(height: 4.h),
-                    Wrap(
+                    stepThreeData["product_prod_category"].length == 0 ?
+                    Center(
+                        child: Text(LabelString.lblNoData,
+                            style: CustomTextStyle.labelBoldFontText))
+                        : Wrap(
                       spacing: 15.sp,
                       direction: Axis.horizontal,
                       alignment: WrapAlignment.spaceBetween,
                       runSpacing: 15.sp,
                       children: List.generate(
                         stepThreeData["product_prod_category"].length,
-
                         (index) {
-
                           categoryType.add(RadioModel(
                               false,
                               stepThreeData["product_prod_category"][index]
@@ -679,8 +673,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                         double.parse(discountPriceController[index].text == ""
                             ? "0"
                             : discountPriceController[index].text));
-                    double profit = ((double.parse(filterList![index].unitPrice!) -
-                        double.parse(
+                    double profit = ((double.parse(filterList![index].unitPrice!) - double.parse(
                             filterList![index].costPrice.toString())) *
                         (filterList![index].quantity!) -
                         double.parse(discountPriceController[index].text == ""
@@ -692,6 +685,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                         final bool isItemAdded = productState.productList
                             .firstWhereOrNull((element) => element.productId == filterList![index].id) !=
                             null;
+                        print("@@@@@@@@@@@@@@@@@ ${filterList![index].imagename}");
                         return Padding(
                           padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                           child: Container(
@@ -705,12 +699,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Image.asset("assets/images/demo.png",
+                                  child: filterList![index].imagename == "" ?
+                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 14.h) :
+                                  Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename}",
                                       height: 12.h),
                                 ),
-                                SizedBox(
-                                  width: 5.w,
-                                ),
+                                SizedBox(width: 5.w),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -836,7 +830,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   quantity: filterList![index] .quantity,
                                                   description: filterList![index] .description,
                                                   selectLocation: (filterList![index].locationList ?? []).join('###'),
-                                                  itemAdd: filterList![index].isItemAdded);
+                                                  itemAdd: filterList![index].isItemAdded,
+                                                productImage: filterList![index].imagename
+                                              );
                                               context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
                                               //Helpers.showSnackBar(context, "Item Added", isError: false);
 
@@ -889,10 +885,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                       horizontal: 8.sp),
                                                   child: SelectLocation(
                                                       filterList![index].quantity,
-                                                      filterList![index]
-                                                          .productname,
-                                                      filterList![index]
-                                                          .locationList));
+                                                      filterList![index].productname,
+                                                      filterList![index].locationList));
                                             },
                                           ).then((value) {
                                             if (value != null) {

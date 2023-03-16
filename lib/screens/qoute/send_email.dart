@@ -97,12 +97,12 @@ class _SendEmailState extends State<SendEmail> {
   }
 
   sendEmail() async {
-    if(contactList.isEmpty){
-      List<String> emails = emailController.text.split(", ");
-      for (var e in emails) {
-        contactList.add(e.trim());
+      if(contactList.isEmpty){
+        List<String> emails = emailController.text.split(", ");
+        for (var e in emails) {
+          contactList.add(e.trim());
+        }
       }
-    }
     FocusScope.of(context).unfocus();
     setState(() { isLoading = true; });
     SharedPreferences preferences = await SharedPreferences.getInstance();

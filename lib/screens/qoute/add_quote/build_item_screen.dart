@@ -72,7 +72,7 @@ class BuildItemScreen extends StatefulWidget {
 
   String? contactEmail;
 
-  String? siteAddress;
+  var siteAddress;
 
   BuildItemScreen(
       this.eAmount,
@@ -128,6 +128,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   @override
   void initState() {
     super.initState();
+    print(widget.siteAddress);
+
    /* var profit = (double.parse("0") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
     if(productList == null){
@@ -382,20 +384,23 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                             insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                             child: QuoteEstimation());
                                       }).then((value) {
-                                        var profit = (double.parse("0") - 80.0).formatAmount();
-                                          context.read<ProductListBloc>().add(UpdateProductToListEvent(productsList: ProductsList(
-                                        itemId:  "123456",
-                                        productId: "789",
-                                        itemName: 'Installation (1st & 2nd fix)',
-                                        costPrice: '80.00',
-                                        sellingPrice: value.toString(),
-                                        quantity: 1,
-                                        discountPrice: "0",
-                                        amountPrice: value.toString(),
-                                        profit: profit,
-                                        description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
-                                    )));
-                                      });
+                                       if(value != null){
+                                         var profit = (double.parse(value.toString()) - 80.0).formatAmount();
+                                         context.read<ProductListBloc>().add(UpdateProductToListEvent(productsList: ProductsList(
+                                             itemId:  "123456",
+                                             productId: "789",
+                                             itemName: 'Installation (1st & 2nd fix)',
+                                             costPrice: '80.00',
+                                             sellingPrice: value.toString(),
+                                             quantity: 1,
+                                             discountPrice: "0",
+                                             amountPrice: value.toString(),
+                                             profit: profit,
+                                             description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
+                                         )));
+                                       }
+                                       }
+                                      );
                                 },
                               children: [
                                 TextSpan(
@@ -419,9 +424,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
     //itemAmount = products.amountPrice.toString();
     final List<ShakeConstant> shakeList;
-
     return Padding(
-      padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 5,bottom: 5),
+      padding: EdgeInsets.only(left: 6.sp, right: 6.sp,top: 5,bottom: 8.sp),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
@@ -551,27 +555,33 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(flex: 1,
-                        child: Image.asset("assets/images/demo.png", height: 8.h)),
+                        child: products.productImage == null || products.productImage == "" ||
+                            products.itemName!.contains("Installation") ?
+                        Image.asset(ImageString.imgDemo, height: 8.h)
+                            : Image.network(
+                            "${ImageBaseUrl.productImageBaseUrl}${products.productImage}",
+                            height: 8.h)
+                    ),
                     Expanded(flex: 3,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Expanded(flex: 3,
-                                  child: Text("${products.quantity} items",style: CustomTextStyle.commonText)),
+                              Expanded(flex: 4,
+                                  child: Text("${products.quantity} items", style: CustomTextStyle.labelText)),
                               Expanded(flex: 2,
-                                  child: Text("£${products.amountPrice.toString().formatAmount}",
+                                  child: Text("£${products.amountPrice.formatAmount()}",
                                       style:  GoogleFonts.roboto(
                                           textStyle: TextStyle(
-                                              fontSize: 12.sp,
+                                              fontSize: 14.sp,
                                               fontWeight: FontWeight.bold,
                                               fontStyle: FontStyle.normal,
                                               color: AppColors.primaryColor))))
                             ],
                           ),
                           SizedBox(height: 1.h),
-                          Text("${products.itemName}",style: CustomTextStyle.labelBoldFontText),
+                          Text("${products.itemName}",style: CustomTextStyle.labelText),
                         ],
                       ),
                     ),
@@ -796,7 +806,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         assignedUserId : preferences.getString(PreferenceString.userId).toString(),
         currencyId : "21x1",
         conversionRate : "0.00",
-        billStreet : widget.billStreet == "" ? " " : widget.billStreet,
+        billStreet : widget.billStreet == "" ? " " : widget.billStreet, //  todo add installation as ship address if site address selected
         shipStreet : widget.shipStreet == "" ? " " : widget.shipStreet,
         billCity : widget.billCity == "" ? " " : widget.billCity,
         shipCity : widget.shipCity == "" ? " " : widget.shipCity,
@@ -810,7 +820,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             : Message.termsCondition2,
         preTaxTotal : vatTotal.toString(),
         hdnSHPercent : "0",
-        siteAddressId : widget.siteAddress == "" ? "" : widget.siteAddress,
+        siteAddressId : widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
         quotesTerms : widget.termsItemSelection,
         hdnprofitTotal : profit.toString(),
         markup : "0.00",
@@ -822,7 +832,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         projectManager : preferences.getString(PreferenceString.userId).toString(),
         quotesEmail : widget.contactEmail,
         quotesTemplateOptions : selectTemplateOption,
-        quoteRelatedId : "0", //todo: get this field on edit operation
+        quoteRelatedId : "0",
         quotesCompany : widget.contactCompany,
         installation : "0",
         hdnsubTotal : subTotal.toString(),
@@ -849,7 +859,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteReqToCompleteWork : widget.timeType,
         lineItems :  productList.map((e) => LineItems(
           productid: e.productId,
-          sequenceNo: "2",
+          sequenceNo: "2", //todo set sequence number as per item index
           quantity: e.quantity.toString(),
           listprice: e.amountPrice,
           discountPercent: "00.00",
@@ -861,10 +871,18 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           tax2: "",
           tax3: "",
           productLocation: e.selectLocation,
-          productLocationTitle: "",
+          productLocationTitle: "", //todo add title with join ###product_title
           costprice: e.costPrice,
           extQty: "0",
           requiredDocument: "Keyholder form###Maintenance contract###Police application###Direct Debit",
+
+          /*
+            "product_nss_keyholder_form": "1",  Keyholder form
+            "product_security_agree_form": "0", Maintenance contract
+            "product_police_app_form": "0", Police application
+            "product_direct_debit_form": "0", Direct Debit
+           */
+
           proShortDescription: e.description,
         )).toList()
     );

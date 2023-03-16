@@ -57,6 +57,6 @@ class ApiEndPoint {
 
 //class for image/icon base url
 class ImageBaseUrl {
-  static const String imageBaseUrl =
-      "https://nssgdata.ams3.digitaloceanspaces.com/NSSG-App-icon/";
+  static const String imageBaseUrl = "https://nssgdata.ams3.digitaloceanspaces.com/NSSG-App-icon/";
+  static const String productImageBaseUrl = 'http://122.170.107.160/nssg/';
 }

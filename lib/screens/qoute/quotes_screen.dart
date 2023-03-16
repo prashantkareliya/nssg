@@ -330,16 +330,22 @@ class _QuoteScreenState extends State<QuoteScreen> {
     );
   }
 
-  FloatingActionButton buildAddContactButton(BuildContext context) {
-    return FloatingActionButton(
-        onPressed: () {
-          context.read<ProductListBloc>().add(ClearProductToListEvent());
-          Navigator.push(context, MaterialPageRoute(builder:
-              (context)=> AddQuotePage(true, "", ""),
-          )).then((value) => getQuote());
+  SizedBox buildAddContactButton(BuildContext context) {
+    return SizedBox(
+      height: 8.h,
+      child: FittedBox(
+        child: FloatingActionButton.small(
+            elevation: 0,
+            onPressed: () {
+              context.read<ProductListBloc>().add(ClearProductToListEvent());
+              Navigator.push(context, MaterialPageRoute(builder:
+                  (context)=> AddQuotePage(true, "", ""),
+              )).then((value) => getQuote());
+            },
+            child: Lottie.asset('assets/lottie/adding.json'))
+      ),
+    );
 
-        },
-        child: const Icon(Icons.add));
   }
 
 

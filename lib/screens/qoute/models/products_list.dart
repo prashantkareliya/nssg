@@ -12,6 +12,7 @@ class ProductsList {
   bool? itemAdd;
   String? selectLocation;
   List<String>? locationList;
+  String? productImage;
 
 
 
@@ -28,7 +29,9 @@ class ProductsList {
     int? quantity,
     bool? itemAdd,
     String? selectLocation,
-    List<String>? locationList
+    List<String>? locationList,
+    String? productImage
+
   }) {
     return ProductsList(
         itemId: itemId ?? this.itemId,
@@ -43,7 +46,8 @@ class ProductsList {
         quantity: quantity ?? this.quantity,
         itemAdd: itemAdd ?? this.itemAdd,
         selectLocation: selectLocation ?? this.selectLocation,
-        locationList: locationList ?? this.locationList
+        locationList: locationList ?? this.locationList,
+        productImage: productImage ?? this.productImage
     );
   }
 
@@ -60,7 +64,7 @@ class ProductsList {
         this.quantity,
         this.itemAdd,
         this.selectLocation,
-        this.locationList = const []});
+        this.locationList = const [], this.productImage});
 
   ProductsList.fromJson(Map<String, dynamic> json) {
     itemId = json["itemId"];
@@ -76,6 +80,7 @@ class ProductsList {
     itemAdd = json['itemAdd'];
     selectLocation = json['selectLocation'];
     locationList = json['locationList'];
+    productImage = json['productImage'];
   }
 
   Map<String, dynamic> toJson() {
@@ -93,6 +98,7 @@ class ProductsList {
     data['itemAdd'] = itemAdd;
     data['selectLocation'] = selectLocation;
     data['locationList'] = locationList;
+    data['productImage'] = productImage;
     return data;
   }
 }

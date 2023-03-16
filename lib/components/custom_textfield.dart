@@ -129,9 +129,8 @@ class CustomTextField extends StatelessWidget {
               hintText: hint,
               hintStyle: CustomTextStyle.labelFontHintText,
               counterText: "",
-
             labelStyle: CustomTextStyle.labelFontHintText,
-            labelText: titleText!
+            labelText: titleText! + "${star ?? ""}"
           ),
           validator: (validator != null)
               ? validator
