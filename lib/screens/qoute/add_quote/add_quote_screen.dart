@@ -489,6 +489,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     isExpanded: true,
                     hint: Text(LabelString.lblSelectSiteAddress,
                         style: CustomTextStyle.labelFontHintText),
+
                     items: siteAddressList.map((item) {
                       return DropdownMenuItem(
                           value: item["id"].toString(), //"${item['address']+","} ${item["city"] + ","} ${item["country"]+","} ${item["postcode"] + ","} ",

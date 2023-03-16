@@ -72,7 +72,7 @@ class BuildItemScreen extends StatefulWidget {
 
   String? contactEmail;
 
-  var siteAddress;
+  String? siteAddress;
 
   BuildItemScreen(
       this.eAmount,
@@ -820,7 +820,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             : Message.termsCondition2,
         preTaxTotal : vatTotal.toString(),
         hdnSHPercent : "0",
-        siteAddressId : widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
+        siteAddressId : widget.siteAddress == "" ? "" : widget.siteAddress,
         quotesTerms : widget.termsItemSelection,
         hdnprofitTotal : profit.toString(),
         markup : "0.00",
@@ -859,7 +859,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteReqToCompleteWork : widget.timeType,
         lineItems :  productList.map((e) => LineItems(
           productid: e.productId,
-          sequenceNo: "2", //todo set sequence number as per item index
+          sequenceNo: e.toString(), //todo set sequence number as per item index
           quantity: e.quantity.toString(),
           listprice: e.amountPrice,
           discountPercent: "00.00",
