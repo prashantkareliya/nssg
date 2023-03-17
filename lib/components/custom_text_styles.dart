@@ -37,7 +37,7 @@ class CustomTextStyle {
 
   static TextStyle commonTextBlue = GoogleFonts.roboto(
       textStyle: TextStyle(
-          fontSize: 10.sp,
+          fontSize: 12.sp,
           fontWeight: FontWeight.normal,
           fontStyle: FontStyle.normal,
           color: AppColors.primaryColor));
@@ -55,11 +55,11 @@ class CustomTextStyle {
   ));
 
   static TextStyle buttonText = GoogleFonts.roboto(
-      textStyle: TextStyle(fontSize: 12.sp, color: AppColors.whiteColor));
+      textStyle: TextStyle(fontSize: 14.sp, color: AppColors.whiteColor));
 
   static TextStyle commonText = GoogleFonts.roboto(
       textStyle: TextStyle(
-          fontSize: 10.sp,
+          fontSize: 12.sp,
           fontWeight: FontWeight.normal,
           fontStyle: FontStyle.normal,
           color: AppColors.blackColor));

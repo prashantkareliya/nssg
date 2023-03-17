@@ -413,8 +413,7 @@ class _AddContactPageState extends State<AddContactPage> {
                         buttonColor: AppColors.primaryColor,
                         onClick: () {
                           FocusScope.of(context).unfocus();
-                          if (contactBasicDetailFormKey.currentState
-                                  ?.validate() ==
+                          if (contactBasicDetailFormKey.currentState?.validate() ==
                               true) {
                             if (primaryEmailController.text.isValidEmail) {
                               pageController.nextPage(

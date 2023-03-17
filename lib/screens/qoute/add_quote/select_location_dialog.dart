@@ -12,7 +12,8 @@ class SelectLocation extends StatefulWidget {
   var quantity;
   var productName;
   List<String>? locations;
-  SelectLocation(this.quantity, this.productName, this.locations, {super.key});
+  List<String>? titles;
+  SelectLocation(this.quantity, this.productName, this.locations, this.titles, {super.key});
 
   @override
   State<SelectLocation> createState() => _SelectLocationState();
@@ -21,10 +22,12 @@ class SelectLocation extends StatefulWidget {
 class _SelectLocationState extends State<SelectLocation> {
 
   List<TextEditingController> textControllers = [];
+  List<String> titleControllers = [];
 
   @override
   void initState() {
     super.initState();
+
     for(String s in widget.locations ?? []){
       final controller = TextEditingController(text: s);
       TextField(
@@ -38,10 +41,21 @@ class _SelectLocationState extends State<SelectLocation> {
       if(textControllers.length != widget.quantity){
         setState(() {
           textControllers.add(controller);
+          titleControllers.add(widget.productName);
           /*fields.add(field);*/
         });
       }
     }
+
+    for(String s in widget.titles ?? []){
+      if(textControllers.length != widget.quantity){
+        setState(() {
+          titleControllers.add(widget.productName);
+          /*fields.add(field);*/
+        });
+      }
+    }
+
   }
   @override
   void dispose() {
@@ -78,6 +92,7 @@ class _SelectLocationState extends State<SelectLocation> {
                   itemCount: widget.quantity,
                   itemBuilder: (context,index){
                     textControllers.add(TextEditingController());
+                    titleControllers.add(widget.productName);
                     return TextField(
                       controller: textControllers[index],
                       decoration: InputDecoration(
@@ -101,7 +116,7 @@ class _SelectLocationState extends State<SelectLocation> {
                       height: query.height * 0.06,
                       child: CustomButton(
                           title: ButtonString.btnSave, onClick: (){
-                        Navigator.pop(context, textControllers.map((e) => e.text).toList());
+                        Navigator.pop(context, textControllers.map((e) => e.text).toList()/*, titleControllers.map((e) => e.toString()).toList()*/);
                       })),
                 ],
               ),

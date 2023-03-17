@@ -95,6 +95,7 @@ class Result {
   int? quantity;
   bool? isItemAdded;
   List<String>? locationList;
+  List<String>? titleLocationList;
 
   Result(
       {this.productname,
@@ -166,7 +167,9 @@ class Result {
         this.id,
         this.quantity,
         this.isItemAdded,
-        this.locationList = const []});
+        this.locationList = const [],
+        this.titleLocationList = const [],
+      });
 
   Result.fromJson(Map<String, dynamic> json) {
     productname = json['productname'];
@@ -239,6 +242,7 @@ class Result {
     quantity = json['quantity'] ?? 1;
     isItemAdded = json['isItemAdded'];
     locationList = json['locationList'];
+    titleLocationList = json['titleLocationList'];
   }
 
   Map<String, dynamic> toJson() {
@@ -313,6 +317,7 @@ class Result {
     data['quantity'] = quantity;
     data['isItemAdded'] = isItemAdded;
     data['locationList'] = locationList;
+    data['titleLocationList'] = titleLocationList;
     return data;
   }
 }

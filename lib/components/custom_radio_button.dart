@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/app_colors.dart';
 import 'custom_text_styles.dart';
@@ -34,7 +35,8 @@ class RadioItem extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 8.sp),
             child: Text(item.buttonText,
                 style: item.isSelected
-                    ? CustomTextStyle.buttonText
+                    ? GoogleFonts.roboto(
+                    textStyle: TextStyle(fontSize: 12.sp, color: AppColors.whiteColor))
                     : CustomTextStyle.labelFontText),
           ),
         ],

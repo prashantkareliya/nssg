@@ -113,7 +113,8 @@ class _EditItemState extends State<EditItem> {
                             child: SelectLocation(
                                 productsList.quantity,
                                 productsList.itemName,
-                                productsList.locationList));
+                                productsList.locationList,
+                            productsList.titleLocationList));
                       },
                     ).then((value) {
 
@@ -218,14 +219,10 @@ class _EditItemState extends State<EditItem> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        productsList.quantity =
-                            (productsList.quantity ?? 0) + 1;
-                        productsList.amountPrice =
-                            ((productsList.quantity ?? 0) *
-                                    productsList.sellingPrice.formatDouble())
-                                .formatAmount();
-                        itemQuantityController.text =
-                            productsList.quantity.toString();
+                        productsList.quantity = (productsList.quantity ?? 0) + 1;
+                        productsList.amountPrice = ((productsList.quantity ?? 0) *
+                                    productsList.sellingPrice.formatDouble()).formatAmount();
+                        itemQuantityController.text = productsList.quantity.toString();
                       });
                     },
                     child: Container(

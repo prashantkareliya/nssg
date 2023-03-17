@@ -157,6 +157,7 @@ class LabelString {
   static const String lblThankYou = "Thank you";
   static const String lblDeposit = "Deposit";
   static const String lblNoDeposit = "No Deposit";
+  static const String lblSendEmail = "Send Email";
 }
 
 //Button Strings
@@ -207,6 +208,9 @@ class ImageString {
   static const String icDeleteProd = "assets/images/ic_delete.svg";
   static const String icEditProd = "assets/images/ic_edit.svg";
   static const String icDiscount = "assets/images/ic_discount.svg";
+  static const String icEmail = "assets/images/email.svg";
+  static const String icEngineer = "assets/images/engineer.svg";
+  static const String icInstallation = "assets/images/installation.png";
 }
 
 class PreferenceString {

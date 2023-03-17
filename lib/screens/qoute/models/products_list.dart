@@ -11,7 +11,9 @@ class ProductsList {
   int? quantity;
   bool? itemAdd;
   String? selectLocation;
+  String? titleLocation;
   List<String>? locationList;
+  List<String>? titleLocationList;
   String? productImage;
 
 
@@ -29,7 +31,9 @@ class ProductsList {
     int? quantity,
     bool? itemAdd,
     String? selectLocation,
+    String? titleLocation,
     List<String>? locationList,
+    List<String>? titleLocationList,
     String? productImage
 
   }) {
@@ -46,7 +50,9 @@ class ProductsList {
         quantity: quantity ?? this.quantity,
         itemAdd: itemAdd ?? this.itemAdd,
         selectLocation: selectLocation ?? this.selectLocation,
+        titleLocation: titleLocation ?? this.titleLocation,
         locationList: locationList ?? this.locationList,
+        titleLocationList: titleLocationList ?? this.titleLocationList,
         productImage: productImage ?? this.productImage
     );
   }
@@ -64,7 +70,10 @@ class ProductsList {
         this.quantity,
         this.itemAdd,
         this.selectLocation,
-        this.locationList = const [], this.productImage});
+        this.titleLocation,
+        this.locationList = const [],
+        this.titleLocationList = const [],
+        this.productImage});
 
   ProductsList.fromJson(Map<String, dynamic> json) {
     itemId = json["itemId"];
@@ -79,7 +88,9 @@ class ProductsList {
     quantity = json['quantity'];
     itemAdd = json['itemAdd'];
     selectLocation = json['selectLocation'];
+    titleLocation = json['titleLocation'];
     locationList = json['locationList'];
+    titleLocationList = json['titleLocationList'];
     productImage = json['productImage'];
   }
 
@@ -97,7 +108,9 @@ class ProductsList {
     data['quantity'] = quantity;
     data['itemAdd'] = itemAdd;
     data['selectLocation'] = selectLocation;
+    data['titleLocation'] = titleLocation;
     data['locationList'] = locationList;
+    data['locationList'] = titleLocationList;
     data['productImage'] = productImage;
     return data;
   }

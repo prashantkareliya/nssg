@@ -476,7 +476,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
             if (siteAddressList.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(top: 10.sp, left: 3.sp, right: 3.sp),
-                child: DropdownButton<String>(
+                child: DropdownButton<Map>(
                     itemHeight: 60.0,
                     style: CustomTextStyle.labelBoldFontText,
                     elevation: 0,
@@ -491,8 +491,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         style: CustomTextStyle.labelFontHintText),
 
                     items: siteAddressList.map((item) {
-                      return DropdownMenuItem(
-                          value: item["id"].toString(), //"${item['address']+","} ${item["city"] + ","} ${item["country"]+","} ${item["postcode"] + ","} ",
+                      return DropdownMenuItem<Map>(
+                          value: item, //"${item['address']+","} ${item["city"] + ","} ${item["country"]+","} ${item["postcode"] + ","} ",
                           child: Text("${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
                               style: CustomTextStyle.labelFontText));
                     }).toList(),
@@ -556,9 +556,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               alignment: Alignment.center,
                               children: [
                                 Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
+                                      SizedBox(height: 1.h),
                                       SvgExtension(
                                           iconColor: premisesType[index].isSelected
                                               ? AppColors.primaryColor
@@ -568,7 +569,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                       Text(premisesType[index].buttonText,
                                           style: premisesType[index].isSelected
                                               ? CustomTextStyle.commonTextBlue
-                                              : CustomTextStyle.commonText)
+                                              : CustomTextStyle.commonText),
+                                      SizedBox(height: 1.h),
                                     ]),
                                 Visibility(
                                   visible:
@@ -599,12 +601,12 @@ class _AddQuotePageState extends State<AddQuotePage> {
             SizedBox(height: 2.0.h),
 
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.sp),
+              padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 3.sp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: query.width * 0.4,
+                    width: 42.w,
                     height: query.height * 0.06,
                     child: CustomButton(
                       //cancel button
@@ -613,7 +615,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         buttonColor: AppColors.redColor),
                   ),
                   SizedBox(
-                    width: query.width * 0.4,
+                    width: 42.w,
                     height: query.height * 0.06,
                     child: CustomButton(
                       //next button
@@ -673,15 +675,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       for (var element in systemType) {
                         element.isSelected = false;
                       }
-
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
-
                       systemType[index].isSelected = true;
                       setState(() {});
                       //  Provider.of<WidgetChange>(context, listen: false).isSetSystem;
-
-                      systemTypeSelect =
-                      stepTwoData["system_type"][index]["label"];
+                      systemTypeSelect = stepTwoData["system_type"][index]["label"];
 
                       print(systemTypeSelect);
                       if (systemTypeSelect.contains("CCTV") ||
@@ -714,7 +712,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 telephoneNumber,
                                 stepTwoData['quotes_terms'],
                                 contactEmail,
-                                dropdownvalue));
+                                (dropdownvalue ?? {}) as Map));
                       } else {
                         pageController.nextPage(
                             duration: const Duration(milliseconds: 500),
@@ -748,6 +746,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     iconColor: systemType[index].isSelected
                                         ? AppColors.primaryColor
                                         : AppColors.blackColor),
+                                SizedBox(height: 1.h),
                                 SizedBox(
                                   width: query.width * 0.3,
                                   child: Text(
@@ -884,7 +883,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   telephoneNumber,
                                   stepThreeData['quotes_terms'],
                                   contactEmail,
-                                  dropdownvalue));
+                                  (dropdownvalue ?? {}) as Map));
                         }
                       },
                       child: ValueListenableBuilder(
@@ -907,10 +906,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               alignment: Alignment.center,
                               children: [
                                 Column(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       //Condition for skip grade and signalling type
                                       SizedBox(height: 1.h),
@@ -1030,7 +1027,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               telephoneNumber,
                               stepThreeData['quotes_terms'],
                               contactEmail,
-                              dropdownvalue));
+                              (dropdownvalue ?? {}) as Map));
                     }
                   },
                   child: ValueListenableBuilder(
@@ -1056,7 +1053,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const Spacer(),
+                                  SizedBox(height: 1.h),
                                   SvgExtension(
                                       itemName: stepThreeData["signalling_type"]
                                       [index]["label"],
@@ -1075,7 +1072,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                             ? CustomTextStyle.commonTextBlue
                                             : CustomTextStyle.commonText),
                                   ),
-                                  const Spacer(),
+                                  SizedBox(height: 1.h),
                                 ]),
                             Visibility(
                               visible:

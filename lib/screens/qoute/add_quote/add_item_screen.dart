@@ -62,7 +62,7 @@ class AddItemDetail extends StatefulWidget {
 
   String? contactEmail;
 
-  String? siteAddress;
+  var siteAddress;
 
   AddItemDetail(
       this.eAmount,
@@ -119,7 +119,7 @@ class AddItemDetail extends StatefulWidget {
       telephoneNumber,
       termsList,
       contactEmail,
-      siteAddress);
+      (siteAddress ?? {}) as Map);
 }
 
 class _AddItemDetailState extends State<AddItemDetail> {
@@ -168,7 +168,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
   String? contactEmail;
 
-  String? siteAddress;
+  var siteAddress;
   _AddItemDetailState(
       this.eAmount,
       this.systemTypeSelect,
@@ -552,29 +552,23 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                 alignment: Alignment.center,
                                 children: [
                                   Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         SizedBox(height: 1.h),
                                         SvgExtension(
-                                            iconColor:
-                                                categoryType[index].isSelected
+                                            iconColor: categoryType[index].isSelected
                                                     ? AppColors.primaryColor
                                                     : AppColors.blackColor,
-                                            itemName:
-                                                categoryType[index].buttonText),
+                                            itemName: categoryType[index].buttonText),
                                         SizedBox(height: 1.h),
                                         SizedBox(
                                           width: query.width * 0.3,
                                           child: Text(
                                               categoryType[index].buttonText,
                                               textAlign: TextAlign.center,
-                                              style: categoryType[index]
-                                                      .isSelected
-                                                  ? CustomTextStyle
-                                                      .commonTextBlue
+                                              style: categoryType[index].isSelected
+                                                  ? CustomTextStyle.commonTextBlue
                                                   : CustomTextStyle.commonText),
                                         ),
                                         SizedBox(height: 1.h),
@@ -695,14 +689,17 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     color: AppColors.borderColor, width: 1),
                                 color: AppColors.whiteColor),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: filterList![index].imagename == "" ?
-                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 14.h) :
-                                  Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename}",
-                                      height: 12.h),
+                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h) :
+                                  ClipRRect(borderRadius: BorderRadius.circular(10.0),
+                                      child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename}",
+                                      height: 12.h))
+
                                 ),
                                 SizedBox(width: 5.w),
                                 Expanded(
@@ -830,6 +827,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   quantity: filterList![index] .quantity,
                                                   description: filterList![index] .description,
                                                   selectLocation: (filterList![index].locationList ?? []).join('###'),
+                                                  titleLocation: (filterList![index].titleLocationList ?? []).join("###"),
                                                   itemAdd: filterList![index].isItemAdded,
                                                 productImage: filterList![index].imagename
                                               );
@@ -886,14 +884,16 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   child: SelectLocation(
                                                       filterList![index].quantity,
                                                       filterList![index].productname,
-                                                      filterList![index].locationList));
+                                                      filterList![index].locationList,
+                                                      filterList![index].titleLocationList,
+                                                  ));
                                             },
                                           ).then((value) {
                                             if (value != null) {
                                               if (value is List) {
                                                 Result r = filterList![index];
-                                                r.locationList =
-                                                value as List<String>;
+                                                r.locationList = value as List<String>;
+                                                r.titleLocationList = value;
                                                 filterList![index] = r;
                                               }
                                             }
@@ -901,7 +901,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.only(
-                                              top: 10.sp, bottom: 16.sp),
+                                              top: 10.sp, bottom: 10.sp),
                                           child: Text(LabelString.lblSelectLocation,
                                               style:
                                               CustomTextStyle.commonTextBlue),

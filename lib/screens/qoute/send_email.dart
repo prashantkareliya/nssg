@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nssg/utils/extention_text.dart';
+import 'package:nssg/utils/helpers.dart';
 import 'package:nssg/utils/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -36,6 +38,7 @@ class _SendEmailState extends State<SendEmail> {
 
   bool isLoading = false;
   _SendEmailState(this.contactList, this.quoteId, this.contactEmail);
+  final emailFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -48,61 +51,74 @@ class _SendEmailState extends State<SendEmail> {
     var query = MediaQuery.of(context).size;
     return SizedBox(
         width: query.width / 1.1,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 1.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 12.sp),
-                  child: Text(LabelString.lblQuoteEmail,
-                      style: CustomTextStyle.labelBoldFontText),
-                ),
-                IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.close_rounded, color: AppColors.transparent),
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.sp),
-              child: CustomTextField(
-                  keyboardType: TextInputType.emailAddress,
-                  readOnly: false,
-                  controller: emailController,
-                  obscureText: false,
-                  hint: LabelString.lblEmailAddress,
-                  titleText: LabelString.lblEmailAddress,
-                  maxLines: 2,
-                  minLines: 1,
-                  textInputAction: TextInputAction.done,
-                  onEditingComplete: () {},
-                  isRequired: false),
-            ),
+        child: Form(
+          key: emailFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 1.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 12.sp),
+                    child: Text(LabelString.lblQuoteEmail,
+                        style: CustomTextStyle.labelBoldFontText),
+                  ),
+                  IconButton(
+                    onPressed: null,
+                    icon: Icon(Icons.close_rounded, color: AppColors.transparent),
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                  )
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                child: CustomTextField(
+                    keyboardType: TextInputType.emailAddress,
+                    readOnly: false,
+                    controller: emailController,
+                    obscureText: false,
+                    hint: LabelString.lblEmailAddress,
+                    titleText: LabelString.lblEmailAddress,
+                    maxLines: 2,
+                    minLines: 1,
+                    textInputAction: TextInputAction.done,
+                    onEditingComplete: () {},
+                    isRequired: true),
+              ),
 
-            SizedBox(height: 1.h),
-            isLoading ? Lottie.asset('assets/lottie/sending.json', height: 12.h, animate: true) : SizedBox(
-                width: query.width * 0.4,
-                height: query.height * 0.06,
-                child: CustomButton(
-                    title: ButtonString.btnSubmit,
-                    onClick: sendEmail)),
-            SizedBox(height: 3.h)
-          ],
-        ));
+              SizedBox(height: 1.h),
+              isLoading ? Lottie.asset('assets/lottie/sending.json', height: 12.h, animate: true) : SizedBox(
+                  width: query.width * 0.4,
+                  height: query.height * 0.06,
+                  child: CustomButton(
+                      title: ButtonString.btnSubmit,
+                      onClick: (){
+                        if(emailFormKey.currentState!.validate()){
+                          if(emailController.text.isValidEmail){
+                            sendEmail();
+                          }else{
+                            Helpers.showSnackBar(context,
+                                ErrorString.emailNotValid,
+                                isError: true);
+                          }
+                        }
+                      })),
+              SizedBox(height: 3.h)
+            ],
+          ),
+        )
+
+    );
   }
 
   sendEmail() async {
-      if(contactList.isEmpty){
-        List<String> emails = emailController.text.split(", ");
-        for (var e in emails) {
-          contactList.add(e.trim());
-        }
-      }
+    if(contactList.isEmpty){
+      contactList = emailController.text.split(", ");
+    }
+
     FocusScope.of(context).unfocus();
     setState(() { isLoading = true; });
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -110,7 +126,8 @@ class _SendEmailState extends State<SendEmail> {
       'operation': "mail_send_with_attch",
       'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'id': quoteId.toString(),
-      'toEmail': contactList.toString().replaceAll("[", '["').replaceAll("]", '"]').replaceAll(",", '", "').replaceAll(" ", "")
+      'toEmail': /*contactList*/
+      contactList.toString().replaceAll("[", '["').replaceAll("]", '"]').replaceAll(",", '", "').replaceAll(" ", "")
     };
 
     final response = await HttpActions().getMethod(
@@ -142,7 +159,7 @@ class _SendEmailState extends State<SendEmail> {
                       children: [
                         Lottie.asset('assets/lottie/done.json', height: 15.h, reverse: false, repeat: false),
                         SizedBox(height: 1.h),
-                        Text("${Message.quoteEmailSentMessage}:\n${contactList.join(",\n")}",
+                        Text("${Message.quoteEmailSentMessage}:\n\n${contactList.join(",\n")}",
                             textAlign: TextAlign.center,
                             style: CustomTextStyle.labelMediumBoldFontText),
                         SizedBox(height: 2.h),

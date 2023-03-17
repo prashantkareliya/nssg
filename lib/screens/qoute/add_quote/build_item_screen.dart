@@ -72,7 +72,7 @@ class BuildItemScreen extends StatefulWidget {
 
   String? contactEmail;
 
-  String? siteAddress;
+  var siteAddress;
 
   BuildItemScreen(
       this.eAmount,
@@ -128,8 +128,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   @override
   void initState() {
     super.initState();
-    print(widget.siteAddress);
-
+    print(widget.siteAddress.toString());
+//widget.siteAddress.toString() == "{}"
    /* var profit = (double.parse("0") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
     if(productList == null){
@@ -231,7 +231,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       growable: false,
                       templateOptionList.length,
                           (index) {
-                        templateOption.add(RadioModel(false, templateOptionList[index]));
+                        templateOption.add(
+                            RadioModel(templateOptionList[index] == "Hide Product Price"
+                                ? true : false, templateOptionList[index]));
                         Provider.of<WidgetChange>(context).isSelectTemplateOption;
 
                         return SizedBox(
@@ -240,6 +242,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             splashColor: AppColors.transparent,
                             highlightColor: AppColors.transparent,
                             onTap: () {
+                              setState(() {
+                                templateOption[0].isSelected = false;
+                              });
                               for (var element in templateOption) {
                                 element.isSelected = false;
                               }
@@ -304,7 +309,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
       ///Open add item screen
       ///Make new class and using pageView for add item detail
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.small(
           onPressed: () {
             //callNextScreen(context, AddItemDetail(widget.systemTypeSelect));
            Navigator.push(context,
@@ -338,7 +343,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       print(value);
                     });
           },
-          child: const Icon(Icons.add)),
+          child: Lottie.asset('assets/lottie/adding.json')),
     );
   }
 
@@ -555,12 +560,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(flex: 1,
-                        child: products.productImage == null || products.productImage == "" ||
-                            products.itemName!.contains("Installation") ?
-                        Image.asset(ImageString.imgDemo, height: 8.h)
-                            : Image.network(
-                            "${ImageBaseUrl.productImageBaseUrl}${products.productImage}",
-                            height: 8.h)
+                        child: products.productImage == null || products.productImage == "" ?
+                        SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) : products.itemName!.contains("Installation (1st & 2nd fix)") ?
+                        Lottie.asset('assets/lottie/gear.json', height: 9.h,)
+                        : ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network("${ImageBaseUrl.productImageBaseUrl}${products.productImage}",height: 8.h),
+                        )
                     ),
                     Expanded(flex: 3,
                       child: Column(
@@ -789,8 +795,20 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   Future<void> callCreateQuoteAPI(double subTotal, double grandTotal, double disc,
       String selectTemplateOption, double vatTotal, double profit, String depositAmount,
       List<ProductsList> productList, String depositValue, String termsSelect ) async {
+    String? street, city, country, code;
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
+    if(widget.siteAddress.toString() != "{}"){
+      street = widget.siteAddress["address"].toString().replaceAll("\n", ", ");
+      city = widget.siteAddress["city"];
+      country = widget.siteAddress["country"];
+      code = widget.siteAddress["postcode"];
+    }else {
+      street = widget.shipStreet == "" ? " " : widget.shipStreet;
+      city = widget.shipCity == "" ? " " : widget.shipCity;
+      country = widget.shipCountry == "" ? " " : widget.shipCountry;
+      code = widget.shipCode == "" ? " " : widget.shipCode;
+    }
     //for create data in json format
     CreateQuoteRequest createQuoteRequest = CreateQuoteRequest(
         subject: "${widget.contactSelect}-${widget.systemTypeSelect}",
@@ -806,21 +824,27 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         assignedUserId : preferences.getString(PreferenceString.userId).toString(),
         currencyId : "21x1",
         conversionRate : "0.00",
+        //widget.siteAddress.toString() == "{}"
+
         billStreet : widget.billStreet == "" ? " " : widget.billStreet, //  todo add installation as ship address if site address selected
-        shipStreet : widget.shipStreet == "" ? " " : widget.shipStreet,
+        //shipStreet : widget.shipStreet == "" ? " " : widget.shipStreet,
+        shipStreet : street,
         billCity : widget.billCity == "" ? " " : widget.billCity,
-        shipCity : widget.shipCity == "" ? " " : widget.shipCity,
+        //shipCity : widget.shipCity == "" ? " " : widget.shipCity,
+        shipCity: city,
         billCountry : widget.billCountry == "" ? " " : widget.billCountry,
-        shipCountry : widget.shipCountry == "" ? " " : widget.shipCountry,
+        //shipCountry : widget.shipCountry == "" ? " " : widget.shipCountry,
+        shipCountry: country,
         billCode : widget.billCode == "" ? " " : widget.billCode,
-        shipCode : widget.shipCode == "" ? " " : widget.shipCode,
+        //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
+        shipCode: code,
         description : Message.descriptionForQuote,
         termsConditions : termsSelect  == "50% Deposit Balance on Account(Agreed terms)"
             ? Message.termsCondition1
             : Message.termsCondition2,
         preTaxTotal : vatTotal.toString(),
         hdnSHPercent : "0",
-        siteAddressId : widget.siteAddress == "" ? "" : widget.siteAddress,
+        siteAddressId : widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
         quotesTerms : widget.termsItemSelection,
         hdnprofitTotal : profit.toString(),
         markup : "0.00",
@@ -859,7 +883,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteReqToCompleteWork : widget.timeType,
         lineItems :  productList.map((e) => LineItems(
           productid: e.productId,
-          sequenceNo: e.toString(), //todo set sequence number as per item index
+          sequenceNo: productList.indexOf(e).toString(), //todo set sequence number as per item index
           quantity: e.quantity.toString(),
           listprice: e.amountPrice,
           discountPercent: "00.00",
@@ -871,7 +895,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           tax2: "",
           tax3: "",
           productLocation: e.selectLocation,
-          productLocationTitle: "", //todo add title with join ###product_title
+          productLocationTitle: e.itemName, //todo add title with join ###product_title
           costprice: e.costPrice,
           extQty: "0",
           requiredDocument: "Keyholder form###Maintenance contract###Police application###Direct Debit",

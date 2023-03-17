@@ -270,14 +270,14 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                               SizedBox(height: 1.0.h),
                                               Text(
                                                   searchKey.isNotEmpty
-                                                      ? searchItemList![index].subject.toString()
-                                                      : quoteItems![index].subject.toString(),
+                                                      ? searchItemList![index].contactName.toString()
+                                                      : quoteItems![index].contactName.toString(),
                                                   style: CustomTextStyle.labelMediumBoldFontText),
                                               SizedBox(height: 2.0.h),
                                               Text(
                                                   searchKey.isNotEmpty
-                                                      ? searchItemList![index].quotesCompany.toString()
-                                                      : quoteItems![index].quotesCompany.toString(),
+                                                      ? searchItemList![index].systemType.toString()
+                                                      : quoteItems![index].systemType.toString(),
                                                   style: CustomTextStyle.labelText),
                                               SizedBox(height: 0.5.h),
                                               Text.rich(
@@ -398,27 +398,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
         isBack: true,
         elevation: 1,
         backgroundColor: AppColors.whiteColor,
-        searchWidget: IconButton(
-            highlightColor: AppColors.transparent,
-            splashColor: AppColors.transparent,
-          onPressed: () {
-
-            showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) {
-                  return Dialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    elevation: 0,
-                    insetAnimationCurve: Curves.decelerate,
-                    insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                    child: SendEmail(contactList, widget.id, dataQuote["quotes_email"], ""),
-                  );
-                });
-
-          },
-          icon: Icon(Icons.email, color: AppColors.blackColor)),
+        searchWidget: Container(),
 
       ),
       body: Stack(
@@ -435,6 +415,68 @@ class _QuoteDetailState extends State<QuoteDetail> {
                        padding: EdgeInsets.symmetric(horizontal: 8.sp),
                        child: Column(
                          children: [
+                           SizedBox(height: 2.h),
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.end,
+                             children: [
+                               SizedBox(
+                                 height: 5.5.h,
+                                 child: ElevatedButton(
+                                     onPressed: (){
+                                       showDialog(
+                                           context: context,
+                                           barrierDismissible: false,
+                                           builder: (context) {
+                                             return Dialog(
+                                               shape: RoundedRectangleBorder(
+                                                   borderRadius: BorderRadius.circular(10)),
+                                               elevation: 0,
+                                               insetAnimationCurve: Curves.decelerate,
+                                               insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                               child: SendEmail(contactList, widget.id, dataQuote["quotes_email"], ""),
+                                             );
+                                           });
+                                     },
+                                     clipBehavior: Clip.hardEdge,
+                                     style: ElevatedButton.styleFrom(
+                                       backgroundColor: AppColors.primaryColor,
+                                       splashFactory: NoSplash.splashFactory,
+                                       shape: const RoundedRectangleBorder(
+                                           borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                     ),
+                                     child: Row(
+                                       mainAxisSize: MainAxisSize.min,
+                                       children: [
+                                         SvgPicture.asset(ImageString.icEmail,
+                                             color: AppColors.whiteColor,
+                                             fit: BoxFit.fill, height: 2.5.h),
+                                         SizedBox(width: 2.w),
+                                         Text(LabelString.lblSendEmail,
+                                             style: CustomTextStyle.buttonText),
+                                       ],
+                                     )
+
+                                 ),
+                               ),
+                               SizedBox(width: 4.w),
+                               Card(elevation: 5,
+                                 shape: const RoundedRectangleBorder(
+                                   borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                                 child: Container(
+                                   height: 5.h,
+                                   width: 10.w,
+                                   decoration: BoxDecoration(
+                                     borderRadius: BorderRadius.circular(15.0)
+                                   ),
+                                   child: Padding(
+                                     padding: EdgeInsets.all(6.sp),
+                                     child: SvgPicture.asset(ImageString.icEditProd,
+                                       color: AppColors.primaryColor),
+                                   )
+                                 ),
+                               )
+                             ],
+                           ),
                            SizedBox(height: 2.h),
                            ExpansionTile(
                              initiallyExpanded: false,
