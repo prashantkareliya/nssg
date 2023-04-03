@@ -11,7 +11,8 @@ class ToggleSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlutterSwitch(value: valueBool,
+    return FlutterSwitch(
+        value: valueBool,
         height: 3.0.h,
         width: 14.w,
         padding: 3.0,

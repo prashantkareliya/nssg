@@ -8,6 +8,7 @@ import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/contact/contact_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -24,6 +25,7 @@ import '../../../httpl_actions/handle_api_error.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/preferences.dart';
+import '../../../utils/widgetChange.dart';
 import '../../../utils/widgets.dart';
 import '../../contact/contact_datasource.dart';
 import '../../contact/contact_repository.dart';
@@ -180,6 +182,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   List<RadioModel> signallingType = <RadioModel>[]; //step 4
   List<RadioModel> quotePayment = <RadioModel>[]; //step 5
   List<RadioModel> termsList = <RadioModel>[]; //step 5
+  String page = "0";
 
   @override
   Widget build(BuildContext context) {
@@ -187,15 +190,31 @@ class _AddQuotePageState extends State<AddQuotePage> {
     getFields = getQuoteFields("Quotes");
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: BaseAppBar(
-        appBar: AppBar(),
-        title: LabelString.lblAddNewQuote,
-        isBack: widget.isBack,
-        elevation: 1,
+      appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
-        searchWidget: Container(),
-        titleTextStyle: CustomTextStyle.labelBoldFontText,
+        elevation: 1,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leadingWidth: 12.w,
+        leading: InkWell(
+          highlightColor: AppColors.transparent,
+          splashColor: AppColors.transparent,
+          onTap: () {
+            if(page == "0"){
+              Navigator.pop(context);
+            } else {
+              pageController.previousPage(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.decelerate);
+            }
+          },
+          child: Icon(Icons.arrow_back_ios_outlined,
+              color: AppColors.blackColor, size: 14.sp),
+        ),
+        title: Text(widget.lastName == "edit" ? LabelString.lblEditQuote : LabelString.lblAddNewQuote,
+            style: CustomTextStyle.labelBoldFontText),
       ),
+
       body: BlocListener<GetContactBloc, GetContactState>(
         bloc: contactBloc,
         listener: (context, state) {
@@ -313,6 +332,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             controller: pageController,
                             onPageChanged: (number) {
                               streamController.add(number);
+                              Provider.of<WidgetChange>(context, listen: false).pageNumber(number.toString());
+                              page = Provider.of<WidgetChange>(context, listen: false).pageNo;
                             },
                             children: [
                               //Premises type and contact selection design
@@ -363,6 +384,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               fieldViewBuilder: (context, textEditingController, focusNode,
                   VoidCallback onFieldSubmitted) {
                 FocusNode focus = focusNode;
+                textEditingController.text = contactSelect;
                 return TextField(
                   autofocus: widget.isBack ? false : true,
                   style: TextStyle(color: AppColors.blackColor),
@@ -420,6 +442,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 }
               },
               onSelected: (selection) async {
+
                 FocusScope.of(context).unfocus();
                 getSiteAddressList();
                 for (int i = 0; i < contactData.length; i++) {
@@ -476,32 +499,50 @@ class _AddQuotePageState extends State<AddQuotePage> {
             if (siteAddressList.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(top: 10.sp, left: 3.sp, right: 3.sp),
-                child: DropdownButton<Map>(
-                    itemHeight: 60.0,
-                    style: CustomTextStyle.labelBoldFontText,
-                    elevation: 0,
-                    icon: Icon(Icons.arrow_drop_down_rounded, size: 24.sp),
-                    iconEnabledColor: AppColors.blackColor,
-                    iconDisabledColor: AppColors.hintFontColor,
-                    underline:
-                    Container(height: 1.0, color: AppColors.primaryColor),
-                    isDense: false,
-                    isExpanded: true,
-                    hint: Text(LabelString.lblSelectSiteAddress,
-                        style: CustomTextStyle.labelFontHintText),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButton<Map>(
+                          itemHeight: 60.0,
+                          style: CustomTextStyle.labelBoldFontText,
+                          elevation: 0,
+                          icon: Icon(Icons.arrow_drop_down_rounded, size: 24.sp),
+                          iconEnabledColor: AppColors.blackColor,
+                          iconDisabledColor: AppColors.hintFontColor,
+                          underline:
+                          Container(height: 1.0, color: AppColors.primaryColor),
+                          isDense: false,
+                          isExpanded: true,
+                          hint: Text(LabelString.lblSelectSiteAddress,
+                              style: CustomTextStyle.labelFontHintText),
 
-                    items: siteAddressList.map((item) {
-                      return DropdownMenuItem<Map>(
-                          value: item, //"${item['address']+","} ${item["city"] + ","} ${item["country"]+","} ${item["postcode"] + ","} ",
-                          child: Text("${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
-                              style: CustomTextStyle.labelFontText));
-                    }).toList(),
-                    onChanged: (newVal) {
-                      setState(() {
-                        dropdownvalue = newVal;
-                      });
-                    },
-                    value: dropdownvalue),
+                          items: siteAddressList.map((item) {
+                            return DropdownMenuItem<Map>(
+                                value: item, //"${item['address']+","} ${item["city"] + ","} ${item["country"]+","} ${item["postcode"] + ","} ",
+                                child: Text("${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
+                                    style: CustomTextStyle.labelFontText));
+                          }).toList(),
+                          onChanged: (newVal) {
+                            setState(() {
+                              dropdownvalue = newVal;
+                            });
+                          },
+                          value: dropdownvalue),
+                    ),
+                    InkWell(
+                        highlightColor: AppColors.transparent,
+                        splashColor: AppColors.transparent,
+                      onTap: (){
+                        setState(() {
+                          dropdownvalue = null;
+                        });
+                      },
+                        child: Padding(
+                          padding: EdgeInsets.all(4.sp),
+                          child: Icon(Icons.close, color: AppColors.blackColor),
+                        ))
+                  ],
+                ),
               ),
             SizedBox(height: 2.0.h),
             Text(LabelString.lblPremisesType,
@@ -664,8 +705,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               children: List.generate(
                 stepTwoData["system_type"].length - 9,
                     (index) {
-                  String systemTypeLabel =
-                  stepTwoData["system_type"][index]["label"].toString();
+                  String systemTypeLabel = stepTwoData["system_type"][index]["label"].toString();
                   systemType.add(RadioModel(
                       false, stepTwoData["system_type"][index]["label"]));
                   return InkWell(
@@ -918,13 +958,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                               .getRange(2, 7)
                                               .toList()[index]["label"]
                                               : dataGrade[index]["label"],
-                                          iconColor:
-                                          gradeAndFire[index].isSelected
+                                          iconColor: gradeAndFire[index].isSelected
                                               ? AppColors.primaryColor
                                               : AppColors.blackColor),
                                       SizedBox(height: 1.h),
-                                      Text(
-                                          systemTypeSelect ==
+                                      Text(systemTypeSelect ==
                                               "Fire System: BS 5839-1: 2017 + SP203-1"
                                               ? dataGrade
                                               .getRange(2, 7)
@@ -981,10 +1019,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
             runSpacing: 15.sp,
             children: List.generate(
               // stepFourData["signalling_type"].length
-              12,
-                  (index) {
-
-                    signallingType.add(RadioModel(false, stepThreeData["signalling_type"][index]["label"]));
+              12, (index) {
+                    signallingType.add(
+                        RadioModel(false, stepThreeData["signalling_type"][index]["label"]));
                 return InkWell(
                   splashColor: AppColors.transparent,
                   highlightColor: AppColors.transparent,
@@ -992,7 +1029,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     for (var element in signallingType) {
                       element.isSelected = false;
                     }
-
                     //Provider.of<WidgetChange>(context, listen: false).isSelectSignallingType();
                     signallingType[index].isSelected = true;
                     notifier.value = !notifier.value;
@@ -1049,31 +1085,32 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(height: 1.h),
-                                  SvgExtension(
-                                      itemName: stepThreeData["signalling_type"]
-                                      [index]["label"],
-                                      iconColor: signallingType[index].isSelected
-                                          ? AppColors.primaryColor
-                                          : AppColors.blackColor),
-                                  SizedBox(height: 1.h),
-                                  SizedBox(
-                                    width: query.width * 0.3,
-                                    child: Text(
-                                        stepThreeData["signalling_type"][index]
-                                        ["label"],
-                                        textAlign: TextAlign.center,
-                                        maxLines: 3,
-                                        style: signallingType[index].isSelected
-                                            ? CustomTextStyle.commonTextBlue
-                                            : CustomTextStyle.commonText),
-                                  ),
-                                  SizedBox(height: 1.h),
-                                ]),
+                            SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(height: 1.h),
+                                    SvgExtension(
+                                        itemName: stepThreeData["signalling_type"][index]["label"],
+                                        iconColor: signallingType[index].isSelected
+                                            ? AppColors.primaryColor
+                                            : AppColors.blackColor),
+                                    SizedBox(height: 1.h),
+                                    SizedBox(
+                                      width: query.width * 0.35,
+                                      child: Text(
+                                          stepThreeData["signalling_type"][index]
+                                          ["label"],
+                                          textAlign: TextAlign.center,
+                                          style: signallingType[index].isSelected
+                                              ? CustomTextStyle.commonTextBlue
+                                              : CustomTextStyle.commonText),
+                                    ),
+                                    SizedBox(height: 1.h),
+                                  ]),
+                            ),
                             Visibility(
                               visible:
                               signallingType[index].isSelected ? true : false,

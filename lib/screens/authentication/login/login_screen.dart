@@ -32,10 +32,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   //controller for email | password fields
-  TextEditingController userNameController =
-      TextEditingController(text: "dn@nssg.co.uk");
-  TextEditingController passwordController =
-      TextEditingController(text: "dave@12345");
+  TextEditingController userNameController = TextEditingController(text: "dn@nssg.co.uk");
+  TextEditingController passwordController = TextEditingController(text: "dave@12345");
 
   final loginFormKey = GlobalKey<FormState>();
 
@@ -251,10 +249,38 @@ class _LoginScreenState extends State<LoginScreen> {
   validateAndDoLogin() async {
     if (loginFormKey.currentState?.validate() == true) {
       if (userNameController.text.toString().isValidEmail) {
+
+        String accessKey = "";
+          switch (userNameController.text.trim()) {
+
+                case "iih.admin":
+                accessKey =  "CBfPHDoMNjtE99vx";
+                break;
+
+                case "dn@nssg.co.uk":
+                accessKey ="S8QzomH4Q4QYxaFb";
+                break;
+
+                case "vn@nssg.co.uk":
+                accessKey ="EsqKnIihnpQ8YKl2";
+                break;
+
+                case "ak@nssg.co.uk" :
+                accessKey= "l6ArnYzg21P92JrT";
+                break;
+
+                case "rj@nssg.co.uk":
+                accessKey= "uLhjPz1Rr3Ef3xoc";
+                break;
+
+                case "sanjay.iih":
+                accessKey ="NiWZP7MDRsh0qh";
+                break;
+          }
         Map<String, dynamic> queryParameters = {
           'username': userNameController.text.trim(),
           'password': passwordController.text.trim(),
-          'accesskey': 'S8QzomH4Q4QYxaFb',
+          'accesskey': accessKey,
         };
         loginBloc.add(LoginUserEvent(queryParameters));
       } else {

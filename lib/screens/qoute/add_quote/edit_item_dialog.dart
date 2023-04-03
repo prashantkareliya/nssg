@@ -49,17 +49,22 @@ class _EditItemState extends State<EditItem> {
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
 
-    final finalAmount = (double.parse(productsList.amountPrice!) -
-            (itemDiscountController.text == ""
-                ? 0.0
-                : double.parse(itemDiscountController.text)))
-        .formatAmount();
+    String finalAmount = ((double.parse(itemSellingPriceController.text) *
+        productsList.quantity!)- (itemDiscountController.text == "" ? 0.0
+        : double.parse(itemDiscountController.text))).formatAmount();
 
-    final finalProfit = (double.parse(productsList.profit!) -
-            (itemDiscountController.text == ""
-                ? 0.0
-                : double.parse(itemDiscountController.text)))
-        .formatAmount();
+    /*(double.parse(productsList.amountPrice!) -
+            (itemDiscountController.text == "" ? 0.0
+                : double.parse(itemDiscountController.text))).formatAmount();*/
+
+    String finalProfit = (((double.parse(itemSellingPriceController.text) * productsList.quantity!) -
+        (double.parse(itemCostPriceController.text) * productsList.quantity!))
+        - (itemDiscountController.text == "" ? 0.0
+            : double.parse(itemDiscountController.text))).formatAmount();
+
+    /*(double.parse(productsList.profit!) -
+            (itemDiscountController.text == "" ? 0.0
+                : double.parse(itemDiscountController.text))).formatAmount();*/
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10.sp, 0, 10.sp, 0.sp),
@@ -117,11 +122,11 @@ class _EditItemState extends State<EditItem> {
                             productsList.titleLocationList));
                       },
                     ).then((value) {
-
                       if (value != null) {
                         if (value is List) {
                           ProductsList p = productsList;
-                          p.locationList = value as List<String>;
+                          p.locationList = value[0] as List<String>?;
+                          p.titleLocationList = value[1] as List<String>?;
                           productsList = p;
                         }
                       }
@@ -144,7 +149,7 @@ class _EditItemState extends State<EditItem> {
                 textInputAction: TextInputAction.none,
                 isRequired: false),
             AbsorbPointer(
-              absorbing: true,
+              absorbing: false,
               child: CustomTextField(
                 keyboardType: TextInputType.number,
                 readOnly: false,
@@ -156,10 +161,13 @@ class _EditItemState extends State<EditItem> {
                 maxLines: 1,
                 minLines: 1,
                 textInputAction: TextInputAction.next,
+                onChange: (string) {
+                  setState(() {});
+                },
               ),
             ),
             AbsorbPointer(
-              absorbing: true,
+              absorbing: false,
               child: CustomTextField(
                 keyboardType: TextInputType.number,
                 readOnly: false,
@@ -169,6 +177,9 @@ class _EditItemState extends State<EditItem> {
                 titleText: LabelString.lblSellingPricePound,
                 isRequired: false,
                 textInputAction: TextInputAction.next,
+                onChange: (string) {
+                  setState(() {});
+                },
               ),
             ),
             Row(
@@ -191,14 +202,10 @@ class _EditItemState extends State<EditItem> {
                     onTap: () {
                       if (productsList.quantity! > 1) {
                         setState(() {
-                          productsList.quantity =
-                              (productsList.quantity ?? 0) - 1;
-                          productsList.amountPrice =
-                              ((productsList.quantity ?? 0) *
-                                      productsList.sellingPrice.formatDouble())
-                                  .formatAmount();
-                          itemQuantityController.text =
-                              productsList.quantity.toString();
+                          productsList.quantity = (productsList.quantity ?? 0) - 1;
+                          productsList.amountPrice = ((productsList.quantity ?? 0) *
+                                      productsList.sellingPrice.formatDouble()).formatAmount();
+                          itemQuantityController.text = productsList.quantity.toString();
                         });
                       }
                     },
@@ -246,7 +253,7 @@ class _EditItemState extends State<EditItem> {
               hint: LabelString.lblDiscountPound,
               titleText: LabelString.lblDiscountPound,
               isRequired: false,
-              onEditingComplete: () {
+              onChange: (string) {
                 setState(() {});
               },
               textInputAction: TextInputAction.next,
@@ -295,10 +302,13 @@ class _EditItemState extends State<EditItem> {
                                   description: itemDescriptionController.text,
                                   profit: finalProfit,
                                   amountPrice: finalAmount,
+                                  costPrice: itemCostPriceController.text,
+                                  sellingPrice: itemSellingPriceController.text,
+                                  quantity: int.parse(itemQuantityController.text),
                                   discountPrice: itemDiscountController.text,
-                                  selectLocation:
-                                      (productsList.locationList ?? [])
-                                          .join('###'))));
+                                  selectLocation: (productsList.locationList ?? []).join('###'),
+                                  titleLocation:(productsList.titleLocationList ?? []).join('###'),
+                              )));
                       Navigator.pop(context);
                     })),
             SizedBox(height: 1.h),
@@ -381,29 +391,23 @@ class _DiscountDialogState extends State<DiscountDialog> {
                     onClick: () {
                       final finalAmount =
                           (double.parse(productsList.amountPrice!) -
-                                  (discController.text == ""
-                                      ? 0.0
-                                      : double.parse(discController.text)))
-                              .formatAmount();
+                                  (discController.text == ""  ? 0.0
+                                      : double.parse(discController.text))).formatAmount();
 
                       final finalProfit = (double.parse(productsList.profit!) -
-                              (discController.text == ""
-                                  ? 0.0
-                                  : double.parse(discController.text)))
-                          .formatAmount();
+                              (discController.text == "" ? 0.0
+                                  : double.parse(discController.text))).formatAmount();
                       context.read<ProductListBloc>().add(
                           UpdateProductToListEvent(
                               productsList: productsList.copyWith(
-                                  itemName:
-                                      widget.productsList.itemName.toString(),
-                                  description: widget.productsList.description
-                                      .toString(),
+                                  itemName: widget.productsList.itemName.toString(),
+                                  description: widget.productsList.description.toString(),
                                   profit: finalProfit,
                                   amountPrice: finalAmount,
                                   discountPrice: discController.text,
-                                  selectLocation:
-                                      (productsList.locationList ?? [])
-                                          .join('###'))));
+                                  selectLocation: (productsList.locationList ?? []).join('###'),
+                                titleLocation:(productsList.titleLocationList ?? []).join('###'),
+                              )));
                       Navigator.pop(context, double.parse(discController.text));
                       //Navigator.pop(context);
                     })),

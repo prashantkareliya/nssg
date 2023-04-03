@@ -205,7 +205,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
     if(productList == null){
       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
           itemId:  "123456",
-          productId: "789",
+          productId: "14x789",
           itemName: 'Installation (1st & 2nd fix)',
           costPrice: '80.00',
           sellingPrice: "450",
@@ -214,7 +214,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
           amountPrice: "450",
           profit: profit,
           description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
-          productImage: ImageString.imgDemo
+          productImage: ImageString.imgDemo,
+
       )));
     }
   }
@@ -238,7 +239,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
     };
     productBloc.add(GetProductListEvent(queryParameters));
   }
-
+//3400+4256+7904.87
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -249,24 +250,26 @@ class _AddItemDetailState extends State<AddItemDetail> {
           elevation: 1,
           centerTitle: true,
           automaticallyImplyLeading: false,
+          leadingWidth: 12.w,
+          leading: InkWell(
+            highlightColor: AppColors.transparent,
+            splashColor: AppColors.transparent,
+            onTap: () {
+              if(page == "0" || page == "1"){
+                Navigator.pop(context);
+              }else{
+                pageController.previousPage(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.decelerate);
+              }
+            },
+            child: Icon(Icons.arrow_back_ios_outlined,
+                color: AppColors.blackColor, size: 14.sp),
+          ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InkWell(
-                highlightColor: AppColors.transparent,
-                splashColor: AppColors.transparent,
-                onTap: () {
-                  if(page == "0"){
-                    Navigator.pop(context);
-                  }else{
-                    pageController.previousPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.decelerate);
-                  }
-                },
-                child: Icon(Icons.arrow_back_ios_outlined,
-                    color: AppColors.blackColor, size: 14.sp),
-              ),
+              Container(),
               Text(LabelString.lblItemDetail, style: CustomTextStyle.labelBoldFontText),
               InkWell(
                 splashColor: AppColors.transparent,
@@ -310,8 +313,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
               : const BouncingScrollPhysics(),
           controller: pageController,
           onPageChanged: (number) {
-            Provider.of<WidgetChange>(context, listen: false)
-                .pageNumber(number.toString());
+            Provider.of<WidgetChange>(context, listen: false).pageNumber(number.toString());
             page = Provider.of<WidgetChange>(context, listen: false).pageNo;
           },
           children: [
@@ -463,7 +465,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
     );
   }
 
-  // Design system type view
+  // Design category view
   ///step 3
   FutureBuilder buildStepTwoItem(context, Size query) {
     Provider.of<WidgetChange>(context).isSelectCategoryItemDetail;
@@ -479,7 +481,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
             /*if(stepThreeData["product_prod_category"].length == 0){
               pageController.jumpToPage(2);
             }*/
-
             return SingleChildScrollView(
               child: Padding(
                 padding:
@@ -493,8 +494,24 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     SizedBox(height: 4.h),
                     stepThreeData["product_prod_category"].length == 0 ?
                     Center(
-                        child: Text(LabelString.lblNoData,
-                            style: CustomTextStyle.labelBoldFontText))
+                        child: Column(
+                          children: [
+                            Text(LabelString.lblNoData,
+                                style: CustomTextStyle.labelBoldFontText),
+                            SizedBox(height: 2.h),
+                            SizedBox(
+
+                              height: query.height * 0.06,
+                              child: CustomButton(title: "See Products",
+                                buttonColor: AppColors.primaryColor,
+                                onClick: (){
+                                pageController.nextPage(
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.decelerate);
+                              },),
+                            )
+                          ],
+                        ))
                         : Wrap(
                       spacing: 15.sp,
                       direction: Axis.horizontal,
@@ -503,11 +520,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                       children: List.generate(
                         stepThreeData["product_prod_category"].length,
                         (index) {
-                          categoryType.add(RadioModel(
-                              false,
-                              stepThreeData["product_prod_category"][index]
-                                  ["label"]));
 
+                          categoryType.add(RadioModel(false, stepThreeData["product_prod_category"][index]["label"]));
 
                           return InkWell(
                             onTap: () {
@@ -515,8 +529,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                 element.isSelected = false;
                               }
 
-                              Provider.of<WidgetChange>(context, listen: false)
-                                  .isCategoryItemDetail();
+                              Provider.of<WidgetChange>(context, listen: false).isCategoryItemDetail();
                               categoryType[index].isSelected = true;
 
                               filterList!.clear();
@@ -524,9 +537,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                 categorySelect = stepThreeData["product_prod_category"][index]["label"];
                               } else {
                                 categorySelect = "";
-                                categorySelect =
-                                    stepThreeData["product_prod_category"]
-                                        [index]["label"];
+                                categorySelect = stepThreeData["product_prod_category"][index]["label"];
                               }
 
                               if (categoryType.isNotEmpty) {
@@ -558,8 +569,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                         SizedBox(height: 1.h),
                                         SvgExtension(
                                             iconColor: categoryType[index].isSelected
-                                                    ? AppColors.primaryColor
-                                                    : AppColors.blackColor,
+                                                    ? AppColors.primaryColor : AppColors.blackColor,
                                             itemName: categoryType[index].buttonText),
                                         SizedBox(height: 1.h),
                                         SizedBox(
@@ -575,8 +585,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       ]),
                                   Visibility(
                                     visible: categoryType[index].isSelected
-                                        ? true
-                                        : false,
+                                        ? true : false,
                                     child: Positioned(
                                       right: 10,
                                       top: 5,
@@ -634,11 +643,19 @@ class _AddItemDetailState extends State<AddItemDetail> {
             productItems = state.productList;
             filterList!.clear();
             for (var element in productItems!) {
-              if (element.productManufacturer!.contains(manufactureSelect) &&
-                  widget.systemTypeSelect!.contains(systemTypeItemProductSelect) &&
-                  element.productProdCategory!.contains(categorySelect) != false) {
-                filterList!.add(element);
+              if(categorySelect.isEmpty){
+                if(element.productManufacturer!.contains(manufactureSelect) &&
+                    widget.systemTypeSelect!.contains(systemTypeItemProductSelect)){
+                  filterList!.add(element);
+                }
+              }else {
+                if (element.productManufacturer!.contains(manufactureSelect) &&
+                    widget.systemTypeSelect!.contains(systemTypeItemProductSelect) &&
+                    element.productProdCategory!.contains(categorySelect) != false) {
+                  filterList!.add(element);
+                }
               }
+
             }
           }
           if (state is ProductLoadedFail) {
@@ -661,12 +678,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   itemBuilder: (context, index) {
                     discountPriceController.add(TextEditingController());
 
-                    double amount = (double.parse(
-                        filterList![index].unitPrice.toString()) *
+                    double amount = (double.parse(filterList![index].unitPrice.toString()) *
                         double.parse(filterList![index].quantity.toString()) -
                         double.parse(discountPriceController[index].text == ""
                             ? "0"
                             : discountPriceController[index].text));
+
                     double profit = ((double.parse(filterList![index].unitPrice!) - double.parse(
                             filterList![index].costPrice.toString())) *
                         (filterList![index].quantity!) -
@@ -677,9 +694,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
                       listener: (context, state) {},
                       builder: (context, productState) {
                         final bool isItemAdded = productState.productList
-                            .firstWhereOrNull((element) => element.productId == filterList![index].id) !=
-                            null;
-                        print("@@@@@@@@@@@@@@@@@ ${filterList![index].imagename}");
+                            .firstWhereOrNull((element) =>
+                        element.productId == filterList![index].id) != null;
+                        print("@@@@@@@@@@@@@@@@@ ${filterList![index].imagename!.replaceAll("&ndash;", "–")}");
                         return Padding(
                           padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                           child: Container(
@@ -690,16 +707,16 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                 color: AppColors.whiteColor),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
-
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
+                                SizedBox(width: 2.w),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: filterList![index].imagename == "" ?
-                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h) :
+                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) :
                                   ClipRRect(borderRadius: BorderRadius.circular(10.0),
-                                      child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename}",
-                                      height: 12.h))
-
+                                      child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
+                                      height: 8.h))
                                 ),
                                 SizedBox(width: 5.w),
                                 Expanded(
@@ -833,36 +850,29 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               );
                                               context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
                                               //Helpers.showSnackBar(context, "Item Added", isError: false);
-
                                               setState(() {
                                                 itemNumber.add(filterList![index].id);
                                               });
                                             },
                                             child: isItemAdded
                                                 ? Container(
-                                                height: 5.h,
-                                                width: 10.w,
+                                                height: 5.h, width: 10.w,
                                                 decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(
-                                                        8.0),
-                                                    border: Border.all(
-                                                        color: AppColors.greenColorAccent,
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    border: Border.all(color: AppColors.greenColorAccent,
                                                         width: 1),
                                                     color: AppColors.greenColorAccent),
-                                                child: SvgPicture.asset(
-                                                    ImageString.icAddCartGreen,
+                                                child: SvgPicture.asset(ImageString.icAddCartGreen,
                                                     fit: BoxFit.none))
                                                 : Container(
-                                                height: 5.h,
-                                                width: 10.w,
+                                                height: 5.h, width: 10.w,
                                                 decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(
-                                                        8.0),
-                                                    border: Border.all(
-                                                        color: AppColors.primaryColor,
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    border: Border.all(color: AppColors.primaryColor,
                                                         width: 1),
                                                     color: AppColors.primaryColor),
-                                                child: SvgPicture.asset(ImageString.icAddCart, fit: BoxFit.none)),
+                                                child: SvgPicture.asset(ImageString.icAddCart,
+                                                    fit: BoxFit.none)),
                                           )
                                         ],
                                       ),
@@ -892,8 +902,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             if (value != null) {
                                               if (value is List) {
                                                 Result r = filterList![index];
-                                                r.locationList = value as List<String>;
-                                                r.titleLocationList = value;
+                                                r.locationList = value[0] as List<String>?;
+                                                r.titleLocationList = value[1] as List<String>?;
                                                 filterList![index] = r;
                                               }
                                             }

@@ -6,6 +6,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
@@ -459,20 +460,25 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                  ),
                                ),
                                SizedBox(width: 4.w),
-                               Card(elevation: 5,
-                                 shape: const RoundedRectangleBorder(
-                                   borderRadius: BorderRadius.all(Radius.circular(12.0))),
-                                 child: Container(
-                                   height: 5.h,
-                                   width: 10.w,
-                                   decoration: BoxDecoration(
-                                     borderRadius: BorderRadius.circular(15.0)
+                               InkWell(
+                                 onTap: (){
+                                   //callNextScreen(context, AddQuotePage(true, ""));
+                                 },
+                                 child: Card(elevation: 5,
+                                   shape: const RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                                   child: Container(
+                                     height: 5.h,
+                                     width: 10.w,
+                                     decoration: BoxDecoration(
+                                       borderRadius: BorderRadius.circular(15.0)
+                                     ),
+                                     child: Padding(
+                                       padding: EdgeInsets.all(6.sp),
+                                       child: SvgPicture.asset(ImageString.icEditProd,
+                                         color: AppColors.primaryColor),
+                                     )
                                    ),
-                                   child: Padding(
-                                     padding: EdgeInsets.all(6.sp),
-                                     child: SvgPicture.asset(ImageString.icEditProd,
-                                       color: AppColors.primaryColor),
-                                   )
                                  ),
                                )
                              ],
@@ -640,8 +646,13 @@ class _QuoteDetailState extends State<QuoteDetail> {
                     Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: 8.sp),
-                          child: Image.asset(ImageString.imgDemo, height: 80.sp)),
+                          padding: EdgeInsets.only(left: 15.sp),
+                          child: itemList[index]["imagename"] == "_" ?
+                          Expanded(child: SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h))  :
+                          Image.network("${ImageBaseUrl.productImageBaseUrl}${itemList[index]["imagename"].toString().replaceAll("&ndash;", "–")}",
+                              height: 10.h, width: 23.w)
+                        ),
+
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.only(right: 30.sp),
@@ -835,7 +846,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
             SizedBox(height: 1.5.h),
             RichText(
               text: TextSpan(
-                  text: "${LabelString.lblInstallationAddress} : ",
+                  text: "${LabelString.lblInvoiceAddress} : ",
                   style: GoogleFonts.roboto(
                     textStyle: TextStyle(
                         fontSize: 12.sp,
@@ -852,7 +863,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
             SizedBox(height: 1.0.h),
             RichText(
               text: TextSpan(
-                  text: "${LabelString.lblInvoiceAddress} : ",
+                  text: "${LabelString.lblInstallationAddress} : ",
                   style: GoogleFonts.roboto(
                     textStyle: TextStyle(
                         fontSize: 12.sp,

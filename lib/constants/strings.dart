@@ -93,6 +93,7 @@ class LabelString {
       "Installation address details";
 
   static const String lblAddNewQuote = "Add New Quote";
+  static const String lblEditQuote = "Edit Quote";
   static const String lblQuoteDetails = "Quote Details";
   static const String lblViewContacts = "View Contacts";
   static const String lblContactName = "Contact Name";

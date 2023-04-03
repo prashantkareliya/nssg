@@ -41,6 +41,8 @@ import 'models/create_quote_request.dart';
 
 import 'quote_estimation_dialog.dart';
 import '../get_product/product_model_dir/get_product_response_model.dart' as product;
+import 'search_add_product_screen.dart';
+import 'thankyou_screen.dart';
 
 
 ///Third step to create quote
@@ -118,10 +120,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   List<ProductsList> productListLocal = [];
   List<String> userChecked = [];
 
-  String selectTemplateOption = '';
+  String selectTemplateOption = "Hide_Product_Price";
   String termsSelect = "";
-  String depositValue = "";
+  String depositValue = "true";
   String defaultItemPrice = "450";
+
+  bool isEmailRemind = true;
 
   //String? itemAmount;
 
@@ -134,7 +138,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
     if(productList == null){
       context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
-          itemId:  "123456",
+          itemId:  "14x123456",
           productId: "789",
           itemName: 'Installation (1st & 2nd fix)',
           costPrice: '80.00',
@@ -149,7 +153,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     //todo: call event(ClearProductToListEvent) after get success response
   }
 
-  AddQuoteBloc addQuoteBloc = AddQuoteBloc(QuoteRepository(quoteDatasource: QuoteDatasource()));
+  AddQuoteBloc addQuoteBloc = AddQuoteBloc(
+      QuoteRepository(quoteDatasource: QuoteDatasource()));
 
   @override
   Widget build(BuildContext context) {
@@ -210,9 +215,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               productListLocal = state.productList;
             },
             builder: (context, state) {
-              return ListView(
+              return isLoading ? loadingView() :ListView(
               physics: const BouncingScrollPhysics(),
-              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 8.sp),
@@ -258,6 +262,34 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         );
                       },
                     ),
+                  ),
+                ),
+                SizedBox(height: 2.0.h),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Checkbox(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0)),
+                            activeColor: AppColors.primaryColor,
+                            onChanged: (value) {
+                              Provider.of<WidgetChange>(context, listen: false).isReminder();
+                              isEmailRemind = Provider.of<WidgetChange>(context, listen: true).isReminderCheck;
+                            },
+                            value: Provider.of<WidgetChange>(context, listen: true).isReminderCheck
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.sp),
+                        child: Text(LabelString.lblQuoteEmailReminder,
+                            style: CustomTextStyle.labelFontText),
+                      )
+                    ],
                   ),
                 ),
                 SizedBox(height: 10.sp),
@@ -309,41 +341,47 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
       ///Open add item screen
       ///Make new class and using pageView for add item detail
-      floatingActionButton: FloatingActionButton.small(
-          onPressed: () {
-            //callNextScreen(context, AddItemDetail(widget.systemTypeSelect));
-           Navigator.push(context,
-                MaterialPageRoute(builder: (context) =>
-                    AddItemDetail(widget.eAmount,
-                        widget.systemTypeSelect,
-                        widget.quotePaymentSelection,
-                        widget.contactSelect,
-                        widget.premisesTypeSelect,
-                        widget.termsItemSelection,
-                        widget.gradeFireSelect,
-                        widget.signallingTypeSelect,
-                        widget.engineerNumbers,
-                        widget.timeType,
-                        widget.billStreet,
-                        widget.billCity,
-                        widget.billCountry,
-                        widget.billCode,
-                        widget.shipStreet,
-                        widget.shipCity,
-                        widget.shipCountry,
-                        widget.shipCode,
-                        widget.contactId,
-                        widget.contactCompany,
-                        widget.mobileNumber,
-                        widget.telephoneNumber,
-                        widget.termsList,
-                      widget.contactEmail,
-                      widget.siteAddress
-                    ))).then((value) {
-                      print(value);
-                    });
-          },
-          child: Lottie.asset('assets/lottie/adding.json')),
+      floatingActionButton: SizedBox(
+        height: 8.h,
+        child: FittedBox(
+          child: FloatingActionButton.small(
+              onPressed: () {
+                //callNextScreen(context, AddItemDetail(widget.systemTypeSelect));
+              /* Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>
+                        AddItemDetail(widget.eAmount,
+                            widget.systemTypeSelect,
+                            widget.quotePaymentSelection,
+                            widget.contactSelect,
+                            widget.premisesTypeSelect,
+                            widget.termsItemSelection,
+                            widget.gradeFireSelect,
+                            widget.signallingTypeSelect,
+                            widget.engineerNumbers,
+                            widget.timeType,
+                            widget.billStreet,
+                            widget.billCity,
+                            widget.billCountry,
+                            widget.billCode,
+                            widget.shipStreet,
+                            widget.shipCity,
+                            widget.shipCountry,
+                            widget.shipCode,
+                            widget.contactId,
+                            widget.contactCompany,
+                            widget.mobileNumber,
+                            widget.telephoneNumber,
+                            widget.termsList,
+                          widget.contactEmail,
+                          widget.siteAddress
+                        ))).then((value) {
+                          print(value);
+                        });*/
+                callNextScreen(context, const SearchAndAddProduct());
+              },
+              child: Lottie.asset('assets/lottie/adding.json')),
+        ),
+      ),
     );
   }
 
@@ -393,7 +431,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                          var profit = (double.parse(value.toString()) - 80.0).formatAmount();
                                          context.read<ProductListBloc>().add(UpdateProductToListEvent(productsList: ProductsList(
                                              itemId:  "123456",
-                                             productId: "789",
+                                             productId: "14x789",
                                              itemName: 'Installation (1st & 2nd fix)',
                                              costPrice: '80.00',
                                              sellingPrice: value.toString(),
@@ -401,7 +439,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                              discountPrice: "0",
                                              amountPrice: value.toString(),
                                              profit: profit,
-                                             description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
+                                             description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
+                                           productImage: ""
+
                                          )));
                                        }
                                        }
@@ -560,13 +600,22 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(flex: 1,
-                        child: products.productImage == null || products.productImage == "" ?
-                        SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) : products.itemName!.contains("Installation (1st & 2nd fix)") ?
+                        child: products.itemName!.contains("Installation (1st & 2nd fix)") ?
+                        Lottie.asset('assets/lottie/gear.json', height: 9.h,) :
+                        products.productImage == null || products.productImage == "" ?
+                        SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) :
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network("${ImageBaseUrl.productImageBaseUrl}${products.productImage!.replaceAll("&ndash;", "–")}", height: 8.h),
+                        )
+                      /* child: products.productImage == null || products.productImage == "" ?
+                        SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) :
+                        products.itemName!.contains("Installation (1st & 2nd fix)") ?
                         Lottie.asset('assets/lottie/gear.json', height: 9.h,)
                         : ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image.network("${ImageBaseUrl.productImageBaseUrl}${products.productImage}",height: 8.h),
-                        )
+                        )*/
                     ),
                     Expanded(flex: 3,
                       child: Column(
@@ -596,7 +645,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               ),
             ),
           )
-          
+
         ),
       )
     );
@@ -868,7 +917,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         isQuotesPaymentConfirm : "0",
         quotesDepositeAmount : depositAmount,
         quotesDepoReceivedAmount : "0.00",
-        quoteEmailReminder : "0",
+        quoteEmailReminder : isEmailRemind ? "1" : "0" ,
         quoteReminderEmailSentLog : "",
         isKeyholderConfirm : "0",
         isMaintenanceConConfirm : "0",
@@ -895,7 +944,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           tax2: "",
           tax3: "",
           productLocation: e.selectLocation,
-          productLocationTitle: e.itemName, //todo add title with join ###product_title
+          productLocationTitle: e.titleLocation, //todo add title with join ###product_title
           costprice: e.costPrice,
           extQty: "0",
           requiredDocument: "Keyholder form###Maintenance contract###Police application###Direct Debit",
@@ -908,6 +957,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
            */
 
           proShortDescription: e.description,
+          proName: e.itemName.toString()
         )).toList()
     );
 
@@ -927,108 +977,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   }
 }
 
-class ThankYouScreen extends StatefulWidget {
-  String quoteId;
 
-  String contactEmail;
-
-  ThankYouScreen(this.quoteId, this.contactEmail, {Key? key}) : super(key: key);
-
-  @override
-  State<ThankYouScreen> createState() => _ThankYouScreenState(quoteId, contactEmail);
-}
-
-class _ThankYouScreenState extends State<ThankYouScreen> {
-  String quoteId;
-
-  String? contactEmail;
-  List<String> contactList = [];
-
-  bool isLoading = false;
-
-  _ThankYouScreenState(this.quoteId, this.contactEmail);
-
-
-  @override
-  Widget build(BuildContext context) {
-    var query = MediaQuery.of(context).size;
-    return SizedBox(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SizedBox(height: 3.h),
-         Column(
-            children: [
-              Lottie.asset('assets/lottie/created.json', height: 15.h,  reverse: false, repeat: false),
-              Text(LabelString.lblThankYou, style: CustomTextStyle.labelMediumBoldFontText),
-              Text(Message.quoteCreateSuccessfully, style: CustomTextStyle.commonText),
-            ],
-          ),
-          SizedBox(height: 3.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.sp),
-            child:  isLoading ? SizedBox(
-                height: query.height * 0.12,
-                width: query.width * 0.8,
-                child: loadingView()) :
-            Column(
-              children: [
-                SizedBox(
-                    width: query.width * 0.8,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                        title: ButtonString.btnQuoteDetail,
-                        buttonColor: AppColors.primaryColor,
-                        onClick: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          removeAndCallNextScreen(context, QuoteDetail(quoteId));
-                        })),
-                SizedBox(height: 1.h),
-               SizedBox(
-                    width: query.width * 0.8,
-                    height: query.height * 0.06,
-                    child: ElevatedButton(
-                      onPressed: (){
-                        Navigator.pop(context);
-                        showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) {
-                              return Dialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                elevation: 0,
-                                insetAnimationCurve: Curves.decelerate,
-                                insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                child: SendEmail(contactList, quoteId, contactEmail, "create"),
-                              );
-                            });
-                        //sendEmail(contactList, context);
-                      },
-                      clipBehavior: Clip.hardEdge,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor.withOpacity(0.20),
-                        splashFactory: NoSplash.splashFactory,
-                        shadowColor: AppColors.transparent,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                      ),
-                      child: Text(ButtonString.btnEmailShare,
-                          style:  GoogleFonts.roboto(
-                            textStyle: TextStyle(fontSize: 12.sp, color: AppColors.primaryColor),
-                          )),
-                    )),],
-            ),
-          ),
-          SizedBox(height: 2.h),
-        ],
-      ),
-    );
-  }
-}
 
 ///Custom class for bottom sheet static design
 class BottomSheetDataTile extends StatelessWidget {

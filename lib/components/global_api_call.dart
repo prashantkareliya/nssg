@@ -28,8 +28,7 @@ Future<dynamic> getContactDetail(contactId) async {
 
   Map<String, dynamic> queryParameters = {
     'operation': "retrieve",
-    'sessionName':
-        preferences.getString(PreferenceString.sessionName).toString(),
+    'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
     'id': contactId.toString()
   };
   final response = await HttpActions() .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
@@ -39,10 +38,10 @@ Future<dynamic> getContactDetail(contactId) async {
 }
 
 
-Future<dynamic> getItemFields(String? systemType, String mfg) async {
+Future<dynamic> getItemFields(String? systemType, String manufactureSelect) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
-  if(mfg == 'noMfg'){
+  if(manufactureSelect == 'noMfg'){
     Map<String, dynamic> queryParameters = {
       'operation': 'describe',
       'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
@@ -60,7 +59,7 @@ Future<dynamic> getItemFields(String? systemType, String mfg) async {
       'elementType': "Products",
       'appversion': Constants.of().appversion,
       'systemtype': systemType.toString(),
-      'manufacturer': mfg.toString()
+      'manufacturer': manufactureSelect.toString().replaceAll("&", "%26")
     };
     final response = await HttpActions().getMethod(ApiEndPoint.getItemDetailListApi, queryParams: queryParameters);
     debugPrint("getItemDetailsAPI --- $response");

@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
       this.errorText,
       this.titleText,
       this.onEditingComplete,
+      this.onChange,
       required this.readOnly,
       this.onTap,
       this.inputFormatters,
@@ -35,6 +36,7 @@ class CustomTextField extends StatelessWidget {
   final String? errorText;
   final String? titleText;
   final Function()? onEditingComplete;
+  final void Function(String)? onChange;
   final bool readOnly;
   final bool obscureText;
   final Function()? onTap;
@@ -90,6 +92,7 @@ class CustomTextField extends StatelessWidget {
           onTap: onTap,
           obscureText: obscureText,
           onEditingComplete: onEditingComplete,
+          onChanged: onChange,
           keyboardType: keyboardType,
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(

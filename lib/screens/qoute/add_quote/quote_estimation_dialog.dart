@@ -66,7 +66,6 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     children: List.generate(
                       fieldsData["quote_no_of_engineer"].length,
                           (index) {
-
                         numbersOfEng.add(RadioModel(false, fieldsData["quote_no_of_engineer"][index]["label"]));
                         return SizedBox(
                           height: 6.h,
@@ -133,31 +132,23 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     ),
                   ),
                   SizedBox(height: 2.0.h),
-                  Row(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: Checkbox(
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.0)),
-                            activeColor: AppColors.primaryColor,
-                            onChanged: (value) =>
-                                Provider.of<WidgetChange>(context, listen: false)
-                                    .isReminder(),
-                            value: Provider.of<WidgetChange>(context, listen: true)
-                                .isReminderCheck),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.sp),
-                        child: Text(LabelString.lblQuoteEmailReminder,
-                            style: CustomTextStyle.labelFontText),
-                      )
-                    ],
+                  Visibility(
+                    visible: false,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          child: Checkbox(
+                              onChanged: (value) => Provider.of<WidgetChange>(context, listen: false).isReminder(),
+                              value: Provider.of<WidgetChange>(context, listen: true).isReminderCheck),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.sp),
+                          child: Text("",
+                              style: CustomTextStyle.labelFontText),
+                        )
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 2.0.h),
-
                   //Estimated installation amount text
                   RichText(
                     text: TextSpan(

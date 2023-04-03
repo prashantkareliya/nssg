@@ -238,9 +238,7 @@ class _AddContactPageState extends State<AddContactPage> {
                       ? loadingView()
                       : PageView(
                           pageSnapping: true,
-                          physics: contactBasicDetailFormKey.currentState
-                                          ?.validate() ==
-                                      true ||
+                          physics: contactBasicDetailFormKey.currentState?.validate() == true ||
                                   widget.contactId != "NoId"
                               ? const BouncingScrollPhysics()
                               : const NeverScrollableScrollPhysics(),
@@ -282,42 +280,7 @@ class _AddContactPageState extends State<AddContactPage> {
                   maxLines: 1,
                   minLines: 1,
                   textInputAction: TextInputAction.next,
-                  /*prefixIcon: Padding(
-                              padding: EdgeInsets.all(4.sp),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: AppColors.backWhiteColor,
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                height: 4.8.h,
-                                child: DropdownButton<String>(
-                                  value: value.selectItem,
-                                  elevation: 0,
-                                  hint: Padding(
-                                    padding: EdgeInsets.only(left: 5.sp),
-                                    child: Text(LabelString.selectField,
-                                        style: CustomTextStyle
-                                            .labelFontHintText),
-                                  ),
-                                  style: CustomTextStyle.labelText,
-                                  underline: Container(
-                                      height: 0, color: Colors.transparent),
-                                  onChanged: (String? v) {
-                                    value.selectItemValue(v);
-                                  },
-                                  items: value.items
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 8.sp),
-                                        child: Text(value,
-                                            style: CustomTextStyle.labelText),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              )),*/
+
                 ),
               ),
               CustomTextField(
@@ -348,7 +311,6 @@ class _AddContactPageState extends State<AddContactPage> {
                   controller: mobilePhoneController,
                   obscureText: false,
                   hint: LabelString.lblMobilePhone,
-                  maxLength: 10,
                   titleText: LabelString.lblMobilePhone,
                   maxLines: 1,
                   minLines: 1,
@@ -360,7 +322,6 @@ class _AddContactPageState extends State<AddContactPage> {
                   controller: officePhoneController,
                   obscureText: false,
                   hint: LabelString.lblOfficePhone,
-                  maxLength: 10,
                   titleText: LabelString.lblOfficePhone,
                   maxLines: 1,
                   minLines: 1,
@@ -413,9 +374,9 @@ class _AddContactPageState extends State<AddContactPage> {
                         buttonColor: AppColors.primaryColor,
                         onClick: () {
                           FocusScope.of(context).unfocus();
-                          if (contactBasicDetailFormKey.currentState?.validate() ==
-                              true) {
-                            if (primaryEmailController.text.isValidEmail) {
+                          if (contactBasicDetailFormKey.currentState?.validate() ==true) {
+                            if (primaryEmailController.text.isValidEmail &&
+                                secondaryEmailController.text.isValidEmail) {
                               pageController.nextPage(
                                   duration: const Duration(milliseconds: 500),
                                   curve: Curves.decelerate);

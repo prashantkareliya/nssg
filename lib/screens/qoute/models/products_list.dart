@@ -16,8 +16,6 @@ class ProductsList {
   List<String>? titleLocationList;
   String? productImage;
 
-
-
   ProductsList copyWith({
     String? itemId,
     String? productId,
@@ -35,7 +33,6 @@ class ProductsList {
     List<String>? locationList,
     List<String>? titleLocationList,
     String? productImage
-
   }) {
     return ProductsList(
         itemId: itemId ?? this.itemId,

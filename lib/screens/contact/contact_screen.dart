@@ -148,8 +148,7 @@ class _ContactScreenState extends State<ContactScreen> {
                       builder: (context, updateKey, search) {
                     return TextField(
                         onChanged: (value) {
-                          Provider.of<WidgetChange>(context, listen: false)
-                              .updateSearch(value);
+                          Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
                           searchKey = updateKey.updateSearchText.toString();
 
                           searchItemList = [];
@@ -278,26 +277,6 @@ class _ContactScreenState extends State<ContactScreen> {
                                                 }
                                               });
 
-                                              /* showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return Dialog(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                elevation: 0,
-                                                insetPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 12.sp),
-                                                child: ContactDetail(
-                                                    contactItems![index].id));
-                                          },
-                                        ).then((value) {
-                                          if (value == "delete") {
-                                            getContact();
-                                          }
-                                        });*/
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
@@ -743,7 +722,7 @@ class ContactDetail extends StatelessWidget {
                                                   children: [
                                                     TextSpan(
                                                         text:
-                                                            "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, ${dataContact["othercountry"]}, ${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
+                                                        "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
                                                         style: GoogleFonts.roboto(textStyle: TextStyle(
                                                             height: 1.5,
                                                             fontSize: 12.sp,
@@ -772,7 +751,7 @@ class ContactDetail extends StatelessWidget {
                                                   children: [
                                                     TextSpan(
                                                         text:
-                                                        "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
+                                                          "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, ${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
                                                         style: GoogleFonts.roboto(textStyle: TextStyle(
                                                             height: 1.5,
                                                             fontSize: 12.sp,

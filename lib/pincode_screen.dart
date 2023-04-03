@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/authentication/login/login_bloc_dir/login_bloc.dart';
@@ -76,9 +77,15 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                         borderColor: AppColors.blackColor,
                         fillColor: AppColors.blackColor,
                         circleSize: 10.sp),
+
                     keyboardUIConfig: KeyboardUIConfig(
                       primaryColor: AppColors.primaryColorLawOpacity,
                       digitBorderWidth: 2,
+                      digitTextStyle: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                              fontSize: 20.sp,
+                              color: AppColors.fontColor,
+                              fontWeight: FontWeight.w500)),
                       digitFillColor: AppColors.primaryColorLawOpacity),
                     title: Text(
                       Message.enterYourPasscodeToUnlock,
@@ -138,10 +145,38 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
   callApi(String enteredPasscode) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
+    String accessKey = "";
+    switch (preferences.getString(PreferenceString.userName).toString()) {
+
+      case "iih.admin":
+        accessKey =  "CBfPHDoMNjtE99vx";
+        break;
+
+      case "dn@nssg.co.uk":
+        accessKey ="S8QzomH4Q4QYxaFb";
+        break;
+
+      case "vn@nssg.co.uk":
+        accessKey ="EsqKnIihnpQ8YKl2";
+        break;
+
+      case "ak@nssg.co.uk" :
+        accessKey= "l6ArnYzg21P92JrT";
+        break;
+
+      case "rj@nssg.co.uk":
+        accessKey= "uLhjPz1Rr3Ef3xoc";
+        break;
+
+      case "sanjay.iih":
+        accessKey ="NiWZP7MDRsh0qh";
+        break;
+    }
+
     Map<String, dynamic> queryParameters = {
       'username': preferences.getString(PreferenceString.userName).toString(),
       'loginpin': enteredPasscode.toString(), //2017
-      'accesskey': 'S8QzomH4Q4QYxaFb',
+      'accesskey': accessKey,
     };
     loginBloc.add(LoginUserEvent(queryParameters));
   }
