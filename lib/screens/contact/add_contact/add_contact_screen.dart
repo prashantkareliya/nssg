@@ -164,7 +164,7 @@ class _AddContactPageState extends State<AddContactPage> {
               if (state is LoadedAddContact) {
                 if (state.isPositive) {
                   print(state.contactDetail);
-                  callNextScreen(
+                  removeAndCallNextScreen(
                       context,
                       AddQuotePage(
                         false,

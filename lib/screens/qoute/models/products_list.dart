@@ -15,6 +15,8 @@ class ProductsList {
   List<String>? locationList;
   List<String>? titleLocationList;
   String? productImage;
+  String? requiredDocument;
+  List<String>? requiredDocumentList;
 
   ProductsList copyWith({
     String? itemId,
@@ -32,7 +34,9 @@ class ProductsList {
     String? titleLocation,
     List<String>? locationList,
     List<String>? titleLocationList,
-    String? productImage
+    List<String>? requiredDocumentList,
+    String? productImage,
+    String? requiredDocument
   }) {
     return ProductsList(
         itemId: itemId ?? this.itemId,
@@ -50,7 +54,9 @@ class ProductsList {
         titleLocation: titleLocation ?? this.titleLocation,
         locationList: locationList ?? this.locationList,
         titleLocationList: titleLocationList ?? this.titleLocationList,
-        productImage: productImage ?? this.productImage
+        requiredDocumentList: requiredDocumentList ?? this.requiredDocumentList,
+        productImage: productImage ?? this.productImage,
+        requiredDocument: productImage ?? this.requiredDocument
     );
   }
 
@@ -70,7 +76,9 @@ class ProductsList {
         this.titleLocation,
         this.locationList = const [],
         this.titleLocationList = const [],
-        this.productImage});
+        this.requiredDocumentList = const [],
+        this.productImage,
+      this.requiredDocument});
 
   ProductsList.fromJson(Map<String, dynamic> json) {
     itemId = json["itemId"];
@@ -88,7 +96,9 @@ class ProductsList {
     titleLocation = json['titleLocation'];
     locationList = json['locationList'];
     titleLocationList = json['titleLocationList'];
+    requiredDocumentList = json['requiredDocumentList'];
     productImage = json['productImage'];
+    requiredDocument = json['requiredDocument'];
   }
 
   Map<String, dynamic> toJson() {
@@ -108,7 +118,9 @@ class ProductsList {
     data['titleLocation'] = titleLocation;
     data['locationList'] = locationList;
     data['locationList'] = titleLocationList;
+    data['requiredDocumentList'] = requiredDocumentList;
     data['productImage'] = productImage;
+    data['requiredDocument'] = requiredDocument;
     return data;
   }
 }

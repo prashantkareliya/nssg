@@ -32,8 +32,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   //controller for email | password fields
-  TextEditingController userNameController = TextEditingController(text: "dn@nssg.co.uk");
-  TextEditingController passwordController = TextEditingController(text: "dave@12345");
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   final loginFormKey = GlobalKey<FormState>();
 

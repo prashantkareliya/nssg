@@ -74,6 +74,13 @@ class _SendEmailState extends State<SendEmail> {
                 ],
               ),
               Padding(
+                padding: EdgeInsets.symmetric(horizontal: 11.sp),
+                child: Text("Please add comma separated email addresses to send the quote to multiple people.",
+                textAlign: TextAlign.center,
+                style: CustomTextStyle.labelFontHintText),
+              ),
+              SizedBox(height: 2.h),
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.sp),
                 child: CustomTextField(
                     keyboardType: TextInputType.emailAddress,
@@ -86,16 +93,16 @@ class _SendEmailState extends State<SendEmail> {
                     minLines: 1,
                     textInputAction: TextInputAction.done,
                     onEditingComplete: () {},
-                    isRequired: true),
-              ),
+                    isRequired: true)),
 
               SizedBox(height: 1.h),
-              isLoading ? Lottie.asset('assets/lottie/sending.json', height: 12.h, animate: true) : SizedBox(
+              isLoading ? Lottie.asset('assets/lottie/sending.json', height: 12.h, animate: true) :
+              SizedBox(
                   width: query.width * 0.4,
                   height: query.height * 0.06,
                   child: CustomButton(
                       title: ButtonString.btnSubmit,
-                      onClick: (){
+                      onClick: () {
                         if(emailFormKey.currentState!.validate()){
                           if(emailController.text.isValidEmail){
                             sendEmail();
@@ -110,7 +117,6 @@ class _SendEmailState extends State<SendEmail> {
             ],
           ),
         )
-
     );
   }
 

@@ -201,11 +201,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
     super.initState();
     getProduct();
     var profit = (double.parse("450") - 80.0).formatAmount();
-    var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
+    var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) =>
+    element.itemId == "123456");
     if(productList == null){
-      context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
+      context.read<ProductListBloc>().add(
+          AddProductToListEvent(productsList: ProductsList(
           itemId:  "123456",
-          productId: "14x789",
+          productId: "1188",
           itemName: 'Installation (1st & 2nd fix)',
           costPrice: '80.00',
           sellingPrice: "450",
@@ -215,7 +217,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
           profit: profit,
           description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
           productImage: ImageString.imgDemo,
-
       )));
     }
   }
@@ -426,15 +427,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     ]),
                                 Visibility(
                                   visible: manufacturingType[index].isSelected
-                                      ? true
-                                      : false,
+                                      ? true : false,
                                   child: Positioned(
-                                    right: 10,
-                                    top: 5,
+                                    right: 10, top: 5,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(80.0),
+                                          borderRadius: BorderRadius.circular(80.0),
                                           color: AppColors.greenColor),
                                       child: Padding(
                                         padding: const EdgeInsets.all(2.0),
@@ -831,6 +829,23 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               });
                                             }
                                                 : () {
+
+                                              List<String> documentType = [];
+
+                                              if (filterList![index].productNssKeyholderForm == "1") {
+                                                documentType.add("Keyholder form");
+                                                if (filterList![index].productSecurityAgreeForm == "1") {
+                                                  documentType.add("Maintenance contract");
+                                                  if (filterList![index].productPoliceAppForm == "1") {
+                                                    documentType.add("Maintenance contract");
+                                                    if (filterList![index].productDirectDebitForm == "1") {
+                                                      documentType.add("Direct Debit");
+                                                    }
+                                                  }
+                                                }
+                                                print((documentType).join('###'));
+                                              }
+
                                               ProductsList productsList = ProductsList(
                                                   itemId: DateTime.now().millisecondsSinceEpoch.toString(),
                                                   productId: filterList![index].id.toString(),
@@ -846,7 +861,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   selectLocation: (filterList![index].locationList ?? []).join('###'),
                                                   titleLocation: (filterList![index].titleLocationList ?? []).join("###"),
                                                   itemAdd: filterList![index].isItemAdded,
-                                                productImage: filterList![index].imagename
+                                                productImage: filterList![index].imagename,
+                                                requiredDocument: (documentType).join('###'),
                                               );
                                               context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
                                               //Helpers.showSnackBar(context, "Item Added", isError: false);
@@ -967,8 +983,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     highlightColor: AppColors.transparent,
                     splashColor: AppColors.transparent,
                     onPressed: () => Navigator.pop(context),
-                    icon:
-                        Icon(Icons.close_rounded, color: AppColors.blackColor)),
+                    icon: Icon(Icons.close_rounded, color: AppColors.blackColor)),
               ],
             ),
             SizedBox(height: 2.h),

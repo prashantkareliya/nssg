@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nssg/constants/navigation.dart';
@@ -121,7 +122,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   List<String> userChecked = [];
 
   String selectTemplateOption = "Hide_Product_Price";
-  String termsSelect = "";
+  String termsSelect = "false";
   String depositValue = "true";
   String defaultItemPrice = "450";
 
@@ -227,9 +228,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
                 //Template option design
                 Padding(
-                  padding: EdgeInsets.only(left: 12.sp),
+                  padding: EdgeInsets.only(left: 8.sp),
                   child: Wrap(
-                    spacing: 3,
+                    spacing: 2,
                     direction: Axis.horizontal,
                     children: List.generate(
                       growable: false,
@@ -254,7 +255,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               }
                               Provider.of<WidgetChange>(context, listen: false).isTemplateOption();
                               templateOption[index].isSelected = true;
-                              selectTemplateOption = templateOption[index].buttonText.toString().replaceAll(" ", "_");
+                              setState(() {
+                                selectTemplateOption = templateOption[index].buttonText.toString().replaceAll(" ", "_");
+                              });
                               print(templateOption[index].buttonText.toString().replaceAll(" ", "_"));
                             },
                             child: RadioItem(templateOption[index]),
@@ -278,10 +281,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                 borderRadius: BorderRadius.circular(4.0)),
                             activeColor: AppColors.primaryColor,
                             onChanged: (value) {
-                              Provider.of<WidgetChange>(context, listen: false).isReminder();
-                              isEmailRemind = Provider.of<WidgetChange>(context, listen: true).isReminderCheck;
+                              setState(() {
+                                isEmailRemind = value!;
+                              });
                             },
-                            value: Provider.of<WidgetChange>(context, listen: true).isReminderCheck
+                            value: isEmailRemind
                         ),
                       ),
                       Padding(
@@ -320,7 +324,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton(
-              onPressed: () => modelBottomSheetMenu(query),
+              onPressed: () {
+                modelBottomSheetMenu(query);
+              },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -420,30 +426,35 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                       builder: (context) {
                                         ///Make new class for dialog
                                         return Dialog(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10)),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                             elevation: 0,
                                             insetAnimationCurve: Curves.decelerate,
                                             insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                             child: QuoteEstimation());
                                       }).then((value) {
-                                       if(value != null){
-                                         var profit = (double.parse(value.toString()) - 80.0).formatAmount();
-                                         context.read<ProductListBloc>().add(UpdateProductToListEvent(productsList: ProductsList(
-                                             itemId:  "123456",
-                                             productId: "14x789",
-                                             itemName: 'Installation (1st & 2nd fix)',
-                                             costPrice: '80.00',
-                                             sellingPrice: value.toString(),
-                                             quantity: 1,
-                                             discountPrice: "0",
-                                             amountPrice: value.toString(),
-                                             profit: profit,
-                                             description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
-                                           productImage: ""
+                                        if(value != null){
+                                          setState(() {
+                                            widget.eAmount = value["keyAmount"];
+                                            widget.engineerNumbers = value["keyEngineerNumbers"];
+                                            widget.timeType = value["keyTimeType"];
+                                          });
+                                      var profit = (double.parse(value["keyAmount"]) - 80.00).formatAmount();
+                                      context.read<ProductListBloc>().add(UpdateProductToListEvent(
+                                          productsList: ProductsList(
+                                              itemId:  "123456",
+                                              productId: "1188",
+                                              itemName: 'Installation (1st & 2nd fix)',
+                                              costPrice: '80.00',
+                                              sellingPrice: value["keyAmount"],
+                                              quantity: 1,
+                                              discountPrice: "0",
+                                              amountPrice: value["keyAmount"].toString(),
+                                              profit: profit.toString(),
+                                              description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
+                                              productImage: ""
 
-                                         )));
-                                       }
+                                          )));
+                                    }
                                        }
                                       );
                                 },
@@ -478,7 +489,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         ),
         child: Slidable(
           key: ValueKey(products.itemId),
-          startActionPane:  ActionPane(
+          startActionPane: ActionPane(
             motion: const ScrollMotion(),
             extentRatio: 0.2,
             children: [
@@ -511,14 +522,14 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         color: AppColors.primaryColor,
                         fit: BoxFit.fill, height: 2.5.h),
                     SizedBox(height: 0.8.h),
-                    Text(LabelString.lblDiscount, style: GoogleFonts.roboto(textStyle: TextStyle(
+                    Text(LabelString.lblDiscountFormal, style: GoogleFonts.roboto(textStyle: TextStyle(
                         fontSize: 10.sp, color: AppColors.primaryColor)),)
                   ],
                 ),
               ),
             ],
           ),
-          endActionPane:  ActionPane(
+          endActionPane: ActionPane(
             extentRatio: 0.4,
             motion: const ScrollMotion(),
             children: [
@@ -535,7 +546,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           elevation: 0,
                           insetPadding: EdgeInsets.zero,
                           child: EditItem(productsList: products));
-                    });
+                    }).then((value) => setState(() {}));
                 },
                 autoClose: true,
                 backgroundColor: AppColors.backWhiteColor,
@@ -656,15 +667,14 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   ///Method for open bottom sheet
   ///Design opened bottom sheet
   void modelBottomSheetMenu(Size query) {
+
     showModalBottomSheet(
         backgroundColor: AppColors.transparent,
         enableDrag: false,
         isDismissible: false,
         isScrollControlled: true,
-
         context: context,
         builder: (builder) {
-
           return Container(
             height: query.height * 0.8,
             color: Colors.transparent, //could change this to Color(0xFF737373),
@@ -687,7 +697,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   grandTotal = subTotal+(subTotal*0.2);
                   vatTotal = (subTotal*0.2);
                   //initial text for deposit textField
-                  depositAmountController.text = (subTotal+(subTotal*0.2)).formatAmount();
 
                 return Container(
                     decoration: BoxDecoration(
@@ -747,23 +756,21 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         width: 1,
-                                        color:
-                                        AppColors.primaryColor),
+                                        color: AppColors.primaryColor),
                                     color: AppColors.whiteColor,
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(5.sp))),
                                 child: Center(
                                   child: Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        3.sp, 0, 3.sp, 0),
+                                    padding: EdgeInsets.fromLTRB(3.sp, 0, 3.sp, 0),
                                     child: TextField(
                                       controller: depositAmountController,
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration.collapsed(
-                                          hintText: LabelString.lblDepositAmount,
-                                          hintStyle: CustomTextStyle.labelFontHintText),
+                                          hintText: grandTotal.formatAmount(),
+                                          hintStyle: CustomTextStyle.labelText),
                                       textAlign: TextAlign.right,
-
+                                      onChanged: (value){ },
                                     ),
                                   ),
                                 ),
@@ -808,7 +815,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               children: [
                                 ToggleSwitch((value) {
                                   Provider.of<WidgetChange>(context, listen: false).isTermsSelect(e['value']);
-                                  termsSelect = e['value'].toString();
+                                    termsSelect = e['value'].toString();
                                 },
                                     valueBool: e['value'] == Provider.of<WidgetChange>(context, listen: false).isTermsBS),
                                 SizedBox(width: 5.w),
@@ -824,10 +831,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             title: ButtonString.btnSubmit,
                             buttonColor: AppColors.primaryColor,
                             onClick: () {
+
                               Navigator.pop(context);
                               callCreateQuoteAPI(subTotal, grandTotal, disc,
                                   selectTemplateOption, vatTotal,
-                                  profit, depositAmountController.text, state.productList,
+                                  profit, depositAmountController.text == "" ? grandTotal.formatAmount(): depositAmountController.text, state.productList,
                                   depositValue, termsSelect);
                             },
                           ),
@@ -852,7 +860,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       city = widget.siteAddress["city"];
       country = widget.siteAddress["country"];
       code = widget.siteAddress["postcode"];
-    }else {
+
+    } else {
       street = widget.shipStreet == "" ? " " : widget.shipStreet;
       city = widget.shipCity == "" ? " " : widget.shipCity;
       country = widget.shipCountry == "" ? " " : widget.shipCountry;
@@ -894,7 +903,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         preTaxTotal : vatTotal.toString(),
         hdnSHPercent : "0",
         siteAddressId : widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
-        quotesTerms : widget.termsItemSelection,
+        quotesTerms : termsSelect,
         hdnprofitTotal : profit.toString(),
         markup : "0.00",
         issueNumber : "1",
@@ -906,7 +915,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quotesEmail : widget.contactEmail,
         quotesTemplateOptions : selectTemplateOption,
         quoteRelatedId : "0",
-        quotesCompany : widget.contactCompany,
+        quotesCompany : widget.siteAddress.toString() != "{}" ? widget.siteAddress["name"] : widget.contactCompany,
         installation : "0",
         hdnsubTotal : subTotal.toString(),
         hdndiscountTotal : disc.toString(),
@@ -926,15 +935,17 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteQuoteType : "Installation",
         quotesContractId : "",
         quoteStopEmailDocReminder : "0",
-        quotePriorityLevel : "Normal",
-        quoteWorksSchedule : "2nd fix only",
+        quotePriorityLevel : "",
+        quoteWorksSchedule : "",
         quoteNoOfEngineer : widget.engineerNumbers,
         quoteReqToCompleteWork : widget.timeType,
+        quotePoNumber : "",
+        quoteGradeOfNoti: "",
         lineItems :  productList.map((e) => LineItems(
           productid: e.productId,
-          sequenceNo: productList.indexOf(e).toString(), //todo set sequence number as per item index
+          sequenceNo: (productList.indexOf(e)+1).toString(), //todo set sequence number as per item index
           quantity: e.quantity.toString(),
-          listprice: e.amountPrice,
+          listprice: e.sellingPrice,
           discountPercent: "00.00",
           discountAmount: e.discountPrice,
           comment: e.description,
@@ -947,9 +958,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           productLocationTitle: e.titleLocation, //todo add title with join ###product_title
           costprice: e.costPrice,
           extQty: "0",
-          requiredDocument: "Keyholder form###Maintenance contract###Police application###Direct Debit",
+          requiredDocument: e.requiredDocument, //"Keyholder form###Maintenance contract###Police application###Direct Debit",
+          profit: e.profit ?? "",
 
-          /*
+            /*
             "product_nss_keyholder_form": "1",  Keyholder form
             "product_security_agree_form": "0", Maintenance contract
             "product_police_app_form": "0", Police application
@@ -957,7 +969,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
            */
 
           proShortDescription: e.description,
-          proName: e.itemName.toString()
+          proName: e.itemName.toString(),
         )).toList()
     );
 
@@ -972,12 +984,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       'elementType': 'Quotes',
       'appversion': Constants.of().appversion.toString(),
     };
-
     addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
   }
 }
-
-
 
 ///Custom class for bottom sheet static design
 class BottomSheetDataTile extends StatelessWidget {

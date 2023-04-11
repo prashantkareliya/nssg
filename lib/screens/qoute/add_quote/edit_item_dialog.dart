@@ -32,15 +32,24 @@ class _EditItemState extends State<EditItem> {
 
   int? quantity = 1;
   late ProductsList productsList;
+  List<String>? listLocation = [];
+  List<String>? listLocationTitle = [];
   @override
   void initState() {
     super.initState();
     productsList = widget.productsList;
+
+    if(productsList.selectLocation != null && productsList.titleLocation != null){
+      listLocation = productsList.selectLocation!.split("###");
+      listLocationTitle = productsList.titleLocation!.split("###");
+    }
+
+
+
     itemDescriptionController.text = widget.productsList.description.toString();
     itemNameController.text = widget.productsList.itemName.toString();
     itemCostPriceController.text = widget.productsList.costPrice.toString();
-    itemSellingPriceController.text =
-        widget.productsList.sellingPrice.formatAmount();
+    itemSellingPriceController.text = widget.productsList.sellingPrice.formatAmount();
     itemQuantityController.text = widget.productsList.quantity.toString();
     itemDiscountController.text = widget.productsList.discountPrice.toString();
   }
@@ -49,7 +58,7 @@ class _EditItemState extends State<EditItem> {
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
 
-    String finalAmount = ((double.parse(itemSellingPriceController.text) *
+    String finalAmount = (itemSellingPriceController.text == "" ? 0.0 : (double.parse(itemSellingPriceController.text) *
         productsList.quantity!)- (itemDiscountController.text == "" ? 0.0
         : double.parse(itemDiscountController.text))).formatAmount();
 
@@ -57,7 +66,7 @@ class _EditItemState extends State<EditItem> {
             (itemDiscountController.text == "" ? 0.0
                 : double.parse(itemDiscountController.text))).formatAmount();*/
 
-    String finalProfit = (((double.parse(itemSellingPriceController.text) * productsList.quantity!) -
+    String finalProfit = (itemSellingPriceController.text == "" ? 0.0 : ((double.parse(itemSellingPriceController.text) * productsList.quantity!) -
         (double.parse(itemCostPriceController.text) * productsList.quantity!))
         - (itemDiscountController.text == "" ? 0.0
             : double.parse(itemDiscountController.text))).formatAmount();
@@ -116,10 +125,10 @@ class _EditItemState extends State<EditItem> {
                             insetPadding:
                                 EdgeInsets.symmetric(horizontal: 12.sp),
                             child: SelectLocation(
-                                productsList.quantity,
-                                productsList.itemName,
-                                productsList.locationList,
-                            productsList.titleLocationList));
+                                widget.productsList.quantity,
+                                widget.productsList.itemName,
+                                listLocation,
+                                listLocationTitle));
                       },
                     ).then((value) {
                       if (value != null) {
@@ -306,8 +315,8 @@ class _EditItemState extends State<EditItem> {
                                   sellingPrice: itemSellingPriceController.text,
                                   quantity: int.parse(itemQuantityController.text),
                                   discountPrice: itemDiscountController.text,
-                                  selectLocation: (productsList.locationList ?? []).join('###'),
-                                  titleLocation:(productsList.titleLocationList ?? []).join('###'),
+                                  selectLocation: (listLocation ?? []).join('###'),
+                                  titleLocation: (listLocationTitle ?? []).join('###'),
                               )));
                       Navigator.pop(context);
                     })),

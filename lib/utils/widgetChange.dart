@@ -20,7 +20,7 @@ class WidgetChange extends ChangeNotifier {
   bool isExpansionTwo = true;
 
   bool isDeposit = true;
-  String isTermsBS = "";
+  String isTermsBS = "false";
   String pageNo = "";
 
   var count = 1;

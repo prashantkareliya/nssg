@@ -14,9 +14,10 @@ class Message {
   static const String quoteExit = "Do you want to exit from this module?";
   static const String enterYourPasscodeToUnlock = "Enter your Passcode to unlock";
 
-  static const String descriptionForQuote = "Our lead times are 2 to 3 weeks from the date of your order.";
-  static const String termsCondition1 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. Deposit Payment Method: Bacs / Cheque / Debit Cards. Payment Terms : 50% Deposit and Remaining balance upon completion.";
-  static const String termsCondition2 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. Deposit Payment Method: Bacs / Cheque / Debit Cards. Payment Terms : 30 Days credit terms upon completion.";
+  //static const String descriptionForQuote = "Our lead times are 2 to 3 weeks from the date of your order.";
+  static const String descriptionForQuote = "Lead times are 3 - 4 weeks on most orders due to parts";
+  static const String termsCondition1 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 50% Deposit and Remaining balance upon completion.";
+  static const String termsCondition2 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 30 Days credit terms upon completion.";
   static const String addEngineerAndHours = "Add the Number of Engineer & Hours";
   static const String quoteEstimation = "for quote estimation";
   static const String quoteCreateSuccessfully = "Your quote has been created successfully!";
@@ -112,7 +113,7 @@ class LabelString {
   static const String lblHideAmount = "Hide Amount";
   static const String lblTemplateOptions = "Template Options";
   static const String lblHideProductPrice = "Hide Product Price";
-  static const String lblHideProduct = "Hide Product";
+  static const String lblHideProduct = "Hide Products";
   static const String lblNone = "None";
   static const String lblCategory = "Category";
   static const String lblManufacturing = "Manufacturing";
@@ -131,6 +132,7 @@ class LabelString {
   static const String lblItemName = "Item Name : ";
   static const String lblQuantity = "Quantity";
   static const String lblDiscount = "Discount : ";
+  static const String lblDiscountFormal = "Discount";
   static const String lbItemName = "Item Name";
   static const String lbItemDescription = "Description";
   static const String lblCostPricePound = "Cost Price(£) ";

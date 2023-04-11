@@ -115,7 +115,8 @@ class _SelectLocationState extends State<SelectLocation> {
                       width: query.width * 0.4,
                       height: query.height * 0.06,
                       child: CustomButton(
-                          title: ButtonString.btnSave, onClick: (){
+                          title: ButtonString.btnSave,
+                          onClick: (){
                         Navigator.pop(context, [textControllers.map((e) => e.text).toList(), titleControllers.map((e) => e.toString()).toList()]);
                       })),
                 ],

@@ -184,6 +184,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   List<RadioModel> termsList = <RadioModel>[]; //step 5
   String page = "0";
 
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -345,7 +346,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               //Grade - Signalling type design
                               buildStepThree(context, query, fieldsData),
 
-
                             ],
                           ),
                         ),
@@ -384,7 +384,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               fieldViewBuilder: (context, textEditingController, focusNode,
                   VoidCallback onFieldSubmitted) {
                 FocusNode focus = focusNode;
-                textEditingController.text = contactSelect;
+                //textEditingController.text = contactSelect;
                 return TextField(
                   autofocus: widget.isBack ? false : true,
                   style: TextStyle(color: AppColors.blackColor),
@@ -446,8 +446,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 FocusScope.of(context).unfocus();
                 getSiteAddressList();
                 for (int i = 0; i < contactData.length; i++) {
-                  if (selection ==
-                      "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
+                  if (selection == "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
                     contactId = contactData[i]["id"];
                     contactCompany = contactData[i]["contact_company"];
                     mobileNumber = contactData[i]["mobile"];
@@ -482,7 +481,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         context,
                         PageTransition(
                             type: PageTransitionType.rightToLeft,
-                            child: ContactDetail(contactId, "quote")));
+                            child: ContactDetail(contactId, "quote", dropdownvalue ?? [])));
                   } else {
                     Helpers.showSnackBar(context, ErrorString.selectOneContact,
                         isError: true);
@@ -1101,8 +1100,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     SizedBox(
                                       width: query.width * 0.35,
                                       child: Text(
-                                          stepThreeData["signalling_type"][index]
-                                          ["label"],
+                                          stepThreeData["signalling_type"][index]["label"],
                                           textAlign: TextAlign.center,
                                           style: signallingType[index].isSelected
                                               ? CustomTextStyle.commonTextBlue

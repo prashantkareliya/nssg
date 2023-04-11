@@ -18,12 +18,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
-import '../../components/custom_button.dart';
 import '../../components/custom_text_styles.dart';
 import '../../components/global_api_call.dart';
 import '../../constants/constants.dart';
 import '../../constants/strings.dart';
-import '../../httpl_actions/app_http.dart';
 import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helpers.dart';
@@ -153,6 +151,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             }
                           },
                           keyboardType: TextInputType.text,
+                          autofocus: true,
                           decoration: InputDecoration(
                               hintText: LabelString.lblSearch,
                               suffixIcon: Container(
@@ -269,10 +268,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               SizedBox(height: 1.0.h),
+                                              //if Contact name of quote is null then we set subject from the list and remove text after the "-"
                                               Text(
                                                   searchKey.isNotEmpty
-                                                      ? searchItemList![index].contactName.toString()
-                                                      : quoteItems![index].contactName.toString(),
+                                                      ? (searchItemList![index].contactName == null ? searchItemList![index].subject!.substring(0, searchItemList![index].subject!.indexOf('-')) : searchItemList![index].contactName.toString())
+                                                      : (quoteItems![index].contactName == null ? quoteItems![index].subject!.substring(0, quoteItems![index].subject!.indexOf('-')) : quoteItems![index].contactName.toString()),
                                                   style: CustomTextStyle.labelMediumBoldFontText),
                                               SizedBox(height: 2.0.h),
                                               Text(
@@ -399,9 +399,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
         isBack: true,
         elevation: 1,
         backgroundColor: AppColors.whiteColor,
-        searchWidget: Container(),
-
-      ),
+        searchWidget: Container()),
       body: Stack(
          children: [
            FutureBuilder<dynamic>(
@@ -462,7 +460,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                SizedBox(width: 4.w),
                                InkWell(
                                  onTap: (){
-                                   //callNextScreen(context, AddQuotePage(true, ""));
+                                   callNextScreen(context, AddQuotePage(true, widget.id,"edit"));
                                  },
                                  child: Card(elevation: 5,
                                    shape: const RoundedRectangleBorder(
@@ -536,14 +534,14 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                color: Colors.transparent,
                                child: Column(
                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                 children: [
-                                   BottomSheetDataTile("Sub Total", "£${dataQuote["hdnsubTotal"].toString().formatAmount}",
+                                 children: [//hdndiscountTotal
+                                   BottomSheetDataTile("Sub Total", "£${(double.parse(dataQuote["hdnsubTotal"])+double.parse(dataQuote["hdndiscountTotal"])).formatAmount()}",
                                        CustomTextStyle.labelFontHintText),
                                    BottomSheetDataTile("Discount Amount", "£${dataQuote["hdndiscountTotal"].toString().formatAmount}",
                                        CustomTextStyle.labelFontHintText),
 
                                    //Item total which is subtotal minus discount amount
-                                   BottomSheetDataTile("Items Total", "£${(dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble()).toString().formatAmount}",
+                                   BottomSheetDataTile("Items Total", "£${((dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble())+double.parse(dataQuote["hdndiscountTotal"])).toString().formatAmount}",
                                        CustomTextStyle.labelFontHintText),
                                    BottomSheetDataTile("Vat Total", "£${dataQuote["pre_tax_total"].toString().formatAmount}",
                                        CustomTextStyle.labelFontHintText),
@@ -648,7 +646,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         Padding(
                           padding: EdgeInsets.only(left: 15.sp),
                           child: itemList[index]["imagename"] == "_" ?
-                          Expanded(child: SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h))  :
+                          SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h)  :
                           Image.network("${ImageBaseUrl.productImageBaseUrl}${itemList[index]["imagename"].toString().replaceAll("&ndash;", "–")}",
                               height: 10.h, width: 23.w)
                         ),
@@ -664,7 +662,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   child: Row(
                                     children: [
                                       Flexible(
-                                          flex: 4, 
+                                          flex: 4,
                                           child: Text(
                                               itemList[index]["prod_name"] ?? "Installation (1st & 2nd fix)",
                                               style: CustomTextStyle.labelBoldFontText)),
@@ -718,9 +716,9 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                 //(listPrice-costPrice)*quantity
                                 ContactTileField(
                                     LabelString.lblProfit,
-                                    "£${((double.parse(itemList[index]["listprice"]) -
+                                    "£${(((double.parse(itemList[index]["listprice"]) -
                                         double.parse(itemList[index]["costprice"])) *
-                                        double.parse(itemList[index]["quantity"])).formatAmount()}",
+                                        double.parse(itemList[index]["quantity"]))-(double.parse(itemList[index]["discount_amount"]))).formatAmount()}",
                                     textAlign: TextAlign.end),
 
                                 /*ContactTileField(
@@ -807,14 +805,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
             SizedBox(height: 0.5.h),
             Row(
               children: [
-                Flexible(
-                  child: Text(dataQuote["quotes_email"], style: CustomTextStyle.labelText),
-                ),
+                Flexible(child: Text(dataQuote["quotes_email"], style: CustomTextStyle.labelText)),
                 dataQuote["quote_mobile_number"] == "" ? Container()
-                    : Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                        child: Container(
-                            color: AppColors.hintFontColor,
+                    : Padding(padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                        child: Container(color: AppColors.hintFontColor,
                             height: 2.0.h, width: 0.5.w)),
                 Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText)]),
             SizedBox(height: 1.5.h),
@@ -855,8 +849,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                   ),
                   children: [
                     TextSpan(
-                        text:
-                            "\n${dataQuote["bill_street"]}, ${dataQuote["bill_city"]}, ${dataQuote["bill_state"]}, ${dataQuote["bill_country"]}, ${dataQuote["bill_code"]}",
+                        text: "\n${dataQuote["bill_street"]}, ${dataQuote["bill_city"]}, ${dataQuote["bill_country"]}, ${dataQuote["bill_code"]}",
                         style: CustomTextStyle.labelText)
                   ]),
             ),
@@ -871,7 +864,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         fontWeight: FontWeight.w500)),
                   children: [
                     TextSpan(
-                        text: "\n${dataQuote["ship_street"]}, ${dataQuote["ship_city"]}, ${dataQuote["ship_state"]}, ${dataQuote["ship_country"]}, ${dataQuote["ship_code"]}",
+                        text: "\n${dataQuote["ship_street"]}, ${dataQuote["ship_city"]}, ${dataQuote["ship_country"]}, ${dataQuote["ship_code"]}",
                         style: CustomTextStyle.labelText)
                   ]),
             ),
@@ -899,15 +892,13 @@ class _QuoteDetailState extends State<QuoteDetail> {
                     highlightColor: AppColors.transparent,
                     splashColor: AppColors.transparent,
                     onPressed: () => Navigator.pop(context),
-                    icon:
-                        Icon(Icons.close_rounded, color: AppColors.blackColor)),
+                    icon: Icon(Icons.close_rounded, color: AppColors.blackColor)),
               ],
             ),
             SizedBox(height: 2.h),
             Text(productName, style: CustomTextStyle.labelBoldFontText),
             SizedBox(height: 3.h),
-            Text(description,
-                style: CustomTextStyle.labelText),
+            Text(description, style: CustomTextStyle.labelText),
           ],
         ),
       ),
@@ -948,3 +939,4 @@ class QuoteTileField extends StatelessWidget {
     );
   }
 }
+//short ball

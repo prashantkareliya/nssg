@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         child: BlocProvider(
           create: (context) => ProductListBloc(),
           child: MaterialApp(
-
+            debugShowCheckedModeBanner: false,
             title: 'National Security System ',
             theme: ThemeData(
                 pageTransitionsTheme: const PageTransitionsTheme(

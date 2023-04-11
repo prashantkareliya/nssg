@@ -438,6 +438,7 @@ class LineItems {
   String? proShortDescription;
   String? id;
   String? prodName;
+  String? prodProfit;
 
   LineItems(
       {this.parentId,
@@ -460,7 +461,7 @@ class LineItems {
         this.requiredDocument,
         this.proShortDescription,
         this.id,
-        this.prodName});
+        this.prodName, this.prodProfit});
 
   LineItems.fromJson(Map<String, dynamic> json) {
     parentId = json['parent_id'];
@@ -484,6 +485,7 @@ class LineItems {
     proShortDescription = json['pro_short_description'];
     id = json['id'];
     prodName = json['prod_name'];
+    prodProfit = json['prodProfit'];
   }
 
   Map<String, dynamic> toJson() {
@@ -509,6 +511,7 @@ class LineItems {
     data['pro_short_description'] = proShortDescription;
     data['id'] = id;
     data['prod_name'] = prodName;
+    data['prodProfit'] = prodProfit;
     return data;
   }
 }

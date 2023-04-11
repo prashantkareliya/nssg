@@ -218,7 +218,39 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                         searchKey.isNotEmpty ? itemNumber.remove(searchItemList![index].id) : itemNumber.remove(productItems![index].id);
                       } :
                           () {
-                        ProductsList productsList = ProductsList(
+                            List<String> documentType = [];
+
+                            if(searchKey.isNotEmpty){
+                              if (searchItemList![index].productNssKeyholderForm == "1") {
+                                documentType.add("Keyholder form");
+                                if (searchItemList![index].productSecurityAgreeForm == "1") {
+                                  documentType.add("Maintenance contract");
+                                  if (searchItemList![index].productPoliceAppForm == "1") {
+                                    documentType.add("Maintenance contract");
+                                    if (searchItemList![index].productDirectDebitForm == "1") {
+                                      documentType.add("Direct Debit");
+                                    }
+                                  }
+                                }
+                                print((documentType).join('###'));
+                              }
+                            }else {
+                              if (productItems![index].productNssKeyholderForm == "1") {
+                                documentType.add("Keyholder form");
+                                if (productItems![index].productSecurityAgreeForm == "1") {
+                                  documentType.add("Maintenance contract");
+                                  if (productItems![index].productPoliceAppForm == "1") {
+                                    documentType.add("Maintenance contract");
+                                    if (productItems![index].productDirectDebitForm == "1") {
+                                      documentType.add("Direct Debit");
+                                    }
+                                  }
+                                }
+                                print((documentType).join('###'));
+                              }
+                            }
+
+                            ProductsList productsList = ProductsList(
                             itemId: DateTime.now().millisecondsSinceEpoch.toString(),
                             productId: searchKey.isNotEmpty? searchItemList![index].id.toString()  :productItems![index].id.toString(),
                             itemName: searchKey.isNotEmpty? searchItemList![index].productname.toString() :productItems![index].productname.toString(),
@@ -235,6 +267,7 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                             titleLocation: searchKey.isNotEmpty ? (searchItemList![index].titleLocationList ?? []).join("###"):(productItems![index].titleLocationList ?? []).join("###"),
                             itemAdd: searchKey.isNotEmpty? searchItemList![index].isItemAdded : productItems![index].isItemAdded,
                             productImage: searchKey.isNotEmpty? searchItemList![index].imagename : productItems![index].imagename,
+                              requiredDocument: (documentType).join('###'),
                         );
                         setState(() {
                           searchKey.isNotEmpty ?

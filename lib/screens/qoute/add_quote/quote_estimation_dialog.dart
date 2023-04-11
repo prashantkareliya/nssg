@@ -16,8 +16,6 @@ import '../../../utils/widgets.dart';
 
 class QuoteEstimation extends StatefulWidget {
 
-  QuoteEstimation({Key? key}) : super(key: key);
-
   @override
   State<QuoteEstimation> createState() => _QuoteEstimationState();
 }
@@ -174,7 +172,8 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                         title: ButtonString.btnSubmit,
                         onClick: () {
                           if(eAmount != "0.0"){
-                            Navigator.pop(context, eAmount);
+                            final data = { "keyAmount" : eAmount, "keyEngineerNumbers" : engineerNumbers, "keyTimeType" : timeType};
+                            Navigator.pop(context, data);
                           }else{
                             showToast("Please select required fields");
                           }

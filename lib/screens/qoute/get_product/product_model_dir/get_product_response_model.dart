@@ -96,6 +96,7 @@ class Result {
   bool? isItemAdded;
   List<String>? locationList;
   List<String>? titleLocationList;
+  List<String>? docList;
 
   Result(
       {this.productname,
@@ -169,6 +170,7 @@ class Result {
         this.isItemAdded,
         this.locationList = const [],
         this.titleLocationList = const [],
+        this.docList = const [],
       });
 
   Result.fromJson(Map<String, dynamic> json) {
@@ -243,6 +245,7 @@ class Result {
     isItemAdded = json['isItemAdded'];
     locationList = json['locationList'];
     titleLocationList = json['titleLocationList'];
+    docList = json['docList'];
   }
 
   Map<String, dynamic> toJson() {
@@ -318,6 +321,7 @@ class Result {
     data['isItemAdded'] = isItemAdded;
     data['locationList'] = locationList;
     data['titleLocationList'] = titleLocationList;
+    data['docList'] = docList;
     return data;
   }
 }

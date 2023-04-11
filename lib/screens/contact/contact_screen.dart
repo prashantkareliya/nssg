@@ -147,6 +147,7 @@ class _ContactScreenState extends State<ContactScreen> {
                   child: Consumer<WidgetChange>(
                       builder: (context, updateKey, search) {
                     return TextField(
+
                         onChanged: (value) {
                           Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
                           searchKey = updateKey.updateSearchText.toString();
@@ -165,6 +166,7 @@ class _ContactScreenState extends State<ContactScreen> {
                           }
                         },
                         keyboardType: TextInputType.text,
+                        autofocus: true,
                         decoration: InputDecoration(
                             hintText: LabelString.lblSearch,
                             suffixIcon: Container(
@@ -271,7 +273,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                               Navigator.push(
                                                       context, PageTransition(
                                                           type: PageTransitionType.rightToLeft,
-                                                          child: ContactDetail(setContactId, "contact"))).then((value) {
+                                                          child: ContactDetail(setContactId, "contact", ""))).then((value) {
                                                 if (value == "delete") {
                                                   getContact();
                                                 }
@@ -556,7 +558,9 @@ class ContactDetail extends StatelessWidget {
 
   String? quote;
 
-  ContactDetail(this.id, this.quote, {Key? key}) : super(key: key);
+  var dropdownvalue;
+
+  ContactDetail(this.id, this.quote, this.dropdownvalue, {Key? key}) : super(key: key);
 
   Future<dynamic>? getDetail;
 
@@ -654,9 +658,12 @@ class ContactDetail extends StatelessWidget {
                                               ImageString.icCompany,height: 2.h, color: AppColors.primaryColor),
                                           SizedBox(width: 2.w),
                                           Expanded(
-                                              child: Text(dataContact["contact_company"]=="" ? LabelString.lblCompanyName : dataContact["contact_company"],
-                                                  style:
-                                                      CustomTextStyle.labelText))
+                                              child:
+                                              dropdownvalue != "" && dropdownvalue.isNotEmpty ?
+                                              Text(dropdownvalue["name"]=="" ? LabelString.lblCompanyName : dropdownvalue["name"],
+                                                  style:CustomTextStyle.labelText)
+                                              : Text(dataContact["contact_company"]=="" ? LabelString.lblCompanyName : dataContact["contact_company"],
+                                                  style:CustomTextStyle.labelText))
                                         ],
                                       ),
                                       divider(),
@@ -750,8 +757,9 @@ class ContactDetail extends StatelessWidget {
                                                       fontWeight: FontWeight.bold)),
                                                   children: [
                                                     TextSpan(
-                                                        text:
-                                                          "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, ${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
+                                                        text: dropdownvalue != "" && dropdownvalue.isNotEmpty ?
+                                                        "\n${dropdownvalue["address"]}, ${dropdownvalue["city"]}, ${dropdownvalue["country"]}, ${dropdownvalue["postcode"]}"
+                                                          : "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, ${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
                                                         style: GoogleFonts.roboto(textStyle: TextStyle(
                                                             height: 1.5,
                                                             fontSize: 12.sp,

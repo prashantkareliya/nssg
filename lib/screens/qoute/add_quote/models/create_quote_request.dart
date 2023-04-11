@@ -61,6 +61,8 @@ class CreateQuoteRequest {
   String? quoteWorksSchedule;
   String? quoteNoOfEngineer;
   String? quoteReqToCompleteWork;
+  String? quotePoNumber;
+  String? quoteGradeOfNoti;
   List<LineItems>? lineItems;
 
   CreateQuoteRequest(
@@ -127,6 +129,8 @@ class CreateQuoteRequest {
         this.quoteWorksSchedule,
         this.quoteNoOfEngineer,
         this.quoteReqToCompleteWork,
+        this.quotePoNumber,
+        this.quoteGradeOfNoti,
         this.lineItems
       });
 
@@ -193,6 +197,8 @@ class CreateQuoteRequest {
     quoteWorksSchedule = json['quote_works_schedule'];
     quoteNoOfEngineer = json['quote_no_of_engineer'];
     quoteReqToCompleteWork = json['quote_req_to_complete_work'];
+    quotePoNumber = json['quote_po_number'];
+    quoteGradeOfNoti = json['quote_grade_of_noti'];
     if (json['LineItems'] != null) {
       lineItems = <LineItems>[];
       json['LineItems'].forEach((v) {
@@ -265,6 +271,8 @@ class CreateQuoteRequest {
     data['quote_works_schedule'] = quoteWorksSchedule;
     data['quote_no_of_engineer'] = quoteNoOfEngineer;
     data['quote_req_to_complete_work'] = quoteReqToCompleteWork;
+    data['quote_po_number'] = quotePoNumber;
+    data['quote_grade_of_noti'] = quoteGradeOfNoti;
     if (lineItems != null) {
       data['LineItems'] = lineItems!.map((v) => v.toJson()).toList();
     }
@@ -292,6 +300,7 @@ class LineItems {
   String? requiredDocument;
   String? proShortDescription;
   String? proName;
+  String? profit;
 
   LineItems(
       {this.productid,
@@ -312,7 +321,7 @@ class LineItems {
         this.extQty,
         this.requiredDocument,
         this.proShortDescription,
-        this.proName});
+        this.proName,this.profit});
 
   LineItems.fromJson(Map<String, dynamic> json) {
     productid = json['productid'];
@@ -334,6 +343,7 @@ class LineItems {
     requiredDocument = json['required_document'];
     proShortDescription = json['pro_short_description'];
     proName = json["prod_name"];
+    profit = json["profit"];
   }
 
   Map<String, dynamic> toJson() {
@@ -357,6 +367,7 @@ class LineItems {
     data['required_document'] = requiredDocument;
     data['pro_short_description'] = proShortDescription;
     data['prod_name'] = proName;
+    data['profit'] = profit;
     return data;
   }
 }
