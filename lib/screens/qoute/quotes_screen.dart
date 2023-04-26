@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
@@ -12,6 +14,7 @@ import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
 import 'package:nssg/screens/qoute/send_email.dart';
 import 'package:nssg/utils/extention_text.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +35,7 @@ import 'bloc/product_list_bloc.dart';
 import 'get_quote/quote_bloc_dir/get_quote_bloc.dart';
 import 'get_quote/quote_model_dir/get_quote_response_model.dart';
 import 'add_quote/build_item_screen.dart';
+import 'models/products_list.dart';
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({Key? key}) : super(key: key);
@@ -135,17 +139,15 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             for (var element in quoteItems!) {
                               if (element.subject!.toLowerCase().contains(searchKey)) {
                                 searchItemList!.add(element);
-                              } else if (element.quotesCompany!
-                                  .toLowerCase()
-                                  .contains(searchKey)) {
+                              } else if (element.quotesCompany!.toLowerCase().contains(searchKey)) {
                                 searchItemList!.add(element);
-                              } else if (element.shipStreet!
-                                  .toLowerCase()
-                                  .contains(searchKey)) {
+                              } else if (element.shipStreet!.toLowerCase().contains(searchKey)) {
                                 searchItemList!.add(element);
-                              } else if (element.shipCode!
-                                  .toLowerCase()
-                                  .contains(searchKey)) {
+                              } else if (element.shipCode!.toLowerCase().contains(searchKey)) {
+                                searchItemList!.add(element);
+                              }else if(element.quoteNo!.toLowerCase().contains(searchKey)){
+                                searchItemList!.add(element);
+                              }else if(element.quotesEmail!.toLowerCase().contains(searchKey)){
                                 searchItemList!.add(element);
                               }
                             }
@@ -227,6 +229,10 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             : quoteItems!.length,
                         itemBuilder: (context, index) {
                           //var quoteItem = quoteItems![index];
+
+                          final DateFormat formatter = DateFormat('dd/MM/yyyy');
+                          final String formatted = formatter.format(DateTime.parse(quoteItems![index].createdDate.toString()));
+
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             child: SlideAnimation(
@@ -241,14 +247,15 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                     elevation: 2,
                                     child: InkWell(
                                       onTap: () {
-                                        if(searchKey.isNotEmpty){
+                                        if (searchKey.isNotEmpty) {
+
                                           Navigator.push(
                                               context, PageTransition(
                                               type: PageTransitionType.rightToLeft,
                                               child: QuoteDetail(searchItemList![index].id)));
 
                                           //callNextScreen(context, QuoteDetail(searchItemList![index].id));
-                                        }else{
+                                        } else {
                                           Navigator.push(
                                               context, PageTransition(
                                               type: PageTransitionType.rightToLeft,
@@ -269,11 +276,37 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                             children: [
                                               SizedBox(height: 1.0.h),
                                               //if Contact name of quote is null then we set subject from the list and remove text after the "-"
-                                              Text(
-                                                  searchKey.isNotEmpty
-                                                      ? (searchItemList![index].contactName == null ? searchItemList![index].subject!.substring(0, searchItemList![index].subject!.indexOf('-')) : searchItemList![index].contactName.toString())
-                                                      : (quoteItems![index].contactName == null ? quoteItems![index].subject!.substring(0, quoteItems![index].subject!.indexOf('-')) : quoteItems![index].contactName.toString()),
-                                                  style: CustomTextStyle.labelMediumBoldFontText),
+                                              InkWell(
+                                                onTap: (){
+                                                  if(searchKey.isNotEmpty){
+                                                    Navigator.push(
+                                                        context,
+                                                        PageTransition(
+                                                            type: PageTransitionType.rightToLeft,
+                                                            child: ContactDetail(searchItemList![index].contactId, "quote", [])));
+                                                  }else {
+                                                    Navigator.push(
+                                                        context,
+                                                        PageTransition(
+                                                            type: PageTransitionType.rightToLeft,
+                                                            child: ContactDetail(quoteItems![index].contactId, "quote", [])));
+                                                  }
+                                                },
+                                                child: Text.rich(
+                                                  TextSpan(
+                                                    text: searchKey.isNotEmpty
+                                                        ? (searchItemList![index].contactName == null ? searchItemList![index].subject!.substring(0, searchItemList![index].subject!.indexOf('-')) : searchItemList![index].contactName.toString())
+                                                        : (quoteItems![index].contactName == null ? quoteItems![index].subject!.substring(0, quoteItems![index].subject!.indexOf('-')) : quoteItems![index].contactName.toString()),
+                                                    style: CustomTextStyle.labelBoldFontText,
+                                                    children: [
+                                                      TextSpan(
+                                                          text: searchKey.isNotEmpty ? " - ${searchItemList![index].quoteNo}" : " - ${quoteItems![index].quoteNo}",
+                                                          style: CustomTextStyle.labelBoldFontText)
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+
                                               SizedBox(height: 2.0.h),
                                               Text(
                                                   searchKey.isNotEmpty
@@ -281,11 +314,29 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                       : quoteItems![index].systemType.toString(),
                                                   style: CustomTextStyle.labelText),
                                               SizedBox(height: 0.5.h),
+                                              Text(
+                                                  searchKey.isNotEmpty
+                                                      ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
+                                                      : "${quoteItems![index].shipStreet} ${quoteItems![index].shipCode}",
+                                                  style: CustomTextStyle.labelText),
+                                              SizedBox(height: 0.5.h),
                                               Text.rich(
                                                 TextSpan(
-                                                  text: quoteItems![index].quotesEmail.toString(),
+                                                  text: "",
                                                   style: CustomTextStyle.labelText,
                                                   children: [
+                                                    TextSpan(
+                                                        text: searchKey.isNotEmpty ?
+                                                        searchItemList![index].quotesEmail.toString()
+                                                            : quoteItems![index].quotesEmail.toString(),
+                                                        style: GoogleFonts.roboto(
+                                                            textStyle: TextStyle(
+                                                          fontSize: 12.sp,
+                                                          color: AppColors.primaryColor)),
+                                                        recognizer: TapGestureRecognizer()..onTap = () {
+                                                          sendMail(quoteItems![index].quotesEmail.toString(), context);
+                                                        }
+                                                    ),
                                                     WidgetSpan(
                                                         child: quoteItems![index].quoteMobileNumber!.isEmpty
                                                             ? Container()
@@ -296,17 +347,23 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                                     height: 2.0.h, width: 0.5.w))),
                                                     TextSpan(
                                                         text: quoteItems![index].quoteMobileNumber.toString(),
-                                                        style: CustomTextStyle.labelText)
+                                                        style: CustomTextStyle.labelText,
+                                                        recognizer: TapGestureRecognizer()..onTap = () =>
+                                                            callFromApp(quoteItems![index].quoteMobileNumber.toString()))
                                                   ],
                                                 ),
                                               ),
                                               SizedBox(height: 0.5.h),
-                                              Text(
-                                                  searchKey.isNotEmpty
-                                                      ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
-                                                      : "${quoteItems![index].shipStreet} ${quoteItems![index].shipCode}",
-                                                  style: CustomTextStyle.labelText),
-                                              SizedBox(height: 2.0.h),
+                                              Align(
+                                                alignment: Alignment.centerRight,
+                                                child: Text(formatted,
+                                                    style: GoogleFonts.roboto(
+                                                        textStyle: TextStyle(
+                                                          fontSize: 10.sp,
+                                                          color: AppColors.hintFontColor,
+                                                        ))),
+                                              ),
+
                                             ],
                                           ),
                                         ),
@@ -359,8 +416,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
           preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyQuote, //2017
       'module_name': 'Quotes',
-      'assigned_user_id':
-          preferences.getString(PreferenceString.userId).toString(),
+     /* 'assigned_user_id':
+          preferences.getString(PreferenceString.userId).toString(),*/
     };
     quoteBloc.add(GetQuoteListEvent(queryParameters));
   }
@@ -408,6 +465,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                  if (snapshot.hasData) {
                    dataQuote = snapshot.data["result"];
                    List<dynamic> itemList = dataQuote["LineItems"];
+                   itemList = itemList.reversed.toList();
                    return SingleChildScrollView(
                      physics: const BouncingScrollPhysics(),
                      child: Padding(
@@ -454,13 +512,14 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                              style: CustomTextStyle.buttonText),
                                        ],
                                      )
-
                                  ),
                                ),
                                SizedBox(width: 4.w),
                                InkWell(
+                                 highlightColor: AppColors.transparent,
+                                 splashColor: AppColors.transparent,
                                  onTap: (){
-                                   callNextScreen(context, AddQuotePage(true, widget.id,"edit"));
+                                   callNextScreen(context, AddQuotePage(true, "","edit", dataQuote: dataQuote, itemList: itemList));
                                  },
                                  child: Card(elevation: 5,
                                    shape: const RoundedRectangleBorder(
@@ -680,7 +739,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                       insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
                                                       child:
                                                           itemDescription(itemList[index]["prod_name"] ?? "Installation (1st & 2nd fix)",
-                                                              itemList[index]["comment"] ?? ""));
+                                                              itemList[index]["pro_short_description"] ?? ""));
                                                 },
                                               );
                                             },
@@ -699,7 +758,11 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                     "£${itemList[index]["listprice"].toString().formatAmount}",
                                     textAlign: TextAlign.end),
                                 ContactTileField(
-                                    LabelString.lblDiscount,
+                                    LabelString.lblQty,
+                                    "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} Items",
+                                    textAlign: TextAlign.end),
+                                ContactTileField(
+                                    LabelString.lblDiscPrice,
                                     "£${itemList[index]["discount_amount"].toString().formatAmount}",
                                     textAlign: TextAlign.end),
 
@@ -736,11 +799,39 @@ class _QuoteDetailState extends State<QuoteDetail> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TextButton(
-                            onPressed: () {},
+                          if(itemList[index]["required_document"] != "") TextButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                      elevation: 0,
+                                      insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: IconButton(icon: Icon(Icons.close, color: AppColors.blackColor),
+                                              onPressed: () => Navigator.pop(context), padding: EdgeInsets.zero,splashRadius: 10.0,),
+                                          ),
+                                          Text("Attachments - ", style: CustomTextStyle.labelBoldFontText),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                                itemList[index]["required_document"].toString().replaceAll("###", "\n-\n"),
+                                                style: CustomTextStyle.labelBoldFontTextSmall),
+                                          ),
+                                        ],
+                                      ));
+                                },
+                              );
+                            },
                             child: Text(LabelString.lblAttachedDocument,
                                 style: CustomTextStyle.commonTextBlue),
-                          ),
+                          )else(Container(height: 2.h)),
 
                           //View location button will be visible only when user had entered location
                           if(itemList[index]["product_location"] != "") TextButton(
@@ -775,7 +866,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                             },
                             child: Text(LabelString.lblViewLocation,
                                 style: CustomTextStyle.commonTextBlue),
-                          ),
+                          )else(Container(height: 2.h)),
                         ],
                       ),
                     ),
@@ -805,12 +896,20 @@ class _QuoteDetailState extends State<QuoteDetail> {
             SizedBox(height: 0.5.h),
             Row(
               children: [
-                Flexible(child: Text(dataQuote["quotes_email"], style: CustomTextStyle.labelText)),
+                InkWell(
+                  onTap: (){
+                    sendMail(dataQuote["quotes_email"], context);
+                  },
+                    child: Flexible(child: Text(dataQuote["quotes_email"], style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.primaryColor)))),
                 dataQuote["quote_mobile_number"] == "" ? Container()
                     : Padding(padding: EdgeInsets.symmetric(horizontal: 8.sp),
                         child: Container(color: AppColors.hintFontColor,
                             height: 2.0.h, width: 0.5.w)),
-                Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText)]),
+                InkWell(onTap: () =>
+                    callFromApp(dataQuote["quote_mobile_number"].toString()),
+                    child: Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText))]),
             SizedBox(height: 1.5.h),
             QuoteTileField(
                 LabelString.lblPremisesType, dataQuote["premises_type"]),
@@ -939,4 +1038,3 @@ class QuoteTileField extends StatelessWidget {
     );
   }
 }
-//short ball

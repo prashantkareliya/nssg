@@ -1,4 +1,4 @@
-import 'dart:convert';
+  import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nssg/constants/navigation.dart';
@@ -15,7 +14,6 @@ import 'package:nssg/constants/strings.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
-import 'package:nssg/screens/qoute/quotes_screen.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,23 +23,16 @@ import '../../../components/custom_radio_button.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../components/toggle_switch.dart';
 import '../../../constants/constants.dart';
-import '../../../httpl_actions/app_http.dart';
 import '../../../utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
-import 'package:collection/collection.dart';
 import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
 import '../../../utils/widgets.dart';
-import '../../dashboard/root_screen.dart';
 import '../models/products_list.dart';
-import '../send_email.dart';
-import 'add_item_screen.dart';
 import 'add_quote_bloc_dir/add_quote_bloc.dart';
 import 'edit_item_dialog.dart';
 import 'models/create_quote_request.dart';
-
 import 'quote_estimation_dialog.dart';
-import '../get_product/product_model_dir/get_product_response_model.dart' as product;
 import 'search_add_product_screen.dart';
 import 'thankyou_screen.dart';
 
@@ -71,11 +62,13 @@ class BuildItemScreen extends StatefulWidget {
   String? mobileNumber;
   String? telephoneNumber;
 
+
   var termsList;
-
   String? contactEmail;
-
   var siteAddress;
+
+  List<dynamic>? itemList = [];
+  var dataQuote;
 
   BuildItemScreen(
       this.eAmount,
@@ -101,7 +94,7 @@ class BuildItemScreen extends StatefulWidget {
       this.mobileNumber,
       this.telephoneNumber,
       this.termsList, this.contactEmail, this.siteAddress,
-      {super.key});
+      {super.key, this.itemList, this.dataQuote});
 
   @override
   State<BuildItemScreen> createState() => _BuildItemScreenState();
@@ -128,30 +121,25 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
   bool isEmailRemind = true;
 
+  bool isChangedDeposit = true;
+
   //String? itemAmount;
 
   @override
   void initState() {
     super.initState();
     print(widget.siteAddress.toString());
-//widget.siteAddress.toString() == "{}"
-   /* var profit = (double.parse("0") - 80.0).formatAmount();
-    var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.itemId == "123456");
-    if(productList == null){
-      context.read<ProductListBloc>().add(AddProductToListEvent(productsList: ProductsList(
-          itemId:  "14x123456",
-          productId: "789",
-          itemName: 'Installation (1st & 2nd fix)',
-          costPrice: '80.00',
-          sellingPrice: defaultItemPrice,
-          quantity: 1,
-          discountPrice: "0",
-          amountPrice: defaultItemPrice,
-          profit: profit,
-          description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm"
-      )));
-    }*/
+    print(widget.itemList.toString());
     //todo: call event(ClearProductToListEvent) after get success response
+
+    if(widget.dataQuote != null){
+      if(widget.dataQuote["quote_email_reminder"] == "1"){
+        isEmailRemind = true;
+      }else{
+        isEmailRemind = false;
+      }
+        productListLocal = widget.itemList as List<ProductsList>;
+    }
   }
 
   AddQuoteBloc addQuoteBloc = AddQuoteBloc(
@@ -222,8 +210,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 Padding(
                   padding: EdgeInsets.only(left: 8.sp),
                   child: Text(LabelString.lblTemplateOptions,
-                      style: CustomTextStyle.labelText),
-                ),
+                      style: CustomTextStyle.labelText)),
                 SizedBox(height: 1.h),
 
                 //Template option design
@@ -236,9 +223,17 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       growable: false,
                       templateOptionList.length,
                           (index) {
-                        templateOption.add(
-                            RadioModel(templateOptionList[index] == "Hide Product Price"
-                                ? true : false, templateOptionList[index]));
+                            if(widget.dataQuote != null){
+                              templateOption.add(RadioModel(
+                                  widget.dataQuote["quotes_template_options"].toString().contains(templateOptionList[index].toString().replaceAll(" ", "_")) ?
+                                  true : false,
+                                  templateOptionList[index]));
+                            }else{
+                              templateOption.add(
+                                  RadioModel(templateOptionList[index] == "Hide Product Price"
+                                      ? true : false, templateOptionList[index]));
+                            }
+
                         Provider.of<WidgetChange>(context).isSelectTemplateOption;
 
                         return SizedBox(
@@ -299,6 +294,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 SizedBox(height: 10.sp),
                 quoteEstimationWidget(query),
                 SizedBox(height: 10.sp),
+                if(widget.itemList != null)
+              ...productListLocal.map((e) => buildDetailItemTile(e, context, state)).toList().reversed
+                    else
                 ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList().reversed,
                 //item list
                 SizedBox(height: query.height *0.08)
@@ -417,8 +415,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.normal,
                                   fontStyle: FontStyle.normal,
-                                  color: AppColors.primaryColor,
-                                  decoration: TextDecoration.underline)),
+                                  color: AppColors.primaryColor)),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   showDialog(
@@ -430,7 +427,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                             elevation: 0,
                                             insetAnimationCurve: Curves.decelerate,
                                             insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                            child: QuoteEstimation());
+                                            child: QuoteEstimation(dataQuote: widget.dataQuote));
                                       }).then((value) {
                                         if(value != null){
                                           setState(() {
@@ -697,7 +694,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   grandTotal = subTotal+(subTotal*0.2);
                   vatTotal = (subTotal*0.2);
                   //initial text for deposit textField
-
+                if(isChangedDeposit){
+                  depositAmountController.text = grandTotal.toString();
+                }
                 return Container(
                     decoration: BoxDecoration(
                         color: AppColors.whiteColor,
@@ -770,7 +769,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                           hintText: grandTotal.formatAmount(),
                                           hintStyle: CustomTextStyle.labelText),
                                       textAlign: TextAlign.right,
-                                      onChanged: (value){ },
+                                      onChanged: (value){
+                                        setState(() {
+                                          isChangedDeposit = false;
+                                        });
+                                      },
                                     ),
                                   ),
                                 ),
@@ -943,7 +946,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteGradeOfNoti: "",
         lineItems :  productList.map((e) => LineItems(
           productid: e.productId,
-          sequenceNo: (productList.indexOf(e)+1).toString(), //todo set sequence number as per item index
+          sequenceNo: (productList.indexOf(e)+1).toString(),
           quantity: e.quantity.toString(),
           listprice: e.sellingPrice,
           discountPercent: "00.00",
@@ -955,7 +958,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           tax2: "",
           tax3: "",
           productLocation: e.selectLocation,
-          productLocationTitle: e.titleLocation, //todo add title with join ###product_title
+          productLocationTitle: e.titleLocation,
           costprice: e.costPrice,
           extQty: "0",
           requiredDocument: e.requiredDocument, //"Keyholder form###Maintenance contract###Police application###Direct Debit",

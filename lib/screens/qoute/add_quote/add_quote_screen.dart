@@ -13,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
-import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/custom_radio_button.dart';
 import '../../../components/custom_rounded_container.dart';
@@ -32,6 +31,7 @@ import '../../contact/contact_repository.dart';
 import '../../contact/get_contact/contact_bloc_dir/get_contact_bloc.dart';
 import '../../contact/get_contact/contact_model_dir/get_contact_response_model.dart';
 import 'add_item_screen.dart';
+import 'build_item_screen.dart';
 
 ///First step to create quote
 class AddQuotePage extends StatefulWidget {
@@ -41,12 +41,15 @@ class AddQuotePage extends StatefulWidget {
   String? lastName;
   var contactDetail;
 
+  var dataQuote;
+  List<dynamic>? itemList;
+
   AddQuotePage(this.isBack, this.firstName, this.lastName,
-      {Key? key, this.contactId, this.contactDetail})
+      {Key? key, this.contactId, this.contactDetail, this.dataQuote, this.itemList})
       : super(key: key);
 
   @override
-  State<AddQuotePage> createState() => _AddQuotePageState();
+  State<AddQuotePage> createState() => _AddQuotePageState(dataQuote, itemList);
 }
 
 class _AddQuotePageState extends State<AddQuotePage> {
@@ -56,7 +59,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
   StreamController<int> streamController = StreamController<int>.broadcast();
   List<Result>? contactItems = []; //this list for API call
   List contactData = []; // this list for set data in contact
-  List addressList = [];
   List siteAddressList = [];
 
   String? contactId;
@@ -84,11 +86,18 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
   var dropdownvalue;
 
+  var dataQuote;
+  List<dynamic>? itemList = [];
+
+  _AddQuotePageState(this.dataQuote, this.itemList);
+
   @override
   void initState() {
     super.initState();
     getContactList();
 
+    print(itemList);
+    print(dataQuote);
     //for create quote after the create contact
     //set contact by default in auto complete textField in create quote screen
     if (!widget.isBack) {
@@ -109,6 +118,22 @@ class _AddQuotePageState extends State<AddQuotePage> {
       installationCity = widget.contactDetail.othercity;
       installationCountry = widget.contactDetail.othercountry;
       installationPostal = widget.contactDetail.otherzip;
+    } else if (dataQuote != null){
+      contactId = dataQuote["contact_id"];
+      contactCompany = dataQuote["quotes_company"];
+      mobileNumber = dataQuote["quote_mobile_number"];
+      telephoneNumber = dataQuote["quote_telephone_number"];
+      contactEmail = dataQuote["quotes_email"];
+
+      invoiceAddress = dataQuote["bill_street"];
+      invoiceCity = dataQuote["bill_city"];
+      invoiceCountry = dataQuote["bill_country"];
+      invoicePostal = dataQuote["bill_pobox"];
+
+      installationAddress = dataQuote["ship_street"];
+      installationCity = dataQuote["ship_city"];
+      installationCountry = dataQuote["ship_country"];
+      installationPostal = dataQuote["ship_pobox"];
     }
   }
 
@@ -122,8 +147,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': 'query',
-      'sessionName':
-      preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyContact, //2017
       'module_name': 'Contacts'
     };
@@ -184,11 +208,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
   List<RadioModel> termsList = <RadioModel>[]; //step 5
   String page = "0";
 
-
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
     getFields = getQuoteFields("Quotes");
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -219,9 +243,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
       body: BlocListener<GetContactBloc, GetContactState>(
         bloc: contactBloc,
         listener: (context, state) {
+
           if (state is ContactLoadFail) {
             Helpers.showSnackBar(context, state.error.toString());
           }
+
           if (state is ContactsLoaded) {
             contactItems = state.contactList;
             isDelete = false;
@@ -377,8 +403,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
           children: [
             //Design Auto filled contact
             Autocomplete(
-              initialValue: widget.isBack
-                  ? null
+              initialValue: dataQuote != null ? TextEditingValue(text: dataQuote["contact_name"] ?? "") :
+              widget.isBack ? null
                   : TextEditingValue(
                   text: "${widget.firstName} ${widget.lastName}"),
               fieldViewBuilder: (context, textEditingController, focusNode,
@@ -386,7 +412,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 FocusNode focus = focusNode;
                 //textEditingController.text = contactSelect;
                 return TextField(
-                  autofocus: widget.isBack ? false : true,
+                  autofocus: widget.isBack || dataQuote != null ? false : true,
                   style: TextStyle(color: AppColors.blackColor),
                   textCapitalization: TextCapitalization.none,
                   textInputAction: TextInputAction.next,
@@ -532,9 +558,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         highlightColor: AppColors.transparent,
                         splashColor: AppColors.transparent,
                       onTap: (){
-                        setState(() {
-                          dropdownvalue = null;
-                        });
+                        setState(() { dropdownvalue = null; });
                       },
                         child: Padding(
                           padding: EdgeInsets.all(4.sp),
@@ -555,8 +579,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
               children: List.generate(
                 stepOneData["premises_type"].length,
                     (index) {
-                  premisesType.add(RadioModel(
-                      false, stepOneData["premises_type"][index]["label"]));
+                  if(dataQuote != null){
+                    premisesType.add(RadioModel(
+                        stepOneData["premises_type"][index]["label"].toString().contains(dataQuote["premises_type"]) ?
+                            true : false, stepOneData["premises_type"][index]["label"]));
+                  }else{
+                    premisesType.add(RadioModel(false, stepOneData["premises_type"][index]["label"]));
+                  }
+
+                 //dataQuote != null ? dataQuote["premises_type"] : ;
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -565,6 +596,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         element.isSelected = false;
                       }
                       // Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
+
                       premisesType[index].isSelected = true;
                       // Provider.of<WidgetChange>(context, listen: false).isSetPremises;
 
@@ -616,8 +648,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   visible:
                                   premisesType[index].isSelected ? true : false,
                                   child: Positioned(
-                                    right: 10,
-                                    top: 5,
+                                    right: 10, top: 5,
                                     child: Container(
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(80.0),
@@ -639,7 +670,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
               ),
             ),
             SizedBox(height: 2.0.h),
-
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 3.sp),
               child: Row(
@@ -705,8 +735,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 stepTwoData["system_type"].length - 9,
                     (index) {
                   String systemTypeLabel = stepTwoData["system_type"][index]["label"].toString();
-                  systemType.add(RadioModel(
-                      false, stepTwoData["system_type"][index]["label"]));
+                  if(dataQuote != null){
+                    systemType.add(RadioModel(
+                        dataQuote["system_type"].toString().contains(stepTwoData["system_type"][index]["label"]) ?
+                        true : false,
+                        stepTwoData["system_type"][index]["label"]));
+                  }else{
+                    systemType.add(RadioModel(false, stepTwoData["system_type"][index]["label"]));
+                  }
+
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -724,34 +761,67 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       if (systemTypeSelect.contains("CCTV") ||
                           systemTypeSelect.contains("Access Control") ||
                           systemTypeSelect.contains("Keyholding")) {
-                        callNextScreen(
-                            context,
-                            AddItemDetail(
-                                eAmount,
-                                systemTypeSelect,
-                                quotePaymentSelection,
-                                contactSelect,
-                                premisesTypeSelect,
-                                termsItemSelection,
-                                gradeFireSelect,
-                                signallingTypeSelect,
-                                engineerNumbers,
-                                timeType,
-                                invoiceAddress,
-                                invoiceCity,
-                                invoiceCountry,
-                                invoicePostal,
-                                installationAddress,
-                                installationCity,
-                                installationCountry,
-                                installationPostal,
-                                contactId,
-                                contactCompany,
-                                mobileNumber,
-                                telephoneNumber,
-                                stepTwoData['quotes_terms'],
-                                contactEmail,
-                                (dropdownvalue ?? {}) as Map));
+                        if(dataQuote != null){
+                          callNextScreen(context, BuildItemScreen(
+                              eAmount,
+                              systemTypeSelect,
+                              quotePaymentSelection,
+                              contactSelect,
+                              premisesTypeSelect,
+                              termsItemSelection,
+                              gradeFireSelect,
+                              signallingTypeSelect,
+                              engineerNumbers,
+                              timeType,
+                              invoiceAddress,
+                              invoiceCity,
+                              invoiceCountry,
+                              invoicePostal,
+                              installationAddress,
+                              installationCity,
+                              installationCountry,
+                              installationPostal,
+                              contactId,
+                              contactCompany,
+                              mobileNumber,
+                              telephoneNumber,
+                              termsList,
+                              contactEmail,
+                              (dropdownvalue ?? {}) as Map,
+                              itemList: itemList, dataQuote: dataQuote
+                          )
+                          );
+                        }else{
+                          callNextScreen(
+                              context,
+                              AddItemDetail(
+                                  eAmount,
+                                  systemTypeSelect,
+                                  quotePaymentSelection,
+                                  contactSelect,
+                                  premisesTypeSelect,
+                                  termsItemSelection,
+                                  gradeFireSelect,
+                                  signallingTypeSelect,
+                                  engineerNumbers,
+                                  timeType,
+                                  invoiceAddress,
+                                  invoiceCity,
+                                  invoiceCountry,
+                                  invoicePostal,
+                                  installationAddress,
+                                  installationCity,
+                                  installationCountry,
+                                  installationPostal,
+                                  contactId,
+                                  contactCompany,
+                                  mobileNumber,
+                                  telephoneNumber,
+                                  stepTwoData['quotes_terms'],
+                                  contactEmail,
+                                  (dropdownvalue ?? {}) as Map));
+                        }
+
                       } else {
                         pageController.nextPage(
                             duration: const Duration(milliseconds: 500),
@@ -780,8 +850,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               children: [
                                 SizedBox(height: 1.h),
                                 SvgExtension(
-                                    itemName: stepTwoData["system_type"][index]
-                                    ["label"],
+                                    itemName: stepTwoData["system_type"][index]["label"],
                                     iconColor: systemType[index].isSelected
                                         ? AppColors.primaryColor
                                         : AppColors.blackColor),
@@ -790,12 +859,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   width: query.width * 0.3,
                                   child: Text(
                                       RegExp(":").hasMatch(systemTypeLabel)
-                                          ? systemTypeLabel
-                                          .substring(
-                                          0,
-                                          systemTypeLabel.indexOf(":") +
-                                              2)
-                                          .replaceAll(":", "")
+                                          ? systemTypeLabel.substring(0,
+                                          systemTypeLabel.indexOf(":") + 2).replaceAll(":", "")
                                           : systemTypeLabel,
                                       textAlign: TextAlign.center,
                                       style: systemType[index].isSelected
@@ -869,15 +934,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 alignment: WrapAlignment.spaceBetween,
                 runSpacing: 15.sp,
                 children: List.generate(
-                  systemTypeSelect ==
-                      "Fire System: BS 5839-1: 2017 + SP203-1"
-                      ? dataGrade.getRange(2, 7).toList().length : 2,
-                      (index) {
+                  2, (index) {
+                    if(dataQuote != null){
+                      gradeAndFire.add(RadioModel(
+                          dataQuote["grade_number"].toString().contains(stepThreeData["grade_number"][index]["label"]) ?
+                          true : false, dataGrade[index]["label"]));
+                    }else {
+                      gradeAndFire.add(RadioModel(false, dataGrade[index]["label"]));
+                    }
 
-                    gradeAndFire.add(RadioModel(false,systemTypeSelect ==
-                        "Fire System: BS 5839-1: 2017 + SP203-1"
-                            ? dataGrade.getRange(2, 7).toList()[index]["label"]
-                            : dataGrade[index]["label"]));
                     return InkWell(
                       splashColor: AppColors.transparent,
                       highlightColor: AppColors.transparent,
@@ -893,36 +958,66 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
                         gradeFireSelect = dataGrade[index]["label"];
 
-                        if (signallingTypeSelect.isNotEmpty &&
-                            gradeFireSelect.isNotEmpty) {
-                          callNextScreen(
-                              context,
-                              AddItemDetail(
-                                  eAmount,
-                                  systemTypeSelect,
-                                  quotePaymentSelection,
-                                  contactSelect,
-                                  premisesTypeSelect,
-                                  termsItemSelection,
-                                  gradeFireSelect,
-                                  signallingTypeSelect,
-                                  engineerNumbers,
-                                  timeType,
-                                  invoiceAddress,
-                                  invoiceCity,
-                                  invoiceCountry,
-                                  invoicePostal,
-                                  installationAddress,
-                                  installationCity,
-                                  installationCountry,
-                                  installationPostal,
-                                  contactId,
-                                  contactCompany,
-                                  mobileNumber,
-                                  telephoneNumber,
-                                  stepThreeData['quotes_terms'],
-                                  contactEmail,
-                                  (dropdownvalue ?? {}) as Map));
+                        if (signallingTypeSelect.isNotEmpty && gradeFireSelect.isNotEmpty) {
+                          if(dataQuote != null){
+                            callNextScreen(
+                                context,
+                                BuildItemScreen(
+                                    eAmount,
+                                    systemTypeSelect,
+                                    quotePaymentSelection,
+                                    contactSelect,
+                                    premisesTypeSelect,
+                                    termsItemSelection,
+                                    gradeFireSelect,
+                                    signallingTypeSelect,
+                                    engineerNumbers,
+                                    timeType,
+                                    invoiceAddress,
+                                    invoiceCity,
+                                    invoiceCountry,
+                                    invoicePostal,
+                                    installationAddress,
+                                    installationCity,
+                                    installationCountry,
+                                    installationPostal,
+                                    contactId,
+                                    contactCompany,
+                                    mobileNumber,
+                                    telephoneNumber,
+                                    stepThreeData['quotes_terms'],
+                                    contactEmail,
+                                    (dropdownvalue ?? {}) as Map));
+                          }else{
+                            callNextScreen(
+                                context,
+                                AddItemDetail(
+                                    eAmount,
+                                    systemTypeSelect,
+                                    quotePaymentSelection,
+                                    contactSelect,
+                                    premisesTypeSelect,
+                                    termsItemSelection,
+                                    gradeFireSelect,
+                                    signallingTypeSelect,
+                                    engineerNumbers,
+                                    timeType,
+                                    invoiceAddress,
+                                    invoiceCity,
+                                    invoiceCountry,
+                                    invoicePostal,
+                                    installationAddress,
+                                    installationCity,
+                                    installationCountry,
+                                    installationPostal,
+                                    contactId,
+                                    contactCompany,
+                                    mobileNumber,
+                                    telephoneNumber,
+                                    stepThreeData['quotes_terms'],
+                                    contactEmail,
+                                    (dropdownvalue ?? {}) as Map));
+                          }
                         }
                       },
                       child: ValueListenableBuilder(
@@ -951,24 +1046,17 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                       //Condition for skip grade and signalling type
                                       SizedBox(height: 1.h),
                                       SvgExtension(
-                                          itemName: systemTypeSelect ==
-                                              "Fire System: BS 5839-1: 2017 + SP203-1"
-                                              ? dataGrade
-                                              .getRange(2, 7)
-                                              .toList()[index]["label"]
+                                          itemName: systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+                                              ? dataGrade.getRange(2, 7).toList()[index]["label"]
                                               : dataGrade[index]["label"],
                                           iconColor: gradeAndFire[index].isSelected
                                               ? AppColors.primaryColor
                                               : AppColors.blackColor),
                                       SizedBox(height: 1.h),
-                                      Text(systemTypeSelect ==
-                                              "Fire System: BS 5839-1: 2017 + SP203-1"
-                                              ? dataGrade
-                                              .getRange(2, 7)
-                                              .toList()[index]["label"]
+                                      Text(systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
+                                              ? dataGrade.getRange(2, 7).toList()[index]["label"]
                                               : dataGrade[index]["label"],
-                                          style: gradeAndFire[index]
-                                              .isSelected
+                                          style: gradeAndFire[index].isSelected
                                               ? CustomTextStyle.commonTextBlue
                                               : CustomTextStyle.commonText),
                                       SizedBox(height: 1.h),
@@ -1019,8 +1107,17 @@ class _AddQuotePageState extends State<AddQuotePage> {
             children: List.generate(
               // stepFourData["signalling_type"].length
               12, (index) {
-                    signallingType.add(
-                        RadioModel(false, stepThreeData["signalling_type"][index]["label"]));
+                if(dataQuote != null){
+                  signallingType.add(
+                      RadioModel(
+                          dataQuote["signalling_type"].toString().contains(stepThreeData["signalling_type"][index]["label"])
+                              ? true : false,
+                          stepThreeData["signalling_type"][index]["label"]));
+                }else {
+                  signallingType.add(
+                      RadioModel(false, stepThreeData["signalling_type"][index]["label"]));
+                }
+
                 return InkWell(
                   splashColor: AppColors.transparent,
                   highlightColor: AppColors.transparent,
@@ -1035,34 +1132,66 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     signallingTypeSelect = stepThreeData["signalling_type"][index]["label"];
 
                     if (signallingTypeSelect.isNotEmpty) {
-                      callNextScreen(
-                          context,
-                          AddItemDetail(
-                              eAmount,
-                              systemTypeSelect,
-                              quotePaymentSelection,
-                              contactSelect,
-                              premisesTypeSelect,
-                              termsItemSelection,
-                              gradeFireSelect,
-                              signallingTypeSelect,
-                              engineerNumbers,
-                              timeType,
-                              invoiceAddress,
-                              invoiceCity,
-                              invoiceCountry,
-                              invoicePostal,
-                              installationAddress,
-                              installationCity,
-                              installationCountry,
-                              installationPostal,
-                              contactId,
-                              contactCompany,
-                              mobileNumber,
-                              telephoneNumber,
-                              stepThreeData['quotes_terms'],
-                              contactEmail,
-                              (dropdownvalue ?? {}) as Map));
+
+                      if(dataQuote != null){
+                        callNextScreen(
+                            context,
+                            BuildItemScreen(
+                                eAmount,
+                                systemTypeSelect,
+                                quotePaymentSelection,
+                                contactSelect,
+                                premisesTypeSelect,
+                                termsItemSelection,
+                                gradeFireSelect,
+                                signallingTypeSelect,
+                                engineerNumbers,
+                                timeType,
+                                invoiceAddress,
+                                invoiceCity,
+                                invoiceCountry,
+                                invoicePostal,
+                                installationAddress,
+                                installationCity,
+                                installationCountry,
+                                installationPostal,
+                                contactId,
+                                contactCompany,
+                                mobileNumber,
+                                telephoneNumber,
+                                stepThreeData['quotes_terms'],
+                                contactEmail,
+                                (dropdownvalue ?? {}) as Map));
+                      }else {
+                        callNextScreen(
+                            context,
+                            AddItemDetail(
+                                eAmount,
+                                systemTypeSelect,
+                                quotePaymentSelection,
+                                contactSelect,
+                                premisesTypeSelect,
+                                termsItemSelection,
+                                gradeFireSelect,
+                                signallingTypeSelect,
+                                engineerNumbers,
+                                timeType,
+                                invoiceAddress,
+                                invoiceCity,
+                                invoiceCountry,
+                                invoicePostal,
+                                installationAddress,
+                                installationCity,
+                                installationCountry,
+                                installationPostal,
+                                contactId,
+                                contactCompany,
+                                mobileNumber,
+                                telephoneNumber,
+                                stepThreeData['quotes_terms'],
+                                contactEmail,
+                                (dropdownvalue ?? {}) as Map));
+                      }
                     }
                   },
                   child: ValueListenableBuilder(

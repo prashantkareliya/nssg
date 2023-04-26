@@ -375,7 +375,7 @@ class _AddContactPageState extends State<AddContactPage> {
                         onClick: () {
                           FocusScope.of(context).unfocus();
                           if (contactBasicDetailFormKey.currentState?.validate() ==true) {
-                            if (primaryEmailController.text.isValidEmail &&
+                            /*if (primaryEmailController.text.isValidEmail &&
                                 secondaryEmailController.text.isValidEmail) {
                               pageController.nextPage(
                                   duration: const Duration(milliseconds: 500),
@@ -384,7 +384,10 @@ class _AddContactPageState extends State<AddContactPage> {
                               Helpers.showSnackBar(
                                   context, ErrorString.emailNotValid,
                                   isError: true);
-                            }
+                            }*/
+                            pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate);
                           }
                         },
                         title: ButtonString.btnNext,
@@ -695,7 +698,7 @@ class _AddContactPageState extends State<AddContactPage> {
         } else {
           //API call for get ID
           var url =
-              "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=S9VYw_n6IE6VlQkZktafRA37641";
+              "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
 
           final response = await http.get(Uri.parse(url),
               headers: <String, String>{

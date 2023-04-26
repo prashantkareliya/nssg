@@ -124,6 +124,7 @@ class LabelString {
   static const String lblViewLocation = "View Location";
   static const String lblCostPrice = "Cost Price";
   static const String lblSellingPrice = "Selling Price";
+  static const String lblQty = "Qty";
   static const String lblDiscPrice = "Disc. Price";
   static const String lblAmount = "Amount";
   static const String lblProfit = "profit";
@@ -131,7 +132,7 @@ class LabelString {
   static const String lblLocation = "Location";
   static const String lblItemName = "Item Name : ";
   static const String lblQuantity = "Quantity";
-  static const String lblDiscount = "Discount : ";
+  //static const String lblDiscount = "Disc. Price : ";
   static const String lblDiscountFormal = "Discount";
   static const String lbItemName = "Item Name";
   static const String lbItemDescription = "Description";

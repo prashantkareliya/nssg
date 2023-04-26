@@ -15,6 +15,10 @@ import '../../../utils/widgets.dart';
 
 
 class QuoteEstimation extends StatefulWidget {
+  var dataQuote;
+
+  QuoteEstimation({this.dataQuote});
+
 
   @override
   State<QuoteEstimation> createState() => _QuoteEstimationState();
@@ -64,7 +68,14 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     children: List.generate(
                       fieldsData["quote_no_of_engineer"].length,
                           (index) {
-                        numbersOfEng.add(RadioModel(false, fieldsData["quote_no_of_engineer"][index]["label"]));
+                        if(widget.dataQuote != null){
+                          numbersOfEng.add(RadioModel(
+                              widget.dataQuote["quote_no_of_engineer"].toString().contains(fieldsData["quote_no_of_engineer"][index]["label"]) ?
+                              true : false,
+                              fieldsData["quote_no_of_engineer"][index]["label"]));
+                        }else{
+                          numbersOfEng.add(RadioModel(false, fieldsData["quote_no_of_engineer"][index]["label"]));
+                        }
                         return SizedBox(
                           height: 6.h,
                           width: 11.w,
@@ -79,7 +90,9 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                               numbersOfEng[index].isSelected = true;
                               Provider.of<WidgetChange>(context, listen: false).isSetEngineer;
 
-                              engineerNumbers = fieldsData["quote_no_of_engineer"][index]["label"].toString();
+                              engineerNumbers = widget.dataQuote != null ?
+                              widget.dataQuote["quote_no_of_engineer"].toString() :
+                                  fieldsData["quote_no_of_engineer"][index]["label"].toString();
                               calculation();
                             },
                             child: RadioItem(numbersOfEng[index]),
@@ -98,9 +111,14 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     children: List.generate(
                       fieldsData["quote_req_to_complete_work"].length,
                           (index) {
-                        installationTiming.add(RadioModel(
-                            false,
-                            fieldsData["quote_req_to_complete_work"][index]["label"]));
+                            if(widget.dataQuote != null){
+                              installationTiming.add(RadioModel(
+                                  widget.dataQuote["quote_req_to_complete_work"].toString().contains(fieldsData["quote_req_to_complete_work"][index]["label"]) ?
+                                  true : false,
+                                  fieldsData["quote_req_to_complete_work"][index]["label"]));
+                            }else{
+                              installationTiming.add(RadioModel(false, fieldsData["quote_req_to_complete_work"][index]["label"]));
+                            }
                         return SizedBox(
                           height: 6.h,
                           child: InkWell(

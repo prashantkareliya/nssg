@@ -44,8 +44,6 @@ class _EditItemState extends State<EditItem> {
       listLocationTitle = productsList.titleLocation!.split("###");
     }
 
-
-
     itemDescriptionController.text = widget.productsList.description.toString();
     itemNameController.text = widget.productsList.itemName.toString();
     itemCostPriceController.text = widget.productsList.costPrice.toString();
@@ -66,8 +64,9 @@ class _EditItemState extends State<EditItem> {
             (itemDiscountController.text == "" ? 0.0
                 : double.parse(itemDiscountController.text))).formatAmount();*/
 
-    String finalProfit = (itemSellingPriceController.text == "" ? 0.0 : ((double.parse(itemSellingPriceController.text) * productsList.quantity!) -
-        (double.parse(itemCostPriceController.text) * productsList.quantity!))
+    String finalProfit = (itemSellingPriceController.text == "" ? 0.0 :
+    ((double.parse(itemSellingPriceController.text) * productsList.quantity!) -
+        (itemCostPriceController.text == "" ? 0.0 : double.parse(itemCostPriceController.text) * productsList.quantity!))
         - (itemDiscountController.text == "" ? 0.0
             : double.parse(itemDiscountController.text))).formatAmount();
 
@@ -106,10 +105,13 @@ class _EditItemState extends State<EditItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: () {},
-                  child: Text(LabelString.lblAttachmentDocument,
-                      style: CustomTextStyle.commonTextBlue),
+                Visibility(
+                  visible: false,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(LabelString.lblAttachmentDocument,
+                        style: CustomTextStyle.commonTextBlue),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -330,8 +332,7 @@ class _EditItemState extends State<EditItem> {
 
 class DiscountDialog extends StatefulWidget {
   final ProductsList productsList;
-
-  DiscountDialog({Key? key, required this.productsList}) : super(key: key);
+  const DiscountDialog({Key? key, required this.productsList}) : super(key: key);
 
   @override
   State<DiscountDialog> createState() => _DiscountDialogState();
@@ -351,6 +352,18 @@ class _DiscountDialogState extends State<DiscountDialog> {
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
+
+   /* final finalAmount = (double.parse(productsList.amountPrice!) -
+        (discController.text == ""  ? 0.0
+            : double.parse(discController.text))).formatAmount();
+*/
+
+
+
+    /*final finalProfit = (double.parse(productsList.profit!) -
+        (discController.text == "" ? 0.0
+            : double.parse(discController.text))).formatAmount();*/
+
 
     return SizedBox(
         width: query.width / 1.1,
@@ -398,14 +411,16 @@ class _DiscountDialogState extends State<DiscountDialog> {
                 child: CustomButton(
                     title: ButtonString.btnSubmit,
                     onClick: () {
-                      final finalAmount =
-                          (double.parse(productsList.amountPrice!) -
-                                  (discController.text == ""  ? 0.0
-                                      : double.parse(discController.text))).formatAmount();
+                      String finalAmount = (widget.productsList.sellingPrice == "" ? 0.0 : (double.parse(widget.productsList.sellingPrice.toString()) *
+                          productsList.quantity!)- (discController.text == "" ? 0.0
+                          : double.parse(discController.text))).formatAmount();
 
-                      final finalProfit = (double.parse(productsList.profit!) -
-                              (discController.text == "" ? 0.0
-                                  : double.parse(discController.text))).formatAmount();
+                      String finalProfit = (widget.productsList.sellingPrice == "" ? 0.0 :
+                      ((double.parse(widget.productsList.sellingPrice.toString()) * productsList.quantity!) -
+                          (widget.productsList.costPrice == "" ? 0.0 : double.parse(widget.productsList.costPrice.toString()) * productsList.quantity!))
+                          - (discController.text == "" ? 0.0
+                          : double.parse(discController.text))).formatAmount();
+
                       context.read<ProductListBloc>().add(
                           UpdateProductToListEvent(
                               productsList: productsList.copyWith(
@@ -413,12 +428,15 @@ class _DiscountDialogState extends State<DiscountDialog> {
                                   description: widget.productsList.description.toString(),
                                   profit: finalProfit,
                                   amountPrice: finalAmount,
+                                  costPrice: widget.productsList.costPrice.toString(),
+                                  sellingPrice: widget.productsList.sellingPrice.toString(),
+                                  quantity: widget.productsList.quantity,
                                   discountPrice: discController.text,
                                   selectLocation: (productsList.locationList ?? []).join('###'),
                                 titleLocation:(productsList.titleLocationList ?? []).join('###'),
                               )));
-                      Navigator.pop(context, double.parse(discController.text));
-                      //Navigator.pop(context);
+                     // Navigator.pop(context, double.parse(discController.text));
+                      Navigator.pop(context);
                     })),
             SizedBox(height: 3.h)
           ],

@@ -42,6 +42,7 @@ class Result {
   String? shipCode;
   String? id;
   String? contactName;
+  String? createdDate;
 
   Result(
       {this.quoteNo,
@@ -57,7 +58,7 @@ class Result {
         this.shipCountry,
         this.shipCode,
         this.id,
-        this.contactName});
+        this.contactName, this.createdDate});
 
   Result.fromJson(Map<String, dynamic> json) {
     quoteNo = json['quote_no'];
@@ -74,6 +75,7 @@ class Result {
     shipCode = json['ship_code'];
     id = json['id'];
     contactName = json['contact_name'];
+    createdDate = json['createdtime'];
   }
 
   Map<String, dynamic> toJson() {
@@ -92,6 +94,7 @@ class Result {
     data['ship_code'] = shipCode;
     data['id'] = id;
     data['contact_name'] = contactName;
+    data['createdtime'] = createdDate;
     return data;
   }
 }

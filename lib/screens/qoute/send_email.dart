@@ -104,13 +104,7 @@ class _SendEmailState extends State<SendEmail> {
                       title: ButtonString.btnSubmit,
                       onClick: () {
                         if(emailFormKey.currentState!.validate()){
-                          if(emailController.text.isValidEmail){
-                            sendEmail();
-                          }else{
-                            Helpers.showSnackBar(context,
-                                ErrorString.emailNotValid,
-                                isError: true);
-                          }
+                          sendEmail();
                         }
                       })),
               SizedBox(height: 3.h)

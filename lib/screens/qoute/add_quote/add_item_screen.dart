@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nssg/components/custom_appbar.dart';
 import 'package:nssg/components/custom_button.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
@@ -711,10 +710,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: filterList![index].imagename == "" ?
-                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) :
+                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h, width: 16.w) :
                                   ClipRRect(borderRadius: BorderRadius.circular(10.0),
                                       child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
-                                      height: 8.h))
+                                      height: 9.h, width: 18.w))
                                 ),
                                 SizedBox(width: 5.w),
                                 Expanded(
@@ -894,6 +893,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       ),
                                       InkWell(
                                         onTap: () {
+                                          if(isItemAdded){
+                                            context.read<ProductListBloc>().add(RemoveProductFromCardByIdEvent(productId: filterList![index].id ?? ""));
+                                            setState(() {
+                                              itemNumber.remove(filterList![index].id);
+                                            });
+                                          }
                                           showDialog(
                                             barrierDismissible: true,
                                             context: context,
@@ -901,18 +906,14 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               ///Make new class for dialog
                                               return Dialog(
                                                   shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
+                                                      borderRadius: BorderRadius.circular(10)),
                                                   insetPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 8.sp),
+                                                  EdgeInsets.symmetric(horizontal: 8.sp),
                                                   child: SelectLocation(
                                                       filterList![index].quantity,
                                                       filterList![index].productname,
                                                       filterList![index].locationList,
-                                                      filterList![index].titleLocationList,
-                                                  ));
+                                                      filterList![index].titleLocationList));
                                             },
                                           ).then((value) {
                                             if (value != null) {

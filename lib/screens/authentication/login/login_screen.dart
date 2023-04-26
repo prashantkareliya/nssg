@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     isLoading = false;
   }
-
+  String accessKey = "";
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -194,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomTextField(
-          keyboardType: TextInputType.name,
+          keyboardType: TextInputType.emailAddress,
           readOnly: false,
           controller: userNameController,
           obscureText: false,
@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomTextField(
-          keyboardType: TextInputType.name,
+          keyboardType: TextInputType.emailAddress,
           readOnly: false,
           controller: passwordController,
           obscureText:
@@ -248,44 +248,38 @@ class _LoginScreenState extends State<LoginScreen> {
   //login button validation for email login
   validateAndDoLogin() async {
     if (loginFormKey.currentState?.validate() == true) {
-      if (userNameController.text.toString().isValidEmail) {
+      switch (userNameController.text.trim()) {
 
-        String accessKey = "";
-          switch (userNameController.text.trim()) {
+        case "iih.admin":
+          accessKey =  "CBfPHDoMNjtE99vx";
+          break;
 
-                case "iih.admin":
-                accessKey =  "CBfPHDoMNjtE99vx";
-                break;
+        case "dn@nssg.co.uk":
+          accessKey ="S8QzomH4Q4QYxaFb";
+          break;
 
-                case "dn@nssg.co.uk":
-                accessKey ="S8QzomH4Q4QYxaFb";
-                break;
+        case "vn@nssg.co.uk":
+          accessKey ="EsqKnIihnpQ8YKl2";
+          break;
 
-                case "vn@nssg.co.uk":
-                accessKey ="EsqKnIihnpQ8YKl2";
-                break;
+        case "ak@nssg.co.uk" :
+          accessKey= "l6ArnYzg21P92JrT";
+          break;
 
-                case "ak@nssg.co.uk" :
-                accessKey= "l6ArnYzg21P92JrT";
-                break;
+        case "rj@nssg.co.uk":
+          accessKey= "uLhjPz1Rr3Ef3xoc";
+          break;
 
-                case "rj@nssg.co.uk":
-                accessKey= "uLhjPz1Rr3Ef3xoc";
-                break;
-
-                case "sanjay.iih":
-                accessKey ="NiWZP7MDRsh0qh";
-                break;
-          }
-        Map<String, dynamic> queryParameters = {
-          'username': userNameController.text.trim(),
-          'password': passwordController.text.trim(),
-          'accesskey': accessKey,
-        };
-        loginBloc.add(LoginUserEvent(queryParameters));
-      } else {
-        Helpers.showSnackBar(context, ErrorString.emailNotValid, isError: true);
+        case "sanjay.iih":
+          accessKey ="NiWZP7MDRsh0qh";
+          break;
       }
+      Map<String, dynamic> queryParameters = {
+        'username': userNameController.text.trim(),
+        'password': passwordController.text.trim(),
+        'accesskey': accessKey,
+      };
+      loginBloc.add(LoginUserEvent(queryParameters));
     }
   }
 
@@ -310,7 +304,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Map<String, dynamic> queryParameters = {
             'username': userName.toString(),
             'loginpin': result.toString(), //2017
-            'accesskey': 'S8QzomH4Q4QYxaFb',
+            'accesskey': accessKey,
           };
           loginBloc.add(LoginUserEvent(queryParameters));
         },

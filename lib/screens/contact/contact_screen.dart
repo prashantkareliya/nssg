@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -31,6 +32,7 @@ import '../../utils/widgetChange.dart';
 import 'add_contact/add_contact_screen.dart';
 import 'get_contact/contact_bloc_dir/get_contact_bloc.dart';
 import 'get_contact/contact_model_dir/get_contact_response_model.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 bool? isDelete = false;
 
@@ -154,13 +156,19 @@ class _ContactScreenState extends State<ContactScreen> {
 
                           searchItemList = [];
                           for (var element in contactItems!) {
-                            if (element.contactName!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase())) {
+                            if (element.contactName!.toLowerCase().contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if (element.contactCompany!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase())) {
+                            } else if (element.contactCompany!.toLowerCase().contains(searchKey.toLowerCase())) {
+                              searchItemList!.add(element);
+                            }else if(element.firstname!.toLowerCase().contains(searchKey.toLowerCase())){
+                              searchItemList!.add(element);
+                            }else if((element.lastname!.toLowerCase().contains(searchKey.toLowerCase()))){
+                              searchItemList!.add(element);
+                            }else if((element.email!.toLowerCase().contains(searchKey.toLowerCase()))){
+                              searchItemList!.add(element);
+                            }else if((element.mailingzip!.toLowerCase().contains(searchKey.toLowerCase()))){
+                              searchItemList!.add(element);
+                            }else if((element.otherzip!.toLowerCase().contains(searchKey.toLowerCase()))){
                               searchItemList!.add(element);
                             }
                           }
@@ -237,7 +245,7 @@ class _ContactScreenState extends State<ContactScreen> {
                       child: ListView.separated(
                         padding: EdgeInsets.only(top: 10.sp),
                         physics: const BouncingScrollPhysics(),
-                        itemCount: searchKey.isNotEmpty
+                        itemCount:  searchKey.isNotEmpty
                             ? searchItemList!.length
                             : contactItems!.length,
                         itemBuilder: (context, index) {
@@ -304,12 +312,35 @@ class _ContactScreenState extends State<ContactScreen> {
                                                                   : contactItems![index].contactName.toString(),
                                                               style: CustomTextStyle.labelMediumBoldFontText),
                                                           SizedBox(height: 1.3.h),
-                                                          Text(
-                                                              contactItems![index].email.toString(),
-                                                              style: CustomTextStyle.labelText),
+                                                          InkWell(
+                                                            onTap: (){
+                                                              if( searchKey.isNotEmpty){
+                                                                sendMail(searchItemList![index].email.toString(), context);
+                                                              }else{
+                                                                sendMail(contactItems![index].email.toString(), context);
+                                                              }
+
+                                                            },
+                                                            child: Text(
+                                                                searchKey.isNotEmpty
+                                                                    ? searchItemList![index].email.toString()
+                                                                    :contactItems![index].email.toString(),
+                                                                style: GoogleFonts.roboto(
+                                                                    textStyle: TextStyle(
+                                                                    fontSize: 12.sp,
+                                                                    color: AppColors.primaryColor))),
+                                                          ),
                                                           SizedBox(height: 0.7.h),
-                                                          Text(contactItems![index].mobile.toString(),
-                                                              style: CustomTextStyle.labelText)],
+                                                          InkWell(
+                                                            onTap: () => callFromApp (searchKey.isNotEmpty
+                                                                  ? searchItemList![index].mobile.toString()
+                                                                  : contactItems![index].mobile.toString()),
+
+                                                            child: Text(searchKey.isNotEmpty
+                                                                ? searchItemList![index].mobile.toString()
+                                                                :contactItems![index].mobile.toString(),
+                                                                style: CustomTextStyle.labelText),
+                                                          )],
                                                       ),
                                                     ),
                                                     Row(
@@ -339,6 +370,7 @@ class _ContactScreenState extends State<ContactScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.sp),
                               ),
+                              //Nirav, pintu, Mango, Kano, Hemant, Akshit, Akshay, Kartik, CJ, Yug, Ganesh
                               elevation: 3,
                               child: InkWell(
                                 onTap: () {
@@ -620,8 +652,7 @@ class ContactDetail extends StatelessWidget {
                                                     Navigator.pop(context);
                                                     Navigator.pop(context, "delete");
                                                   },
-                                                  () => Navigator.pop(
-                                                      context), //No button
+                                                  () => Navigator.pop(context), //No button
                                                 ),
                                               );
                                             },
@@ -660,9 +691,9 @@ class ContactDetail extends StatelessWidget {
                                           Expanded(
                                               child:
                                               dropdownvalue != "" && dropdownvalue.isNotEmpty ?
-                                              Text(dropdownvalue["name"]=="" ? LabelString.lblCompanyName : dropdownvalue["name"],
+                                              Text(dropdownvalue["name"]=="" ? "" : dropdownvalue["name"],
                                                   style:CustomTextStyle.labelText)
-                                              : Text(dataContact["contact_company"]=="" ? LabelString.lblCompanyName : dataContact["contact_company"],
+                                              : Text(dataContact["contact_company"]== "" ? " " : dataContact["contact_company"],
                                                   style:CustomTextStyle.labelText))
                                         ],
                                       ),
@@ -676,9 +707,12 @@ class ContactDetail extends StatelessWidget {
                                           Expanded(
                                             child: RichText(
                                               text: TextSpan(
-                                                  text: dataContact["mobile"],
-                                                  style: CustomTextStyle.labelText,
                                                   children: [
+                                                    TextSpan(
+                                                        text: dataContact["mobile"],
+                                                        style: CustomTextStyle.labelText,
+                                                        recognizer: TapGestureRecognizer()..onTap = () => callFromApp(dataContact["mobile"].toString())
+                                                    ),
                                                     WidgetSpan(
                                                         child: dataContact["phone"] =="" || dataContact["mobile"] ==""
                                                             ? Container()
@@ -691,24 +725,42 @@ class ContactDetail extends StatelessWidget {
                                                               )),
                                                     TextSpan(
                                                         text: dataContact["phone"],
-                                                        style: CustomTextStyle.labelText)
+                                                        style: CustomTextStyle.labelText,
+                                                      recognizer: TapGestureRecognizer()..onTap = ()=>
+                                                          callFromApp(dataContact["phone"].toString())
+                                                    )
                                                   ]),
                                             ),
                                           )
                                         ],
                                       ),
                                       divider(),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Icon(Icons.email_outlined, color: AppColors.primaryColor, size: 13.sp),
-                                          SizedBox(width: 2.w),
-                                          Expanded(
-                                              child: Text(
-                                                  "${dataContact["email"]}  ${dataContact["secondaryemail"]}",
-                                                  style:
-                                                      CustomTextStyle.labelText))
-                                        ],
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            WidgetSpan(child: Icon(Icons.email_outlined, color: AppColors.primaryColor, size: 13.sp)),
+                                            WidgetSpan(child: SizedBox(width: 2.w)),
+                                            TextSpan(
+                                                text: dataContact["email"].toString(),
+                                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: AppColors.primaryColor
+                                                )),
+                                                recognizer: TapGestureRecognizer()..onTap = () {
+                                                  sendMail(dataContact["email"].toString(), context);
+                                                }
+                                            ),
+                                            const TextSpan(text: ", "),
+                                            TextSpan(
+                                                text: "${dataContact["secondaryemail"]}",
+                                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: AppColors.primaryColor)),
+                                                recognizer: TapGestureRecognizer()..onTap = (){
+                                                  sendMail(dataContact["secondaryemail"].toString(), context);
+                                                })
+                                          ],
+                                        ),
                                       ),
 
                                       divider(),
