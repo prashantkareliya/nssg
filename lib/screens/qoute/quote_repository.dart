@@ -4,6 +4,8 @@ import '../../constants/constants.dart';
 import '../../httpl_actions/api_result.dart';
 import '../../httpl_actions/handle_api_error.dart';
 import 'add_quote/models/create_quote_response.dart';
+import 'add_quote/models/update_quote_request.dart';
+import 'add_quote/models/update_quote_response.dart';
 import 'get_quote/quote_model_dir/get_quote_response_model.dart';
 
 class QuoteRepository {
@@ -40,6 +42,24 @@ class QuoteRepository {
 
       } else {
         return ApiResult.failure(error: createQuoteResponse.success.toString());
+      }
+
+    } catch (e) {
+      final message = HandleAPI.handleAPIError(e);
+      return ApiResult.failure(error: message);
+    }
+  }
+
+  Future<ApiResult<UpdateQuoteResponse>> quoteUpdate(Map<String, dynamic> paraMeters) async {
+    try {
+      final result = await _quoteDatasource.updateQuote(paraMeters);
+
+      UpdateQuoteResponse updateQuoteResponse = UpdateQuoteResponse.fromJson(result);
+
+      if (updateQuoteResponse.success.toString() == ResponseStatus.success) {
+        return ApiResult.success(data: updateQuoteResponse);
+      } else {
+        return ApiResult.failure(error: updateQuoteResponse.success.toString());
       }
 
     } catch (e) {

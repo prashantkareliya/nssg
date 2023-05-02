@@ -16,4 +16,11 @@ class QuoteDatasource extends HttpActions {
     debugPrint("create Quote --- $response");
     return response;
   }
+
+
+  Future<dynamic> updateQuote(Map<String, dynamic> paraMeters) async {
+    final response = await postMethodQueryParams(ApiEndPoint.getQuoteListApi, data: paraMeters);
+    debugPrint("update Quote --- $response");
+    return response;
+  }
 }

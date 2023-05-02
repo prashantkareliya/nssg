@@ -9,3 +9,9 @@ class AddQuoteDetailEvent extends AddQuoteEvent {
 
   AddQuoteDetailEvent(this.bodyData);
 }
+
+class UpdateQuoteDetailEvent extends AddQuoteEvent {
+  Map<String, String> bodyData;
+
+  UpdateQuoteDetailEvent(this.bodyData);
+}

@@ -14,7 +14,7 @@ import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
 import 'package:nssg/screens/qoute/send_email.dart';
 import 'package:nssg/utils/extention_text.dart';
-import 'package:open_mail_app/open_mail_app.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +25,7 @@ import '../../components/custom_text_styles.dart';
 import '../../components/global_api_call.dart';
 import '../../constants/constants.dart';
 import '../../constants/strings.dart';
+import '../../httpl_actions/app_http.dart';
 import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/helpers.dart';
@@ -248,7 +249,6 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                     child: InkWell(
                                       onTap: () {
                                         if (searchKey.isNotEmpty) {
-
                                           Navigator.push(
                                               context, PageTransition(
                                               type: PageTransitionType.rightToLeft,
@@ -297,11 +297,19 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                     text: searchKey.isNotEmpty
                                                         ? (searchItemList![index].contactName == null ? searchItemList![index].subject!.substring(0, searchItemList![index].subject!.indexOf('-')) : searchItemList![index].contactName.toString())
                                                         : (quoteItems![index].contactName == null ? quoteItems![index].subject!.substring(0, quoteItems![index].subject!.indexOf('-')) : quoteItems![index].contactName.toString()),
-                                                    style: CustomTextStyle.labelBoldFontText,
+                                                    style: GoogleFonts.roboto(
+                                                        textStyle: TextStyle(
+                                                            fontSize: 13.sp,
+                                                            color: AppColors.fontColor,
+                                                            fontWeight: FontWeight.bold)),
                                                     children: [
                                                       TextSpan(
                                                           text: searchKey.isNotEmpty ? " - ${searchItemList![index].quoteNo}" : " - ${quoteItems![index].quoteNo}",
-                                                          style: CustomTextStyle.labelBoldFontText)
+                                                          style: GoogleFonts.roboto(
+                                                              textStyle: TextStyle(
+                                                                  fontSize: 13.sp,
+                                                                  color: AppColors.fontColor,
+                                                                  fontWeight: FontWeight.bold)))
                                                     ],
                                                   ),
                                                 ),
@@ -442,6 +450,28 @@ class _QuoteDetailState extends State<QuoteDetail> {
   var dataQuote;
   List<String> contactList = [];
   bool isLoading = false;
+  String pdfURL = "";
+  @override
+  void initState() {
+    super.initState();
+    getPDFUrl();
+  }
+
+  Future<dynamic> getPDFUrl() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': "retrieve_quote_pdf_url",
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'id': widget.id.toString(),
+      'pdf_type': 'preview'
+    };
+    final response = await HttpActions().getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
+
+    debugPrint("PDF URL --- $response");
+    pdfURL = response["result"];
+    return response;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -476,46 +506,67 @@ class _QuoteDetailState extends State<QuoteDetail> {
                            Row(
                              mainAxisAlignment: MainAxisAlignment.end,
                              children: [
-                               SizedBox(
-                                 height: 5.5.h,
-                                 child: ElevatedButton(
-                                     onPressed: (){
-                                       showDialog(
-                                           context: context,
-                                           barrierDismissible: false,
-                                           builder: (context) {
-                                             return Dialog(
-                                               shape: RoundedRectangleBorder(
-                                                   borderRadius: BorderRadius.circular(10)),
-                                               elevation: 0,
-                                               insetAnimationCurve: Curves.decelerate,
-                                               insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                               child: SendEmail(contactList, widget.id, dataQuote["quotes_email"], ""),
-                                             );
-                                           });
-                                     },
-                                     clipBehavior: Clip.hardEdge,
-                                     style: ElevatedButton.styleFrom(
-                                       backgroundColor: AppColors.primaryColor,
-                                       splashFactory: NoSplash.splashFactory,
-                                       shape: const RoundedRectangleBorder(
-                                           borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                     ),
-                                     child: Row(
-                                       mainAxisSize: MainAxisSize.min,
-                                       children: [
-                                         SvgPicture.asset(ImageString.icEmail,
-                                             color: AppColors.whiteColor,
-                                             fit: BoxFit.fill, height: 2.5.h),
-                                         SizedBox(width: 2.w),
-                                         Text(LabelString.lblSendEmail,
-                                             style: CustomTextStyle.buttonText),
-                                       ],
-                                     )
+                           Card(
+                             elevation:5,
+                             shape: const RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                             child: SizedBox(
+                               height: query.height * 0.06,
+                               width: query.width * 0.12,
+                               child: TextButton(
+                               style: ButtonStyle(
+                               foregroundColor: MaterialStateProperty.all<Color>(
+                                   AppColors.primaryColor),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                 RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.circular(10.0),
+                                     side: BorderSide(
+                                         color: AppColors.transparent,
+                                         width: 0)))),
+                                onPressed: (){
+                                  UrlLauncher.launch(pdfURL);
+                                },
+                                child: Icon(Icons.picture_as_pdf, color: AppColors.primaryColor)),
+                             ),
+                           ),
+                               SizedBox(width: 0.0.w),
+                               Card(
+                                 elevation:5.0,
+                                 shape: const RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                 child: SizedBox(
+                                   height: query.height * 0.06,
+                                   width: query.width * 0.12,
+                                   child: ElevatedButton(
+                                       onPressed: (){
+                                         showDialog(
+                                             context: context,
+                                             barrierDismissible: false,
+                                             builder: (context) {
+                                               return Dialog(
+                                                 shape: RoundedRectangleBorder(
+                                                     borderRadius: BorderRadius.circular(10)),
+                                                 elevation: 0,
+                                                 insetAnimationCurve: Curves.decelerate,
+                                                 insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                                 child: SendEmail(contactList, widget.id, dataQuote["quotes_email"], ""),
+                                               );
+                                             });
+                                       },
+                                       clipBehavior: Clip.hardEdge,
+                                       style: ElevatedButton.styleFrom(
+                                         backgroundColor: AppColors.primaryColor,
+                                         splashFactory: NoSplash.splashFactory,
+                                         shape: const RoundedRectangleBorder(
+                                             borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                       ),
+                                       child: SvgPicture.asset(ImageString.icEmail,
+                                           color: AppColors.whiteColor, height: 2.0.h, fit: BoxFit.fill),
+                                   ),
                                  ),
                                ),
-                               SizedBox(width: 4.w),
-                               InkWell(
+                               SizedBox(width: 0.0.w),
+                               /*InkWell(
                                  highlightColor: AppColors.transparent,
                                  splashColor: AppColors.transparent,
                                  onTap: (){
@@ -523,21 +574,21 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                  },
                                  child: Card(elevation: 5,
                                    shape: const RoundedRectangleBorder(
-                                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                    child: Container(
-                                     height: 5.h,
-                                     width: 10.w,
+                                       height: query.height * 0.06,
+                                       width: query.width * 0.12,
                                      decoration: BoxDecoration(
-                                       borderRadius: BorderRadius.circular(15.0)
+                                       borderRadius: BorderRadius.circular(10.0)
                                      ),
                                      child: Padding(
-                                       padding: EdgeInsets.all(6.sp),
+                                       padding: EdgeInsets.all(10.sp),
                                        child: SvgPicture.asset(ImageString.icEditProd,
                                          color: AppColors.primaryColor),
                                      )
                                    ),
                                  ),
-                               )
+                               )*/
                              ],
                            ),
                            SizedBox(height: 2.h),
@@ -895,6 +946,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
             Text(dataQuote["quotes_company"].toString(), style: CustomTextStyle.labelText),
             SizedBox(height: 0.5.h),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 InkWell(
                   onTap: (){
@@ -907,9 +959,11 @@ class _QuoteDetailState extends State<QuoteDetail> {
                     : Padding(padding: EdgeInsets.symmetric(horizontal: 8.sp),
                         child: Container(color: AppColors.hintFontColor,
                             height: 2.0.h, width: 0.5.w)),
-                InkWell(onTap: () =>
-                    callFromApp(dataQuote["quote_mobile_number"].toString()),
-                    child: Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText))]),
+                Expanded(
+                  child: InkWell(onTap: () =>
+                      callFromApp(dataQuote["quote_mobile_number"].toString()),
+                      child: Text(dataQuote["quote_mobile_number"], style: CustomTextStyle.labelText)),
+                )]),
             SizedBox(height: 1.5.h),
             QuoteTileField(
                 LabelString.lblPremisesType, dataQuote["premises_type"]),

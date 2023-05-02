@@ -173,6 +173,7 @@ class ButtonString {
   static const String btnCancel = "Cancel";
   static const String btnNext = "Next";
   static const String btnPrevious = "Previous";
+  static const String btnViewPDF = "View PDF";
   static const String btnSubmit = "Submit";
   static const String btnUpdate = "Update";
   static const String btnSave = "Save";

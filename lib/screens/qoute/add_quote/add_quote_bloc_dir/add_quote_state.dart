@@ -19,6 +19,11 @@ class LoadedAddQuote extends AddQuoteState {
 
 class FailAddQuote extends AddQuoteState {
   final String? error;
-
   FailAddQuote({this.error});
+}
+
+class UpdateAddQuote extends AddQuoteState {
+  final String? updatedQuoteDetail;
+  final String? updatedQuoteId;
+  UpdateAddQuote({this.updatedQuoteDetail, this.updatedQuoteId});
 }

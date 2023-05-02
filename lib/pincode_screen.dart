@@ -22,7 +22,7 @@ import 'package:sizer/sizer.dart';
 
 import 'constants/navigation.dart';
 
-const storedPasscode = '2017';
+//const storedPasscode = '2017';
 
 class PinCodeScreen extends StatefulWidget {
   const PinCodeScreen({Key? key}) : super(key: key);
@@ -48,6 +48,8 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
         listener: (context, state) {
           if (state is LoginLoadFailure) {
             Helpers.showSnackBar(context, state.error.toString());
+            bool isValid = "111" == "000";
+            _verificationNotifier.add(isValid);
           }
 
           if (state is LoginLoaded) {
@@ -125,7 +127,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
   }
 
   _onPasscodeEntered(String enteredPasscode) {
-    bool isValid = storedPasscode == enteredPasscode;
+    bool isValid = enteredPasscode == enteredPasscode;
     _verificationNotifier.add(isValid);
     if (isValid) {
       callApi(enteredPasscode);
@@ -150,6 +152,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
 
       case "iih.admin":
         accessKey =  "CBfPHDoMNjtE99vx";
+
         break;
 
       case "dn@nssg.co.uk":

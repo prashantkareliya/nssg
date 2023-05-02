@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomTextField(
-          keyboardType: TextInputType.emailAddress,
+          keyboardType: TextInputType.text,
           readOnly: false,
           controller: passwordController,
           obscureText:
@@ -275,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
           break;
       }
       Map<String, dynamic> queryParameters = {
-        'username': userNameController.text.trim(),
+        'username': userNameController.text.trim().toLowerCase(),
         'password': passwordController.text.trim(),
         'accesskey': accessKey,
       };

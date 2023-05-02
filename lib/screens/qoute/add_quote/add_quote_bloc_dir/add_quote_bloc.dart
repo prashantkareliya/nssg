@@ -15,6 +15,10 @@ class AddQuoteBloc extends Bloc<AddQuoteEvent, AddQuoteState> {
     on<AddQuoteDetailEvent>((event, emit) {
       return addQuoteDetail(event, emit);
     });
+
+    on<UpdateQuoteDetailEvent>((event, emit) {
+      return updateQuoteDetail(event, emit);
+    });
   }
 
   addQuoteDetail(AddQuoteDetailEvent event, Emitter<AddQuoteState> emit) async {
@@ -32,5 +36,20 @@ class AddQuoteBloc extends Bloc<AddQuoteEvent, AddQuoteState> {
     emit(LoadingAddQuote(false));
     emit(FailAddQuote(error: failure.toString()));
     });
+  }
+
+  updateQuoteDetail(UpdateQuoteDetailEvent event, Emitter<AddQuoteState> emit) async {
+    emit(LoadingAddQuote(true));
+    final response = await quoteRepository.quoteAdd(event.bodyData);
+    response.when(success: (success) {
+      emit(LoadingAddQuote(false));
+
+      emit(UpdateAddQuote(updatedQuoteDetail: success.result.toString(),
+          updatedQuoteId: success.result!.id.toString()));
+    },
+        failure: (failure) {
+          emit(LoadingAddQuote(false));
+          emit(FailAddQuote(error: failure.toString()));
+        });
   }
 }

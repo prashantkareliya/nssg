@@ -987,7 +987,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     telephoneNumber,
                                     stepThreeData['quotes_terms'],
                                     contactEmail,
-                                    (dropdownvalue ?? {}) as Map));
+                                    (dropdownvalue ?? {}) as Map, itemList: itemList, dataQuote: dataQuote));
                           }else{
                             callNextScreen(
                                 context,
@@ -1161,7 +1161,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 telephoneNumber,
                                 stepThreeData['quotes_terms'],
                                 contactEmail,
-                                (dropdownvalue ?? {}) as Map));
+                                (dropdownvalue ?? {}) as Map, itemList: itemList, dataQuote: dataQuote));
                       }else {
                         callNextScreen(
                             context,

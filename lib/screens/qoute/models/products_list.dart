@@ -1,3 +1,5 @@
+import 'package:nssg/utils/extention_text.dart';
+
 class ProductsList {
   String? itemId;
   String? productId;
@@ -90,7 +92,9 @@ class ProductsList {
     amountPrice = json['amountPrice'];
     profit = json['profit'];
     description = json['description'];
-    quantity = json['quantity'];
+    //quantity = json['quantity'];
+    quantity = (json['quantity'] is String) ? int.tryParse(json["quantity"]) : json['quantity'];
+//    json['quantity'] is String ? quantity.toString() : quantity = json['quantity'];
     itemAdd = json['itemAdd'];
     selectLocation = json['selectLocation'];
     titleLocation = json['titleLocation'];
@@ -100,6 +104,30 @@ class ProductsList {
     productImage = json['productImage'];
     requiredDocument = json['requiredDocument'];
   }
+
+  ProductsList.fromJsonOne(Map<String, dynamic> json) {
+    itemId = json["parent_id"];
+    productId = json["productid"];
+    itemName = json['prod_name'];
+    costPrice = json['costprice'].toString().formatAmount;
+    sellingPrice = json['listprice'].toString().formatAmount;
+    discountPrice = json['discount_amount'].toString().formatAmount;
+    amountPrice = json['listprice'].toString().formatAmount;
+    profit = json['profit'];
+    description = json['description'];
+    //quantity = json['quantity'];
+    quantity = (json['quantity'] is String) ? int.parse(json["quantity"].toString().substring(0,json["quantity"].toString().indexOf("."))) : json['quantity'];
+//    json['quantity'] i v vgbfgs String ? quantity.toString() : quantity = json['quantity'];
+    itemAdd = json['itemAdd'];
+    selectLocation = json['selectLocation'];
+    titleLocation = json['titleLocation'];
+    locationList = json['locationList'];
+    titleLocationList = json['titleLocationList'];
+    requiredDocumentList = json['requiredDocumentList'];
+    productImage = json['imagename'];
+    requiredDocument = json['requiredDocument'];
+  }
+
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

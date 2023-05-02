@@ -18,18 +18,15 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       emit(state.copyWith(productList: []));
     });
     on<DeleteProductToListEvent>(_deleteProductToList);
-
     on<RemoveProductFromCardByIdEvent>(_removeProductFromCardByIdEvent);
     on<UpdateProductQuantityByIdEvent>(_updateProductQuantityById);
   }
 
   _updateProductQuantityById(
       UpdateProductQuantityByIdEvent event, Emitter<ProductListState> emit) {
-    List<ProductsList> products = state.productList
-        .map((e) => ProductsList.fromJson(e.toJson()))
-        .toList();
-    ProductsList? product = products
-        .firstWhereOrNull((element) => element.productId == event.productId);
+    List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
+    ProductsList? product = products.firstWhereOrNull((element) => element.productId == event.productId);
+
     if (product != null) {
       product.quantity = event.quantity;
       final index = products
@@ -51,16 +48,15 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
 
   _addNewProductToList(
       AddProductToListEvent event, Emitter<ProductListState> emit) {
-    List<ProductsList> products = state.productList
-        .map((e) => ProductsList.fromJson(e.toJson())).toList();
+    List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
     products.add(event.productsList);
     emit(state.copyWith(productList: products));
   }
 
   FutureOr<void> _updateProductToList(
       UpdateProductToListEvent event, Emitter<ProductListState> emit) {
-    List<ProductsList> products = state.productList
-        .map((e) => ProductsList.fromJson(e.toJson())).toList();
+
+    List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
     final int index = products
         .indexWhere((element) => element.itemId == event.productsList.itemId);
     products[index] = event.productsList;
@@ -69,8 +65,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
 
   FutureOr<void> _deleteProductToList(
       DeleteProductToListEvent event, Emitter<ProductListState> emit) {
-    List<ProductsList> products = state.productList
-        .map((e) => ProductsList.fromJson(e.toJson())).toList();
+    List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
     final int index = products
         .indexWhere((element) => element.itemId == event.productsList.itemId);
     products.removeAt(index);

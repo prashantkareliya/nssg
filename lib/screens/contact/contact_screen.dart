@@ -32,7 +32,6 @@ import '../../utils/widgetChange.dart';
 import 'add_contact/add_contact_screen.dart';
 import 'get_contact/contact_bloc_dir/get_contact_bloc.dart';
 import 'get_contact/contact_model_dir/get_contact_response_model.dart';
-import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 bool? isDelete = false;
 

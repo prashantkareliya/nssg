@@ -31,10 +31,9 @@ void sendMail(String emailAddress, BuildContext context) async {
         return MailAppPickerDialog(
           mailApps: apps,
           emailContent: EmailContent(
-            to: [ emailAddress.toString()],
+            to: [emailAddress.toString()],
             subject: 'Hello!',
-            body: '',
-          ),
+            body: ''),
         );
       },
     );
@@ -46,11 +45,11 @@ void showNoMailAppsDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text("Open Mail App"),
-        content: Text("No mail apps installed"),
+        title: const Text("Open Mail App"),
+        content: const Text("No mail apps installed"),
         actions: <Widget>[
           TextButton(
-            child: Text("OK"),
+            child: const Text("OK"),
             onPressed: () {
               Navigator.pop(context);
             },
