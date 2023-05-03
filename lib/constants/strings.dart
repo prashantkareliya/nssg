@@ -127,7 +127,7 @@ class LabelString {
   static const String lblQty = "Qty";
   static const String lblDiscPrice = "Disc. Price";
   static const String lblAmount = "Amount";
-  static const String lblProfit = "profit";
+  static const String lblProfit = "Profit";
   static const String lblTitle = "Title";
   static const String lblLocation = "Location";
   static const String lblItemName = "Item Name : ";

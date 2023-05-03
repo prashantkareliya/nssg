@@ -511,19 +511,18 @@ class _QuoteDetailState extends State<QuoteDetail> {
                              shape: const RoundedRectangleBorder(
                                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
                              child: SizedBox(
-                               height: query.height * 0.06,
-                               width: query.width * 0.12,
+                               height: query.height * 0.05,
+                               width: query.width * 0.10,
                                child: TextButton(
                                style: ButtonStyle(
-                               foregroundColor: MaterialStateProperty.all<Color>(
-                                   AppColors.primaryColor),
+                               foregroundColor: MaterialStateProperty.all<Color>(AppColors.primaryColor),
                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                  RoundedRectangleBorder(
                                      borderRadius: BorderRadius.circular(10.0),
                                      side: BorderSide(
                                          color: AppColors.transparent,
                                          width: 0)))),
-                                onPressed: (){
+                                onPressed: () {
                                   UrlLauncher.launch(pdfURL);
                                 },
                                 child: Icon(Icons.picture_as_pdf, color: AppColors.primaryColor)),
@@ -535,9 +534,9 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                  shape: const RoundedRectangleBorder(
                                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                  child: SizedBox(
-                                   height: query.height * 0.06,
-                                   width: query.width * 0.12,
-                                   child: ElevatedButton(
+                                   height: query.height * 0.05,
+                                   width: query.width * 0.10,
+                                   child: TextButton(
                                        onPressed: (){
                                          showDialog(
                                              context: context,
@@ -560,35 +559,56 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                          shape: const RoundedRectangleBorder(
                                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                        ),
-                                       child: SvgPicture.asset(ImageString.icEmail,
-                                           color: AppColors.whiteColor, height: 2.0.h, fit: BoxFit.fill),
+                                       child: Icon(Icons.email_outlined, color: AppColors.whiteColor),
                                    ),
                                  ),
                                ),
                                SizedBox(width: 0.0.w),
-                               /*InkWell(
-                                 highlightColor: AppColors.transparent,
-                                 splashColor: AppColors.transparent,
-                                 onTap: (){
-                                   callNextScreen(context, AddQuotePage(true, "","edit", dataQuote: dataQuote, itemList: itemList));
-                                 },
-                                 child: Card(elevation: 5,
-                                   shape: const RoundedRectangleBorder(
+                               Card(
+                                 elevation:5,
+                                 shape: const RoundedRectangleBorder(
                                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                   child: Container(
-                                       height: query.height * 0.06,
-                                       width: query.width * 0.12,
-                                     decoration: BoxDecoration(
-                                       borderRadius: BorderRadius.circular(10.0)
-                                     ),
-                                     child: Padding(
-                                       padding: EdgeInsets.all(10.sp),
-                                       child: SvgPicture.asset(ImageString.icEditProd,
-                                         color: AppColors.primaryColor),
-                                     )
-                                   ),
+                                 child: SizedBox(
+                                   height: query.height * 0.05,
+                                   width: query.width * 0.10,
+                                   child: TextButton(
+                                       style: ButtonStyle(
+                                           foregroundColor: MaterialStateProperty.all<Color>(AppColors.primaryColor),
+                                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                               RoundedRectangleBorder(
+                                                   borderRadius: BorderRadius.circular(10.0),
+                                                   side: BorderSide(
+                                                       color: AppColors.transparent,
+                                                       width: 0)))),
+                                       onPressed: (){
+                                         callNextScreen(context, AddQuotePage(true, "","edit", dataQuote: dataQuote, itemList: itemList));
+                                       },
+                                       child: Icon(Icons.edit_outlined, color: AppColors.primaryColor)),
                                  ),
-                               )*/
+                               ),
+                               Card(
+                                 elevation:5,
+                                 shape: const RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                 child: SizedBox(
+                                   height: query.height * 0.05,
+                                   width: query.width * 0.10,
+                                   child: TextButton(
+                                       style: ButtonStyle(
+                                           foregroundColor: MaterialStateProperty.all<Color>(
+                                               AppColors.primaryColor),
+                                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                               RoundedRectangleBorder(
+                                                   borderRadius: BorderRadius.circular(10.0),
+                                                   side: BorderSide(
+                                                       color: AppColors.transparent,
+                                                       width: 0)))),
+                                       onPressed: (){
+                                         print("copy");
+                                       },
+                                       child: Icon(Icons.content_copy, color: AppColors.primaryColor)),
+                                 ),
+                               ),
                              ],
                            ),
                            SizedBox(height: 2.h),
@@ -727,7 +747,6 @@ class _QuoteDetailState extends State<QuoteDetail> {
                    child: loadingView(),
                  )
                ))),
-
          ],
       )
     );
@@ -756,11 +775,12 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         Padding(
                           padding: EdgeInsets.only(left: 15.sp),
                           child: itemList[index]["imagename"] == "_" ?
-                          SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h)  :
+                          Container(
+                              height: 10.h, width: 23.w,
+                              child: SvgPicture.asset(ImageString.imgPlaceHolder))  :
                           Image.network("${ImageBaseUrl.productImageBaseUrl}${itemList[index]["imagename"].toString().replaceAll("&ndash;", "–")}",
                               height: 10.h, width: 23.w)
                         ),
-
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.only(right: 30.sp),
@@ -788,9 +808,10 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                               borderRadius: BorderRadius.circular(10)),
                                                       elevation: 0,
                                                       insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                                      child:
-                                                          itemDescription(itemList[index]["prod_name"] ?? "Installation (1st & 2nd fix)",
-                                                              itemList[index]["pro_short_description"] ?? ""));
+                                                      child: itemDescription(itemList[index]["prod_name"] ?? "Installation (1st & 2nd fix)",
+                                                              itemList[index]["pro_short_description"] ?? "",
+                                                        itemList[index]
+                                                      ));
                                                 },
                                               );
                                             },
@@ -800,41 +821,6 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                     ],
                                   ),
                                 ),
-                                ContactTileField(
-                                    LabelString.lblCostPrice, "£${itemList[index]["costprice"].toString().formatAmount}",
-                                    textAlign: TextAlign.end),
-                                //Use listPrice as sellingPrice
-                                ContactTileField(
-                                    LabelString.lblSellingPrice,
-                                    "£${itemList[index]["listprice"].toString().formatAmount}",
-                                    textAlign: TextAlign.end),
-                                ContactTileField(
-                                    LabelString.lblQty,
-                                    "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} Items",
-                                    textAlign: TextAlign.end),
-                                ContactTileField(
-                                    LabelString.lblDiscPrice,
-                                    "£${itemList[index]["discount_amount"].toString().formatAmount}",
-                                    textAlign: TextAlign.end),
-
-                                ///Amount calculation
-                                //(listPrice * quantity)- discount
-                                ContactTileField(
-                                    LabelString.lblAmount,
-                                    "£${((double.parse(itemList[index]["listprice"])) *
-                                        (double.parse(itemList[index]["quantity"])) -
-                                        (double.parse(itemList[index]["discount_amount"]))).formatAmount()}",
-                                    textAlign: TextAlign.end),
-
-                                ///Profit calculation
-                                //(listPrice-costPrice)*quantity
-                                ContactTileField(
-                                    LabelString.lblProfit,
-                                    "£${(((double.parse(itemList[index]["listprice"]) -
-                                        double.parse(itemList[index]["costprice"])) *
-                                        double.parse(itemList[index]["quantity"]))-(double.parse(itemList[index]["discount_amount"]))).formatAmount()}",
-                                    textAlign: TextAlign.end),
-
                                 /*ContactTileField(
                                     LabelString.lblQuantity,
                                     (double.parse(itemList[index]["quantity"])).toString(),
@@ -1028,7 +1014,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
   }
 
   //Item Description dialog
-  Widget itemDescription(String productName, String description) {
+  Widget itemDescription(String productName, String description, itemList) {
     return Padding(
       padding: EdgeInsets.only(left: 15.sp, bottom: 16.sp),
       child: SingleChildScrollView(
@@ -1048,10 +1034,53 @@ class _QuoteDetailState extends State<QuoteDetail> {
                     icon: Icon(Icons.close_rounded, color: AppColors.blackColor)),
               ],
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 1.h),
             Text(productName, style: CustomTextStyle.labelBoldFontText),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
             Text(description, style: CustomTextStyle.labelText),
+            SizedBox(height: 1.h),
+            Padding(
+              padding:  EdgeInsets.only(right: 30.sp),
+              child: Column(
+                children: [
+                  ContactTileField(
+                      LabelString.lblCostPrice, "£${itemList["costprice"].toString().formatAmount}",
+                      textAlign: TextAlign.end),
+                  //Use listPrice as sellingPrice
+                  ContactTileField(
+                      LabelString.lblSellingPrice,
+                      "£${itemList["listprice"].toString().formatAmount}",
+                      textAlign: TextAlign.end),
+                  ContactTileField(
+                      LabelString.lblQty,
+                      "${itemList["quantity"].toString().substring(0, itemList["quantity"].toString().indexOf("."))} Items",
+                      textAlign: TextAlign.end),
+                  ContactTileField(
+                      LabelString.lblDiscPrice,
+                      "£${itemList["discount_amount"].toString().formatAmount}",
+                      textAlign: TextAlign.end),
+
+                  ///Amount calculation
+//(listPrice * quantity)- discount
+                  ContactTileField(
+                      LabelString.lblAmount,
+                      "£${((double.parse(itemList["listprice"])) *
+                          (double.parse(itemList["quantity"])) -
+                          (double.parse(itemList["discount_amount"]))).formatAmount()}",
+                      textAlign: TextAlign.end),
+
+                  ///Profit calculation
+//(listPrice-costPrice)*quantity
+                  ContactTileField(
+                      LabelString.lblProfit,
+                      "£${(((double.parse(itemList["listprice"]) -
+                          double.parse(itemList["costprice"])) *
+                          double.parse(itemList["quantity"]))-(double.parse(itemList["discount_amount"]))).formatAmount()}",
+                      textAlign: TextAlign.end),
+                ],
+              ),
+            ),
+
           ],
         ),
       ),
