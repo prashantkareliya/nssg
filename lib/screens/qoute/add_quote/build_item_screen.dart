@@ -329,13 +329,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       if(widget.itemList != null)
                         ...productListLocal
                             .map((e) => buildDetailItemTile(e, context, state))
-                            .toList()
-                            .reversed
+                            .toList().reversed
                       else
                         ...state.productList
                             .map((e) => buildDetailItemTile(e, context, state))
-                            .toList()
-                            .reversed,
+                            .toList().reversed,
                       //item list
                       SizedBox(height: query.height * 0.08)
                     ],
@@ -662,28 +660,32 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(0.sp, 3.sp, 0.sp, 3.sp),
                   child: SizedBox(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(flex: 1,
-                            child: products.itemName!.contains(
-                                "Installation (1st & 2nd fix)") ?
+                            child: products.itemName!.contains("Installation (1st & 2nd fix)") ?
                             Lottie.asset(
                               'assets/lottie/gear.json', height: 9.h,) :
-                            products.productImage == null ||
-                                products.productImage == "" ?
+                            products.productImage == null || products.productImage == "" ?
                             SvgPicture.asset(
                                 ImageString.imgPlaceHolder, height: 8.h) :
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: Image.network("${ImageBaseUrl
-                                  .productImageBaseUrl}${products.productImage!
-                                  .replaceAll("&ndash;", "–")}", height: 8.h),
+                            Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: 4.sp),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Container(
+                                  color: AppColors.backWhiteColor,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(4.sp),
+                                    child: Image.network("${ImageBaseUrl
+                                        .productImageBaseUrl}${products.productImage!
+                                        .replaceAll("&ndash;", "–")}", height: 8.h),
+                                  ),
+                                ),
+                              ),
                             )
                           /* child: products.productImage == null || products.productImage == "" ?
                         SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) :
@@ -704,7 +706,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                       child: Text("${products.quantity} items",
                                           style: CustomTextStyle.labelText)),
                                   Expanded(flex: 2,
-                                      child: Text("£${products.amountPrice}",
+                                      child: Text("£${products.amountPrice.toString().formatAmount}",
                                           style: GoogleFonts.roboto(
                                               textStyle: TextStyle(
                                                   fontSize: 14.sp,
@@ -1029,8 +1031,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         hdnDiscountPercent: "0.00",
         hdnDiscountAmount: disc.toString(),
         hdnSHAmount: "0.00",
-        assignedUserId: preferences.getString(PreferenceString.userId)
-            .toString(),
+        assignedUserId: preferences.getString(PreferenceString.userId).toString(),
         currencyId: "21x1",
         conversionRate: "0.00",
         //widget.siteAddress.toString() == "{}"
@@ -1099,10 +1100,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteReqToCompleteWork: widget.timeType,
         quotePoNumber: "",
         quoteGradeOfNoti: "",
-        lineItems: productList.map((e) =>
-            LineItems(
+        lineItems: productList.map((e) {
+          return LineItems(
               productid: e.productId,
-              sequenceNo: (productList.indexOf(e) + 1).toString(),
+              sequenceNo: e.itemName.toString().contains("Installation") ?
+              productList.length.toString() :
+              (productList.indexOf(e)).toString(),
               quantity: e.quantity.toString(),
               listprice: e.sellingPrice,
               discountPercent: "00.00",
@@ -1130,7 +1133,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
               proShortDescription: e.description,
               proName: e.itemName.toString(),
-            )).toList()
+            );
+        }).toList()
     );
 
     String jsonQuoteDetail = jsonEncode(createQuoteRequest);
@@ -1177,10 +1181,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         hdnDiscountPercent: "0.00",
         hdnDiscountAmount: disc.toString(),
         hdnSHAmount: "0.00",
-        assignedUserId: preferences.getString(PreferenceString.userId)
-            .toString(),
+        assignedUserId: preferences.getString(PreferenceString.userId).toString(),
         currencyId: "21x1",
         conversionRate: "0.00",
+
         //widget.siteAddress.toString() == "{}"
 
         billStreet: widget.billStreet == "" ? " " : widget.billStreet,
@@ -1197,14 +1201,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         shipCode: code,
         description: Message.descriptionForQuote,
-        termsConditions: termsSelect ==
-            "50% Deposit Balance on Account(Agreed terms)"
+        termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
             ? Message.termsCondition1
             : Message.termsCondition2,
         preTaxTotal: vatTotal.toString(),
         hdnSHPercent: "0",
-        siteAddressId: widget.siteAddress["id"] == "" ? "" : widget
-            .siteAddress["id"],
+        siteAddressId: widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
         quotesTerms: termsSelect,
         hdnprofitTotal: profit.toString(),
         markup: "0.00",
@@ -1217,8 +1219,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quotesEmail: widget.contactEmail,
         quotesTemplateOptions: selectTemplateOption,
         quoteRelatedId: "0",
-        quotesCompany: widget.siteAddress.toString() != "{}" ? widget
-            .siteAddress["name"] : widget.contactCompany,
+        quotesCompany: widget.siteAddress.toString() != "{}" ? widget.siteAddress["name"] : widget.contactCompany,
         installation: "0",
         hdnsubTotal: subTotal.toString(),
         hdndiscountTotal: disc.toString(),
@@ -1226,8 +1227,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteTelephoneNumber: widget.telephoneNumber,
         isQuotesConfirm: "0",
         quotesPayment: depositValue == "false" || depositValue == ""
-            ? "No Deposit"
-            : "Deposit",
+            ? "No Deposit" : "Deposit",
         isQuotesPaymentConfirm: "0",
         quotesDepositeAmount: depositAmount,
         quotesDepoReceivedAmount: "0.00",
@@ -1270,7 +1270,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               //"Keyholder form###Maintenance contract###Police application###Direct Debit",
               profit: e.profit ?? "",
               proShortDescription: e.description,
-              proName: e.itemName.toString(),
+              proName: e.itemName.toString().replaceAll("&", "%26"),
             )).toList()
     );
 
@@ -1283,8 +1283,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonQuoteDetail,
       'appversion': Constants.of().appversion.toString(),
-      'old_document_name': "",
-    };
+      'old_document_name': ""};
     addQuoteBloc.add(UpdateQuoteDetailEvent(bodyData));
   }
 }

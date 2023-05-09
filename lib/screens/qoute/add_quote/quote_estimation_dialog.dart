@@ -38,7 +38,7 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
 
   @override
   Widget build(BuildContext context) {
-    getFields = getQuoteFields("Quotes");
+    getFields = getQuoteFields("Quotes", context);
 
     return FutureBuilder<dynamic>(
         future: getFields,

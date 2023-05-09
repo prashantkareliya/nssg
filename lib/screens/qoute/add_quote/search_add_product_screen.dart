@@ -281,12 +281,19 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                           padding: EdgeInsets.symmetric(vertical: 5.sp),
                           child:(searchKey.isNotEmpty ? searchItemList![index].imagename == "" : productItems![index].imagename == "") ?
                           SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h, width: 20.w,) :
-                          ClipRRect(borderRadius: BorderRadius.circular(10.0),
-                              child: searchKey.isNotEmpty ?
-                                  Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename}",
-                                  height: 10.h,width: 20.w)
-                                  :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename}",
-                                  height: 10.h,width: 20.w))
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Container(
+                                color: AppColors.backWhiteColor,
+                                child: Padding(
+                                  padding:  EdgeInsets.all(4.sp),
+                                  child: searchKey.isNotEmpty ?
+                                      Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename}",
+                                      height: 10.h,width: 20.w)
+                                      :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename}",
+                                      height: 10.h,width: 20.w),
+                                ),
+                              ))
                       ),
                       title: Text(searchKey.isNotEmpty ? searchItemList![index].productname.toString()
                           : productItems![index].productname.toString(),textAlign: TextAlign.start,

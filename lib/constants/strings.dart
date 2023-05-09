@@ -6,6 +6,7 @@ class ErrorString {
   static const String emailNotValid = "Email address is not valid";
   static const String selectOneContact = "Select at least one contact";
   static const String deletedItemError = "This item is delete already";
+  static const String reOpenTheApp = "Your session has timed out. please reopen the app login again.";
 }
 
 class Message {
@@ -45,6 +46,21 @@ class LabelString {
 
   static const String lblContact = "Contacts";
   static const String lblQuotes = "Quotes";
+  static const String lblJobs = "Jobs";
+  static const String lblJobList = "Job List";
+  static const String lblCreateJob = "Create Job";
+  static const String lblOfficeNote = "Office Note";
+  static const String lblEngineerNote = "Engineer Note";
+  static const String lblEngineerInstruction = "Engineer Instruction";
+  static const String lblSpecialInstruction = "Special Instruction";
+  static const String lblQuestionsForProjectManagers = "Questions for Project Managers";
+  static const String lblJobInstructions = "Job Instructions";
+  static const String lblPriorityLevel = "Priority Level";
+  static const String lblWorkSchedule = "Work Schedule";
+  static const String lblPaymentMethod = "Payment Method";
+  static const String lblPaymentInstructions = "Payment Instructions";
+  static const String lblInstructionsToProceed = "Instructions to Proceed";
+  static const String lblInstallationTimeRequired = "Installation Time required";
 
   static const String lblFullName = "Full Name";
   static const String lblCompany = "Company";
@@ -182,6 +198,7 @@ class ButtonString {
   static const String btnQuoteDetail = "View Detail";
   static const String btnEmailShare = "Share Quote Email?";
   static const String btnViewCart = "View Cart";
+  static const String btnGenerateJob = "Generate Job";
 }
 
 //Image path Strings
@@ -216,6 +233,7 @@ class ImageString {
   static const String icEmail = "assets/images/email.svg";
   static const String icEngineer = "assets/images/engineer.svg";
   static const String icInstallation = "assets/images/installation.png";
+  static const String icCreateInstallation = "assets/images/ic_create_installation.svg";
 }
 
 class PreferenceString {

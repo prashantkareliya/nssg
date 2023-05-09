@@ -711,9 +711,16 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: filterList![index].imagename == "" ?
                                   SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h, width: 16.w) :
-                                  ClipRRect(borderRadius: BorderRadius.circular(10.0),
-                                      child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
-                                      height: 9.h, width: 18.w))
+                                  ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Container(
+                                        color: AppColors.backWhiteColor,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(4.sp),
+                                          child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
+                                          height: 9.h, width: 18.w),
+                                        ),
+                                      ))
                                 ),
                                 SizedBox(width: 5.w),
                                 Expanded(

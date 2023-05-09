@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nssg/screens/qoute/get_quote/quote_model_dir/get_quote_response_model.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../components/custom_button.dart';
@@ -59,8 +60,8 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
             Column(
               children: [
                 SizedBox(
-                    width: query.width * 0.8,
                     height: query.height * 0.06,
+                    width: query.width * 0.8,
                     child: CustomButton(
                         title: ButtonString.btnQuoteDetail,
                         buttonColor: AppColors.primaryColor,
@@ -68,7 +69,7 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
                           Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pop(context);
-                          removeAndCallNextScreen(context, QuoteDetail(quoteId));
+                          removeAndCallNextScreen(context, QuoteDetail(quoteId, {} as Result));
                         })),
                 SizedBox(height: 1.h),
                 SizedBox(

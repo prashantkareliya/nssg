@@ -6,6 +6,8 @@ class HandleAPI {
       if (e.toString().contains(
           "type 'Null' is not a subtype of type 'Map<String, dynamic>'")) {
         return ErrorString.noInternet;
+      }else if(e.toString().contains("type '(dynamic) => Null' is not a subtype of type '(String, dynamic) => void' of 'action'")){
+        return ErrorString.reOpenTheApp;
       }
       return e.toString();
     } catch (e) {

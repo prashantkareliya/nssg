@@ -6,7 +6,7 @@ import '../constants/strings.dart';
 import '../httpl_actions/app_http.dart';
 
 //Calling API for fetch detail of single contact
-Future<dynamic> getQuoteFields(String passElementType) async {
+Future<dynamic> getQuoteFields(String passElementType, BuildContext context) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
   Map<String, dynamic> queryParameters = {
@@ -19,11 +19,14 @@ Future<dynamic> getQuoteFields(String passElementType) async {
   final response = await HttpActions()
       .getMethod(ApiEndPoint.getQuoteListApi, queryParams: queryParameters);
   debugPrint("getQuoteFieldsAPI --- $response");
+  if(response["success"] == false){
+    Navigator.pushNamedAndRemoveUntil(context,'/',(_) => false);
+  }
   return response;
 }
 
 //Calling API for fetch detail of single contact
-Future<dynamic> getContactDetail(contactId) async {
+Future<dynamic> getContactDetail(contactId, BuildContext context) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
   Map<String, dynamic> queryParameters = {
@@ -34,6 +37,9 @@ Future<dynamic> getContactDetail(contactId) async {
   final response = await HttpActions() .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
 
   debugPrint("getContactDetailApi --- $response");
+  if(response["success"] == false){
+    Navigator.pushNamedAndRemoveUntil(context,'/',(_) => false);
+  }
   return response;
 }
 

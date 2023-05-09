@@ -600,7 +600,7 @@ class ContactDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getDetail = getContactDetail(id);
+    getDetail = getContactDetail(id, context);
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.transparent,

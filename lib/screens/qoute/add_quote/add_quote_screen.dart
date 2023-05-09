@@ -211,7 +211,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
-    getFields = getQuoteFields("Quotes");
+    getFields = getQuoteFields("Quotes", context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
