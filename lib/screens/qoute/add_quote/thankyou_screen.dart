@@ -69,7 +69,7 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
                           Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pop(context);
-                          removeAndCallNextScreen(context, QuoteDetail(quoteId, {} as Result));
+                          removeAndCallNextScreen(context, QuoteDetail(quoteId));
                         })),
                 SizedBox(height: 1.h),
                 SizedBox(
@@ -93,10 +93,10 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
                             });
                         //sendEmail(contactList, context);
                       },
-                      clipBehavior: Clip.hardEdge,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor.withOpacity(0.20),
-                        foregroundColor: AppColors.primaryColor.withOpacity(0.20),
+                        foregroundColor: AppColors.primaryColor.withOpacity(0.30),
+                        elevation: 0,
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10.0))),
                       ),

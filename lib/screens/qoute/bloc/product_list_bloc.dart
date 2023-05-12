@@ -20,7 +20,11 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     on<DeleteProductToListEvent>(_deleteProductToList);
     on<RemoveProductFromCardByIdEvent>(_removeProductFromCardByIdEvent);
     on<UpdateProductQuantityByIdEvent>(_updateProductQuantityById);
+    on<UpdateEditProductListEvent>((event, emit) {
+      emit(state.copyWith(productList: event.productsList));
+    });
   }
+
 
   _updateProductQuantityById(
       UpdateProductQuantityByIdEvent event, Emitter<ProductListState> emit) {
@@ -57,8 +61,7 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       UpdateProductToListEvent event, Emitter<ProductListState> emit) {
 
     List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
-    final int index = products
-        .indexWhere((element) => element.itemId == event.productsList.itemId);
+    final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId);
     products[index] = event.productsList;
     emit(state.copyWith(productList: products));
   }

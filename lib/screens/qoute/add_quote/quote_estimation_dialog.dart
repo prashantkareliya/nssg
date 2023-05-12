@@ -37,6 +37,20 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
   get productsList => null;
 
   @override
+  void initState() {
+    super.initState();
+    if(widget.dataQuote != null){
+      if(widget.dataQuote["quote_no_of_engineer"].toString() != ""){
+        engineerNumbers = widget.dataQuote["quote_no_of_engineer"].toString();
+      }
+
+      if(widget.dataQuote["quote_req_to_complete_work"].toString() != ""){
+        timeType = widget.dataQuote["quote_req_to_complete_work"].toString();
+      }
+      calculation();
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     getFields = getQuoteFields("Quotes", context);
 
@@ -90,9 +104,7 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                               numbersOfEng[index].isSelected = true;
                               Provider.of<WidgetChange>(context, listen: false).isSetEngineer;
 
-                              engineerNumbers = widget.dataQuote != null ?
-                              widget.dataQuote["quote_no_of_engineer"].toString() :
-                                  fieldsData["quote_no_of_engineer"][index]["label"].toString();
+                              engineerNumbers = fieldsData["quote_no_of_engineer"][index]["label"].toString();
                               calculation();
                             },
                             child: RadioItem(numbersOfEng[index]),
@@ -219,10 +231,8 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
     if (engineerNumbers != null && timeType != null) {
       if (timeType!.endsWith("Hours")) {
         var timeCalculate = (int.parse(engineerNumbers!) *
-            int.parse(timeType!.substring(0, 1)) *
-            35);
-        var vatAdd =
-            (int.parse(timeCalculate.toString()) * (0.20)) + timeCalculate;
+            int.parse(timeType!.substring(0, 1)) * 35);
+        var vatAdd = (int.parse(timeCalculate.toString()) * (0.20)) + timeCalculate;
         eAmount = vatAdd.toString().replaceAll(".0", ".00");
       } else {
         var timeCalculate = (int.parse(engineerNumbers!) *

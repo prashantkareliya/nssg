@@ -24,8 +24,8 @@ import '../../../utils/widgets.dart';
 
 
 class AddJobPage extends StatefulWidget {
-  Result quoteItem;
-  AddJobPage(this.quoteItem);
+  Result? quoteItem;
+  AddJobPage({this.quoteItem});
 
   @override
   State<AddJobPage> createState() => _AddJobPageState();
@@ -71,15 +71,15 @@ class _AddJobPageState extends State<AddJobPage> {
     Map<String, dynamic> queryParameters = {
       'operation': "retrive_contract_number_by_id",
       'sessionName': preferences.getString(PreferenceString.sessionName),
-      'id': widget.quoteItem.id,
+      'id': widget.quoteItem?.id,
       'quotes_contract_id': "",
-      'quotes_system_type': widget.quoteItem.systemType,
-      'quotes_ship_street': widget.quoteItem.shipStreet,
-      'quotes_ship_city': widget.quoteItem.shipCity,
-      'quotes_ship_country': widget.quoteItem.shipCountry,
-      'quotes_ship_code': widget.quoteItem.shipCode,
+      'quotes_system_type': widget.quoteItem?.systemType,
+      'quotes_ship_street': widget.quoteItem?.shipStreet,
+      'quotes_ship_city': widget.quoteItem?.shipCity,
+      'quotes_ship_country': widget.quoteItem?.shipCountry,
+      'quotes_ship_code': widget.quoteItem?.shipCode,
       'quotes_quote_type': "Installation",
-      'contact_id': widget.quoteItem.contactId,
+      'contact_id': widget.quoteItem?.contactId,
     };
     final response = await HttpActions() .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
 
@@ -587,54 +587,6 @@ class _AddJobPageState extends State<AddJobPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /*SizedBox(height: 2.0.h),
-            Text(LabelString.lblInstallationTimeRequired,
-                style: CustomTextStyle.labelText),
-            SizedBox(height: 1.0.h),
-            Wrap(
-              spacing: 4.sp,
-              direction: Axis.horizontal,
-              alignment: WrapAlignment.start,
-              runSpacing: 8.sp,
-              children: List.generate(
-                jobFieldsData["installation_time_required"].length,
-                    (index) {
-                  String installationTimeRequiredLabel = jobFieldsData["installation_time_required"][index]["label"].toString();
-                installationTimeRequired.add(RadioModel(false, jobFieldsData["installation_time_required"][index]["label"]));
-                  return InkWell(
-                    splashColor: AppColors.transparent,
-                    highlightColor: AppColors.transparent,
-                    onTap: () {
-                      for (var element in installationTimeRequired) {
-                        element.isSelected = false;
-                      }
-                      installationTimeRequired[index].isSelected = true;
-                      setState(() {});
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: installationTimeRequired[index].isSelected
-                              ? AppColors.primaryColorLawOpacity
-                              : AppColors.whiteColor,
-                          border: Border.all(
-                              color: installationTimeRequired[index].isSelected
-                                  ? AppColors.primaryColor
-                                  : AppColors.borderColor,
-                              width: 1),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 10.sp),
-                        child:  Text(installationTimeRequiredLabel,
-                            textAlign: TextAlign.center,
-                            style: installationTimeRequired[index].isSelected
-                                ? CustomTextStyle.commonTextBlue
-                                : CustomTextStyle.labelText),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),*/
             CustomTextField(
               keyboardType: TextInputType.text,
               readOnly: false,

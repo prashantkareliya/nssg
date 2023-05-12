@@ -100,6 +100,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
     print(dataQuote);
     //for create quote after the create contact
     //set contact by default in auto complete textField in create quote screen
+
     if (!widget.isBack) {
       print(widget.contactDetail.id);
       getSiteAddressList();
@@ -134,6 +135,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
       installationCity = dataQuote["ship_city"];
       installationCountry = dataQuote["ship_country"];
       installationPostal = dataQuote["ship_pobox"];
+    }
+
+    if(widget.lastName == "edit"){
+      getSiteAddressList();
+      //dropdownvalue = dataQuote["quotestage"].toString().toMap();
     }
   }
 
@@ -543,7 +549,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
                           items: siteAddressList.map((item) {
                             return DropdownMenuItem<Map>(
-                                value: item, //"${item['address']+","} ${item["city"] + ","} ${item["country"]+","} ${item["postcode"] + ","} ",
+                                value: item,
                                 child: Text("${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
                                     style: CustomTextStyle.labelFontText));
                           }).toList(),
@@ -735,7 +741,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 stepTwoData["system_type"].length - 9,
                     (index) {
                   String systemTypeLabel = stepTwoData["system_type"][index]["label"].toString();
-                  if(dataQuote != null){
+                  if(widget.lastName == "edit"){
                     systemType.add(RadioModel(
                         dataQuote["system_type"].toString().contains(stepTwoData["system_type"][index]["label"]) ?
                         true : false,
@@ -785,10 +791,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               contactCompany,
                               mobileNumber,
                               telephoneNumber,
-                              termsList,
+                              stepTwoData['quotes_terms'],
                               contactEmail,
                               (dropdownvalue ?? {}) as Map,
-                              itemList: itemList, dataQuote: dataQuote
+                              itemList: itemList, dataQuote: dataQuote,
+                              widget.lastName
                           )
                           );
                         }else{
@@ -819,7 +826,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   telephoneNumber,
                                   stepTwoData['quotes_terms'],
                                   contactEmail,
-                                  (dropdownvalue ?? {}) as Map));
+                                  (dropdownvalue ?? {}) as Map,
+                                  widget.lastName
+                              ));
                         }
 
                       } else {
@@ -935,7 +944,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 runSpacing: 15.sp,
                 children: List.generate(
                   2, (index) {
-                    if(dataQuote != null){
+                    if(widget.lastName == "edit"){
                       gradeAndFire.add(RadioModel(
                           dataQuote["grade_number"].toString().contains(stepThreeData["grade_number"][index]["label"]) ?
                           true : false, dataGrade[index]["label"]));
@@ -987,7 +996,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     telephoneNumber,
                                     stepThreeData['quotes_terms'],
                                     contactEmail,
-                                    (dropdownvalue ?? {}) as Map, itemList: itemList, dataQuote: dataQuote));
+                                    (dropdownvalue ?? {}) as Map, widget.lastName, itemList: itemList, dataQuote: dataQuote));
                           }else{
                             callNextScreen(
                                 context,
@@ -1016,7 +1025,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     telephoneNumber,
                                     stepThreeData['quotes_terms'],
                                     contactEmail,
-                                    (dropdownvalue ?? {}) as Map));
+                                    (dropdownvalue ?? {}) as Map, widget.lastName));
                           }
                         }
                       },
@@ -1107,7 +1116,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
             children: List.generate(
               // stepFourData["signalling_type"].length
               12, (index) {
-                if(dataQuote != null){
+                if(widget.lastName == "edit"){
                   signallingType.add(
                       RadioModel(
                           dataQuote["signalling_type"].toString().contains(stepThreeData["signalling_type"][index]["label"])
@@ -1161,7 +1170,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 telephoneNumber,
                                 stepThreeData['quotes_terms'],
                                 contactEmail,
-                                (dropdownvalue ?? {}) as Map, itemList: itemList, dataQuote: dataQuote));
+                                (dropdownvalue ?? {}) as Map, widget.lastName, itemList: itemList, dataQuote: dataQuote));
                       }else {
                         callNextScreen(
                             context,
@@ -1190,7 +1199,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 telephoneNumber,
                                 stepThreeData['quotes_terms'],
                                 contactEmail,
-                                (dropdownvalue ?? {}) as Map));
+                                (dropdownvalue ?? {}) as Map, widget.lastName));
                       }
                     }
                   },

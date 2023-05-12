@@ -36,3 +36,9 @@ class DeleteProductToListEvent extends ProductListEvent {
 
   DeleteProductToListEvent({required this.productsList});
 }
+
+class UpdateEditProductListEvent extends ProductListEvent {
+  final List<ProductsList> productsList;
+
+  UpdateEditProductListEvent({required this.productsList});
+}

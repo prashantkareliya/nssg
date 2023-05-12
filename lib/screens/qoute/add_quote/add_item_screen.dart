@@ -60,6 +60,7 @@ class AddItemDetail extends StatefulWidget {
   var termsList;
 
   String? contactEmail;
+  String? operationType;
 
   var siteAddress;
 
@@ -88,7 +89,7 @@ class AddItemDetail extends StatefulWidget {
       this.telephoneNumber,
       this.termsList,
       this.contactEmail,
-      this.siteAddress,
+      this.siteAddress, this.operationType,
       {super.key});
 
   @override
@@ -1034,6 +1035,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
             telephoneNumber,
             termsList,
             contactEmail,
-            siteAddress));
+            siteAddress, widget.operationType));
   }
 }

@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
+import 'package:nssg/screens/qoute/add_quote/models/copy_quote_request.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/screens/qoute/quote_datasource.dart';
 import 'package:nssg/screens/qoute/quote_repository.dart';
@@ -66,6 +67,7 @@ class BuildItemScreen extends StatefulWidget {
 
   var termsList;
   String? contactEmail;
+  String? operationType;
   var siteAddress;
 
   List<dynamic>? itemList = [];
@@ -94,7 +96,7 @@ class BuildItemScreen extends StatefulWidget {
       this.contactCompany,
       this.mobileNumber,
       this.telephoneNumber,
-      this.termsList, this.contactEmail, this.siteAddress,
+      this.termsList, this.contactEmail, this.siteAddress, this.operationType,
       {super.key, this.itemList, this.dataQuote});
 
   @override
@@ -143,9 +145,19 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       } else {
         isEmailRemind = false;
       }
-      widget.itemList!.map((e) =>
-          productListLocal.add(ProductsList.fromJsonOne(e))).toList();
+      //widget.itemList!.map((e) => productListLocal.add(ProductsList.fromJsonOne(e))).toList();
+      callToUpdateEditItemList();
+      depositValue = "false";
     }
+  }
+
+  void callToUpdateEditItemList() {
+    List<ProductsList> productListLocal1 =
+    widget.itemList!.map((e) => ProductsList.fromJsonOne(e)).toList();
+
+    context
+        .read<ProductListBloc>()
+        .add(UpdateEditProductListEvent(productsList: productListLocal1));
   }
 
   AddQuoteBloc addQuoteBloc = AddQuoteBloc(
@@ -326,11 +338,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       SizedBox(height: 10.sp),
                       quoteEstimationWidget(query),
                       SizedBox(height: 10.sp),
-                      if(widget.itemList != null)
+                      /*if(widget.itemList != null)
                         ...productListLocal
                             .map((e) => buildDetailItemTile(e, context, state))
                             .toList().reversed
-                      else
+                      else*/
                         ...state.productList
                             .map((e) => buildDetailItemTile(e, context, state))
                             .toList().reversed,
@@ -473,8 +485,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             if (value != null) {
                               setState(() {
                                 widget.eAmount = value["keyAmount"];
-                                widget.engineerNumbers =
-                                value["keyEngineerNumbers"];
+                                widget.engineerNumbers = value["keyEngineerNumbers"];
                                 widget.timeType = value["keyTimeType"];
                               });
                               var profit = (double.parse(value["keyAmount"]) -
@@ -521,8 +532,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   }
 
   //product list
-  Padding buildDetailItemTile(products, BuildContext context,
-      ProductListState state) {
+  Padding buildDetailItemTile(products, BuildContext context, ProductListState state) {
     //itemAmount = products.amountPrice.toString();
     final List<ShakeConstant> shakeList;
     return Padding(
@@ -622,11 +632,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                     autoClose: true,
                     onPressed: (value) {
                       setState(() {
-                        if (widget.dataQuote != null) {
-                          productListLocal.remove(products);
-                        } else {
-                          state.productList.remove(products);
-                        }
+                        context.read<ProductListBloc>().add(RemoveProductFromCardByIdEvent(productId: products.productId ?? ""));
                       });
                     },
                     backgroundColor: AppColors.backWhiteColor,
@@ -666,7 +672,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(flex: 1,
-                            child: products.itemName!.contains("Installation (1st & 2nd fix)") ?
+                            child: products.itemName!.contains("Installation") ?
                             Lottie.asset(
                               'assets/lottie/gear.json', height: 9.h,) :
                             products.productImage == null || products.productImage == "" ?
@@ -680,21 +686,17 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   color: AppColors.backWhiteColor,
                                   child: Padding(
                                     padding: EdgeInsets.all(4.sp),
-                                    child: Image.network("${ImageBaseUrl
+                                    child: products.productImage == "_" ?
+                                    SizedBox(
+                                        height: 10.h, width: 23.w,
+                                        child: SvgPicture.asset(ImageString.imgPlaceHolder))  :
+                                    Image.network("${ImageBaseUrl
                                         .productImageBaseUrl}${products.productImage!
                                         .replaceAll("&ndash;", "–")}", height: 8.h),
                                   ),
                                 ),
                               ),
                             )
-                          /* child: products.productImage == null || products.productImage == "" ?
-                        SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h) :
-                        products.itemName!.contains("Installation (1st & 2nd fix)") ?
-                        Lottie.asset('assets/lottie/gear.json', height: 9.h,)
-                        : ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.network("${ImageBaseUrl.productImageBaseUrl}${products.productImage}",height: 8.h),
-                        )*/
                         ),
                         Expanded(flex: 3,
                           child: Column(
@@ -756,20 +758,15 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 double profit = 0.0;
                 double grandTotal = 0.0;
                 double vatTotal = 0.0;
-                if (widget.dataQuote != null) {
-                  subTotal =
-                      widget.dataQuote["hdnsubTotal"].toString().formatDouble();
-                  disc = widget.dataQuote["hdndiscountTotal"]
-                      .toString()
-                      .formatDouble();
-                  profit = widget.dataQuote["hdnprofitTotal"]
-                      .toString()
-                      .formatDouble();
+                /*if (widget.dataQuote != null) {
+                  subTotal = widget.dataQuote["hdnsubTotal"].toString().formatDouble();
+                  disc = widget.dataQuote["hdndiscountTotal"].toString().formatDouble();
+                  profit = widget.dataQuote["hdnprofitTotal"].toString().formatDouble();
 
                   grandTotal = subTotal + (subTotal * 0.2);
                   vatTotal = (subTotal * 0.2);
                 } else {
-                  //total of amount
+                  //total of amount*/
                   for (ProductsList p in state.productList) {
                     subTotal += p.amountPrice.formatDouble();
                     disc += (p.discountPrice == "" ? 0.0 : p.discountPrice
@@ -779,7 +776,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
                   grandTotal = subTotal + (subTotal * 0.2);
                   vatTotal = (subTotal * 0.2);
-                }
+
 
                 //initial text for deposit textField
                 if (isChangedDeposit) {
@@ -893,20 +890,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               horizontal: 14.sp, vertical: 10.sp),
                           child: Row(
                             children: [
-
                               ToggleSwitch((value) {
-                                Provider.of<WidgetChange>(
-                                    context, listen: false).isDepositAmount(
-                                    value);
+                                Provider.of<WidgetChange>(context, listen: false).isDepositAmount(value);
                                 depositValue = value.toString();
                               },
-                                  valueBool: Provider
-                                      .of<WidgetChange>(context, listen: false)
-                                      .isDeposit),
+                                  valueBool: Provider.of<WidgetChange>(context, listen: false).isDeposit),
                               SizedBox(width: 5.w),
-                              Text(Provider
-                                  .of<WidgetChange>(context, listen: false)
-                                  .isDeposit
+                              Text(Provider.of<WidgetChange>(context, listen: false).isDeposit
                                   ? LabelString.lblDeposit
                                   : LabelString.lblNoDeposit,
                                   style: CustomTextStyle.labelText)
@@ -916,30 +906,22 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         Align(
                             alignment: Alignment.topLeft,
                             child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 14.sp,
-                                  vertical: 10.sp),
+                              padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
                               child: Text(LabelString.lblTerms,
-                                  style: CustomTextStyle
-                                      .labelMediumBoldFontText),
+                                  style: CustomTextStyle.labelMediumBoldFontText),
                             )),
                         ...widget.termsList.map((e) {
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 14.sp, vertical: 10.sp),
+                            padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ToggleSwitch((value) {
-                                  Provider.of<WidgetChange>(
-                                      context, listen: false).isTermsSelect(
-                                      e['value']);
+                                  Provider.of<WidgetChange>(context, listen: false).isTermsSelect(e['value']);
                                   termsSelect = e['value'].toString();
                                 },
-                                    valueBool: e['value'] == Provider
-                                        .of<WidgetChange>(
-                                        context, listen: false)
-                                        .isTermsBS),
+                                    valueBool: e['value'] == Provider.of<WidgetChange>(context, listen: false).isTermsBS),
                                 SizedBox(width: 5.w),
                                 Expanded(child: Text(e["label"].toString(),
                                     style: CustomTextStyle.labelText))
@@ -951,12 +933,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           width: query.width * 0.8,
                           height: query.height * 0.06,
                           child: CustomButton(
-                            title: widget.dataQuote != null ? ButtonString
+                            title: widget.operationType == "edit" ? ButtonString
                                 .btnUpdate : ButtonString.btnSubmit,
                             buttonColor: AppColors.primaryColor,
                             onClick: () {
                               Navigator.pop(context);
-                              if (widget.dataQuote != null) {
+                              if (widget.operationType == "edit") {
                                 print("update quote");
                                 updateCreateQuoteAPI(
                                     subTotal,
@@ -971,7 +953,22 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     state.productList,
                                     depositValue,
                                     termsSelect);
-                              } else {
+                              } else if(widget.operationType == "copy"){
+                                copyQuoteAPI(
+                                    subTotal,
+                                    grandTotal,
+                                    disc,
+                                    selectTemplateOption,
+                                    vatTotal,
+                                    profit,
+                                    depositAmountController.text == ""
+                                        ? grandTotal.formatAmount()
+                                        : depositAmountController.text,
+                                    state.productList,
+                                    depositValue,
+                                    termsSelect);
+                              }
+                              else{
                                 print("Make quote");
                                 callCreateQuoteAPI(
                                     subTotal,
@@ -1104,8 +1101,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           return LineItems(
               productid: e.productId,
               sequenceNo: e.itemName.toString().contains("Installation") ?
-              productList.length.toString() :
-              (productList.indexOf(e)).toString(),
+              productList.length.toString() : (productList.indexOf(e)).toString(),
               quantity: e.quantity.toString(),
               listprice: e.sellingPrice,
               discountPercent: "00.00",
@@ -1147,6 +1143,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       'element': jsonQuoteDetail,
       'elementType': 'Quotes',
       'appversion': Constants.of().appversion.toString(),
+
+
     };
     addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
   }
@@ -1168,11 +1166,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       country = widget.shipCountry == "" ? " " : widget.shipCountry;
       code = widget.shipCode == "" ? " " : widget.shipCode;
     }
-    UpdateQuoteRequest updateQuoteRequest = UpdateQuoteRequest(
 
+    UpdateQuoteRequest updateQuoteRequest = UpdateQuoteRequest(
       //for update data in json format
         subject: "${widget.contactSelect}-${widget.systemTypeSelect}",
-        quotestage: "Processed",
+        quotestage: widget.dataQuote["quotestage"],
         contactId: widget.contactId,
         subtotal: subTotal.toString(),
         txtAdjustment: "0.00",
@@ -1200,7 +1198,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         billCode: widget.billCode == "" ? " " : widget.billCode,
         //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         shipCode: code,
-        description: Message.descriptionForQuote,
+        description: widget.dataQuote["description"],
         termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
             ? Message.termsCondition1
             : Message.termsCondition2,
@@ -1248,7 +1246,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteGradeOfNoti: "",
         id: widget.dataQuote["id"].toString(),
         floorPlanDocs: "",
-        lineItemsUpdate: productListLocal.map((e) =>
+        lineItemsUpdate: productList.map((e) =>
             LineItemsUpdate(
               productid: e.productId,
               sequenceNo: (productList.indexOf(e) + 1).toString(),
@@ -1285,6 +1283,145 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       'appversion': Constants.of().appversion.toString(),
       'old_document_name': ""};
     addQuoteBloc.add(UpdateQuoteDetailEvent(bodyData));
+  }
+
+  Future<void> copyQuoteAPI(double subTotal, double grandTotal, double disc,
+      String selectTemplateOption, double vatTotal, double profit, String depositAmount,
+      List<ProductsList> productList, String depositValue, String termsSelect) async {
+    String? street, city, country, code;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    if (widget.siteAddress.toString() != "{}") {
+      street = widget.siteAddress["address"].toString().replaceAll("\n", ", ");
+      city = widget.siteAddress["city"];
+      country = widget.siteAddress["country"];
+      code = widget.siteAddress["postcode"];
+    } else {
+      street = widget.shipStreet == "" ? " " : widget.shipStreet;
+      city = widget.shipCity == "" ? " " : widget.shipCity;
+      country = widget.shipCountry == "" ? " " : widget.shipCountry;
+      code = widget.shipCode == "" ? " " : widget.shipCode;
+    }
+
+    CopyQuoteRequest copyQuoteRequest = CopyQuoteRequest(
+      //for update data in json format
+        subject: "${widget.contactSelect}-${widget.systemTypeSelect}",
+        quotestage: widget.dataQuote["quotestage"],
+        contactId: widget.contactId,
+        subtotal: subTotal.toString(),
+        txtAdjustment: "0.00",
+        hdnGrandTotal: grandTotal.toString(),
+        hdnTaxType: "individual",
+        hdnDiscountPercent: "0.00",
+        hdnDiscountAmount: disc.toString(),
+        hdnSHAmount: "0.00",
+        assignedUserId: preferences.getString(PreferenceString.userId).toString(),
+        currencyId: "21x1",
+        conversionRate: "0.00",
+
+        //widget.siteAddress.toString() == "{}"
+
+        billStreet: widget.billStreet == "" ? " " : widget.billStreet,
+        //  todo add installation as ship address if site address selected
+        //shipStreet : widget.shipStreet == "" ? " " : widget.shipStreet,
+        shipStreet: street,
+        billCity: widget.billCity == "" ? " " : widget.billCity,
+        //shipCity : widget.shipCity == "" ? " " : widget.shipCity,
+        shipCity: city,
+        billCountry: widget.billCountry == "" ? " " : widget.billCountry,
+        //shipCountry : widget.shipCountry == "" ? " " : widget.shipCountry,
+        shipCountry: country,
+        billCode: widget.billCode == "" ? " " : widget.billCode,
+        //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
+        shipCode: code,
+        description: widget.dataQuote["description"],
+        termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
+            ? Message.termsCondition1
+            : Message.termsCondition2,
+        preTaxTotal: vatTotal.toString(),
+        hdnSHPercent: "0",
+        siteAddressId: widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
+        quotesTerms: termsSelect,
+        hdnprofitTotal: profit.toString(),
+        markup: "0.00",
+        issueNumber: "1",
+        gradeNumber: widget.gradeFireSelect,
+        systemType: widget.systemTypeSelect,
+        signallingType: widget.signallingTypeSelect,
+        premisesType: widget.premisesTypeSelect,
+        projectManager: preferences.getString(PreferenceString.userId).toString(),
+        quotesEmail: widget.contactEmail,
+        quotesTemplateOptions: selectTemplateOption,
+        quoteRelatedId: widget.dataQuote["id"].toString(),
+        quotesCompany: widget.siteAddress.toString() != "{}" ? widget.siteAddress["name"] : widget.contactCompany,
+        installation: "0",
+        hdnsubTotal: subTotal.toString(),
+        hdndiscountTotal: disc.toString(),
+        quoteMobileNumber: widget.mobileNumber,
+        quoteTelephoneNumber: widget.telephoneNumber,
+        isQuotesConfirm: "0",
+        quotesPayment: depositValue == "false" || depositValue == ""
+            ? "No Deposit" : "Deposit",
+        isQuotesPaymentConfirm: "0",
+        quotesDepositeAmount: depositAmount,
+        quotesDepoReceivedAmount: "0.00",
+        quoteEmailReminder: isEmailRemind ? "1" : "0",
+        quoteReminderEmailSentLog: "",
+        isKeyholderConfirm: "0",
+        isMaintenanceConConfirm: "0",
+        isPoliceAppliConfirm: "0",
+        quoteCorrespondencesDocs: "",
+        quoteQuoteType: "Installation",
+        quotesContractId: "",
+        quoteStopEmailDocReminder: "0",
+        quotePriorityLevel: "",
+        quoteWorksSchedule: "",
+        quoteNoOfEngineer: widget.engineerNumbers,
+        quoteReqToCompleteWork: widget.timeType,
+        quotePoNumber: "",
+        quoteGradeOfNoti: "",
+        lineItems: productList.map((e) =>
+            LineItemsCopy(
+              productid: e.productId,
+              sequenceNo: (productList.indexOf(e) + 1).toString(),
+              quantity: e.quantity.toString(),
+              listprice: e.sellingPrice,
+              discountPercent: "00.00",
+              discountAmount: e.discountPrice,
+              comment: e.description,
+              description: "",
+              incrementondel: "0",
+              tax1: "20.00",
+              tax2: "",
+              tax3: "",
+              productLocation: e.selectLocation,
+              productLocationTitle: e.titleLocation,
+              costprice: e.costPrice,
+              extQty: "0",
+              requiredDocument: e.requiredDocument,
+              //"Keyholder form###Maintenance contract###Police application###Direct Debit",
+              profit: e.profit ?? "",
+              proShortDescription: e.description,
+              proName: e.itemName.toString().replaceAll("&", "%26"),
+
+            )).toList()
+    );
+
+    String jsonQuoteDetail = jsonEncode(copyQuoteRequest);
+
+    debugPrint(" jsonQuoteDetail copy ----- $jsonQuoteDetail");
+
+    Map<String, String> bodyData = {
+      'operation': "create",
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'element': jsonQuoteDetail,
+      'elementType': 'Quotes',
+      'appversion': Constants.of().appversion.toString(),
+      'duplicateTo': widget.dataQuote["id"].toString(),
+      'IS_DUPLICATE': "1",
+      'contact_id': widget.contactId.toString(),
+    };
+    addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
   }
 }
 

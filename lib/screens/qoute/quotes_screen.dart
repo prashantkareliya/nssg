@@ -250,6 +250,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                       motion: const ScrollMotion(),
                                       children: [
                                         CustomSlidableAction(
+
                                           borderRadius: const BorderRadius.only(
                                               bottomRight: Radius.circular(20.0),
                                               topRight: Radius.circular(20.0)),
@@ -257,12 +258,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                           autoClose: true,
                                           onPressed: (value) {
                                             if(searchKey.isNotEmpty){
-                                              callNextScreen(context, AddJobPage(searchItemList![index]));
+                                              callNextScreen(context, AddJobPage(quoteItem: searchItemList![index]));
                                             }else{
-                                              callNextScreen(context, AddJobPage(quoteItems![index]));
+                                              callNextScreen(context, AddJobPage(quoteItem: quoteItems![index]));
                                             }
                                           },
-
                                           backgroundColor: AppColors.hintFontColor.withOpacity(0.30),
                                           foregroundColor: AppColors.redColor,
                                           child: Column(
@@ -296,14 +296,14 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                             Navigator.push(
                                                 context, PageTransition(
                                                 type: PageTransitionType.rightToLeft,
-                                                child: QuoteDetail(searchItemList![index].id, searchItemList![index])));
+                                                child: QuoteDetail(searchItemList![index].id, quoteData: searchItemList![index])));
 
                                             //callNextScreen(context, QuoteDetail(searchItemList![index].id));
                                           } else {
                                             Navigator.push(
                                                 context, PageTransition(
                                                 type: PageTransitionType.rightToLeft,
-                                                child: QuoteDetail(quoteItems![index].id, quoteItems![index])));
+                                                child: QuoteDetail(quoteItems![index].id, quoteData: quoteItems![index])));
                                           }
                                         },
                                         child: Container(
@@ -484,9 +484,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
 class QuoteDetail extends StatefulWidget {
   var id;
 
-  Result quoteData;
+  Result? quoteData;
 
-  QuoteDetail(this.id, this.quoteData, {Key? key}) : super(key: key);
+  QuoteDetail(this.id, {Key? key, this.quoteData}) : super(key: key);
 
   @override
   State<QuoteDetail> createState() => _QuoteDetailState();
@@ -651,7 +651,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                        color: AppColors.transparent,
                                                        width: 0)))),
                                        onPressed: (){
-                                         print("copy");
+                                         callNextScreen(context, AddQuotePage(true, "","copy", dataQuote: dataQuote, itemList: itemList));
                                        },
                                        child: Icon(Icons.content_copy, color: AppColors.primaryColor)),
                                  ),
@@ -675,7 +675,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                                        width: 0)))),
                                        onPressed: (){
                                          print("Generate job" );
-                                         callNextScreen(context, AddJobPage(widget.quoteData));
+                                         callNextScreen(context, AddJobPage(quoteItem: widget.quoteData));
                                        },
                                        child: SvgPicture.asset(ImageString.icCreateInstallation,
                                            color: AppColors.primaryColor,
