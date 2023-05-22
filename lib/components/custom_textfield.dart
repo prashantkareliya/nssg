@@ -5,30 +5,31 @@ import 'package:nssg/utils/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomTextField extends StatelessWidget {
-  const CustomTextField(
-      {Key? key,
-      this.hint,
-      required this.controller,
-      required this.keyboardType,
-      this.errorText,
-      this.titleText,
-      this.onEditingComplete,
-      this.onChange,
-      required this.readOnly,
-      this.onTap,
-      this.inputFormatters,
-      this.validator,
-      this.isRequired,
-      required this.obscureText,
-      this.suffixWidget,
-      this.copyWidget,
-      this.prefixIcon,
-      this.maxLength,
-      this.maxLines,
-      this.minLines,
-      this.star,
-      this.textInputAction})
-      : super(key: key);
+  const CustomTextField({
+    Key? key,
+    this.hint,
+    required this.controller,
+    required this.keyboardType,
+    this.errorText,
+    this.titleText,
+    this.onEditingComplete,
+    this.onChange,
+    required this.readOnly,
+    this.onTap,
+    this.inputFormatters,
+    this.validator,
+    this.isRequired,
+    required this.obscureText,
+    this.suffixWidget,
+    this.copyWidget,
+    this.prefixIcon,
+    this.maxLength,
+    this.maxLines,
+    this.minLines,
+    this.star,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.sentences,
+  }) : super(key: key);
 
   final String? hint;
   final TextEditingController controller;
@@ -51,6 +52,7 @@ class CustomTextField extends StatelessWidget {
   final int? minLines;
   final String? star;
   final TextInputAction? textInputAction;
+  final TextCapitalization? textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class CustomTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-       /* Row(
+        /* Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (titleText != null) ...[
@@ -82,7 +84,7 @@ class CustomTextField extends StatelessWidget {
         TextFormField(
           controller: controller,
           style: TextStyle(color: AppColors.blackColor),
-          textCapitalization: TextCapitalization.sentences,
+          textCapitalization: textCapitalization!,
           inputFormatters: inputFormatters,
           textInputAction: textInputAction,
           maxLines: maxLines,
@@ -99,7 +101,7 @@ class CustomTextField extends StatelessWidget {
               suffixIcon: suffixWidget,
               prefixIcon: prefixIcon,
 
-             /* border: OutlineInputBorder(
+              /* border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),
@@ -111,30 +113,25 @@ class CustomTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),*/
-             /* enabledBorder: UnderlineInputBorder(
+              /* enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                     width: 1, color: AppColors.primaryColor)
               ),*/
 
               border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)
-              ),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               filled: true,
               fillColor: Colors.white,
               contentPadding: EdgeInsets.only(left: 12.sp),
               hintText: hint,
               hintStyle: CustomTextStyle.labelFontHintText,
               counterText: "",
-            labelStyle: CustomTextStyle.labelFontHintText,
-            labelText: titleText! + "${star ?? ""}"
-          ),
+              labelStyle: CustomTextStyle.labelFontHintText,
+              labelText: titleText! + "${star ?? ""}"),
           validator: (validator != null)
               ? validator
               : (isRequired == true)

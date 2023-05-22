@@ -44,8 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //Variable for login with pin screen's username
   String? userName = "xxxx@gmail.com";
 
-  LoginBloc loginBloc =
-      LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
+  LoginBloc loginBloc = LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
   bool isLoading = false;
 
   @override
@@ -61,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     isLoading = false;
   }
+
   String accessKey = "";
   @override
   Widget build(BuildContext context) {
@@ -101,91 +101,85 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Form getBody(BuildContext context, Size query) {
     return Form(
-        key: loginFormKey,
-        child: SingleChildScrollView(
-          child: Container(
-            width: buildResponsiveWidth(context),
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(ImageString.imgBack),
-                fit: BoxFit.cover,
-              ),
+      key: loginFormKey,
+      child: SingleChildScrollView(
+        child: Container(
+          width: buildResponsiveWidth(context),
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(ImageString.imgBack),
+              fit: BoxFit.cover,
             ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: query.height * 0.12,
-                  horizontal: query.width * 0.05),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(10.0))),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: query.width * 0.07),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      SizedBox(height: 3.h),
-                      Image.asset(ImageString.imgLogoSplash,
-                          height: query.height * 0.25),
-                      //email | password field visibility
-                      Visibility(
-                        visible: widget.isLogin == "isLogin" ? false : true,
-                        child: Column(
-                          children: [
-                            buildEmailInput(),
-                            buildPasswordInput(),
-                          ],
-                        ),
+          ),
+          child: Padding(
+            padding:
+                EdgeInsets.symmetric(vertical: query.height * 0.12, horizontal: query.width * 0.05),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0))),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: query.width * 0.07),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(height: 3.h),
+                    Image.asset(ImageString.imgLogoSplash, height: query.height * 0.25),
+                    //email | password field visibility
+                    Visibility(
+                      visible: widget.isLogin == "isLogin" ? false : true,
+                      child: Column(
+                        children: [
+                          buildEmailInput(),
+                          buildPasswordInput(),
+                        ],
                       ),
-                      //pin number fields visibility
-                      Visibility(
-                        visible: widget.isLogin == "isLogin" ? true : false,
-                        child: Column(
-                          children: [
-                            Text(userName!,
-                                style: CustomTextStyle.labelFontHintText),
-                            SizedBox(height: 3.h),
-                            Text(LabelString.lblEnterPinNumber,
-                                style: CustomTextStyle.labelText),
-                            SizedBox(height: 3.h),
-                            buildPinNumber(),
-                          ],
-                        ),
+                    ),
+                    //pin number fields visibility
+                    Visibility(
+                      visible: widget.isLogin == "isLogin" ? true : false,
+                      child: Column(
+                        children: [
+                          Text(userName!, style: CustomTextStyle.labelFontHintText),
+                          SizedBox(height: 3.h),
+                          Text(LabelString.lblEnterPinNumber, style: CustomTextStyle.labelText),
+                          SizedBox(height: 3.h),
+                          buildPinNumber(),
+                        ],
                       ),
-                      //Login Button
-                      SizedBox(
-                          width: query.width,
-                          height: 7.h,
-                          child: isLoading
-                              ? loadingView()
-                              : widget.isLogin == "isLogin"
-                                  ? CustomButton(
-                                      title: ButtonString
-                                          .btnLoginWithOtherAccount
-                                          .toUpperCase(),
-                                      onClick: () {
-                                        setState(() {
-                                          widget.isLogin = "isNotLogin";
-                                          preferences.removeKeyFromPreference(PreferenceString.sessionName);
-                                        });
-                                      })
-                                  : CustomButton(
-                                      title:
-                                          ButtonString.btnLogin.toUpperCase(),
-                                      onClick: () => validateAndDoLogin(),
-                                    )),
-                      buildPowerLabel(),
-                      SizedBox(height: query.height * 0.001)
-                    ],
-                  ),
+                    ),
+                    //Login Button
+                    SizedBox(
+                        width: query.width,
+                        height: 7.h,
+                        child: isLoading
+                            ? loadingView()
+                            : widget.isLogin == "isLogin"
+                                ? CustomButton(
+                                    title: ButtonString.btnLoginWithOtherAccount.toUpperCase(),
+                                    onClick: () {
+                                      setState(() {
+                                        widget.isLogin = "isNotLogin";
+                                        preferences
+                                            .removeKeyFromPreference(PreferenceString.sessionName);
+                                      });
+                                    })
+                                : CustomButton(
+                                    title: ButtonString.btnLogin.toUpperCase(),
+                                    onClick: () => validateAndDoLogin(),
+                                  )),
+                    buildPowerLabel(),
+                    SizedBox(height: query.height * 0.001)
+                  ],
                 ),
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   //enter email field
@@ -201,6 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
           hint: "abcd@gmail.com",
           titleText: LabelString.lblEmailAddress,
           isRequired: true,
+          textCapitalization: TextCapitalization.none,
         ),
       ],
     );
@@ -215,8 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           readOnly: false,
           controller: passwordController,
-          obscureText:
-              Provider.of<WidgetChange>(context, listen: false).isVisibleText,
+          obscureText: Provider.of<WidgetChange>(context, listen: false).isVisibleText,
           hint: "* * * * * * *",
           titleText: LabelString.lblPassword,
           isRequired: true,
@@ -224,13 +218,11 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: EdgeInsets.only(right: 2.sp),
             child: IconButton(
               onPressed: () {
-                Provider.of<WidgetChange>(context, listen: false)
-                    .textVisibility();
+                Provider.of<WidgetChange>(context, listen: false).textVisibility();
               },
-              icon:
-                  Provider.of<WidgetChange>(context, listen: true).isVisibleText
-                      ? Image.asset(ImageString.icImageVisible)
-                      : Image.asset(ImageString.icImageInVisible),
+              icon: Provider.of<WidgetChange>(context, listen: true).isVisibleText
+                  ? Image.asset(ImageString.icImageVisible)
+                  : Image.asset(ImageString.icImageInVisible),
             ),
           ),
           maxLines: 1,
@@ -241,37 +233,35 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildPowerLabel() {
-    return Text(LabelString.lblPoweredBy,
-        style: CustomTextStyle.labelFontHintText);
+    return Text(LabelString.lblPoweredBy, style: CustomTextStyle.labelFontHintText);
   }
 
   //login button validation for email login
   validateAndDoLogin() async {
     if (loginFormKey.currentState?.validate() == true) {
       switch (userNameController.text.trim()) {
-
         case "iih.admin":
-          accessKey =  "CBfPHDoMNjtE99vx";
+          accessKey = "CBfPHDoMNjtE99vx";
           break;
 
         case "dn@nssg.co.uk":
-          accessKey ="S8QzomH4Q4QYxaFb";
+          accessKey = "S8QzomH4Q4QYxaFb";
           break;
 
         case "vn@nssg.co.uk":
-          accessKey ="EsqKnIihnpQ8YKl2";
+          accessKey = "EsqKnIihnpQ8YKl2";
           break;
 
-        case "ak@nssg.co.uk" :
-          accessKey= "l6ArnYzg21P92JrT";
+        case "ak@nssg.co.uk":
+          accessKey = "l6ArnYzg21P92JrT";
           break;
 
         case "rj@nssg.co.uk":
-          accessKey= "uLhjPz1Rr3Ef3xoc";
+          accessKey = "uLhjPz1Rr3Ef3xoc";
           break;
 
         case "sanjay.iih":
-          accessKey ="NiWZP7MDRsh0qh";
+          accessKey = "NiWZP7MDRsh0qh";
           break;
       }
       Map<String, dynamic> queryParameters = {
@@ -295,8 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: true,
         controller: newTextEditingController,
         focusNode: focusNode,
-        keyboardType:
-            const TextInputType.numberWithOptions(signed: true, decimal: true),
+        keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
         animationCurve: Curves.easeInOut,
         switchInAnimationCurve: Curves.easeIn,
         switchOutAnimationCurve: Curves.easeOut,
