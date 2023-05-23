@@ -1,38 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nssg/components/global_api_call.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
 import '../../components/custom_text_styles.dart';
+import '../../constants/constants.dart';
 import '../../constants/strings.dart';
+import '../../httpl_actions/app_http.dart';
+import '../../httpl_actions/handle_api_error.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/widgetChange.dart';
+import '../../utils/widgets.dart';
 
 
-class JobListScreen extends StatefulWidget {
-  const JobListScreen({Key? key}) : super(key: key);
+class ContractListScreen extends StatefulWidget {
+  const ContractListScreen({Key? key}) : super(key: key);
 
   @override
-  State<JobListScreen> createState() => _JobListScreenState();
+  State<ContractListScreen> createState() => _ContractListScreenState();
 }
 
-class _JobListScreenState extends State<JobListScreen> {
-
+class _ContractListScreenState extends State<ContractListScreen> {
+  Future<dynamic>? getDetail;
   String searchKey = "";
 
-  @override
+  List contractList = [];
+
+ @override
   Widget build(BuildContext context) {
+   getDetail = getData();
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.backWhiteColor,
-        body: Column(
-          children: [
-            buildAppbar(context),
-            buildSearchBar(context),
-            buildJobList(context)
-          ],
+        body: FutureBuilder<dynamic>(
+            future: getDetail,
+          builder: (context, snapshot) {
+            return Column(
+              children: [
+                buildAppbar(context),
+                buildSearchBar(context),
+                if(snapshot.hasData) buildJobList(context, snapshot.data)
+                else if(snapshot.hasError) Text(HandleAPI.handleAPIError(snapshot.error))
+                else SizedBox(height: 70.h, child: loadingView())
+              ],
+            );
+          }
         ),
       ),
     );
@@ -48,7 +64,7 @@ class _JobListScreenState extends State<JobListScreen> {
         visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow,
         child: BaseAppBar(
           appBar: AppBar(),
-          title: LabelString.lblJobs,
+          title: LabelString.lblContracts,
           titleTextStyle: CustomTextStyle.labelFontText,
           isBack: false,
           searchWidget: Padding(
@@ -150,13 +166,14 @@ class _JobListScreenState extends State<JobListScreen> {
     );
   }
 
-  AnimationLimiter buildJobList(BuildContext context) {
+  AnimationLimiter buildJobList(BuildContext context, contractData) {
+   contractList = contractData["result"];
     return AnimationLimiter(
       child: Expanded(
         child: ListView.separated(
           padding: EdgeInsets.only(top: 10.sp),
           physics: const BouncingScrollPhysics(),
-          itemCount: 10,
+          itemCount: contractList.length,
           itemBuilder: (context, index) {
             return AnimationConfiguration.staggeredList(
               position: index,
@@ -190,7 +207,7 @@ class _JobListScreenState extends State<JobListScreen> {
                                   onTap: (){ },
                                   child: Text.rich(
                                     TextSpan(
-                                      text: "Job Title",
+                                      text: "",
                                       style: GoogleFonts.roboto(
                                           textStyle: TextStyle(
                                               fontSize: 15.sp,
@@ -198,7 +215,7 @@ class _JobListScreenState extends State<JobListScreen> {
                                               fontWeight: FontWeight.bold)),
                                       children: [
                                         TextSpan(
-                                            text: "",
+                                            text: contractList[index]["subject"],
                                             style: GoogleFonts.roboto(
                                                 textStyle: TextStyle(
                                                     fontSize: 13.sp,
@@ -210,11 +227,29 @@ class _JobListScreenState extends State<JobListScreen> {
                                 ),
 
                                 SizedBox(height: 2.0.h),
-                                Text("Sunrise Enterprise",
+                                Text(contractList[index]["contract_no"],
                                     style: CustomTextStyle.labelText),
                                 SizedBox(height: 0.5.h),
-                                Text("1324 N Federal Hwy, Delray Beach, \nFlorida, 33483",
-                                    style: CustomTextStyle.labelText),
+                                Text.rich(
+                                  TextSpan(
+                                    text: contractList[index]["ser_con_inv_address"] ?? "",
+                                    style: CustomTextStyle.labelText,
+                                    children: [
+                                      if(contractList[index]["ser_con_inv_address"] != "" && contractList[index]["ser_con_inv_address"] != null) const TextSpan(text: ", "),
+                                      TextSpan(
+                                          text: contractList[index]["ser_con_inv_city"] ?? "",
+                                          style: CustomTextStyle.labelText),
+                                      if(contractList[index]["ser_con_inv_city"] != "" && contractList[index]["ser_con_inv_city"] != null) const TextSpan(text: ", "),
+                                      TextSpan(
+                                          text: contractList[index]["ser_con_inv_country"] ?? "",
+                                          style: CustomTextStyle.labelText),
+                                      if(contractList[index]["ser_con_inv_country"] != "" && contractList[index]["ser_con_inv_country"] != null) const TextSpan(text: ", "),
+                                      TextSpan(
+                                          text: contractList[index]["ser_con_inv_postcode"]?? "",
+                                          style: CustomTextStyle.labelText)
+                                    ],
+                                  ),
+                                ),
                                 SizedBox(height: 0.5.h),
                               ],
                             ),

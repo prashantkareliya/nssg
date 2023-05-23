@@ -206,13 +206,13 @@ class UpdateQuoteRequest {
     if (json['LineItems'] != null) {
       lineItemsUpdate = <LineItemsUpdate>[];
       json['LineItems'].forEach((v) {
-        lineItemsUpdate!.add(new LineItemsUpdate.fromJson(v));
+        lineItemsUpdate!.add(LineItemsUpdate.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['subject'] = subject;
     data['quotestage'] = quotestage;
     data['contact_id'] = contactId;
@@ -353,7 +353,7 @@ class LineItemsUpdate {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['productid'] = productid;
     data['sequence_no'] = sequenceNo;
     data['quantity'] = quantity;

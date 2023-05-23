@@ -13,7 +13,9 @@ class SelectLocation extends StatefulWidget {
   var productName;
   List<String>? locations;
   List<String>? titles;
-  SelectLocation(this.quantity, this.productName, this.locations, this.titles, {super.key});
+
+  var productTitle;
+  SelectLocation(this.quantity, this.productName, this.locations, this.titles, this.productTitle, {super.key});
 
   @override
   State<SelectLocation> createState() => _SelectLocationState();
@@ -28,35 +30,18 @@ class _SelectLocationState extends State<SelectLocation> {
   void initState() {
     super.initState();
 
-    for(String s in widget.locations ?? []){
-      final controller = TextEditingController(text: s);
-      TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: "Location ${textControllers.length}",
-          labelText: "Location ${textControllers.length}",
-        ),
-      );
-
-      if(textControllers.length != widget.quantity){
-        setState(() {
-          textControllers.add(controller);
-          titleControllers.add(widget.productName);
-          /*fields.add(field);*/
-        });
+    for(int i=0 ; i<widget.quantity; i++){
+      try{
+        textControllers.add(TextEditingController(text: widget.locations?[i]));
+        titleControllers.add(widget.productTitle);
+      }catch(e) {
+        textControllers.add(TextEditingController());
+        titleControllers.add(widget.productTitle);
       }
-    }
 
-    for(String s in widget.titles ?? []){
-      if(textControllers.length != widget.quantity){
-        setState(() {
-          titleControllers.add(widget.productName);
-          /*fields.add(field);*/
-        });
-      }
     }
-
   }
+
   @override
   void dispose() {
     for (final controller in textControllers) {
@@ -64,6 +49,7 @@ class _SelectLocationState extends State<SelectLocation> {
     }
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -91,8 +77,8 @@ class _SelectLocationState extends State<SelectLocation> {
                   shrinkWrap: true,
                   itemCount: widget.quantity,
                   itemBuilder: (context,index){
-                    textControllers.add(TextEditingController());
-                    titleControllers.add(widget.productName);
+                    /*textControllers.add(TextEditingController());
+                    titleControllers.add(widget.productName);*/
                     return TextField(
                       controller: textControllers[index],
                       decoration: InputDecoration(

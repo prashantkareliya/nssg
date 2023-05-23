@@ -1,13 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nssg/constants/navigation.dart';
+import 'package:nssg/screens/job/create_job/models/add_job_request_model.dart';
+import 'package:nssg/screens/job/job_datasource.dart';
+import 'package:nssg/screens/job/job_repository.dart';
 import 'package:nssg/screens/qoute/get_quote/quote_model_dir/get_quote_response_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
-import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/custom_radio_button.dart';
 import '../../../components/custom_rounded_container.dart';
@@ -19,8 +25,12 @@ import '../../../constants/strings.dart';
 import '../../../httpl_actions/app_http.dart';
 import '../../../httpl_actions/handle_api_error.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
 import '../../../utils/widgets.dart';
+import '../../qoute/add_quote/quote_estimation_dialog.dart';
+import '../contracts_screen.dart';
+import 'create_job_bloc_dir/create_job_bloc.dart';
 
 
 class AddJobPage extends StatefulWidget {
@@ -44,6 +54,7 @@ class _AddJobPageState extends State<AddJobPage> {
   TextEditingController engineerNoteController = TextEditingController();
   TextEditingController engineerInstructionController = TextEditingController();
   TextEditingController specialInstructionController = TextEditingController();
+  TextEditingController specialInstructionController1 = TextEditingController();
 
 
   bool isLoading = false;
@@ -57,7 +68,19 @@ class _AddJobPageState extends State<AddJobPage> {
   List<RadioModel> installationTimeRequired = <RadioModel>[];
   String page = "0";
 
+  String priorityLevelSelect = "Medium";
+  String workScheduleSelect = "";
+  String paymentMethodSelect = "";
+  String paymentInstructionSelect = "";
+  String instructionToProceedSelect = "";
+  String contractNumberPass = "";
 
+  String numberOfEngineer = "";
+  String installationTime = "";
+
+  Future<dynamic>? getDetail;
+
+  CreateJobBloc createJobBloc = CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
   @override
   void initState() {
     super.initState();
@@ -82,16 +105,19 @@ class _AddJobPageState extends State<AddJobPage> {
       'contact_id': widget.quoteItem?.contactId,
     };
     final response = await HttpActions() .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
-
+    setState(() {
+      contractNumberPass = response["result"].toString();
+    });
     debugPrint("getContractNumberAPI --- $response");
     return response;
   }
+
 
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
     getJobFields = getQuoteFields("SalesOrder", context);
-
+    getDetail = getContactDetail(widget.quoteItem?.id, context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -104,13 +130,7 @@ class _AddJobPageState extends State<AddJobPage> {
           highlightColor: AppColors.transparent,
           splashColor: AppColors.transparent,
           onTap: () {
-            if(page == "0"){
-              Navigator.pop(context);
-            } else {
-              pageController.previousPage(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.decelerate);
-            }
+            Navigator.pop(context);
           },
           child: Icon(Icons.arrow_back_ios_outlined,
               color: AppColors.blackColor, size: 14.sp),
@@ -119,124 +139,88 @@ class _AddJobPageState extends State<AddJobPage> {
             style: CustomTextStyle.labelBoldFontText),
       ),
 
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
-            child: StreamBuilder<int>(
-              initialData: 0,
-              stream: streamController.stream,
-              builder: (context, snapshot) {
-                return Column(
-                  children: [
-                    //step design
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        snapshot.data! == 0
-                            ? RoundedContainer(
-                                containerText: (snapshot.data! + 1).toString(),
-                                stepText: (snapshot.data! + 1).toString(),
-                                isEnable: true,
-                                isDone: false)
-                            : RoundedContainer(
-                                containerText: (snapshot.data! + 1).toString(),
-                                stepText: (snapshot.data!).toString(),
-                                isEnable: false,
-                                isDone: true),
-                        snapshot.data! == 1
-                            ? RoundedContainer(
-                                containerText: (snapshot.data! + 1).toString(),
-                                stepText: (snapshot.data! + 1).toString(),
-                                isEnable: true,
-                                isDone: false)
-                            : RoundedContainer(
-                                containerText: (snapshot.data! + 2).toString(),
-                                stepText: (snapshot.data! + 2).toString(),
-                                isEnable: false,
-                                isDone: false)
-                      ],
-                    ),
-                    SizedBox(height: 2.h),
-                    StepProgressIndicator(
-                      padding: 0.0,
-                      totalSteps: 2,
-                      size: 2.sp,
-                      currentStep: snapshot.data!,
-                      selectedColor: AppColors.primaryColor,
-                      unselectedColor: AppColors.transparent,
-                      customColor: (index) {
-                        if (index == snapshot.data) {
-                          return AppColors.primaryColor;
-                        } else {
-                          return index == 5
-                              ? AppColors.redColor
-                              : Colors.transparent;
-                        }
-                      },
-                    ),
+      body: BlocListener<CreateJobBloc, CreateJobState>(
+        bloc: createJobBloc,
 
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.sp, right: 10.sp, top : 8.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(snapshot.data == 1 ? LabelString.lblJobInstructions
-                              :LabelString.lblQuestionsForProjectManagers,
-                              style: CustomTextStyle.labelBoldFontTextSmall),
-                          Row(
-                            children: [
-                              Text(LabelString.lblStep, style: CustomTextStyle.commonText),
-                              Text(" ${snapshot.data! + 1}/2", style: CustomTextStyle.commonTextBlue),
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+        listener: (context, state) {
+          if (state is FailCreateJob) {
+            Helpers.showSnackBar(context, ErrorString.somethingWentWrong);
+          }
+          if (state is LoadedCreateJob) {
+            Helpers.showSnackBar(context, "Job Created Successfully");
+            //Navigator.pop(context);
+          }
+          if(state is LoadingCreateJob){
+            Navigator.pop(context);
+
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  duration: const Duration(milliseconds: 4000),
+                  backgroundColor: Colors.green,
+                  content: Text(
+                      "This quote is being converted into the job, please verify in the CRM after few minutes.",
+                    style: TextStyle(color: AppColors.whiteColor),
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+          }
+        },
+        child: BlocBuilder<CreateJobBloc, CreateJobState>(
+        bloc: createJobBloc,
+        builder: (context, state) {
+          if (state is LoadingCreateJob) {
+            isLoading = state.isBusy;
+            FocusScope.of(context).unfocus();
+          }
+          if (state is LoadedCreateJob) {
+            isLoading = false;
+          }
+          if (state is FailCreateJob) {
+            isLoading = false;
+          }
+        return FutureBuilder<dynamic>(
+            future: getJobFields,
+            builder: (context, snapshot) {
+              if(snapshot.hasData){
+                var jobFieldsData = snapshot.data["result"];
+                return FutureBuilder<dynamic>(
+                    future: getDetail,
+                    builder: (context, snapshot1) {
+                      if(snapshot1.hasData){
+                        installationTime = snapshot1.data["result"]["quote_req_to_complete_work"];
+                        numberOfEngineer = snapshot1.data["result"]["quote_no_of_engineer"];
+
+                        return snapshot1.data["result"]["quote_quote_type"] == "Installation" ?
+                        buildStepOne(query, jobFieldsData, snapshot1.data["result"]) :
+                        buildStepTwo(query, jobFieldsData, snapshot1.data["result"]);
+                      }else if(snapshot1.hasError){
+                        final message = HandleAPI.handleAPIError(snapshot.error);
+                        return Text(message);
+                      }
+                      return SizedBox(height: 70.h, child: loadingView());
+                    }
                 );
-              },
-            ),
-          ),
-          //bloc for update and create contact
-          FutureBuilder<dynamic>(
-              future: getJobFields,
-              builder: (context, snapshot) {
-                if(snapshot.hasData){
-                  var jobFieldsData = snapshot.data["result"];
-                  return Expanded(
-                    child: PageView(
-                      pageSnapping: true,
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      controller: pageController,
-                      onPageChanged: (number) {
-                        streamController.add(number);
-                        Provider.of<WidgetChange>(context, listen: false).pageNumber(number.toString());
-                        page = Provider.of<WidgetChange>(context, listen: false).pageNo;
-
-                      },
-                      children: [buildStepOne(query, jobFieldsData), buildStepTwo(query, jobFieldsData)],
-                    ),
-                  );
-                }else if (snapshot.hasError) {
-                  final message = HandleAPI.handleAPIError(snapshot.error);
-                  return Text(message);
-                }
-                return SizedBox(height: 70.h, child: loadingView());
+              }else if (snapshot.hasError) {
+                final message = HandleAPI.handleAPIError(snapshot.error);
+                return Text(message);
               }
-          )
-        ],
-      ),
+              return SizedBox(height: 70.h, child: loadingView());
+            }
+        );
+  },
+),
+),
     );
   }
 
   //stepOne design
-  Padding buildStepOne(Size query, jobFieldsData) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.sp),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+  Widget buildStepOne(Size query, jobFieldsData, dataForCreateJob) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -252,7 +236,7 @@ class _AddJobPageState extends State<AddJobPage> {
                 jobFieldsData["priority_level"].length,
                     (index) {
                   String priorityLevelLabel = jobFieldsData["priority_level"][index]["label"].toString();
-                  priorityLevel.add(RadioModel(false, jobFieldsData["priority_level"][index]["label"]));
+                  priorityLevel.add(RadioModel(priorityLevelLabel == "Medium" ? true : false, jobFieldsData["priority_level"][index]["label"]));
 
                   return InkWell(
                     splashColor: AppColors.transparent,
@@ -263,6 +247,9 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       priorityLevel[index].isSelected = true;
+
+                      priorityLevelSelect = jobFieldsData["priority_level"][index]["label"];
+
                       setState(() {});
                     },
                     child: Container(width: query.width * 0.29,
@@ -282,31 +269,31 @@ class _AddJobPageState extends State<AddJobPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if(jobFieldsData["priority_level"][index]["label"].toString() == "High")
-                            Container(
-                              height: 2.h, width: 4.w,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFFC1C1),
-                                borderRadius: BorderRadius.circular(50.0),
-                                border: Border.all(color: const Color(0xFFFF5757))
-                              ),
-                            ) else
-                              if(jobFieldsData["priority_level"][index]["label"].toString() == "Medium")
                               Container(
+                                height: 2.h, width: 4.w,
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFFFC1C1),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    border: Border.all(color: const Color(0xFFFF5757))
+                                ),
+                              ) else
+                              if(jobFieldsData["priority_level"][index]["label"].toString() == "Medium")
+                                Container(
                                   height: 2.h, width: 4.w,
                                   decoration: BoxDecoration(
-                                  color: const Color(0xFFFEF0A6),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  border: Border.all(color: const Color(0xFFFFC93D))
+                                      color: const Color(0xFFFEF0A6),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      border: Border.all(color: const Color(0xFFFFC93D))
                                   ),
                                 ) else
-                                  Container(
-                                    height: 2.h, width: 4.w,
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xFFCBDAEA),
-                                        borderRadius: BorderRadius.circular(50.0),
-                                        border: Border.all(color: const Color(0xFF58A8FE))
+                                Container(
+                                  height: 2.h, width: 4.w,
+                                  decoration: BoxDecoration(
+                                      color: const Color(0xFFCBDAEA),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      border: Border.all(color: const Color(0xFF58A8FE))
+                                  ),
                                 ),
-                              ),
                             SizedBox(width: 2.w),
                             Text(priorityLevelLabel,
                                 textAlign: TextAlign.center,
@@ -345,6 +332,7 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       worksSchedule[index].isSelected = true;
+                      workScheduleSelect = jobFieldsData["works_schedule"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -394,6 +382,7 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       paymentMethod[index].isSelected = true;
+                      paymentMethodSelect = jobFieldsData["payment_method"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -442,6 +431,7 @@ class _AddJobPageState extends State<AddJobPage> {
                         element.isSelected = false;
                       }
                       paymentInstructions[index].isSelected = true;
+                      paymentInstructionSelect = jobFieldsData["payment_instructions"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -491,6 +481,18 @@ class _AddJobPageState extends State<AddJobPage> {
                 minLines: 1,
                 textInputAction: TextInputAction.next,
                 isRequired: false),
+            CustomTextField(
+              keyboardType: TextInputType.text,
+              readOnly: false,
+              controller: specialInstructionController1,
+              obscureText: false,
+              hint: LabelString.lblSpecialInstruction,
+              titleText: LabelString.lblSpecialInstruction,
+              textInputAction: TextInputAction.next,
+              maxLines: 3,
+              minLines: 1,
+              isRequired: true,
+            ),
             SizedBox(height: 2.0.h),
             Text(LabelString.lblInstructionsToProceed,
                 style: CustomTextStyle.labelText),
@@ -512,6 +514,7 @@ class _AddJobPageState extends State<AddJobPage> {
                         element.isSelected = false;
                       }
                       instructionsToProceed[index].isSelected = true;
+                      instructionToProceedSelect = jobFieldsData["instructions_to_proceed"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -540,37 +543,58 @@ class _AddJobPageState extends State<AddJobPage> {
               ),
             ),
             Padding(
-              padding:
-                  EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  //cancel button
-                  SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                        buttonColor: AppColors.redColor,
-                        onClick: () => Navigator.pop(context),
-                        title: ButtonString.btnCancel),
+                padding:
+                EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
+                child: SizedBox(
+                  width: query.width,
+                  height: query.height * 0.06,
+                  child: CustomButton(
+                    buttonColor: AppColors.primaryColor,
+                    onClick: () {
+                      if(priorityLevelSelect == ""){
+                        Helpers.showSnackBar(context, ErrorString.selectPriorityLevel, isError: true);
+                      }else if(workScheduleSelect == ""){
+                        Helpers.showSnackBar(context, ErrorString.selectWorkSchedule, isError: true);
+                      }else if(paymentMethodSelect ==""){
+                        Helpers.showSnackBar(context, ErrorString.selectPaymentMethod, isError: true);
+                      }else if(instructionToProceedSelect == ""){
+                        Helpers.showSnackBar(context, ErrorString.selectInstructionToProceed, isError: true);
+                      }else if(paymentInstructionSelect == ""){
+                        Helpers.showSnackBar(context, ErrorString.selectPaymentInstruction, isError: true);
+                      }else if(engineerNoteController.text.isEmpty){
+                        Helpers.showSnackBar(context, ErrorString.selectEngineerNote, isError: true);
+                      } else {
+                        if(installationTime == "" || numberOfEngineer == ""){
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                ///Make new class for dialog
+                                return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            10)),
+                                    elevation: 0,
+                                    insetAnimationCurve: Curves.decelerate,
+                                    insetPadding: EdgeInsets.symmetric(
+                                        horizontal: 12.sp),
+                                    child: QuoteEstimation(
+                                        dataQuote: dataForCreateJob, "job"));
+                              }).then((value) {
+                            print(value);
+                            setState(() {
+                              installationTime = value["keyTimeType"];
+                              numberOfEngineer = value["keyEngineerNumbers"];
+                              createJob(dataForCreateJob);
+                            });
+                          });
+                        }
+                        createJob(dataForCreateJob);
+                      }
+
+                    },
+                    title: ButtonString.btnSubmit,
                   ),
-                  //next button
-                  SizedBox(
-                    width: query.width * 0.4,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                      buttonColor: AppColors.primaryColor,
-                      onClick: () {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
-                      },
-                      title: ButtonString.btnNext,
-                    ),
-                  )
-                ],
-              ),
+                )
             )
           ],
         ),
@@ -579,88 +603,233 @@ class _AddJobPageState extends State<AddJobPage> {
   }
 
   //stepTwo design
-  buildStepTwo(Size query, jobFieldsData) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.sp),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomTextField(
-              keyboardType: TextInputType.text,
-              readOnly: false,
-              controller: officeNote2Controller,
-              obscureText: false,
-              hint: LabelString.lblOfficeNote,
-              titleText: LabelString.lblOfficeNote,
-              textInputAction: TextInputAction.next,
-              maxLines: 3,
-
-              minLines: 1,
-              isRequired: true,
+  buildStepTwo(Size query, jobFieldsData, dataForCreateJob) {
+    return AbsorbPointer(
+      absorbing: isLoading,
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.sp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTextField(
+                    keyboardType: TextInputType.text,
+                    readOnly: false,
+                    controller: officeNote2Controller,
+                    obscureText: false,
+                    hint: LabelString.lblOfficeNote,
+                    titleText: LabelString.lblOfficeNote,
+                    textInputAction: TextInputAction.next,
+                    maxLines: 3,
+                    minLines: 1,
+                    isRequired: true,
+                  ),
+                  CustomTextField(
+                    keyboardType: TextInputType.text,
+                    readOnly: false,
+                    controller: engineerInstructionController,
+                    obscureText: false,
+                    hint: LabelString.lblEngineerInstruction,
+                    titleText: LabelString.lblEngineerInstruction,
+                    textInputAction: TextInputAction.next,
+                    maxLines: 3,
+                    minLines: 1,
+                    isRequired: true,
+                  ),
+                  CustomTextField(
+                    keyboardType: TextInputType.text,
+                    readOnly: false,
+                    controller: specialInstructionController,
+                    obscureText: false,
+                    hint: LabelString.lblSpecialInstruction,
+                    titleText: LabelString.lblSpecialInstruction,
+                    textInputAction: TextInputAction.next,
+                    maxLines: 3,
+                    minLines: 1,
+                    isRequired: true,
+                  ),
+                  SizedBox(
+                      width: query.width,
+                      height: query.height * 0.06,
+                      child: CustomButton(
+                          buttonColor: AppColors.primaryColor,
+                          onClick: () {
+                            if(engineerInstructionController.text.isEmpty){
+                              Helpers.showSnackBar(context, ErrorString.selectPaymentInstruction, isError: true);
+                            }else{
+                              createJob(dataForCreateJob);
+                            }
+                          },
+                          title: ButtonString.btnSubmit)
+                  ),
+                ],
+              ),
             ),
-            CustomTextField(
-              keyboardType: TextInputType.text,
-              readOnly: false,
-              controller: engineerInstructionController,
-              obscureText: false,
-              hint: LabelString.lblEngineerInstruction,
-              titleText: LabelString.lblEngineerInstruction,
-              textInputAction: TextInputAction.next,
-              maxLines: 3,
-              minLines: 1,
-              isRequired: true,
-            ),
-            CustomTextField(
-              keyboardType: TextInputType.text,
-              readOnly: false,
-              controller: specialInstructionController,
-              obscureText: false,
-              hint: LabelString.lblSpecialInstruction,
-              titleText: LabelString.lblSpecialInstruction,
-              textInputAction: TextInputAction.next,
-              maxLines: 3,
-              minLines: 1,
-              isRequired: true,
-            ),
-            buildButtons(query),
-          ],
-        ),
-      ),
-    );
-  }
-
-  //previous and submit button
-  Padding buildButtons(Size query) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 2.0.sp),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          //previous button
-          SizedBox(
-              width: query.width * 0.4,
-              height: query.height * 0.06,
-              child: BorderButton(
-                  btnString: ButtonString.btnPrevious,
-                  onClick: () => pageController.previousPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.decelerate))),
-          //submit or update button
-          SizedBox(
-            width: query.width * 0.4,
-            height: query.height * 0.06,
-            child: CustomButton(
-                    buttonColor: AppColors.primaryColor,
-                    onClick: () { },
-                    title: ButtonString.btnSubmit)
-          )
+          ),
+          Visibility(
+            visible: isLoading,
+            child: Align(
+                alignment: Alignment.center,
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                    child: loadingView(),
+                  ),
+                )),
+          ),
         ],
       ),
     );
   }
 
+  Future<void> createJob (dataForCreateJob) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
 
+    CreateJobRequest createJobRequest = CreateJobRequest(
+        subject : dataForCreateJob["subject"] ?? " ",
+        quoteId : dataForCreateJob["id"] ?? " ",
+        contactId : dataForCreateJob["contact_id"] ?? " ",
+        sostatus : "Created" ?? " ",
+        hdnGrandTotal : dataForCreateJob["hdnGrandTotal"] ?? " ",
+        hdnSubTotal : dataForCreateJob["hdnSubTotal"] ?? " ",
+        hdnTaxType : dataForCreateJob["hdnTaxType"] ?? " ",
+        hdnDiscountPercent : dataForCreateJob["hdnDiscountPercent"] ?? " ",
+        hdnDiscountAmount : dataForCreateJob["hdnDiscountAmount"] ?? " ",
+        hdnSHAmount : dataForCreateJob["hdnS_H_Amount"] ?? " ",
+        assignedUserId : dataForCreateJob["assigned_user_id"] ?? " ",
+        currencyId : dataForCreateJob["currency_id"] ?? " ",
+        conversionRate : dataForCreateJob["conversion_rate"] ?? " ",
+        billStreet : dataForCreateJob["bill_street"] ?? " ",
+        shipStreet : dataForCreateJob["ship_street"] ?? " ",
+        billCity : dataForCreateJob["bill_city"] ?? " ",
+        shipCity : dataForCreateJob["ship_city"] ?? " ",
+        billCountry : dataForCreateJob["bill_country"] ?? " ",
+        shipCountry : dataForCreateJob["ship_country"] ?? " ",
+        billCode : dataForCreateJob["bill_code"] ?? " ",
+        shipCode : dataForCreateJob["ship_code"] ?? " ",
+        startPeriod : " " ?? " ",
+        endPeriod : " " ?? " ",
+        paymentDuration : " " ?? " ",
+        invoicestatus : "Created" ?? " ",
+        preTaxTotal : dataForCreateJob["pre_tax_total"] ?? "  ",
+        hdnSHPercent : dataForCreateJob["hdnS_H_Percent"] ?? "  ",
+        jobCompany : dataForCreateJob["quotes_company"] ?? "  ",
+        contractNumber : contractNumberPass ?? "  ",
+        jobsSystemType : dataForCreateJob["system_type"] ?? "  ",
+        jobsTerms : dataForCreateJob["terms_conditions"] ?? "  ",
+        jobsGradeNumber : dataForCreateJob["grade_number"] ?? "  ",
+        jobsSignallingType : dataForCreateJob["signalling_type"] ?? "  ",
+        jobsProjectManager : dataForCreateJob["project_manager"] ?? "  ",
+        installation : dataForCreateJob["installation"] ?? "  ",
+        email : dataForCreateJob["quotes_email"] ?? "  ",
+        telephoneNumber : dataForCreateJob["quote_telephone_number"] ?? "  ",
+        mobileNumber : dataForCreateJob["quote_mobile_number"] ?? "  ",
+        priorityLevel : priorityLevelSelect ?? "  ",
+        engineersNote : engineerNoteController.text ?? "  ",
+        officeNote : officeNoteController.text ?? "  ",
+        specialInstructions : specialInstructionController.text ?? "  ",
+        installationTimeRequired : installationTime,
+        preferredInstallationTeam : numberOfEngineer,
+        worksSchedule : workScheduleSelect ?? "  ",
+        instructionsToProceed : instructionToProceedSelect ?? "  ",
+        paymentInstructions : paymentInstructionSelect ?? "  ",
+        paymentMethod : paymentMethodSelect ?? "  ",
+        isConfirm : "0",
+        contractNotesJob : " ",
+        invoiceNumber : " " ?? " ",
+        jobPremisesType : dataForCreateJob["premises_type"] ?? " ",
+        jobTaskTimestamp : "" ?? " ",
+        hdnprofitTotal : dataForCreateJob["hdnprofitTotal"] ?? " ",
+        jobType : dataForCreateJob["quote_quote_type"] ?? " ",
+        soJobStatus : " ",
+        isscheduledjob : "0 ",
+        isJobScheduleMailSent : "0 ",
+        jobServiServiceMonth : "  ",
+        jobServiPerAnnum : " ",
+        jobServiServiceYear : "  ",
+        jobServiServiceType : "  ",
+        salesorderRelatedId : "0 ",
+        isCustomerConfirm : "0 ",
+        jobSchDateByCustomer : " ",
+        jobSchAltDateByCustomer : " ",
+        jobSchCustomerNotes : " ",
+        isProjectTaskCreatedAsana : "0 ",
+        asanaCreatedProjectId : " ",
+        jobPartStatus : " ",
+        jotformWorkCarryOut : " ",
+        jotformOutStandWork : " ",
+        jotformPartReqNextVisit : " ",
+        jotformAddWorkToQuote : " ",
+        jotformPartUsed : " ",
+        jobChecklistBooked : " ",
+        jobChecklistRaiseInvoice : " ",
+        jobChecklistRaiseInvoiceNumber : " ",
+        jobChecklistPickListStock : " ",
+        jobChecklistObtCustFeedback : dataForCreateJob["quote_quote_type"] !=  "installation" ? "Not select" : "",
+        jobChecklistPaymentOnComplet : " ",
+        jobChecklistExtraStockAllocate : " ",
+        jobChecklistExtraStockReturnFaulty : " ",
+        jobChecklistCommsAllocated : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistCreateContract : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistOrderComms : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistUrnSentClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistUrnReceivedClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistUrnAppliPoliceForce : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistUrnReceivedPoliceForce : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistMaintenSentClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistMaintenReceived : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistKeyholderSentClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistKeyholderReceived : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
+        jobChecklistCsDigiCheck : " ",
+        jobChecklistCsDigiNumber : " ",
+        jobChecklistIssueNsiCertCheck : " ",
+        jobChecklistIssueNsiCertNumber : " ",
+        jobChecklistReadyToClose : " ",
+      jobChecklistPayRecived: dataForCreateJob["quote_quote_type"] ==  "Installation" ? "Not select" : "",
+      jobChecklistStockRequire: dataForCreateJob["quote_quote_type"] ==  "Installation" ?  "Not select" : "",
+      jobChecklistDdRecSubSetup: dataForCreateJob["quote_quote_type"] !=  "Installation" ?  "Not select" : "",
+      lineItems: dataForCreateJob["LineItems"].map((e) {
+        return LineItems(
+          productid: e["productid"].toString().replaceAll("14x", ""),
+          sequenceNo: e["sequence_no"],
+          quantity: e["quantity"],
+          listprice: e["listprice"],
+          discountPercent: e["discount_percent"],
+          discountAmount: e["discount_amount"],
+          comment: e["comment"],
+          description: e["description"],
+          incrementondel: e["incrementonde"],
+          tax1: e["tax1"],
+          tax2: e["tax2"],
+          tax3: e["tax3"],
+          productLocation: e["product_location"],
+          productLocationTitle: e["product_location_title"],
+          costprice: e["costprice"],
+          extQty: e["ext_qty"],
+          requiredDocument: e["required_document"],
+          proShortDescription: e["pro_short_description"],
+        );
+      }).toList()
+    );
+
+    String jsonJobDetail = jsonEncode(createJobRequest);
+
+    debugPrint(" jsonQuoteDetail add ----- $jsonJobDetail");
+
+    Map<String, String> bodyData = {
+      'operation': "create",
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'element': jsonEncode(createJobRequest),
+      'elementType': 'SalesOrder',
+      'appversion': Constants.of().appversion.toString(),
+      'contract_number' : contractNumberPass.toString(),
+      'job_type' : dataForCreateJob["quote_quote_type"].toString(),
+  };
+    createJobBloc.add(CreateJobDetailEvent(bodyData));
+  }
 }

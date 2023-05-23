@@ -551,138 +551,154 @@ class _QuoteDetailState extends State<QuoteDetail> {
                          children: [
                            SizedBox(height: 2.h),
                            Row(
-                             mainAxisAlignment: MainAxisAlignment.end,
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                              children: [
-                           Card(
-                             elevation:5,
-                             shape: const RoundedRectangleBorder(
-                                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                             child: SizedBox(
-                               height: query.height * 0.05,
-                               width: query.width * 0.10,
-                               child: TextButton(
-                               style: ButtonStyle(
-                               foregroundColor: MaterialStateProperty.all<Color>(AppColors.primaryColor),
-                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                 RoundedRectangleBorder(
-                                     borderRadius: BorderRadius.circular(10.0),
-                                     side: BorderSide(
-                                         color: AppColors.transparent,
-                                         width: 0)))),
-                                onPressed: () {
-                                  UrlLauncher.launch(pdfURL);
-                                },
-                                child: Icon(Icons.picture_as_pdf, color: AppColors.primaryColor)),
-                             ),
-                           ),
-                               SizedBox(width: 0.0.w),
-                               Card(
-                                 elevation:5.0,
-                                 shape: const RoundedRectangleBorder(
-                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                 child: SizedBox(
-                                   height: query.height * 0.05,
-                                   width: query.width * 0.10,
-                                   child: TextButton(
-                                       onPressed: (){
-                                         showDialog(
-                                             context: context,
-                                             barrierDismissible: false,
-                                             builder: (context) {
-                                               return Dialog(
-                                                 shape: RoundedRectangleBorder(
-                                                     borderRadius: BorderRadius.circular(10)),
-                                                 elevation: 0,
-                                                 insetAnimationCurve: Curves.decelerate,
-                                                 insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                                 child: SendEmail(contactList, widget.id, dataQuote["quotes_email"], ""),
-                                               );
-                                             });
-                                       },
-                                       clipBehavior: Clip.hardEdge,
-                                       style: ElevatedButton.styleFrom(
-                                         backgroundColor: AppColors.primaryColor,
-                                         splashFactory: NoSplash.splashFactory,
-                                         shape: const RoundedRectangleBorder(
-                                             borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                       ),
-                                       child: Icon(Icons.email_outlined, color: AppColors.whiteColor),
+                               Padding(
+                                 padding: const EdgeInsets.only(left: 8.0),
+                                 child: Row(
+                                   children: [
+                                     Column(
+                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                       children: [
+                                         Text("Quote no : ", style: CustomTextStyle.commonStyle),
+                                         Text(dataQuote["quote_no"], style: CustomTextStyle.labelBoldFontTextSmall),
+                                       ],
+                                     )],
+                                 ),
+                               ),
+                               Row(
+                                 children: [
+                                   Card(
+                                     elevation:5,
+                                     shape: const RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                     child: SizedBox(
+                                       height: query.height * 0.05,
+                                       width: query.width * 0.10,
+                                       child: TextButton(
+                                           style: ButtonStyle(
+                                               foregroundColor: MaterialStateProperty.all<Color>(AppColors.primaryColor),
+                                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                   RoundedRectangleBorder(
+                                                       borderRadius: BorderRadius.circular(10.0),
+                                                       side: BorderSide(
+                                                           color: AppColors.transparent,
+                                                           width: 0)))),
+                                           onPressed: () {
+                                             UrlLauncher.launch(pdfURL);
+                                           },
+                                           child: Icon(Icons.picture_as_pdf, color: AppColors.primaryColor)),
+                                     ),
                                    ),
-                                 ),
-                               ),
-                               SizedBox(width: 0.0.w),
-                               Card(
-                                 elevation:5,
-                                 shape: const RoundedRectangleBorder(
-                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                 child: SizedBox(
-                                   height: query.height * 0.05,
-                                   width: query.width * 0.10,
-                                   child: TextButton(
-                                       style: ButtonStyle(
-                                           foregroundColor: MaterialStateProperty.all<Color>(AppColors.primaryColor),
-                                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                               RoundedRectangleBorder(
-                                                   borderRadius: BorderRadius.circular(10.0),
-                                                   side: BorderSide(
-                                                       color: AppColors.transparent,
-                                                       width: 0)))),
-                                       onPressed: (){
-                                         callNextScreen(context, AddQuotePage(true, "","edit", dataQuote: dataQuote, itemList: itemList));
-                                       },
-                                       child: Icon(Icons.edit_outlined, color: AppColors.primaryColor)),
-                                 ),
-                               ),
-                               Card(
-                                 elevation:5,
-                                 shape: const RoundedRectangleBorder(
-                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                 child: SizedBox(
-                                   height: query.height * 0.05,
-                                   width: query.width * 0.10,
-                                   child: TextButton(
-                                       style: ButtonStyle(
-                                           foregroundColor: MaterialStateProperty.all<Color>(
-                                               AppColors.primaryColor),
-                                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                               RoundedRectangleBorder(
-                                                   borderRadius: BorderRadius.circular(10.0),
-                                                   side: BorderSide(
-                                                       color: AppColors.transparent,
-                                                       width: 0)))),
-                                       onPressed: (){
-                                         callNextScreen(context, AddQuotePage(true, "","copy", dataQuote: dataQuote, itemList: itemList));
-                                       },
-                                       child: Icon(Icons.content_copy, color: AppColors.primaryColor)),
-                                 ),
-                               ),
-                               Card(
-                                 elevation:5,
-                                 shape: const RoundedRectangleBorder(
-                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                 child: SizedBox(
-                                   height: query.height * 0.05,
-                                   width: query.width * 0.10,
-                                   child: TextButton(
-                                       style: ButtonStyle(
-                                           foregroundColor: MaterialStateProperty.all<Color>(
-                                               AppColors.primaryColor),
-                                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                               RoundedRectangleBorder(
-                                                   borderRadius: BorderRadius.circular(10.0),
-                                                   side: BorderSide(
-                                                       color: AppColors.transparent,
-                                                       width: 0)))),
-                                       onPressed: (){
-                                         print("Generate job" );
-                                         callNextScreen(context, AddJobPage(quoteItem: widget.quoteData));
-                                       },
-                                       child: SvgPicture.asset(ImageString.icCreateInstallation,
-                                           color: AppColors.primaryColor,
-                                           fit: BoxFit.fill,
-                                           height: 2.5.h)),
-                                 ),
-                               ),
+                                   Card(
+                                     elevation:5.0,
+                                     shape: const RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                     child: SizedBox(
+                                       height: query.height * 0.05,
+                                       width: query.width * 0.10,
+                                       child: TextButton(
+                                         onPressed: (){
+                                           showDialog(
+                                               context: context,
+                                               barrierDismissible: false,
+                                               builder: (context) {
+                                                 return Dialog(
+                                                   shape: RoundedRectangleBorder(
+                                                       borderRadius: BorderRadius.circular(10)),
+                                                   elevation: 0,
+                                                   insetAnimationCurve: Curves.decelerate,
+                                                   insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                                   child: SendEmail(contactList, widget.id, dataQuote["quotes_email"], ""),
+                                                 );
+                                               });
+                                         },
+                                         clipBehavior: Clip.hardEdge,
+                                         style: ElevatedButton.styleFrom(
+                                           backgroundColor: AppColors.primaryColor,
+                                           splashFactory: NoSplash.splashFactory,
+                                           shape: const RoundedRectangleBorder(
+                                               borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                         ),
+                                         child: Icon(Icons.email_outlined, color: AppColors.whiteColor),
+                                       ),
+                                     ),
+                                   ),
+                                   Card(
+                                     elevation:5,
+                                     shape: const RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                     child: SizedBox(
+                                       height: query.height * 0.05,
+                                       width: query.width * 0.10,
+                                       child: TextButton(
+                                           style: ButtonStyle(
+                                               foregroundColor: MaterialStateProperty.all<Color>(AppColors.primaryColor),
+                                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                   RoundedRectangleBorder(
+                                                       borderRadius: BorderRadius.circular(10.0),
+                                                       side: BorderSide(
+                                                           color: AppColors.transparent,
+                                                           width: 0)))),
+                                           onPressed: (){
+                                             callNextScreen(context, AddQuotePage(true, "","edit", dataQuote: dataQuote, itemList: itemList));
+                                           },
+                                           child: Icon(Icons.edit_outlined, color: AppColors.primaryColor)),
+                                     ),
+                                   ),
+                                   Card(
+                                     elevation:5,
+                                     shape: const RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                     child: SizedBox(
+                                       height: query.height * 0.05,
+                                       width: query.width * 0.10,
+                                       child: TextButton(
+                                           style: ButtonStyle(
+                                               foregroundColor: MaterialStateProperty.all<Color>(
+                                                   AppColors.primaryColor),
+                                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                   RoundedRectangleBorder(
+                                                       borderRadius: BorderRadius.circular(10.0),
+                                                       side: BorderSide(
+                                                           color: AppColors.transparent,
+                                                           width: 0)))),
+                                           onPressed: (){
+                                             callNextScreen(context, AddQuotePage(true, "","copy", dataQuote: dataQuote, itemList: itemList));
+                                           },
+                                           child: Icon(Icons.content_copy, color: AppColors.primaryColor)),
+                                     ),
+                                   ),
+                                   Card(
+                                     elevation:5,
+                                     shape: const RoundedRectangleBorder(
+                                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                     child: SizedBox(
+                                       height: query.height * 0.05,
+                                       width: query.width * 0.10,
+                                       child: TextButton(
+                                           style: ButtonStyle(
+                                               foregroundColor: MaterialStateProperty.all<Color>(
+                                                   AppColors.primaryColor),
+                                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                   RoundedRectangleBorder(
+                                                       borderRadius: BorderRadius.circular(10.0),
+                                                       side: BorderSide(
+                                                           color: AppColors.transparent,
+                                                           width: 0)))),
+                                           onPressed: (){
+                                             print("Generate job" );
+                                             callNextScreen(context, AddJobPage(quoteItem: widget.quoteData));
+                                           },
+                                           child: SvgPicture.asset(ImageString.icCreateInstallation,
+                                               color: AppColors.primaryColor,
+                                               fit: BoxFit.fill,
+                                               height: 2.5.h)),
+                                     ),
+                                   ),
+                                 ],
+                               )
+
                              ],
                            ),
                            SizedBox(height: 2.h),
@@ -739,13 +755,14 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                child: Column(
                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                  children: [//hdndiscountTotal
-                                   BottomSheetDataTile("Sub Total", "£${(double.parse(dataQuote["hdnsubTotal"])+double.parse(dataQuote["hdndiscountTotal"])).formatAmount()}",
-                                       CustomTextStyle.labelFontHintText),
+                                   //BottomSheetDataTile("Sub Total", "£${(double.parse(dataQuote["hdnsubTotal"])+double.parse(dataQuote["hdndiscountTotal"])).formatAmount()}",CustomTextStyle.labelFontHintText),
+                                   BottomSheetDataTile("Sub Total", "£${(double.parse(dataQuote["hdnsubTotal"]))}",CustomTextStyle.labelFontHintText),
                                    BottomSheetDataTile("Discount Amount", "£${dataQuote["hdndiscountTotal"].toString().formatAmount}",
                                        CustomTextStyle.labelFontHintText),
 
                                    //Item total which is subtotal minus discount amount
-                                   BottomSheetDataTile("Items Total", "£${((dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble())+double.parse(dataQuote["hdndiscountTotal"])).toString().formatAmount}",
+                                   //BottomSheetDataTile("Items Total", "£${((dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble())+double.parse(dataQuote["hdndiscountTotal"])).toString().formatAmount}",CustomTextStyle.labelFontHintText),
+                                   BottomSheetDataTile("Items Total", "£${((dataQuote["hdnsubTotal"].toString().formatDouble()-dataQuote["hdndiscountTotal"].toString().formatDouble())).toString().formatAmount}",
                                        CustomTextStyle.labelFontHintText),
                                    BottomSheetDataTile("Vat Total", "£${dataQuote["pre_tax_total"].toString().formatAmount}",
                                        CustomTextStyle.labelFontHintText),

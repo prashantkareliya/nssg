@@ -5,7 +5,7 @@ import 'package:nssg/screens/qoute/quotes_screen.dart';
 import 'package:sizer/sizer.dart';
 import '../../components/custom_text_styles.dart';
 import '../../constants/strings.dart';
-import '../job/job_list_screen.dart';
+import '../job/contracts_screen.dart';
 import 'bottom_navbar_bloc.dart';
 
 class RootScreen extends StatefulWidget {
@@ -51,8 +51,8 @@ class _RootScreenState extends State<RootScreen> {
             case NavBarItem.quote:
               return const QuoteScreen();
 
-           /* case NavBarItem.jobList:
-              return const JobListScreen();*/
+            case NavBarItem.contracts:
+              return const ContractListScreen();
           }
         },
       ),
@@ -85,9 +85,9 @@ class _RootScreenState extends State<RootScreen> {
                 BottomNavigationBarItem(
                     icon: Icon(Icons.help_rounded),
                     label: LabelString.lblQuotes),
-               /* BottomNavigationBarItem(
+                BottomNavigationBarItem(
                     icon: Icon(Icons.list),
-                    label: LabelString.lblJobList),*/
+                    label: LabelString.lblContracts),
               ],
             ),
           );

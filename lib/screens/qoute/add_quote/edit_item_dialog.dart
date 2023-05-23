@@ -39,6 +39,7 @@ class _EditItemState extends State<EditItem> {
     super.initState();
     productsList = widget.productsList;
 
+
     if(productsList.selectLocation != null && productsList.titleLocation != null){
       listLocation = productsList.selectLocation!.split("###");
       listLocationTitle = productsList.titleLocation!.split("###");
@@ -56,9 +57,14 @@ class _EditItemState extends State<EditItem> {
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
 
-    String finalAmount = (itemSellingPriceController.text == "" ? 0.0 : (double.parse(itemSellingPriceController.text) *
+    //this is for show amount on edit dialog
+    String finalAmountShow = (itemSellingPriceController.text == "" ? 0.0 : (double.parse(itemSellingPriceController.text) *
         productsList.quantity!)- (itemDiscountController.text == "" ? 0.0
         : double.parse(itemDiscountController.text))).formatAmount();
+
+    //this is for data pass
+    String finalAmount = (itemSellingPriceController.text == "" ? 0.0 : (double.parse(itemSellingPriceController.text) *
+        productsList.quantity!)- (0.0)).formatAmount();
 
     /*(double.parse(productsList.amountPrice!) -
             (itemDiscountController.text == "" ? 0.0
@@ -127,18 +133,20 @@ class _EditItemState extends State<EditItem> {
                             insetPadding:
                                 EdgeInsets.symmetric(horizontal: 12.sp),
                             child: SelectLocation(
-                                widget.productsList.quantity,
-                                widget.productsList.itemName,
+                                productsList.quantity,
+                                productsList.itemName,
                                 listLocation,
-                                listLocationTitle));
+                                listLocationTitle,
+                              productsList.productTitle,));
                       },
                     ).then((value) {
                       if (value != null) {
                         if (value is List) {
-                          ProductsList p = productsList;
-                          p.locationList = value[0] as List<String>?;
-                          p.titleLocationList = value[1] as List<String>?;
-                          productsList = p;
+                          productsList = productsList.copyWith(locationList: value[0] as List<String>?,
+                              titleLocationList: value[1] as List<String>?);
+                          listLocation = value[0] as List<String>?;
+                          listLocationTitle = value[1] as List<String>?;
+                          setState(() { });
                         }
                       }
                     });
@@ -278,7 +286,7 @@ class _EditItemState extends State<EditItem> {
                         style: CustomTextStyle.labelFontHintText,
                         children: [
                           TextSpan(
-                              text: finalAmount,
+                              text: finalAmountShow,
                               style: CustomTextStyle.labelText)
                         ]),
                   ),
@@ -291,7 +299,7 @@ class _EditItemState extends State<EditItem> {
                         style: CustomTextStyle.labelFontHintText,
                         children: [
                           TextSpan(
-                              text: finalProfit,
+                              text: finalProfit == "-0.00" ? "0.00" : finalProfit,
                               //productsList.profit.formatAmount(),
                               style: CustomTextStyle.labelText)
                         ]),
@@ -320,7 +328,7 @@ class _EditItemState extends State<EditItem> {
                                   selectLocation: (listLocation ?? []).join('###'),
                                   titleLocation: (listLocationTitle ?? []).join('###'),
                               )));
-                      Navigator.pop(context);
+                      Navigator.pop(context, finalAmountShow);
                     })),
             SizedBox(height: 1.h),
           ],
@@ -352,18 +360,6 @@ class _DiscountDialogState extends State<DiscountDialog> {
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
-
-   /* final finalAmount = (double.parse(productsList.amountPrice!) -
-        (discController.text == ""  ? 0.0
-            : double.parse(discController.text))).formatAmount();
-*/
-
-
-
-    /*final finalProfit = (double.parse(productsList.profit!) -
-        (discController.text == "" ? 0.0
-            : double.parse(discController.text))).formatAmount();*/
-
 
     return SizedBox(
         width: query.width / 1.1,
@@ -412,8 +408,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                     title: ButtonString.btnSubmit,
                     onClick: () {
                       String finalAmount = (widget.productsList.sellingPrice == "" ? 0.0 : (double.parse(widget.productsList.sellingPrice.toString()) *
-                          productsList.quantity!)- (discController.text == "" ? 0.0
-                          : double.parse(discController.text))).formatAmount();
+                          productsList.quantity!)- (0.0)).formatAmount();
 
                       String finalProfit = (widget.productsList.sellingPrice == "" ? 0.0 :
                       ((double.parse(widget.productsList.sellingPrice.toString()) * productsList.quantity!) -

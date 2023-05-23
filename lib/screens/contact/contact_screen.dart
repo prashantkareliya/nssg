@@ -780,7 +780,7 @@ class ContactDetail extends StatelessWidget {
                                                   children: [
                                                     TextSpan(
                                                         text:
-                                                        "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
+                                                        "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
                                                         style: GoogleFonts.roboto(textStyle: TextStyle(
                                                             height: 1.5,
                                                             fontSize: 12.sp,

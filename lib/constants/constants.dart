@@ -7,6 +7,8 @@ class Constants {
     required this.apiKeyContact,
     required this.apiKeyQuote,
     required this.apiKeyProduct,
+    required this.apiKeyContract,
+    required this.apiKyeForAddress,
     this.appversion,
   });
 
@@ -25,8 +27,11 @@ class Constants {
         //for use in future
         apiKeyQuote: 'VmxSQ1YxUldTbFpVYkZaS1UwVlplRmxxVGxOaVJtZDVUbGhhVFZORk5IaFhWekYzWWtacmVsVllUbXBYUmxveVdrVmtWMlZzWjNsV2JsSmFWako0ZWxSRmFFZE5WMGw2VlcxNFdVMXFSakpYVnpGell6RndWMDlZVm10V2VrWndWMnhvU21NeVRsbFdibHByVWpGYU5scEZaRWRpYkhCVVpVZHdhVTFxVlhkWFZtUlBUVVpuZVdKSGRFMVRSVFF4V1hwT1UySkhTbGRQVkVKc1YwVktjMVJGYUVkTlYwbDZWVzE0YWsxVWJIRlpha2w0WkRGc1dFNVVWazFUUlRWMldWWm9RMXB0VFhwVmJteGhWakZaZDFSRmFFOWlNa1paVVcxYVdrMXRkM2RhVms0MFpXMUdTR0pJWkZsTmF6VXlXa1pqTVUxSFRuVmhNMDVxVFcxb2Qxa3dXVFZoYlVsNVZXMTRUVkl3TlRWWGJHUkhUVVp3V0ZWcVFtaFdla1p6VTFWV1lWVXhVWGROUjJSV1YwWmFNbHBGWkZkbGEyeEhXa1ZzVTFacmNFZFRWV2hIVFZkSmVsVnRlR3BOTVVwdlYycEtWazlWYjNoUmJteHBUV3MxYzFsNlRrOWlSbkJFV1hwalBRPT0=',
         apiKeyProduct: 'VmxSQ1YxUldTbFpVYkZaS1VUSTVibFZ0ZUV0VlJsSlVVV3hHYW1KVWJISmFSbVJQVFVkT05tTjZNRDA9',
+        apiKeyContract: 'VmxSQ1YxUldTbFpVYkZaS1VUSTVibFZ0ZUV0VlJsSlVVV3hTWVZkRmIzbFpWbVJQWWtaRmVVOVlWbXRUUlhCdlYxUk9VMlZyT1ROUVZEQTk=',
         //for use in future
-        appversion: "2.0" //Application version
+        appversion: "2.0",//Application version
+
+      apiKyeForAddress: ""
     );
   }
 
@@ -36,6 +41,8 @@ class Constants {
   final String apiKeyContact;
   final String apiKeyQuote;
   final String apiKeyProduct;
+  final String apiKeyContract;
+  final String apiKyeForAddress;
   final String? appversion;
 }
 

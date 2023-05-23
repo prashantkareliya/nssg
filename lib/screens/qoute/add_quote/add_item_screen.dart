@@ -203,7 +203,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
     var profit = (double.parse("450") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) =>
     element.itemId == "123456");
-    if(productList == null){
+    /*if(productList == null){
       context.read<ProductListBloc>().add(
           AddProductToListEvent(productsList: ProductsList(
           itemId:  "123456",
@@ -218,7 +218,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
           productImage: ImageString.imgDemo,
       )));
-    }
+    }*/
   }
 
   List<RadioModel> manufacturingType = <RadioModel>[]; //step 1
@@ -653,7 +653,27 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   filterList!.add(element);
                 }
               }
-
+              if(element.productname!.contains("Installation (1st & 2nd fix)")){
+                var profit = (double.parse(element.unitPrice!) - double.parse(element.costPrice!)).formatAmount();
+                var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) =>
+                element.itemId == element.itemId);
+                if(productList == null){
+                  context.read<ProductListBloc>().add(
+                      AddProductToListEvent(productsList: ProductsList(
+                        itemId:  element.id,
+                        productId: element.id,
+                        itemName: element.productname,
+                        costPrice: element.costPrice,
+                        sellingPrice: element.unitPrice,
+                        quantity: 1,
+                        discountPrice: "0",
+                        amountPrice: element.costPrice,
+                        profit: profit,
+                        description: element.description,
+                        productImage: ImageString.imgDemo,
+                      )));
+                }
+              }
             }
           }
           if (state is ProductLoadedFail) {
@@ -695,7 +715,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                             .firstWhereOrNull((element) =>
                         element.productId == filterList![index].id) != null;
                         print("@@@@@@@@@@@@@@@@@ ${filterList![index].imagename!.replaceAll("&ndash;", "–")}");
-                        return Padding(
+                        return filterList![index].discontinued == "1" ?
+                        Padding(
                           padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                           child: Container(
                             decoration: BoxDecoration(
@@ -870,6 +891,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   itemAdd: filterList![index].isItemAdded,
                                                 productImage: filterList![index].imagename,
                                                 requiredDocument: (documentType).join('###'),
+                                                productTitle: filterList![index].productsTitle
                                               );
                                               context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
                                               //Helpers.showSnackBar(context, "Item Added", isError: false);
@@ -921,7 +943,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                       filterList![index].quantity,
                                                       filterList![index].productname,
                                                       filterList![index].locationList,
-                                                      filterList![index].titleLocationList));
+                                                      filterList![index].titleLocationList,
+                                                      filterList![index].productsTitle));
                                             },
                                           ).then((value) {
                                             if (value != null) {
@@ -948,7 +971,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               ],
                             ),
                           ),
-                        );
+                        ) : Container();
                       },
                     );
                   },

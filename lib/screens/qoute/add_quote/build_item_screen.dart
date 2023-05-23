@@ -124,7 +124,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   String selectTemplateOption = "Hide_Product_Price";
   String termsSelect = "false";
   String depositValue = "true";
+  String assignTo = "";
+  String projectManager = "";
 
+  String descripation = "";
 
   bool isEmailRemind = true;
 
@@ -137,6 +140,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     super.initState();
     print(widget.siteAddress.toString());
     print(widget.itemList.toString());
+
     //todo: call event(ClearProductToListEvent) after get success response
 
     if (widget.dataQuote != null) {
@@ -147,7 +151,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       }
       //widget.itemList!.map((e) => productListLocal.add(ProductsList.fromJsonOne(e))).toList();
       callToUpdateEditItemList();
-      depositValue = "false";
+      depositValue = widget.dataQuote["quotes_payment"] == "Deposit" ? "true" : "false";
+      selectTemplateOption = widget.dataQuote["quotes_template_options"];
+      assignTo = widget.dataQuote["assigned_user_id"];
+      projectManager = widget.dataQuote["project_manager"];
+      termsSelect = widget.dataQuote["quotes_terms"];
+      descripation = widget.dataQuote["description"];
     }
   }
 
@@ -155,8 +164,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     List<ProductsList> productListLocal1 =
     widget.itemList!.map((e) => ProductsList.fromJsonOne(e)).toList();
 
-    context
-        .read<ProductListBloc>()
+    context.read<ProductListBloc>()
         .add(UpdateEditProductListEvent(productsList: productListLocal1));
   }
 
@@ -165,9 +173,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var query = MediaQuery
-        .of(context)
-        .size;
+    var query = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: BaseAppBar(
@@ -232,11 +238,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               }
 
               return BlocConsumer<ProductListBloc, ProductListState>(
-                listener: (context, state) {
-                  if (widget.dataQuote == null) {
-                    productListLocal = state.productList;
-                  }
-                },
+                listener: (context, state) { },
                 builder: (context, state) {
                   return isLoading ? loadingView() : ListView(
                     physics: const BouncingScrollPhysics(),
@@ -264,15 +266,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     templateOptionList[index]));
                               } else {
                                 templateOption.add(
-                                    RadioModel(templateOptionList[index] ==
-                                        "Hide Product Price"
+                                    RadioModel(templateOptionList[index] == "Hide Product Price"
                                         ? true : false,
                                         templateOptionList[index]));
                               }
 
-                              Provider
-                                  .of<WidgetChange>(context)
-                                  .isSelectTemplateOption;
+                              Provider.of<WidgetChange>(context).isSelectTemplateOption;
 
                               return SizedBox(
                                 height: 6.h,
@@ -336,16 +335,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         ),
                       ),
                       SizedBox(height: 10.sp),
-                      quoteEstimationWidget(query),
+                      quoteEstimationWidget(query, state.productList),
                       SizedBox(height: 10.sp),
-                      /*if(widget.itemList != null)
-                        ...productListLocal
-                            .map((e) => buildDetailItemTile(e, context, state))
-                            .toList().reversed
-                      else*/
-                        ...state.productList
-                            .map((e) => buildDetailItemTile(e, context, state))
-                            .toList().reversed,
+                      if(widget.itemList != null)
+                        ...state.productList.reversed.map((e) => buildDetailItemTile(e, context, state)).toList()
+                      else
+                        ...state.productList.reversed.map((e) => buildDetailItemTile(e, context, state)).toList(),
                       //item list
                       SizedBox(height: query.height * 0.08)
                     ],
@@ -398,37 +393,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         child: FittedBox(
           child: FloatingActionButton.small(
               onPressed: () {
-                //callNextScreen(context, AddItemDetail(widget.systemTypeSelect));
-                /* Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>
-                        AddItemDetail(widget.eAmount,
-                            widget.systemTypeSelect,
-                            widget.quotePaymentSelection,
-                            widget.contactSelect,
-                            widget.premisesTypeSelect,
-                            widget.termsItemSelection,
-                            widget.gradeFireSelect,
-                            widget.signallingTypeSelect,
-                            widget.engineerNumbers,
-                            widget.timeType,
-                            widget.billStreet,
-                            widget.billCity,
-                            widget.billCountry,
-                            widget.billCode,
-                            widget.shipStreet,
-                            widget.shipCity,
-                            widget.shipCountry,
-                            widget.shipCode,
-                            widget.contactId,
-                            widget.contactCompany,
-                            widget.mobileNumber,
-                            widget.telephoneNumber,
-                            widget.termsList,
-                          widget.contactEmail,
-                          widget.siteAddress
-                        ))).then((value) {
-                          print(value);
-                        });*/
                 callNextScreen(context, const SearchAndAddProduct());
               },
               child: Lottie.asset('assets/lottie/adding.json')),
@@ -437,7 +401,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     );
   }
 
-  Padding quoteEstimationWidget(Size query) {
+  Padding quoteEstimationWidget(Size query, List<ProductsList> productList) {
     return Padding(
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp, top: 5, bottom: 5),
       child: Container(width: query.width, height: query.height * 0.08,
@@ -480,7 +444,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     insetPadding: EdgeInsets.symmetric(
                                         horizontal: 12.sp),
                                     child: QuoteEstimation(
-                                        dataQuote: widget.dataQuote));
+                                        dataQuote: widget.dataQuote, "createQuote"));
                               }).then((value) {
                             if (value != null) {
                               setState(() {
@@ -489,24 +453,21 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                 widget.timeType = value["keyTimeType"];
                               });
                               var profit = (double.parse(value["keyAmount"]) -
-                                  80.00).formatAmount();
-
+                                  double.parse(productList.first.costPrice.toString())).formatAmount();
                               context.read<ProductListBloc>().add(
                                 UpdateProductToListEvent(
                                     productsList: ProductsList(
-                                        itemId: "123456",
-                                        productId: "1188",
-                                        itemName: 'Installation (1st & 2nd fix)',
-                                        costPrice: '80.00',
+                                        itemId: productList.first.itemId,
+                                        productId: productList.first.productId,
+                                        itemName: productList.first.itemName,
+                                        costPrice: productList.first.costPrice,
                                         sellingPrice: value["keyAmount"],
-                                        quantity: 1,
-                                        discountPrice: "0",
-                                        amountPrice: value["keyAmount"]
-                                            .toString(),
+                                        quantity: productList.first.quantity,
+                                        discountPrice: productList.first.discountPrice,
+                                        amountPrice: value["keyAmount"].toString(),
                                         profit: profit.toString(),
-                                        description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
+                                        description: productList.first.description,
                                         productImage: ""
-
                                     )),
                               );
                             }
@@ -602,7 +563,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                       borderRadius: BorderRadius.circular(10)),
                                   elevation: 0,
                                   insetPadding: EdgeInsets.zero,
-                                  child: EditItem(productsList: products));
+                                  child: widget.dataQuote != null ?
+                                  EditItem(productsList: products) : EditItem(productsList: products));
                             }).then((value) => setState(() {}));
                       },
                       autoClose: true,
@@ -708,7 +670,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                       child: Text("${products.quantity} items",
                                           style: CustomTextStyle.labelText)),
                                   Expanded(flex: 2,
-                                      child: Text("£${products.amountPrice.toString().formatAmount}",
+                                      child: Text("£${(double.parse(products.amountPrice)- (products.discountPrice == "0" || products.discountPrice == "" || products.discountPrice == null ?
+                                          double.parse("0.0") : double.parse(products.discountPrice))).toString().formatAmount}",
                                           style: GoogleFonts.roboto(
                                               textStyle: TextStyle(
                                                   fontSize: 14.sp,
@@ -758,29 +721,27 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 double profit = 0.0;
                 double grandTotal = 0.0;
                 double vatTotal = 0.0;
-                /*if (widget.dataQuote != null) {
-                  subTotal = widget.dataQuote["hdnsubTotal"].toString().formatDouble();
-                  disc = widget.dataQuote["hdndiscountTotal"].toString().formatDouble();
-                  profit = widget.dataQuote["hdnprofitTotal"].toString().formatDouble();
+               if (widget.dataQuote != null) {
+                  //subTotal = widget.dataQuote["hdnsubTotal"].toString().formatDouble();
+                 // disc = widget.dataQuote["hdndiscountTotal"].toString().formatDouble();
+                 // profit = widget.dataQuote["hdnprofitTotal"].toString().formatDouble();
 
-                  grandTotal = subTotal + (subTotal * 0.2);
-                  vatTotal = (subTotal * 0.2);
-                } else {
-                  //total of amount*/
+                 // grandTotal = subTotal + (subTotal * 0.2);
+                 // vatTotal = (subTotal * 0.2);
+                }
+                  //total of amount
                   for (ProductsList p in state.productList) {
                     subTotal += p.amountPrice.formatDouble();
-                    disc += (p.discountPrice == "" ? 0.0 : p.discountPrice
-                        .formatDouble());
+                    disc += (p.discountPrice == "" ? 0.0 : p.discountPrice.formatDouble());
                     profit += p.profit.formatDouble();
-                  }
-
-                  grandTotal = subTotal + (subTotal * 0.2);
-                  vatTotal = (subTotal * 0.2);
-
-
+                  //}
+                  print(subTotal);
+                  vatTotal = (subTotal-disc) * 0.2;
+                    grandTotal = (subTotal-disc) + vatTotal;
+                }
                 //initial text for deposit textField
                 if (isChangedDeposit) {
-                  depositAmountController.text = grandTotal.toString();
+                  depositAmountController.text = grandTotal.toString().formatAmount;
                 }
                 return Container(
                     decoration: BoxDecoration(
@@ -812,9 +773,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           ),
                         ),
                         //discount + amount = subtotal
-                        BottomSheetDataTile(
+/*                        BottomSheetDataTile(
                             LabelString.lblSubTotal,
                             (subTotal + disc).formatAmount(),
+                            CustomTextStyle.labelText),*/
+                        BottomSheetDataTile(
+                            LabelString.lblSubTotal,
+                            subTotal.formatAmount(),
                             CustomTextStyle.labelText),
 
                         //Entered by user in textField
@@ -823,8 +788,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             CustomTextStyle.labelText),
 
                         //subTotal - discount = itemTotal
-                        BottomSheetDataTile(
+                        /*BottomSheetDataTile(
                             LabelString.lblItemsTotal, subTotal.formatAmount(),
+                            CustomTextStyle.labelText),*/
+
+                        BottomSheetDataTile(
+                            LabelString.lblItemsTotal, (subTotal-disc).formatAmount(),
                             CustomTextStyle.labelText),
 
                         //itemTotal * 0.2(Means 20%) = vat (20% vat on itemTotal)
@@ -832,9 +801,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             LabelString.lblVatTotal, vatTotal.formatAmount(),
                             CustomTextStyle.labelText),
                         //show textField for enter deposit mount if user select deposit otherwise field is invisible
-                        Provider
-                            .of<WidgetChange>(context, listen: true)
-                            .isDeposit ?
+                        Provider.of<WidgetChange>(context, listen: true).isDeposit && depositValue == "true" ?
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 14.sp),
                           child: Row(
@@ -854,8 +821,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                         Radius.circular(5.sp))),
                                 child: Center(
                                   child: Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        3.sp, 0, 3.sp, 0),
+                                    padding: EdgeInsets.fromLTRB(3.sp, 0, 3.sp, 0),
                                     child: TextField(
                                       controller: depositAmountController,
                                       keyboardType: TextInputType.number,
@@ -893,8 +859,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               ToggleSwitch((value) {
                                 Provider.of<WidgetChange>(context, listen: false).isDepositAmount(value);
                                 depositValue = value.toString();
+                                setState(() {});
                               },
-                                  valueBool: Provider.of<WidgetChange>(context, listen: false).isDeposit),
+                                  valueBool: depositValue == "false" ? false : Provider.of<WidgetChange>(context, listen: false).isDeposit
+                              ),
                               SizedBox(width: 5.w),
                               Text(Provider.of<WidgetChange>(context, listen: false).isDeposit
                                   ? LabelString.lblDeposit
@@ -911,6 +879,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   style: CustomTextStyle.labelMediumBoldFontText),
                             )),
                         ...widget.termsList.map((e) {
+
                           return Padding(
                             padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
                             child: Row(
@@ -918,10 +887,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ToggleSwitch((value) {
+                                  setState(() {});
                                   Provider.of<WidgetChange>(context, listen: false).isTermsSelect(e['value']);
                                   termsSelect = e['value'].toString();
+
                                 },
-                                    valueBool: e['value'] == Provider.of<WidgetChange>(context, listen: false).isTermsBS),
+                                    //30 Day Account(for Agreed Clients only)
+                                    valueBool: widget.dataQuote != null ? termsSelect == e['value'] : e['value'] == Provider.of<WidgetChange>(context, listen: false).isTermsBS),
                                 SizedBox(width: 5.w),
                                 Expanded(child: Text(e["label"].toString(),
                                     style: CustomTextStyle.labelText))
@@ -1018,7 +990,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     }
     //for create data in json format
     CreateQuoteRequest createQuoteRequest = CreateQuoteRequest(
-        subject: "${widget.contactSelect}-${widget.systemTypeSelect}",
+        subject: "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}",
         quotestage: "Processed",
         contactId: widget.contactId,
         subtotal: subTotal.toString(),
@@ -1143,10 +1115,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       'element': jsonQuoteDetail,
       'elementType': 'Quotes',
       'appversion': Constants.of().appversion.toString(),
-
-
     };
-    addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+   addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
   }
 
   Future<void> updateCreateQuoteAPI(double subTotal, double grandTotal, double disc,
@@ -1161,15 +1131,16 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       country = widget.siteAddress["country"];
       code = widget.siteAddress["postcode"];
     } else {
-      street = widget.shipStreet == "" ? " " : widget.shipStreet;
-      city = widget.shipCity == "" ? " " : widget.shipCity;
-      country = widget.shipCountry == "" ? " " : widget.shipCountry;
-      code = widget.shipCode == "" ? " " : widget.shipCode;
+      street = widget.dataQuote["ship_street"] == "" ? " " : widget.dataQuote["ship_street"];
+      city = widget.dataQuote["ship_city"] == "" ? " " : widget.dataQuote["ship_city"];
+      country = widget.dataQuote["ship_country"] == "" ? " " : widget.dataQuote["ship_country"];
+      code = widget.dataQuote["ship_code"] == "" ? " " : widget.dataQuote["ship_code"];
     }
 
     UpdateQuoteRequest updateQuoteRequest = UpdateQuoteRequest(
       //for update data in json format
-        subject: "${widget.contactSelect}-${widget.systemTypeSelect}",
+        subject: widget.contactSelect!.contains("-") ? "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}"
+            : "${widget.contactSelect!}-${widget.systemTypeSelect}",
         quotestage: widget.dataQuote["quotestage"],
         contactId: widget.contactId,
         subtotal: subTotal.toString(),
@@ -1179,7 +1150,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         hdnDiscountPercent: "0.00",
         hdnDiscountAmount: disc.toString(),
         hdnSHAmount: "0.00",
-        assignedUserId: preferences.getString(PreferenceString.userId).toString(),
+        assignedUserId: assignTo.toString(),
         currencyId: "21x1",
         conversionRate: "0.00",
 
@@ -1195,10 +1166,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         billCountry: widget.billCountry == "" ? " " : widget.billCountry,
         //shipCountry : widget.shipCountry == "" ? " " : widget.shipCountry,
         shipCountry: country,
-        billCode: widget.billCode == "" ? " " : widget.billCode,
+        billCode: widget.dataQuote["bill_code"].toString(),
         //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         shipCode: code,
-        description: widget.dataQuote["description"],
+        description: descripation.toString(),
         termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
             ? Message.termsCondition1
             : Message.termsCondition2,
@@ -1213,7 +1184,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         systemType: widget.systemTypeSelect,
         signallingType: widget.signallingTypeSelect,
         premisesType: widget.premisesTypeSelect,
-        projectManager: preferences.getString(PreferenceString.userId).toString(),
+        projectManager: projectManager.toString(),
         quotesEmail: widget.contactEmail,
         quotesTemplateOptions: selectTemplateOption,
         quoteRelatedId: "0",
@@ -1224,8 +1195,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteMobileNumber: widget.mobileNumber,
         quoteTelephoneNumber: widget.telephoneNumber,
         isQuotesConfirm: "0",
-        quotesPayment: depositValue == "false" || depositValue == ""
-            ? "No Deposit" : "Deposit",
+        quotesPayment: depositValue == "false" ? "No Deposit" : "Deposit",
         isQuotesPaymentConfirm: "0",
         quotesDepositeAmount: depositAmount,
         quotesDepoReceivedAmount: "0.00",
@@ -1235,21 +1205,22 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         isMaintenanceConConfirm: "0",
         isPoliceAppliConfirm: "0",
         quoteCorrespondencesDocs: "",
-        quoteQuoteType: "Installation",
-        quotesContractId: "",
-        quoteStopEmailDocReminder: "0",
-        quotePriorityLevel: "",
-        quoteWorksSchedule: "",
+        quoteQuoteType: widget.dataQuote["quote_quote_type"],
+        quotesContractId: widget.dataQuote["quotes_contract_id"],
+        quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
+        quotePriorityLevel: widget.dataQuote["quote_priority_level"],
+        quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
         quoteNoOfEngineer: widget.engineerNumbers,
         quoteReqToCompleteWork: widget.timeType,
-        quotePoNumber: "",
-        quoteGradeOfNoti: "",
+        quotePoNumber: widget.dataQuote["quote_po_number"],
+        quoteGradeOfNoti: widget.dataQuote["quote_grade_of_noti"],
         id: widget.dataQuote["id"].toString(),
         floorPlanDocs: "",
         lineItemsUpdate: productList.map((e) =>
             LineItemsUpdate(
               productid: e.productId,
-              sequenceNo: (productList.indexOf(e) + 1).toString(),
+              sequenceNo: e.itemName.toString().contains("Installation") ?
+              productList.length.toString() : (productList.indexOf(e)).toString(),
               quantity: e.quantity.toString(),
               listprice: e.sellingPrice,
               discountPercent: "00.00",
@@ -1273,7 +1244,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     );
 
     String jsonQuoteDetail = jsonEncode(updateQuoteRequest);
-
     debugPrint(" jsonQuoteDetail update ----- $jsonQuoteDetail");
 
     Map<String, String> bodyData = {
@@ -1282,7 +1252,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       'element': jsonQuoteDetail,
       'appversion': Constants.of().appversion.toString(),
       'old_document_name': ""};
-    addQuoteBloc.add(UpdateQuoteDetailEvent(bodyData));
+   addQuoteBloc.add(UpdateQuoteDetailEvent(bodyData));
   }
 
   Future<void> copyQuoteAPI(double subTotal, double grandTotal, double disc,
@@ -1304,8 +1274,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     }
 
     CopyQuoteRequest copyQuoteRequest = CopyQuoteRequest(
-      //for update data in json format
-        subject: "${widget.contactSelect}-${widget.systemTypeSelect}",
+      //for copy data in json format
+        subject: "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}",
         quotestage: widget.dataQuote["quotestage"],
         contactId: widget.contactId,
         subtotal: subTotal.toString(),
@@ -1315,7 +1285,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         hdnDiscountPercent: "0.00",
         hdnDiscountAmount: disc.toString(),
         hdnSHAmount: "0.00",
-        assignedUserId: preferences.getString(PreferenceString.userId).toString(),
+        assignedUserId: assignTo.toString(),
         currencyId: "21x1",
         conversionRate: "0.00",
 
@@ -1334,7 +1304,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         billCode: widget.billCode == "" ? " " : widget.billCode,
         //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         shipCode: code,
-        description: widget.dataQuote["description"],
+        description: descripation.toString(),
         termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
             ? Message.termsCondition1
             : Message.termsCondition2,
@@ -1349,10 +1319,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         systemType: widget.systemTypeSelect,
         signallingType: widget.signallingTypeSelect,
         premisesType: widget.premisesTypeSelect,
-        projectManager: preferences.getString(PreferenceString.userId).toString(),
+        projectManager: projectManager.toString(),
         quotesEmail: widget.contactEmail,
         quotesTemplateOptions: selectTemplateOption,
-        quoteRelatedId: widget.dataQuote["id"].toString(),
+        quoteRelatedId: widget.dataQuote["id"].toString().replaceAll("4x", ""),
         quotesCompany: widget.siteAddress.toString() != "{}" ? widget.siteAddress["name"] : widget.contactCompany,
         installation: "0",
         hdnsubTotal: subTotal.toString(),
@@ -1360,8 +1330,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteMobileNumber: widget.mobileNumber,
         quoteTelephoneNumber: widget.telephoneNumber,
         isQuotesConfirm: "0",
-        quotesPayment: depositValue == "false" || depositValue == ""
-            ? "No Deposit" : "Deposit",
+        quotesPayment: depositValue == "false" ? "No Deposit" : "Deposit",
         isQuotesPaymentConfirm: "0",
         quotesDepositeAmount: depositAmount,
         quotesDepoReceivedAmount: "0.00",
@@ -1373,9 +1342,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteCorrespondencesDocs: "",
         quoteQuoteType: "Installation",
         quotesContractId: "",
-        quoteStopEmailDocReminder: "0",
+        quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
         quotePriorityLevel: "",
-        quoteWorksSchedule: "",
+        quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
         quoteNoOfEngineer: widget.engineerNumbers,
         quoteReqToCompleteWork: widget.timeType,
         quotePoNumber: "",
@@ -1417,9 +1386,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       'element': jsonQuoteDetail,
       'elementType': 'Quotes',
       'appversion': Constants.of().appversion.toString(),
-      'duplicateTo': widget.dataQuote["id"].toString(),
+      'duplicateTo': widget.dataQuote["id"].toString().replaceAll("4x", ""),
       'IS_DUPLICATE': "1",
-      'contact_id': widget.contactId.toString(),
+      'contact_id': widget.contactId.toString().replaceAll("12x", ""),
     };
     addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
   }

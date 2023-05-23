@@ -17,7 +17,9 @@ import '../../../utils/widgets.dart';
 class QuoteEstimation extends StatefulWidget {
   var dataQuote;
 
-  QuoteEstimation({this.dataQuote});
+  String? type;
+
+  QuoteEstimation(this.type, {this.dataQuote});
 
 
   @override
@@ -178,7 +180,7 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     ),
                   ),
                   //Estimated installation amount text
-                  RichText(
+                  widget.type == "job" ? Container() : RichText(
                     text: TextSpan(
                         text: "${LabelString.lblEstimationAmount} : ",
                         style: CustomTextStyle.labelText,
@@ -200,7 +202,15 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     child: CustomButton(
                       //next button
                         title: ButtonString.btnSubmit,
-                        onClick: () {
+                        onClick: widget.type == "job" ?  (){
+                          if(eAmount != "0.0"){
+                            final data = {"keyEngineerNumbers" : engineerNumbers, "keyTimeType" : timeType};
+                            Navigator.pop(context, data);
+                          }else{
+                            showToast("Please select required fields");
+                          }
+                        } :
+                        () {
                           if(eAmount != "0.0"){
                             final data = { "keyAmount" : eAmount, "keyEngineerNumbers" : engineerNumbers, "keyTimeType" : timeType};
                             Navigator.pop(context, data);

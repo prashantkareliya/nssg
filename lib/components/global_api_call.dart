@@ -72,3 +72,19 @@ Future<dynamic> getItemFields(String? systemType, String manufactureSelect) asyn
     return response;
   }
 }
+
+Future<dynamic> getData() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  Map<String, dynamic> queryParameters = {
+    'operation': "query",
+    'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+    'query': Constants.of().apiKeyContract,
+    'module_name': "ServiceContracts",
+  };
+  final response = await HttpActions()
+      .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
+  debugPrint("get Contract Detail Api --- $response");
+
+  return response;
+}

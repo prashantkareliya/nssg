@@ -4,6 +4,7 @@ class ProductsList {
   String? itemId;
   String? productId;
   String? itemName;
+  String? productTitle;
   String? costPrice;
   String? sellingPrice;
   String? discountPrice;
@@ -24,6 +25,7 @@ class ProductsList {
     String? itemId,
     String? productId,
     String? itemName,
+    String? productTitle,
     String? costPrice,
     String? sellingPrice,
     String? discountPrice,
@@ -44,6 +46,7 @@ class ProductsList {
         itemId: itemId ?? this.itemId,
         productId: productId ?? this.productId,
         itemName: itemName ?? this.itemName,
+        productTitle: productTitle ?? this.productTitle,
         costPrice: costPrice ?? this.costPrice,
         sellingPrice: sellingPrice ?? this.sellingPrice,
         discountPrice: discountPrice ?? this.discountPrice,
@@ -66,6 +69,7 @@ class ProductsList {
       {this.itemId,
         this.productId,
         this.itemName,
+        this.productTitle,
         this.costPrice,
         this.sellingPrice,
         this.discountPrice,
@@ -86,6 +90,7 @@ class ProductsList {
     itemId = json["itemId"];
     productId = json["productId"];
     itemName = json['itemName'];
+    productTitle = json['productTitle'];
     costPrice = json['costPrice'];
     sellingPrice = json['sellingPrice'];
     discountPrice = json['discountPrice'];
@@ -106,26 +111,41 @@ class ProductsList {
   }
 
   ProductsList.fromJsonOne(Map<String, dynamic> json) {
-    itemId = json["parent_id"];
+    itemId = json["sequence_no"];
     productId = json["productid"];
     itemName = json['prod_name'];
+    productTitle = json['productTitle'];
     costPrice = json['costprice'].toString().formatAmount;
     sellingPrice = json['listprice'].toString().formatAmount;
     discountPrice = json['discount_amount'].toString().formatAmount;
-    amountPrice = json['listprice'].toString().formatAmount;
-    profit = json['profit'];
-    description = json['description'];
-    //quantity = json['quantity'];
+    //amountPrice = json['listprice'].toString().formatAmount;
     quantity = (json['quantity'] is String) ? int.parse(json["quantity"].toString().substring(0,json["quantity"].toString().indexOf("."))) : json['quantity'];
+    if (json['listprice'] is String) {
+      if (json['listprice'].toString().isNotEmpty) {
+        amountPrice = ((quantity ?? 0) * num.parse(json['listprice'])).toString();
+      }
+    }
+    profit = (((double.parse(sellingPrice!)* quantity!) - (double.parse(costPrice!) * quantity!)) - double.parse(discountPrice!)).toString().formatAmount;
+//        ((num.parse((sellingPrice! * quantity!)) - num.parse((costPrice! * quantity!))) - num.parse(discountPrice!)).toString().formatAmount;
+    json['profit'];
+    description = json['pro_short_description'];
+    //quantity = json['quantity'];
 //    json['quantity'] i v vgbfgs String ? quantity.toString() : quantity = json['quantity'];
     itemAdd = json['itemAdd'];
-    selectLocation = json['selectLocation'];
-    titleLocation = json['titleLocation'];
-    locationList = json['locationList'];
+    selectLocation = json['product_location'];
+    titleLocation = json['product_location_title'];
+    if(json["product_location"] is String){
+      locationList = json["product_location"].toString().split("###");
+    }
+    //locationList = json['product_location'];
     titleLocationList = json['titleLocationList'];
-    requiredDocumentList = json['requiredDocumentList'];
+
+    if(json["product_location"] is String){
+      requiredDocumentList = json["required_document"].toString().split("###");
+    }
+    //requiredDocumentList = json['required_document'];
     productImage = json['imagename'];
-    requiredDocument = json['requiredDocument'];
+    requiredDocument = json['required_document'];
   }
 
 
@@ -134,6 +154,7 @@ class ProductsList {
     data["itemId"] = itemId;
     data["productId"] = productId;
     data['itemName'] = itemName;
+    data['productTitle'] = productTitle;
     data['costPrice'] = costPrice;
     data['sellingPrice'] = sellingPrice;
     data['discountPrice'] = discountPrice;

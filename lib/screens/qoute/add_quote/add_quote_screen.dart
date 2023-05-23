@@ -409,13 +409,14 @@ class _AddQuotePageState extends State<AddQuotePage> {
           children: [
             //Design Auto filled contact
             Autocomplete(
-              initialValue: dataQuote != null ? TextEditingValue(text: dataQuote["contact_name"] ?? "") :
-              widget.isBack ? null
-                  : TextEditingValue(
+              initialValue: dataQuote != null ?
+              TextEditingValue(text: dataQuote["contact_name"] ?? "") :
+              widget.isBack ? TextEditingValue(text: contactSelect) : TextEditingValue(
                   text: "${widget.firstName} ${widget.lastName}"),
               fieldViewBuilder: (context, textEditingController, focusNode,
                   VoidCallback onFieldSubmitted) {
                 FocusNode focus = focusNode;
+                dataQuote != null ? contactSelect = dataQuote["contact_name"] : "";
                 //textEditingController.text = contactSelect;
                 return TextField(
                   autofocus: widget.isBack || dataQuote != null ? false : true,
@@ -462,7 +463,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 } else {
                   List<String> matchesContact = <String>[];
                   matchesContact.addAll(contactData.map((e) {
-                    return "${e["firstname"].trim()} ${e["lastname"].trim()}";
+                    return "${e["firstname"].trim()} ${e["lastname"].trim()} - ${e["otherstreet"]}";
                   }));
 
                   matchesContact = matchesContact
@@ -478,7 +479,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 FocusScope.of(context).unfocus();
                 getSiteAddressList();
                 for (int i = 0; i < contactData.length; i++) {
-                  if (selection == "${contactData[i]["firstname"]} ${contactData[i]["lastname"]}") {
+                  if (selection == "${contactData[i]["firstname"]} ${contactData[i]["lastname"]} - ${contactData[i]["otherstreet"]}") {
                     contactId = contactData[i]["id"];
                     contactCompany = contactData[i]["contact_company"];
                     mobileNumber = contactData[i]["mobile"];
@@ -585,7 +586,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
               children: List.generate(
                 stepOneData["premises_type"].length,
                     (index) {
-                  if(dataQuote != null){
+                  if(dataQuote != null && dataQuote["premises_type"] != ""){
                     premisesType.add(RadioModel(
                         stepOneData["premises_type"][index]["label"].toString().contains(dataQuote["premises_type"]) ?
                             true : false, stepOneData["premises_type"][index]["label"]));
@@ -741,7 +742,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 stepTwoData["system_type"].length - 9,
                     (index) {
                   String systemTypeLabel = stepTwoData["system_type"][index]["label"].toString();
-                  if(widget.lastName == "edit"){
+                  if(widget.lastName == "edit" && dataQuote["system_type"] != ""){
                     systemType.add(RadioModel(
                         dataQuote["system_type"].toString().contains(stepTwoData["system_type"][index]["label"]) ?
                         true : false,
@@ -794,7 +795,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               stepTwoData['quotes_terms'],
                               contactEmail,
                               (dropdownvalue ?? {}) as Map,
-                              itemList: itemList, dataQuote: dataQuote,
+                              itemList: itemList,
+                              dataQuote: dataQuote,
                               widget.lastName
                           )
                           );
@@ -944,7 +946,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 runSpacing: 15.sp,
                 children: List.generate(
                   2, (index) {
-                    if(widget.lastName == "edit"){
+                    if(dataQuote != null && dataQuote["grade_number"] != null){
                       gradeAndFire.add(RadioModel(
                           dataQuote["grade_number"].toString().contains(stepThreeData["grade_number"][index]["label"]) ?
                           true : false, dataGrade[index]["label"]));
@@ -996,7 +998,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     telephoneNumber,
                                     stepThreeData['quotes_terms'],
                                     contactEmail,
-                                    (dropdownvalue ?? {}) as Map, widget.lastName, itemList: itemList, dataQuote: dataQuote));
+                                    (dropdownvalue ?? {}) as Map,
+                                    widget.lastName,
+                                    itemList: itemList,
+                                    dataQuote: dataQuote));
                           }else{
                             callNextScreen(
                                 context,
@@ -1116,7 +1121,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
             children: List.generate(
               // stepFourData["signalling_type"].length
               12, (index) {
-                if(widget.lastName == "edit"){
+                if(dataQuote != null && dataQuote["grade_number"] != null){
                   signallingType.add(
                       RadioModel(
                           dataQuote["signalling_type"].toString().contains(stepThreeData["signalling_type"][index]["label"])
@@ -1170,7 +1175,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 telephoneNumber,
                                 stepThreeData['quotes_terms'],
                                 contactEmail,
-                                (dropdownvalue ?? {}) as Map, widget.lastName, itemList: itemList, dataQuote: dataQuote));
+                                (dropdownvalue ?? {}) as Map,
+                                widget.lastName,
+                                itemList: itemList, dataQuote: dataQuote));
                       }else {
                         callNextScreen(
                             context,

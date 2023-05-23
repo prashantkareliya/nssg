@@ -75,7 +75,7 @@ class ValidationDialog extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryColor.withOpacity(0.20),
                               splashFactory: NoSplash.splashFactory,
-                              shadowColor: AppColors.transparent,
+                              shadowColor: AppColors.transparent,elevation: 0,
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(10.0))),
                             ),

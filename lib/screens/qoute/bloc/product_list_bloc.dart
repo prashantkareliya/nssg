@@ -61,9 +61,23 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       UpdateProductToListEvent event, Emitter<ProductListState> emit) {
 
     List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
-    final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId);
-    products[index] = event.productsList;
-    emit(state.copyWith(productList: products));
+    final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId); ///products.length-1;
+    print(index);
+    if(index == -1){
+      final int index = products.length-1;
+      for(int i =0; i<=products.length; i++){
+        if(products[i].itemName!.contains("Installation")){
+          products[i] = event.productsList;
+          emit(state.copyWith(productList: products));
+          break;
+        }
+      }
+
+    }else{
+      products[index] = event.productsList;
+      emit(state.copyWith(productList: products));
+    }
+
   }
 
   FutureOr<void> _deleteProductToList(

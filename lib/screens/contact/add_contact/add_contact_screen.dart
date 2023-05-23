@@ -592,7 +592,7 @@ class _AddContactPageState extends State<AddContactPage> {
                         context: context,
                         barrierDismissible: false,
                         builder: (ctx) => ValidationDialog(
-                          Message.createQoute,
+                          Message.createQuote,
 
                           //Yes button//
                           () {
@@ -652,18 +652,6 @@ class _AddContactPageState extends State<AddContactPage> {
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
               suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-              /*border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(width: 2, color: AppColors.primaryColor)),*/
               border: UnderlineInputBorder(
                   borderSide:
                       BorderSide(width: 1, color: AppColors.primaryColor)),
@@ -697,7 +685,7 @@ class _AddContactPageState extends State<AddContactPage> {
         } else {
           //API call for get ID
           var url =
-              "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
+                "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
 
           final response = await http.get(Uri.parse(url),
               headers: <String, String>{
@@ -723,8 +711,7 @@ class _AddContactPageState extends State<AddContactPage> {
             String addressId = addressList[i]["id"].toString();
 
             //Call API for get address detail
-            var url =
-                "https://api.getAddress.io/get/$addressId?api-key=S9VYw_n6IE6VlQkZktafRA37641";
+            var url = "https://api.getAddress.io/get/$addressId?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
 
             final response = await http.get(Uri.parse(url));
             final responseJson = json.decode(response.body);
@@ -732,8 +719,7 @@ class _AddContactPageState extends State<AddContactPage> {
             //set address detail in field
             if (response.statusCode == 200) {
               if (autoCompleteType == "invoice") {
-                invoiceAddressController.text =
-                    "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                invoiceAddressController.text = "${responseJson["line_1"]}  ${responseJson["line_2"]}";
                 invoiceCityController.text = "${responseJson["town_or_city"]}";
                 invoiceCountryController.text = "${responseJson["county"]}";
                 invoicePostalController.text = "${responseJson["postcode"]}";
@@ -808,8 +794,8 @@ class _AddContactPageState extends State<AddContactPage> {
         firstNameController.text.trim(),
         lastNameController.text.trim(),
         companyNameController.text.trim(),
-        officePhoneController.text.trim(),
-        mobilePhoneController.text.trim(),
+        officePhoneController.text.replaceAll("+", "%2B"),
+        mobilePhoneController.text.replaceAll("+", "%2B"),
         primaryEmailController.text.trim(),
         secondaryEmailController.text.trim(),
         invoiceAddressController.text.trim(),
@@ -827,8 +813,7 @@ class _AddContactPageState extends State<AddContactPage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "create",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonContactDetail,
       'elementType': 'Contacts',
     };
@@ -854,11 +839,12 @@ class _AddContactPageState extends State<AddContactPage> {
 
     //for create data in json format
     UpdateContactData updateContactData = UpdateContactData(
+      contactDetailData.salutationtype.toString(),
       firstNameController.text.trim(),
       contactDetailData.contactNo.toString(),
-      officePhoneController.text.trim(),
+      officePhoneController.text.trim().replaceAll("+", "%2B"),
       lastNameController.text.trim(),
-      mobilePhoneController.text.trim(),
+      mobilePhoneController.text.trim().replaceAll("+", "%2B"),
       contactDetailData.accountId.toString(),
       contactDetailData.homephone.toString(),
       contactDetailData.leadsource.toString(),

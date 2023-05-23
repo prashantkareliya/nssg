@@ -7,10 +7,17 @@ class ErrorString {
   static const String selectOneContact = "Select at least one contact";
   static const String deletedItemError = "This item is delete already";
   static const String reOpenTheApp = "Your session has timed out. please reopen the app login again.";
+  static const String selectPriorityLevel = "Please Select Priority Level";
+  static const String selectWorkSchedule = "Please Select Work Schedule";
+  static const String selectPaymentMethod = "Please Select Payment Method";
+  static const String selectInstructionToProceed = "Please Select Instruction To Proceed";
+  static const String selectPaymentInstruction = "Please Select Payment Instruction";
+  static const String selectEngineerInstruction = "Please Enter Engineer Instruction";
+  static const String selectEngineerNote = "Please Enter Engineer Note";
 }
 
 class Message {
-  static const String createQoute = "Would you like to create a quote for this contact now?";
+  static const String createQuote = "Would you like to create a quote for this contact now?";
   static const String deleteContact = "Do you want to delete this contact?";
   static const String quoteExit = "Do you want to exit from this module?";
   static const String enterYourPasscodeToUnlock = "Enter your Passcode to unlock";
@@ -47,7 +54,7 @@ class LabelString {
   static const String lblContact = "Contacts";
   static const String lblQuotes = "Quotes";
   static const String lblJobs = "Jobs";
-  static const String lblJobList = "Job List";
+  static const String lblContracts = "Contracts";
   static const String lblCreateJob = "Create Job";
   static const String lblOfficeNote = "Office Note";
   static const String lblEngineerNote = "Engineer Note";

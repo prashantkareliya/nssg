@@ -1,5 +1,5 @@
 class UpdateContactData {
-  //String salutationtype;
+  String salutationtype;
   String firstname;
   String contact_no;
   String phone;
@@ -23,9 +23,8 @@ class UpdateContactData {
   String assigned_user_id;
   String reference;
   String notify_owner;
-
   String modifiedby;
-    String isconvertedfromlead;
+  String isconvertedfromlead;
   String contact_company;
   String mailingstreet;
   String mailingcity;
@@ -45,7 +44,7 @@ class UpdateContactData {
   String assigned_user_name;
 
   UpdateContactData(
-     // this.salutationtype,
+      this.salutationtype,
       this.firstname,
       this.contact_no,
       this.phone,
@@ -90,7 +89,7 @@ class UpdateContactData {
       this.assigned_user_name);
 
   Map toJson() => {
-       // 'salutationtype': salutationtype,
+        'salutationtype': salutationtype,
         'firstname': firstname,
         'contact_no': contact_no,
         'phone': phone,

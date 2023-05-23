@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,9 @@ class HttpActions {
           }
         });
       }
-      http.Response response = await http.post(Uri.parse(finalUrl), body: data, headers: headers);
+      log("URl -- $finalUrl");
+
+      http.Response response = await http.post(Uri.parse(finalUrl), body: data/*, headers: headers*/);
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);
@@ -45,19 +48,28 @@ class HttpActions {
           }
         });
       }
-      debugPrint("URl -- $finalUrl");
-      http.Response response =
-          await http.get(Uri.parse(finalUrl), headers: headers);
+      log("URl -- $finalUrl");
+      http.Response response = await http.get(Uri.parse(finalUrl), headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       Future.error(ErrorString.noInternet);
     }
   }
+  Future<dynamic> getMethodWithBody(String url, {Map<String, String>? headers}) async {
+    if ((await checkConnection()) != ConnectivityResult.none) {
+      headers = await getSessionData(headers ?? {});
 
+      http.Response response = await http.get(Uri.parse(endPoint + url), headers: headers);
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      Future.error(ErrorString.noInternet);
+    }
+  }
   Future<dynamic> patchMethod(String url,
       {dynamic data, Map<String, String>? headers}) async {
     if ((await checkConnection()) != ConnectivityResult.none) {
       headers = await getSessionData(headers ?? {});
+
       http.Response response = await http.patch(Uri.parse(endPoint + url),
           body: data, headers: headers);
       return jsonDecode(utf8.decode(response.bodyBytes));
@@ -104,7 +116,7 @@ class HttpActions {
 
       var response = await request.send();
       if (response.statusCode == 200) {
-
+        log("URl -- $finalUrl");
         var responded = await http.Response.fromStream(response);
         final responseData = json.decode(responded.body);
         return responseData;
@@ -115,6 +127,8 @@ class HttpActions {
       Future.error(ErrorString.noInternet);
     }
   }
+
+
 
   Future<Map<String, String>> getSessionData(Map<String, String> headers) async {
     headers["content-type"] = "application/json";
