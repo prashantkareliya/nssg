@@ -61,12 +61,10 @@ class _RootScreenState extends State<RootScreen> {
         initialData: bottomNavBarBloc?.defaultItem,
         builder: (BuildContext context, AsyncSnapshot<NavBarItem> snapshot) {
           return Container(
-            height: 9.5.h,
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                  topLeft: (Radius.circular(20.0)),
-                  topRight: (Radius.circular(20.0))),
+                  topLeft: (Radius.circular(20.0)), topRight: (Radius.circular(20.0))),
             ),
             child: BottomNavigationBar(
               currentIndex: snapshot.data!.index,
@@ -80,13 +78,11 @@ class _RootScreenState extends State<RootScreen> {
               type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.group_rounded),
-                    label: LabelString.lblContact),
+                    icon: Icon(Icons.group_rounded), label: LabelString.lblContact),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.help_rounded),
-                    label: LabelString.lblQuotes),
+                    icon: Icon(Icons.help_rounded), label: LabelString.lblQuotes),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.list),
+                    icon: ImageIcon(AssetImage("assets/images/contract.png")),
                     label: LabelString.lblContracts),
               ],
             ),
