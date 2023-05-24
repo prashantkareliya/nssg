@@ -34,12 +34,10 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'National Security System ',
             theme: ThemeData(
-                pageTransitionsTheme: const PageTransitionsTheme(
-                    builders: {
-                      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-                      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-                    }
-                ),
+                pageTransitionsTheme: const PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+                  TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                }),
                 colorScheme: ColorScheme.fromSwatch().copyWith(
                     primary: AppColors.primaryColor,
                     secondary: AppColors.primaryColor)),
@@ -98,5 +96,3 @@ class _CheckingScreenState extends State<CheckingScreen> {
     }
   }
 }
-
-///nssgpassword

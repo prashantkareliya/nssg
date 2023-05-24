@@ -31,7 +31,7 @@ import '../../../utils/widgets.dart';
 import '../../qoute/add_quote/quote_estimation_dialog.dart';
 import '../contracts_screen.dart';
 import 'create_job_bloc_dir/create_job_bloc.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 
 class AddJobPage extends StatefulWidget {
   Result? quoteItem;
@@ -44,7 +44,6 @@ class AddJobPage extends StatefulWidget {
 class _AddJobPageState extends State<AddJobPage> {
   Future<dynamic>? getJobFields;
 
-
   PageController pageController = PageController();
 
   StreamController<int> streamController = StreamController<int>.broadcast();
@@ -56,9 +55,7 @@ class _AddJobPageState extends State<AddJobPage> {
   TextEditingController specialInstructionController = TextEditingController();
   TextEditingController specialInstructionController1 = TextEditingController();
 
-
   bool isLoading = false;
-
 
   List<RadioModel> priorityLevel = <RadioModel>[];
   List<RadioModel> worksSchedule = <RadioModel>[];
@@ -80,7 +77,8 @@ class _AddJobPageState extends State<AddJobPage> {
 
   Future<dynamic>? getDetail;
 
-  CreateJobBloc createJobBloc = CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
+  CreateJobBloc createJobBloc =
+      CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
   @override
   void initState() {
     super.initState();
@@ -104,14 +102,14 @@ class _AddJobPageState extends State<AddJobPage> {
       'quotes_quote_type': "Installation",
       'contact_id': widget.quoteItem?.contactId,
     };
-    final response = await HttpActions() .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
+    final response = await HttpActions()
+        .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
     setState(() {
       contractNumberPass = response["result"].toString();
     });
     debugPrint("getContractNumberAPI --- $response");
     return response;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -138,10 +136,8 @@ class _AddJobPageState extends State<AddJobPage> {
         title: Text(LabelString.lblCreateJob,
             style: CustomTextStyle.labelBoldFontText),
       ),
-
       body: BlocListener<CreateJobBloc, CreateJobState>(
         bloc: createJobBloc,
-
         listener: (context, state) {
           if (state is FailCreateJob) {
             Helpers.showSnackBar(context, ErrorString.somethingWentWrong);
@@ -155,50 +151,55 @@ class _AddJobPageState extends State<AddJobPage> {
           }
         },
         child: BlocBuilder<CreateJobBloc, CreateJobState>(
-        bloc: createJobBloc,
-        builder: (context, state) {
-          if (state is LoadingCreateJob) {
-            isLoading = state.isBusy;
-            FocusScope.of(context).unfocus();
-          }
-          if (state is LoadedCreateJob) {
-            isLoading = false;
-          }
-          if (state is FailCreateJob) {
-            isLoading = false;
-          }
-        return FutureBuilder<dynamic>(
-            future: getJobFields,
-            builder: (context, snapshot) {
-              if(snapshot.hasData){
-                var jobFieldsData = snapshot.data["result"];
-                return FutureBuilder<dynamic>(
-                    future: getDetail,
-                    builder: (context, snapshot1) {
-                      if(snapshot1.hasData){
-                        installationTime = snapshot1.data["result"]["quote_req_to_complete_work"];
-                        numberOfEngineer = snapshot1.data["result"]["quote_no_of_engineer"];
-
-                        return snapshot1.data["result"]["quote_quote_type"] == "Installation" ?
-                        buildStepOne(query, jobFieldsData, snapshot1.data["result"]) :
-                        buildStepTwo(query, jobFieldsData, snapshot1.data["result"]);
-                      }else if(snapshot1.hasError){
-                        final message = HandleAPI.handleAPIError(snapshot.error);
-                        return Text(message);
-                      }
-                      return SizedBox(height: 70.h, child: loadingView());
-                    }
-                );
-              }else if (snapshot.hasError) {
-                final message = HandleAPI.handleAPIError(snapshot.error);
-                return Text(message);
-              }
-              return SizedBox(height: 70.h, child: loadingView());
+          bloc: createJobBloc,
+          builder: (context, state) {
+            if (state is LoadingCreateJob) {
+              isLoading = state.isBusy;
+              FocusScope.of(context).unfocus();
             }
-        );
-  },
-),
-),
+            if (state is LoadedCreateJob) {
+              isLoading = false;
+            }
+            if (state is FailCreateJob) {
+              isLoading = false;
+            }
+            return FutureBuilder<dynamic>(
+                future: getJobFields,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    var jobFieldsData = snapshot.data["result"];
+                    return FutureBuilder<dynamic>(
+                        future: getDetail,
+                        builder: (context, snapshot1) {
+                          if (snapshot1.hasData) {
+                            installationTime = snapshot1.data["result"]
+                                ["quote_req_to_complete_work"];
+                            numberOfEngineer = snapshot1.data["result"]
+                                ["quote_no_of_engineer"];
+
+                            return snapshot1.data["result"]
+                                        ["quote_quote_type"] ==
+                                    "Installation"
+                                ? buildStepOne(query, jobFieldsData,
+                                    snapshot1.data["result"])
+                                : buildStepTwo(query, jobFieldsData,
+                                    snapshot1.data["result"]);
+                          } else if (snapshot1.hasError) {
+                            final message =
+                                HandleAPI.handleAPIError(snapshot.error);
+                            return Text(message);
+                          }
+                          return SizedBox(height: 70.h, child: loadingView());
+                        });
+                  } else if (snapshot.hasError) {
+                    final message = HandleAPI.handleAPIError(snapshot.error);
+                    return Text(message);
+                  }
+                  return SizedBox(height: 70.h, child: loadingView());
+                });
+          },
+        ),
+      ),
     );
   }
 
@@ -212,7 +213,8 @@ class _AddJobPageState extends State<AddJobPage> {
           children: [
             SizedBox(height: 1.h),
             Text(LabelString.lblPriorityLevel,
-                style: CustomTextStyle.labelText),
+                style: GoogleFonts.roboto(
+                    fontSize: 13.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 1.0.h),
             Wrap(
               spacing: 8.sp,
@@ -220,9 +222,13 @@ class _AddJobPageState extends State<AddJobPage> {
               runSpacing: 8.sp,
               children: List.generate(
                 jobFieldsData["priority_level"].length,
-                    (index) {
-                  String priorityLevelLabel = jobFieldsData["priority_level"][index]["label"].toString();
-                  priorityLevel.add(RadioModel(priorityLevelLabel == "Medium" ? true : false, jobFieldsData["priority_level"][index]["label"]));
+                (index) {
+                  String priorityLevelLabel = jobFieldsData["priority_level"]
+                          [index]["label"]
+                      .toString();
+                  priorityLevel.add(RadioModel(
+                      priorityLevelLabel == "Medium" ? true : false,
+                      jobFieldsData["priority_level"][index]["label"]));
 
                   return InkWell(
                     splashColor: AppColors.transparent,
@@ -234,11 +240,13 @@ class _AddJobPageState extends State<AddJobPage> {
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       priorityLevel[index].isSelected = true;
 
-                      priorityLevelSelect = jobFieldsData["priority_level"][index]["label"];
+                      priorityLevelSelect =
+                          jobFieldsData["priority_level"][index]["label"];
 
                       setState(() {});
                     },
-                    child: Container(width: query.width * 0.29,
+                    child: Container(
+                      width: query.width * 0.29,
                       decoration: BoxDecoration(
                           color: priorityLevel[index].isSelected
                               ? AppColors.primaryColorLawOpacity
@@ -254,32 +262,41 @@ class _AddJobPageState extends State<AddJobPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if(jobFieldsData["priority_level"][index]["label"].toString() == "High")
+                            if (jobFieldsData["priority_level"][index]["label"]
+                                    .toString() ==
+                                "High")
                               Container(
-                                height: 2.h, width: 4.w,
+                                height: 2.h,
+                                width: 4.w,
                                 decoration: BoxDecoration(
                                     color: const Color(0xFFFFC1C1),
                                     borderRadius: BorderRadius.circular(50.0),
-                                    border: Border.all(color: const Color(0xFFFF5757))
-                                ),
-                              ) else
-                              if(jobFieldsData["priority_level"][index]["label"].toString() == "Medium")
-                                Container(
-                                  height: 2.h, width: 4.w,
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFFEF0A6),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      border: Border.all(color: const Color(0xFFFFC93D))
-                                  ),
-                                ) else
-                                Container(
-                                  height: 2.h, width: 4.w,
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFCBDAEA),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      border: Border.all(color: const Color(0xFF58A8FE))
-                                  ),
-                                ),
+                                    border: Border.all(
+                                        color: const Color(0xFFFF5757))),
+                              )
+                            else if (jobFieldsData["priority_level"][index]
+                                        ["label"]
+                                    .toString() ==
+                                "Medium")
+                              Container(
+                                height: 2.h,
+                                width: 4.w,
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFFEF0A6),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    border: Border.all(
+                                        color: const Color(0xFFFFC93D))),
+                              )
+                            else
+                              Container(
+                                height: 2.h,
+                                width: 4.w,
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFCBDAEA),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    border: Border.all(
+                                        color: const Color(0xFF58A8FE))),
+                              ),
                             SizedBox(width: 2.w),
                             Text(priorityLevelLabel,
                                 textAlign: TextAlign.center,
@@ -296,7 +313,8 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 2.5.h),
             Text(LabelString.lblWorkSchedule,
-                style: CustomTextStyle.labelText),
+                style: GoogleFonts.roboto(
+                    fontSize: 13.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 1.0.h),
             Wrap(
               spacing: 8.sp,
@@ -305,9 +323,12 @@ class _AddJobPageState extends State<AddJobPage> {
               runSpacing: 8.sp,
               children: List.generate(
                 jobFieldsData["works_schedule"].length,
-                    (index) {
-                  String worksScheduleLabel = jobFieldsData["works_schedule"][index]["label"].toString();
-                  worksSchedule.add(RadioModel(false, jobFieldsData["works_schedule"][index]["label"]));
+                (index) {
+                  String worksScheduleLabel = jobFieldsData["works_schedule"]
+                          [index]["label"]
+                      .toString();
+                  worksSchedule.add(RadioModel(
+                      false, jobFieldsData["works_schedule"][index]["label"]));
 
                   return InkWell(
                     splashColor: AppColors.transparent,
@@ -318,7 +339,8 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       worksSchedule[index].isSelected = true;
-                      workScheduleSelect = jobFieldsData["works_schedule"][index]["label"];
+                      workScheduleSelect =
+                          jobFieldsData["works_schedule"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -333,8 +355,9 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 10.sp),
-                        child:  Text(worksScheduleLabel,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Text(worksScheduleLabel,
                             textAlign: TextAlign.center,
                             style: worksSchedule[index].isSelected
                                 ? CustomTextStyle.commonTextBlue
@@ -347,7 +370,8 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 2.5.h),
             Text(LabelString.lblPaymentMethod,
-                style: CustomTextStyle.labelText),
+                style: GoogleFonts.roboto(
+                    fontSize: 13.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 1.0.h),
             Wrap(
               spacing: 8.sp,
@@ -356,9 +380,12 @@ class _AddJobPageState extends State<AddJobPage> {
               runSpacing: 8.sp,
               children: List.generate(
                 jobFieldsData["payment_method"].length,
-                    (index) {
-                  String paymentMethodLabel = jobFieldsData["payment_method"][index]["label"].toString();
-                  paymentMethod.add(RadioModel(false, jobFieldsData["payment_method"][index]["label"]));
+                (index) {
+                  String paymentMethodLabel = jobFieldsData["payment_method"]
+                          [index]["label"]
+                      .toString();
+                  paymentMethod.add(RadioModel(
+                      false, jobFieldsData["payment_method"][index]["label"]));
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -368,7 +395,8 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       paymentMethod[index].isSelected = true;
-                      paymentMethodSelect = jobFieldsData["payment_method"][index]["label"];
+                      paymentMethodSelect =
+                          jobFieldsData["payment_method"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -383,8 +411,9 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 10.sp),
-                        child:  Text(paymentMethodLabel,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Text(paymentMethodLabel,
                             textAlign: TextAlign.center,
                             style: paymentMethod[index].isSelected
                                 ? CustomTextStyle.commonTextBlue
@@ -397,7 +426,8 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 2.5.h),
             Text(LabelString.lblPaymentInstructions,
-                style: CustomTextStyle.labelText),
+                style: GoogleFonts.roboto(
+                    fontSize: 13.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 1.0.h),
             Wrap(
               spacing: 8.sp,
@@ -406,9 +436,12 @@ class _AddJobPageState extends State<AddJobPage> {
               runSpacing: 8.sp,
               children: List.generate(
                 jobFieldsData["payment_instructions"].length,
-                    (index) {
-                  String paymentInstructionsLabel = jobFieldsData["payment_instructions"][index]["label"].toString();
-                  paymentInstructions.add(RadioModel(false, jobFieldsData["payment_instructions"][index]["label"]));
+                (index) {
+                  String paymentInstructionsLabel =
+                      jobFieldsData["payment_instructions"][index]["label"]
+                          .toString();
+                  paymentInstructions.add(RadioModel(false,
+                      jobFieldsData["payment_instructions"][index]["label"]));
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -417,7 +450,8 @@ class _AddJobPageState extends State<AddJobPage> {
                         element.isSelected = false;
                       }
                       paymentInstructions[index].isSelected = true;
-                      paymentInstructionSelect = jobFieldsData["payment_instructions"][index]["label"];
+                      paymentInstructionSelect =
+                          jobFieldsData["payment_instructions"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -432,8 +466,9 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-                        child:  Text(paymentInstructionsLabel,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 5.sp),
+                        child: Text(paymentInstructionsLabel,
                             textAlign: TextAlign.center,
                             style: paymentInstructions[index].isSelected
                                 ? CustomTextStyle.commonTextBlue
@@ -481,7 +516,8 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 2.0.h),
             Text(LabelString.lblInstructionsToProceed,
-                style: CustomTextStyle.labelText),
+                style: GoogleFonts.roboto(
+                    fontSize: 13.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 1.0.h),
             Wrap(
               spacing: 8.sp,
@@ -489,9 +525,14 @@ class _AddJobPageState extends State<AddJobPage> {
               runSpacing: 8.sp,
               children: List.generate(
                 jobFieldsData["instructions_to_proceed"].length,
-                    (index) {
-                  String instructionsToProceedLabel = jobFieldsData["instructions_to_proceed"][index]["label"].toString();
-                  instructionsToProceed.add(RadioModel(false, jobFieldsData["instructions_to_proceed"][index]["label"]));
+                (index) {
+                  String instructionsToProceedLabel =
+                      jobFieldsData["instructions_to_proceed"][index]["label"]
+                          .toString();
+                  instructionsToProceed.add(RadioModel(
+                      false,
+                      jobFieldsData["instructions_to_proceed"][index]
+                          ["label"]));
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -500,7 +541,9 @@ class _AddJobPageState extends State<AddJobPage> {
                         element.isSelected = false;
                       }
                       instructionsToProceed[index].isSelected = true;
-                      instructionToProceedSelect = jobFieldsData["instructions_to_proceed"][index]["label"];
+                      instructionToProceedSelect =
+                          jobFieldsData["instructions_to_proceed"][index]
+                              ["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -516,8 +559,9 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-                        child:  Text(instructionsToProceedLabel,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 5.sp),
+                        child: Text(instructionsToProceedLabel,
                             textAlign: TextAlign.center,
                             style: instructionsToProceed[index].isSelected
                                 ? CustomTextStyle.commonTextBlue
@@ -530,27 +574,39 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             Padding(
                 padding:
-                EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
+                    EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
                 child: SizedBox(
                   width: query.width,
                   height: query.height * 0.06,
                   child: CustomButton(
                     buttonColor: AppColors.primaryColor,
                     onClick: () {
-                      if(priorityLevelSelect == ""){
-                        Helpers.showSnackBar(context, ErrorString.selectPriorityLevel, isError: true);
-                      }else if(workScheduleSelect == ""){
-                        Helpers.showSnackBar(context, ErrorString.selectWorkSchedule, isError: true);
-                      }else if(paymentMethodSelect ==""){
-                        Helpers.showSnackBar(context, ErrorString.selectPaymentMethod, isError: true);
-                      }else if(instructionToProceedSelect == ""){
-                        Helpers.showSnackBar(context, ErrorString.selectInstructionToProceed, isError: true);
-                      }else if(paymentInstructionSelect == ""){
-                        Helpers.showSnackBar(context, ErrorString.selectPaymentInstruction, isError: true);
-                      }else if(engineerNoteController.text.isEmpty){
-                        Helpers.showSnackBar(context, ErrorString.selectEngineerNote, isError: true);
+                      if (priorityLevelSelect == "") {
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectPriorityLevel,
+                            isError: true);
+                      } else if (workScheduleSelect == "") {
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectWorkSchedule,
+                            isError: true);
+                      } else if (paymentMethodSelect == "") {
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectPaymentMethod,
+                            isError: true);
+                      } else if (instructionToProceedSelect == "") {
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectInstructionToProceed,
+                            isError: true);
+                      } else if (paymentInstructionSelect == "") {
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectPaymentInstruction,
+                            isError: true);
+                      } else if (engineerNoteController.text.isEmpty) {
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectEngineerNote,
+                            isError: true);
                       } else {
-                        if(installationTime == "" || numberOfEngineer == ""){
+                        if (installationTime == "" || numberOfEngineer == "") {
                           showDialog(
                               context: context,
                               builder: (context) {
@@ -560,8 +616,8 @@ class _AddJobPageState extends State<AddJobPage> {
                                         borderRadius: BorderRadius.circular(10)),
                                     elevation: 0,
                                     insetAnimationCurve: Curves.decelerate,
-                                    insetPadding: EdgeInsets.symmetric(
-                                        horizontal: 12.sp),
+                                    insetPadding:
+                                        EdgeInsets.symmetric(horizontal: 12.sp),
                                     child: QuoteEstimation(
                                         dataQuote: dataForCreateJob, "job"));
                               }).then((value) {
@@ -578,12 +634,10 @@ class _AddJobPageState extends State<AddJobPage> {
                           createJob(dataForCreateJob);
                         }
                       }
-
                     },
                     title: ButtonString.btnSubmit,
                   ),
-                )
-            )
+                ))
           ],
         ),
       ),
@@ -644,14 +698,15 @@ class _AddJobPageState extends State<AddJobPage> {
                       child: CustomButton(
                           buttonColor: AppColors.primaryColor,
                           onClick: () {
-                            if(engineerInstructionController.text.isEmpty){
-                              Helpers.showSnackBar(context, ErrorString.selectPaymentInstruction, isError: true);
-                            }else{
+                            if (engineerInstructionController.text.isEmpty) {
+                              Helpers.showSnackBar(
+                                  context, ErrorString.selectPaymentInstruction,
+                                  isError: true);
+                            } else {
                               createJob(dataForCreateJob);
                             }
                           },
-                          title: ButtonString.btnSubmit)
-                  ),
+                          title: ButtonString.btnSubmit)),
                 ],
               ),
             ),
@@ -665,7 +720,8 @@ class _AddJobPageState extends State<AddJobPage> {
                   child: Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0)),
                     child: loadingView(),
                   ),
                 )),
@@ -675,7 +731,7 @@ class _AddJobPageState extends State<AddJobPage> {
     );
   }
 
-  Future<void> createJob (dataForCreateJob) async {
+  Future<void> createJob(dataForCreateJob) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     CreateJobRequest createJobRequest = CreateJobRequest(
         subject : dataForCreateJob["subject"] ?? " ",
@@ -810,13 +866,14 @@ class _AddJobPageState extends State<AddJobPage> {
 
     Map<String, String> bodyData = {
       'operation': "create",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonEncode(createJobRequest),
       'elementType': 'SalesOrder',
       'appversion': Constants.of().appversion.toString(),
-      'contract_number' : contractNumberPass.toString(),
-      'job_type' : dataForCreateJob["quote_quote_type"].toString(),
-  };
+      'contract_number': contractNumberPass.toString(),
+      'job_type': dataForCreateJob["quote_quote_type"].toString(),
+    };
     createJobBloc.add(CreateJobDetailEvent(bodyData));
 
   }
