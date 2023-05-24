@@ -338,9 +338,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       quoteEstimationWidget(query, state.productList),
                       SizedBox(height: 10.sp),
                       if(widget.itemList != null)
-                        ...state.productList.reversed.map((e) => buildDetailItemTile(e, context, state)).toList()
+                        ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList()
                       else
-                        ...state.productList.reversed.map((e) => buildDetailItemTile(e, context, state)).toList(),
+                        ...state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
                       //item list
                       SizedBox(height: query.height * 0.08)
                     ],
@@ -1275,7 +1275,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
     CopyQuoteRequest copyQuoteRequest = CopyQuoteRequest(
       //for copy data in json format
-        subject: "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}",
+        subject: widget.contactSelect.toString().contains("-") ?
+        "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}"
+            : "${widget.contactSelect}",
         quotestage: widget.dataQuote["quotestage"],
         contactId: widget.contactId,
         subtotal: subTotal.toString(),
@@ -1288,7 +1290,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         assignedUserId: assignTo.toString(),
         currencyId: "21x1",
         conversionRate: "0.00",
-
         //widget.siteAddress.toString() == "{}"
 
         billStreet: widget.billStreet == "" ? " " : widget.billStreet,
@@ -1352,7 +1353,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         lineItems: productList.map((e) =>
             LineItemsCopy(
               productid: e.productId,
-              sequenceNo: (productList.indexOf(e) + 1).toString(),
+              sequenceNo: e.itemName.toString().contains("Installation") ?
+              productList.length.toString() : (productList.indexOf(e)).toString(),
               quantity: e.quantity.toString(),
               listprice: e.sellingPrice,
               discountPercent: "00.00",

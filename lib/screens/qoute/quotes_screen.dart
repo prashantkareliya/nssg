@@ -250,7 +250,6 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                       motion: const ScrollMotion(),
                                       children: [
                                         CustomSlidableAction(
-
                                           borderRadius: const BorderRadius.only(
                                               bottomRight: Radius.circular(20.0),
                                               topRight: Radius.circular(20.0)),
@@ -258,9 +257,45 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                           autoClose: true,
                                           onPressed: (value) {
                                             if(searchKey.isNotEmpty){
-                                              callNextScreen(context, AddJobPage(quoteItem: searchItemList![index]));
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                  AddJobPage(quoteItem: searchItemList![index]))).then((value){
+                                                if(value == "yes"){
+                                                  ScaffoldMessenger.of(context)
+                                                    ..hideCurrentSnackBar()
+                                                    ..showSnackBar(
+                                                      SnackBar(
+                                                        duration: const Duration(milliseconds: 4000),
+                                                        backgroundColor: Colors.green,
+                                                        content: Text(
+                                                          "This quote is being converted into the job, please verify in the CRM after few minutes.",
+                                                          style: TextStyle(color: AppColors.whiteColor),
+                                                        ),
+                                                        behavior: SnackBarBehavior.floating,
+                                                      ),
+                                                    );
+                                                }
+                                              });
+                                              //callNextScreen(context, AddJobPage(quoteItem: searchItemList![index]));
                                             }else{
-                                              callNextScreen(context, AddJobPage(quoteItem: quoteItems![index]));
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                  AddJobPage(quoteItem: quoteItems![index]))).then((value) {
+                                               if(value == "yes"){
+                                                 ScaffoldMessenger.of(context)
+                                                   ..hideCurrentSnackBar()
+                                                   ..showSnackBar(
+                                                     SnackBar(
+                                                       duration: const Duration(milliseconds: 5000),
+                                                       backgroundColor: Colors.green,
+                                                       content: Text(
+                                                         "This quote is being converted into the job, please verify in the CRM after few minutes.",
+                                                         style: TextStyle(color: AppColors.whiteColor),
+                                                       ),
+                                                       behavior: SnackBarBehavior.floating,
+                                                     ),
+                                                   );
+                                               }
+                                              });
+                                              //callNextScreen(context, AddJobPage(quoteItem: quoteItems![index]));
                                             }
                                           },
                                           backgroundColor: AppColors.hintFontColor.withOpacity(0.30),
@@ -851,7 +886,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
         padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
         child: ListView.separated(
             shrinkWrap: true,
-            reverse: true,
+            reverse: false,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: itemList.length,
             itemBuilder: (context, index) {

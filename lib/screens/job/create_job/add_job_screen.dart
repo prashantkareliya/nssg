@@ -130,7 +130,7 @@ class _AddJobPageState extends State<AddJobPage> {
           highlightColor: AppColors.transparent,
           splashColor: AppColors.transparent,
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pop(context, "no");
           },
           child: Icon(Icons.arrow_back_ios_outlined,
               color: AppColors.blackColor, size: 14.sp),
@@ -151,21 +151,7 @@ class _AddJobPageState extends State<AddJobPage> {
             //Navigator.pop(context);
           }
           if(state is LoadingCreateJob){
-            Navigator.pop(context);
-
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  duration: const Duration(milliseconds: 4000),
-                  backgroundColor: Colors.green,
-                  content: Text(
-                      "This quote is being converted into the job, please verify in the CRM after few minutes.",
-                    style: TextStyle(color: AppColors.whiteColor),
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+            //Navigator.pop(context, "yes");
           }
         },
         child: BlocBuilder<CreateJobBloc, CreateJobState>(
@@ -571,8 +557,7 @@ class _AddJobPageState extends State<AddJobPage> {
                                 ///Make new class for dialog
                                 return Dialog(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            10)),
+                                        borderRadius: BorderRadius.circular(10)),
                                     elevation: 0,
                                     insetAnimationCurve: Curves.decelerate,
                                     insetPadding: EdgeInsets.symmetric(
@@ -584,11 +569,14 @@ class _AddJobPageState extends State<AddJobPage> {
                             setState(() {
                               installationTime = value["keyTimeType"];
                               numberOfEngineer = value["keyEngineerNumbers"];
+                              Navigator.pop(context, "yes");
                               createJob(dataForCreateJob);
+
                             });
                           });
+                        }else{
+                          createJob(dataForCreateJob);
                         }
-                        createJob(dataForCreateJob);
                       }
 
                     },
@@ -689,7 +677,6 @@ class _AddJobPageState extends State<AddJobPage> {
 
   Future<void> createJob (dataForCreateJob) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-
     CreateJobRequest createJobRequest = CreateJobRequest(
         subject : dataForCreateJob["subject"] ?? " ",
         quoteId : dataForCreateJob["id"] ?? " ",
@@ -740,40 +727,40 @@ class _AddJobPageState extends State<AddJobPage> {
         paymentInstructions : paymentInstructionSelect ?? "  ",
         paymentMethod : paymentMethodSelect ?? "  ",
         isConfirm : "0",
-        contractNotesJob : " ",
-        invoiceNumber : " " ?? " ",
-        jobPremisesType : dataForCreateJob["premises_type"] ?? " ",
-        jobTaskTimestamp : "" ?? " ",
-        hdnprofitTotal : dataForCreateJob["hdnprofitTotal"] ?? " ",
-        jobType : dataForCreateJob["quote_quote_type"] ?? " ",
-        soJobStatus : " ",
+        contractNotesJob : "",
+        invoiceNumber : "" ?? " ",
+        jobPremisesType : dataForCreateJob["premises_type"] ?? "",
+        jobTaskTimestamp : "" ?? "",
+        hdnprofitTotal : dataForCreateJob["hdnprofitTotal"] ?? "",
+        jobType : dataForCreateJob["quote_quote_type"] ?? "",
+        soJobStatus : "",
         isscheduledjob : "0 ",
         isJobScheduleMailSent : "0 ",
-        jobServiServiceMonth : "  ",
-        jobServiPerAnnum : " ",
-        jobServiServiceYear : "  ",
-        jobServiServiceType : "  ",
+        jobServiServiceMonth : " ",
+        jobServiPerAnnum : "",
+        jobServiServiceYear : " ",
+        jobServiServiceType : " ",
         salesorderRelatedId : "0 ",
         isCustomerConfirm : "0 ",
-        jobSchDateByCustomer : " ",
-        jobSchAltDateByCustomer : " ",
-        jobSchCustomerNotes : " ",
+        jobSchDateByCustomer : "",
+        jobSchAltDateByCustomer : "",
+        jobSchCustomerNotes : "",
         isProjectTaskCreatedAsana : "0 ",
-        asanaCreatedProjectId : " ",
-        jobPartStatus : " ",
-        jotformWorkCarryOut : " ",
-        jotformOutStandWork : " ",
-        jotformPartReqNextVisit : " ",
-        jotformAddWorkToQuote : " ",
-        jotformPartUsed : " ",
-        jobChecklistBooked : " ",
-        jobChecklistRaiseInvoice : " ",
-        jobChecklistRaiseInvoiceNumber : " ",
-        jobChecklistPickListStock : " ",
+        asanaCreatedProjectId : "",
+        jobPartStatus : "",
+        jotformWorkCarryOut : "",
+        jotformOutStandWork : "",
+        jotformPartReqNextVisit : "",
+        jotformAddWorkToQuote : "",
+        jotformPartUsed : "",
+        jobChecklistBooked : "",
+        jobChecklistRaiseInvoice : "",
+        jobChecklistRaiseInvoiceNumber : "",
+        jobChecklistPickListStock : "",
         jobChecklistObtCustFeedback : dataForCreateJob["quote_quote_type"] !=  "installation" ? "Not select" : "",
-        jobChecklistPaymentOnComplet : " ",
-        jobChecklistExtraStockAllocate : " ",
-        jobChecklistExtraStockReturnFaulty : " ",
+        jobChecklistPaymentOnComplet : "",
+        jobChecklistExtraStockAllocate : "",
+        jobChecklistExtraStockReturnFaulty : "",
         jobChecklistCommsAllocated : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
         jobChecklistCreateContract : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
         jobChecklistOrderComms : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
@@ -785,11 +772,11 @@ class _AddJobPageState extends State<AddJobPage> {
         jobChecklistMaintenReceived : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
         jobChecklistKeyholderSentClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
         jobChecklistKeyholderReceived : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistCsDigiCheck : " ",
-        jobChecklistCsDigiNumber : " ",
-        jobChecklistIssueNsiCertCheck : " ",
-        jobChecklistIssueNsiCertNumber : " ",
-        jobChecklistReadyToClose : " ",
+        jobChecklistCsDigiCheck : "",
+        jobChecklistCsDigiNumber : "",
+        jobChecklistIssueNsiCertCheck : "",
+        jobChecklistIssueNsiCertNumber : "",
+        jobChecklistReadyToClose : "",
       jobChecklistPayRecived: dataForCreateJob["quote_quote_type"] ==  "Installation" ? "Not select" : "",
       jobChecklistStockRequire: dataForCreateJob["quote_quote_type"] ==  "Installation" ?  "Not select" : "",
       jobChecklistDdRecSubSetup: dataForCreateJob["quote_quote_type"] !=  "Installation" ?  "Not select" : "",
@@ -831,5 +818,6 @@ class _AddJobPageState extends State<AddJobPage> {
       'job_type' : dataForCreateJob["quote_quote_type"].toString(),
   };
     createJobBloc.add(CreateJobDetailEvent(bodyData));
+
   }
 }
