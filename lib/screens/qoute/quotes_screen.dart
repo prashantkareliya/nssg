@@ -1107,7 +1107,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
         padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
         child: ListView.separated(
             shrinkWrap: true,
-            reverse: true,
+            reverse: false,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: itemList.length,
             itemBuilder: (context, index) {
