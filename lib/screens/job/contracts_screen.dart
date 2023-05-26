@@ -16,7 +16,6 @@ import '../../utils/app_colors.dart';
 import '../../utils/widgetChange.dart';
 import '../../utils/widgets.dart';
 
-
 class ContractListScreen extends StatefulWidget {
   const ContractListScreen({Key? key}) : super(key: key);
 
@@ -30,26 +29,28 @@ class _ContractListScreenState extends State<ContractListScreen> {
 
   List contractList = [];
 
- @override
+  @override
   Widget build(BuildContext context) {
-   getDetail = getData();
+    getDetail = getData();
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.backWhiteColor,
         body: FutureBuilder<dynamic>(
             future: getDetail,
-          builder: (context, snapshot) {
-            return Column(
-              children: [
-                buildAppbar(context),
-                buildSearchBar(context),
-                if(snapshot.hasData) buildJobList(context, snapshot.data)
-                else if(snapshot.hasError) Text(HandleAPI.handleAPIError(snapshot.error))
-                else SizedBox(height: 70.h, child: loadingView())
-              ],
-            );
-          }
-        ),
+            builder: (context, snapshot) {
+              return Column(
+                children: [
+                  buildAppbar(context),
+                  buildSearchBar(context),
+                  if (snapshot.hasData)
+                    buildJobList(context, snapshot.data)
+                  else if (snapshot.hasError)
+                    Text(HandleAPI.handleAPIError(snapshot.error))
+                  else
+                    SizedBox(height: 70.h, child: loadingView())
+                ],
+              );
+            }),
       ),
     );
   }
@@ -58,26 +59,26 @@ class _ContractListScreenState extends State<ContractListScreen> {
   AnimatedOpacity buildAppbar(BuildContext context) {
     return AnimatedOpacity(
       opacity:
-      Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 0,
+          Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 0,
       duration: const Duration(milliseconds: 500),
-      child: Visibility(
-        visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow,
-        child: BaseAppBar(
-          appBar: AppBar(),
-          title: LabelString.lblContracts,
-          titleTextStyle: CustomTextStyle.labelFontText,
-          isBack: false,
-          searchWidget: Padding(
-            padding: EdgeInsets.only(right: 12.sp),
-            child: IconButton(
-                onPressed: () =>
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .appbarVisibility(),
-                icon: Icon(Icons.search, color: AppColors.blackColor)),
-          ),
-          backgroundColor: AppColors.backWhiteColor,
-        ),
-      ),
+      // child: Visibility(
+      //   visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow,
+      //   child: BaseAppBar(
+      //     appBar: AppBar(),
+      //     title: "",
+      //     titleTextStyle: CustomTextStyle.labelFontText,
+      //     isBack: false,
+      //     searchWidget: Padding(
+      //       padding: EdgeInsets.only(right: 12.sp),
+      //       child: IconButton(
+      //           onPressed: () =>
+      //               Provider.of<WidgetChange>(context, listen: false)
+      //                   .appbarVisibility(),
+      //           icon: Icon(Icons.search, color: AppColors.blackColor)),
+      //     ),
+      //     backgroundColor: AppColors.backWhiteColor,
+      //   ),
+      // ),
     );
   }
 
@@ -85,30 +86,31 @@ class _ContractListScreenState extends State<ContractListScreen> {
   AnimatedOpacity buildSearchBar(BuildContext context) {
     return AnimatedOpacity(
       opacity:
-      Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 0 : 1,
+          Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 1,
       duration: const Duration(milliseconds: 500),
       child: Visibility(
         visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow
-            ? false
+            ? true
             : true,
         child: Padding(
           padding:
-          EdgeInsets.only(right: 24.sp, top: 8.sp, left: 15.sp, bottom: 0),
+              EdgeInsets.only(right: 15.sp, top: 8.sp, left: 0.sp, bottom: 8),
           child: Padding(
             padding: EdgeInsets.only(bottom: 0.sp),
             child: Row(
               children: [
-                InkWell(
-                    onTap: () => closeSearchBar(),
-                    child: Icon(Icons.arrow_back_ios_rounded,
-                        color: AppColors.blackColor)),
+                // InkWell(
+                //     onTap: () => closeSearchBar(),
+                //     child: Icon(Icons.arrow_back_ios_rounded,
+                //         color: AppColors.blackColor)),
                 SizedBox(width: 5.w),
                 Expanded(
                   child: Consumer<WidgetChange>(
-                    builder: (context, updateKey, search){
+                    builder: (context, updateKey, search) {
                       return TextField(
                           onChanged: (value) {
-                            Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
+                            Provider.of<WidgetChange>(context, listen: false)
+                                .updateSearch(value);
                             searchKey = updateKey.updateSearchText.toString();
 
                             //searchItemList = [];
@@ -129,7 +131,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
                             }*/
                           },
                           keyboardType: TextInputType.text,
-                          autofocus: true,
+                          autofocus: false,
                           decoration: InputDecoration(
                               hintText: LabelString.lblSearch,
                               suffixIcon: Container(
@@ -139,7 +141,8 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5))),
                                   child: Icon(Icons.search,
-                                      color: AppColors.whiteColor, size: 15.sp)),
+                                      color: AppColors.whiteColor,
+                                      size: 15.sp)),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
                                   borderSide: BorderSide(
@@ -152,10 +155,9 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                   borderRadius: BorderRadius.circular(5),
                                   borderSide: BorderSide(
                                       width: 2, color: AppColors.primaryColor)),
-                              contentPadding:
-                              EdgeInsets.only(left: 10.sp, top: 0, bottom: 0)));
+                              contentPadding: EdgeInsets.only(
+                                  left: 10.sp, top: 0, bottom: 0)));
                     },
-
                   ),
                 ),
               ],
@@ -167,7 +169,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
   }
 
   AnimationLimiter buildJobList(BuildContext context, contractData) {
-   contractList = contractData["result"];
+    contractList = contractData["result"];
     return AnimationLimiter(
       child: Expanded(
         child: ListView.separated(
@@ -188,15 +190,14 @@ class _ContractListScreenState extends State<ContractListScreen> {
                           borderRadius: BorderRadius.circular(12.sp)),
                       elevation: 2,
                       child: InkWell(
-                        onTap: () { },
+                        onTap: () {},
                         child: Container(
                           decoration: BoxDecoration(
                               color: AppColors.whiteColor,
                               borderRadius: BorderRadius.circular(12.sp)),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: 8.sp,
-                                horizontal: 15.sp),
+                                vertical: 8.sp, horizontal: 15.sp),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,7 +205,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                 SizedBox(height: 1.0.h),
                                 //if Contact name of quote is null then we set subject from the list and remove text after the "-"
                                 InkWell(
-                                  onTap: (){ },
+                                  onTap: () {},
                                   child: Text.rich(
                                     TextSpan(
                                       text: "",
@@ -215,12 +216,14 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                               fontWeight: FontWeight.bold)),
                                       children: [
                                         TextSpan(
-                                            text: contractList[index]["subject"],
+                                            text: contractList[index]
+                                                ["subject"],
                                             style: GoogleFonts.roboto(
                                                 textStyle: TextStyle(
                                                     fontSize: 13.sp,
                                                     color: AppColors.fontColor,
-                                                    fontWeight: FontWeight.bold)))
+                                                    fontWeight:
+                                                        FontWeight.bold)))
                                       ],
                                     ),
                                   ),
@@ -232,20 +235,46 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                 SizedBox(height: 0.5.h),
                                 Text.rich(
                                   TextSpan(
-                                    text: contractList[index]["ser_con_inv_address"] ?? "",
+                                    text: contractList[index]
+                                            ["ser_con_inv_address"] ??
+                                        "",
                                     style: CustomTextStyle.labelText,
                                     children: [
-                                      if(contractList[index]["ser_con_inv_address"] != "" && contractList[index]["ser_con_inv_address"] != null) const TextSpan(text: ", "),
+                                      if (contractList[index]
+                                                  ["ser_con_inv_address"] !=
+                                              "" &&
+                                          contractList[index]
+                                                  ["ser_con_inv_address"] !=
+                                              null)
+                                        const TextSpan(text: ", "),
                                       TextSpan(
-                                          text: contractList[index]["ser_con_inv_city"] ?? "",
+                                          text: contractList[index]
+                                                  ["ser_con_inv_city"] ??
+                                              "",
                                           style: CustomTextStyle.labelText),
-                                      if(contractList[index]["ser_con_inv_city"] != "" && contractList[index]["ser_con_inv_city"] != null) const TextSpan(text: ", "),
+                                      if (contractList[index]
+                                                  ["ser_con_inv_city"] !=
+                                              "" &&
+                                          contractList[index]
+                                                  ["ser_con_inv_city"] !=
+                                              null)
+                                        const TextSpan(text: ", "),
                                       TextSpan(
-                                          text: contractList[index]["ser_con_inv_country"] ?? "",
+                                          text: contractList[index]
+                                                  ["ser_con_inv_country"] ??
+                                              "",
                                           style: CustomTextStyle.labelText),
-                                      if(contractList[index]["ser_con_inv_country"] != "" && contractList[index]["ser_con_inv_country"] != null) const TextSpan(text: ", "),
+                                      if (contractList[index]
+                                                  ["ser_con_inv_country"] !=
+                                              "" &&
+                                          contractList[index]
+                                                  ["ser_con_inv_country"] !=
+                                              null)
+                                        const TextSpan(text: ", "),
                                       TextSpan(
-                                          text: contractList[index]["ser_con_inv_postcode"]?? "",
+                                          text: contractList[index]
+                                                  ["ser_con_inv_postcode"] ??
+                                              "",
                                           style: CustomTextStyle.labelText)
                                     ],
                                   ),
@@ -262,7 +291,6 @@ class _ContractListScreenState extends State<ContractListScreen> {
               ),
             );
           },
-
           separatorBuilder: (BuildContext context, int index) {
             return Container(height: 10.sp);
           },
@@ -275,6 +303,4 @@ class _ContractListScreenState extends State<ContractListScreen> {
     Provider.of<WidgetChange>(context, listen: false).appbarVisibility();
     searchKey = "";
   }
-
-
 }
