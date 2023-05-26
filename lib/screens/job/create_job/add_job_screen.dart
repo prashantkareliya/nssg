@@ -627,7 +627,6 @@ class _AddJobPageState extends State<AddJobPage> {
                               numberOfEngineer = value["keyEngineerNumbers"];
                               Navigator.pop(context, "yes");
                               createJob(dataForCreateJob);
-
                             });
                           });
                         }else{
