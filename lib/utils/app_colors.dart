@@ -8,6 +8,7 @@ class AppColors {
 
   static Color backWhiteColor = const Color(0xFFF1F4F8);
   static Color borderColor = const Color(0xFFD9D9D9);
+  static Color darkGray = const Color(0xFFA5A5A5);
 
   static Color primaryColor = const Color(0xFF1E5CA4);
   static Color primaryColorLawOpacity = const Color(0xFF1E5CA4).withOpacity(0.10);
@@ -21,4 +22,5 @@ class AppColors {
   static Color blueAccentColor = const Color(0xFF1E5CA4);
   static Color greenColor = const Color(0xFF0B702D);
   static Color greenColorAccent = const Color(0xFF8BC24A);
+  static Color greenColorAccept = const Color(0xFF00AC26);
 }

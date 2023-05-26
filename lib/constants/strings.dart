@@ -30,6 +30,8 @@ class Message {
   static const String quoteEstimation = "for quote estimation";
   static const String quoteCreateSuccessfully = "Your quote has been created successfully!";
   static const String quoteEmailSentMessage= "Quote has been sent successfully to";
+  static const String generateJobMessage= "This quote is being converted into the job, please verify in the CRM after few minutes.";
+  static const String quoteUpdateMessage= "Quote update successfully";
 }
 
 //Label Strings
@@ -241,6 +243,8 @@ class ImageString {
   static const String icEngineer = "assets/images/engineer.svg";
   static const String icInstallation = "assets/images/installation.png";
   static const String icCreateInstallation = "assets/images/ic_create_installation.svg";
+  static const String icCreateProcessed = "assets/images/ic_processed.svg";
+  static const String icAccepted = "assets/images/ic_accepted.svg";
 }
 
 class PreferenceString {

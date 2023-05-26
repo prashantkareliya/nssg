@@ -42,3 +42,10 @@ class UpdateEditProductListEvent extends ProductListEvent {
 
   UpdateEditProductListEvent({required this.productsList});
 }
+
+class ChangeProductOrderEvent extends ProductListEvent {
+  final int oldIndex;
+  final int newIndex;
+
+  ChangeProductOrderEvent(this.oldIndex, this.newIndex);
+}
