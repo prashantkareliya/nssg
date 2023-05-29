@@ -14,7 +14,8 @@ class LoadingAddQuote extends AddQuoteState {
 class LoadedAddQuote extends AddQuoteState {
   final String? quoteDetail;
   final String? quoteId;
-  LoadedAddQuote({this.quoteDetail, this.quoteId});
+  final String? quoteNo;
+  LoadedAddQuote({this.quoteDetail, this.quoteId, this.quoteNo});
 }
 
 class FailAddQuote extends AddQuoteState {

@@ -30,7 +30,7 @@ class AddQuoteBloc extends Bloc<AddQuoteEvent, AddQuoteState> {
       emit(LoadingAddQuote(false));
 
     emit(LoadedAddQuote(quoteDetail: success.result.toString(),
-        quoteId: success.result!.id.toString()));
+        quoteId: success.result!.id.toString(), quoteNo: success.result!.quoteNo.toString()));
     },
         failure: (failure) {
     emit(LoadingAddQuote(false));

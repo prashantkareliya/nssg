@@ -17,7 +17,9 @@ class ThankYouScreen extends StatefulWidget {
 
   String contactEmail;
 
-  ThankYouScreen(this.quoteId, this.contactEmail, {Key? key}) : super(key: key);
+  String? quoteNo;
+
+  ThankYouScreen(this.quoteId, this.contactEmail, this.quoteNo, {Key? key}) : super(key: key);
 
   @override
   State<ThankYouScreen> createState() => _ThankYouScreenState(quoteId, contactEmail);
@@ -69,7 +71,7 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
                           Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.pop(context);
-                          removeAndCallNextScreen(context, QuoteDetail(quoteId));
+                          removeAndCallNextScreen(context, QuoteDetail(quoteId, quoteNo: widget.quoteNo));
                         })),
                 SizedBox(height: 1.h),
                 SizedBox(
