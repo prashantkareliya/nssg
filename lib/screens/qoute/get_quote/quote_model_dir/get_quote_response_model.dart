@@ -43,22 +43,26 @@ class Result {
   String? id;
   String? contactName;
   String? createdDate;
+  String? assignedUserName;
 
-  Result(
-      {this.quoteNo,
-        this.subject,
-        this.quotesEmail,
-        this.quoteMobileNumber,
-        this.quotestage,
-        this.contactId,
-        this.systemType,
-        this.quotesCompany,
-        this.shipStreet,
-        this.shipCity,
-        this.shipCountry,
-        this.shipCode,
-        this.id,
-        this.contactName, this.createdDate});
+  Result({
+    this.quoteNo,
+    this.subject,
+    this.quotesEmail,
+    this.quoteMobileNumber,
+    this.quotestage,
+    this.contactId,
+    this.systemType,
+    this.quotesCompany,
+    this.shipStreet,
+    this.shipCity,
+    this.shipCountry,
+    this.shipCode,
+    this.id,
+    this.contactName,
+    this.createdDate,
+    this.assignedUserName,
+  });
 
   Result.fromJson(Map<String, dynamic> json) {
     quoteNo = json['quote_no'];
@@ -76,6 +80,7 @@ class Result {
     id = json['id'];
     contactName = json['contact_name'];
     createdDate = json['createdtime'];
+    assignedUserName = json['assigned_user_name'];
   }
 
   Map<String, dynamic> toJson() {
@@ -95,6 +100,7 @@ class Result {
     data['id'] = id;
     data['contact_name'] = contactName;
     data['createdtime'] = createdDate;
+    data['assigned_user_name'] = assignedUserName;
     return data;
   }
 }

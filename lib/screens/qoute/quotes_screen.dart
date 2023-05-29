@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -84,26 +85,26 @@ class _QuoteScreenState extends State<QuoteScreen> {
   AnimatedOpacity buildAppbar(BuildContext context) {
     return AnimatedOpacity(
       opacity:
-          Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 0,
+          Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 0 : 0,
       duration: const Duration(milliseconds: 500),
-      child: Visibility(
-        visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow,
-        child: BaseAppBar(
-          appBar: AppBar(),
-          title: LabelString.lblQuotes,
-          titleTextStyle: CustomTextStyle.labelFontText,
-          isBack: false,
-          searchWidget: Padding(
-            padding: EdgeInsets.only(right: 12.sp),
-            child: IconButton(
-                onPressed: () =>
-                    Provider.of<WidgetChange>(context, listen: false)
-                        .appbarVisibility(),
-                icon: Icon(Icons.search, color: AppColors.blackColor)),
-          ),
-          backgroundColor: AppColors.backWhiteColor,
-        ),
-      ),
+      // child: Visibility(
+      //   visible: Provider.of<WidgetChange>(context, listen: false).isAppbarShow,
+      //   child: BaseAppBar(
+      //     // appBar: AppBar(),
+      //     title: "",
+      //     titleTextStyle: CustomTextStyle.labelFontText,
+      //     isBack: false,
+      //     searchWidget: Padding(
+      //       padding: EdgeInsets.only(right: 12.sp),
+      //       child: IconButton(
+      //           onPressed: () =>
+      //               Provider.of<WidgetChange>(context, listen: false)
+      //                   .appbarVisibility(),
+      //           icon: Icon(Icons.search, color: AppColors.blackColor)),
+      //     ),
+      //     backgroundColor: AppColors.backWhiteColor,
+      //   ),
+      // ),
     );
   }
 
@@ -114,19 +115,19 @@ class _QuoteScreenState extends State<QuoteScreen> {
       duration: const Duration(milliseconds: 500),
       child: Visibility(
         visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow
-            ? false
+            ? true
             : true,
         child: Padding(
           padding:
-              EdgeInsets.only(right: 24.sp, top: 8.sp, left: 15.sp, bottom: 0),
+              EdgeInsets.only(right: 15.sp, top: 8.sp, left: 0.sp, bottom: 8),
           child: Padding(
             padding: EdgeInsets.only(bottom: 0.sp),
             child: Row(
               children: [
-                InkWell(
-                    onTap: () => closeSearchBar(),
-                    child: Icon(Icons.arrow_back_ios_rounded,
-                        color: AppColors.blackColor)),
+                // InkWell(
+                //     onTap: () => closeSearchBar(),
+                //     child: Icon(Icons.arrow_back_ios_rounded,
+                //         color: AppColors.blackColor)),
                 SizedBox(width: 5.w),
                 Expanded(
                   child: Consumer<WidgetChange>(
@@ -155,7 +156,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             }
                           },
                           keyboardType: TextInputType.text,
-                          autofocus: true,
+                          autofocus: false,
                           decoration: InputDecoration(
                               hintText: LabelString.lblSearch,
                               suffixIcon: Container(
@@ -227,6 +228,44 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             : quoteItems!.length,
                         itemBuilder: (context, index) {
                           //var quoteItem = quoteItems![index];
+
+                          String name = "";
+                          if (quoteItems![index].assignedUserName != null) {
+                            if (quoteItems![index]
+                                .assignedUserName!
+                                .contains(" ")) {
+                              if (quoteItems![index]
+                                      .assignedUserName!
+                                      .split(" ")
+                                      .length >
+                                  1) {
+                                if (quoteItems![index]
+                                    .assignedUserName!
+                                    .split(" ")[1]
+                                    .isNotEmpty) {
+                                  name =
+                                      "${quoteItems![index].assignedUserName!.split(" ")[0][0]}${quoteItems![index].assignedUserName!.split(" ")[1][0]}"
+                                          .toUpperCase();
+                                } else {
+                                  name = quoteItems![index]
+                                      .assignedUserName![0]
+                                      .trim()
+                                      .toUpperCase();
+                                }
+                              } else {
+                                name = quoteItems![index]
+                                    .assignedUserName![0]
+                                    .trim()
+                                    .toUpperCase();
+                              }
+                            } else {
+                              name = quoteItems![index]
+                                  .assignedUserName![0]
+                                  .trim()
+                                  .toUpperCase();
+                            }
+                          }
+
                           final DateFormat formatter = DateFormat('dd/MM/yyyy');
                           final String formatted = formatter.format(DateTime.parse(quoteItems![index].createdDate.toString()));
                           return AnimationConfiguration.staggeredList(
@@ -350,43 +389,151 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                   children: [
                                                     SizedBox(height: 1.0.h),
                                                     //if Contact name of quote is null then we set subject from the list and remove text after the "-"
-                                                    InkWell(
-                                                      onTap: () {
-                                                        if (searchKey.isNotEmpty) {
-                                                          Navigator.push(context,
-                                                              PageTransition(type: PageTransitionType.rightToLeft,
-                                                                  child: ContactDetail(searchItemList![index].contactId, "quote", [])));
-                                                        } else {
-                                                          Navigator.push(context,
-                                                              PageTransition(type: PageTransitionType.rightToLeft,
-                                                                  child: ContactDetail(quoteItems![index].contactId, "quote", [])));
-                                                        }
-                                                      },
-                                                      child: Text.rich(
-                                                        TextSpan(
-                                                          text: searchKey.isNotEmpty
-                                                              ? (searchItemList![index].contactName == null
-                                                                  ? searchItemList![index].subject!.substring(0, searchItemList![index].subject!.indexOf('-'))
-                                                                  : searchItemList![index].contactName.toString())
-                                                              : (quoteItems![index].contactName == null
-                                                                  ? quoteItems![index].subject!.substring(0, quoteItems![index].subject!.indexOf('-'))
-                                                                  : quoteItems![index].contactName.toString()),
-                                                          style: GoogleFonts.roboto(textStyle: TextStyle(
-                                                                  fontSize: 13.sp,
-                                                                  color: AppColors.fontColor,
-                                                                  fontWeight:FontWeight.bold)),
-                                                          children: [
-                                                            TextSpan(
-                                                                text: searchKey.isNotEmpty
-                                                                    ? " - ${searchItemList![index].quoteNo}"
-                                                                    : " - ${quoteItems![index].quoteNo}",
-                                                                style: GoogleFonts.roboto(textStyle: TextStyle(
-                                                                        fontSize: 13.sp,
-                                                                        color: AppColors.fontColor,
-                                                                        fontWeight:FontWeight.bold)))
-                                                          ],
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            if (searchKey
+                                                                .isNotEmpty) {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  PageTransition(
+                                                                      type: PageTransitionType
+                                                                          .rightToLeft,
+                                                                      child: ContactDetail(
+                                                                          searchItemList![index]
+                                                                              .contactId,
+                                                                          "quote",
+                                                                          [])));
+                                                            } else {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  PageTransition(
+                                                                      type: PageTransitionType
+                                                                          .rightToLeft,
+                                                                      child: ContactDetail(
+                                                                          quoteItems![index]
+                                                                              .contactId,
+                                                                          "quote",
+                                                                          [])));
+                                                            }
+                                                          },
+                                                          child: SizedBox(
+                                                            width: 70.w,
+                                                            child: Text.rich(
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .clip,
+                                                              TextSpan(
+                                                                text: searchKey
+                                                                        .isNotEmpty
+                                                                    ? (searchItemList![index].contactName ==
+                                                                            null
+                                                                        ? searchItemList![index].subject!.substring(
+                                                                            0,
+                                                                            searchItemList![index].subject!.indexOf(
+                                                                                '-'))
+                                                                        : searchItemList![index]
+                                                                            .contactName
+                                                                            .toString())
+                                                                    : (quoteItems![index].contactName ==
+                                                                            null
+                                                                        ? quoteItems![index].subject!.substring(
+                                                                            0,
+                                                                            quoteItems![index].subject!.indexOf(
+                                                                                '-'))
+                                                                        : quoteItems![index]
+                                                                            .contactName
+                                                                            .toString()),
+                                                                style: GoogleFonts.roboto(
+                                                                    textStyle: TextStyle(
+                                                                        fontSize: 13
+                                                                            .sp,
+                                                                        color: AppColors
+                                                                            .fontColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold)),
+                                                                children: [
+                                                                  TextSpan(
+                                                                      text: searchKey
+                                                                              .isNotEmpty
+                                                                          ? " - ${searchItemList![index].quoteNo}"
+                                                                          : " - ${quoteItems![index].quoteNo}",
+                                                                      style: GoogleFonts.roboto(
+                                                                          textStyle: TextStyle(
+                                                                              fontSize: 13.sp,
+                                                                              color: AppColors.fontColor,
+                                                                              fontWeight: FontWeight.bold))),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+//                                                     InkWell(
+//                                                       onTap: () {
+//                                                         if (searchKey.isNotEmpty) {
+//                                                           Navigator.push(context,
+//                                                               PageTransition(type: PageTransitionType.rightToLeft,
+//                                                                   child: ContactDetail(searchItemList![index].contactId, "quote", [])));
+//                                                         } else {
+//                                                           Navigator.push(context,
+//                                                               PageTransition(type: PageTransitionType.rightToLeft,
+//                                                                   child: ContactDetail(quoteItems![index].contactId, "quote", [])));
+//                                                         }
+//                                                       },
+//                                                       child: Text.rich(
+//                                                         TextSpan(
+//                                                           text: searchKey.isNotEmpty
+//                                                               ? (searchItemList![index].contactName == null
+//                                                                   ? searchItemList![index].subject!.substring(0, searchItemList![index].subject!.indexOf('-'))
+//                                                                   : searchItemList![index].contactName.toString())
+//                                                               : (quoteItems![index].contactName == null
+//                                                                   ? quoteItems![index].subject!.substring(0, quoteItems![index].subject!.indexOf('-'))
+//                                                                   : quoteItems![index].contactName.toString()),
+//                                                           style: GoogleFonts.roboto(textStyle: TextStyle(
+//                                                                   fontSize: 13.sp,
+//                                                                   color: AppColors.fontColor,
+//                                                                   fontWeight:FontWeight.bold)),
+//                                                           children: [
+//                                                             TextSpan(
+//                                                                 text: searchKey.isNotEmpty
+//                                                                     ? " - ${searchItemList![index].quoteNo}"
+//                                                                     : " - ${quoteItems![index].quoteNo}",
+//                                                                 style: GoogleFonts.roboto(textStyle: TextStyle(
+//                                                                         fontSize: 13.sp,
+//                                                                         color: AppColors.fontColor,
+//                                                                         fontWeight:FontWeight.bold)))
+//                                                           ],
                                                         ),
-                                                      ),
+                                                        Container(
+                                                          height: 30.sp,
+                                                          width: 30.sp,
+                                                          alignment:
+                                                              Alignment.center,
+                                                          decoration: BoxDecoration(
+                                                              color: Colors
+                                                                      .primaries[
+                                                                  Random().nextInt(Colors
+                                                                      .primaries
+                                                                      .length)],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          50)),
+                                                          child: Text(
+                                                            name,
+                                                            style: TextStyle(
+                                                                fontSize: 13.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
 
                                                     SizedBox(height: 2.0.h),
