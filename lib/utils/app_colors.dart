@@ -18,9 +18,31 @@ class AppColors {
   static Color redColor = const Color(0xFFA41E1E);
   static Color redColorSwitch = const Color(0xFFE9514E);
 
-
   static Color blueAccentColor = const Color(0xFF1E5CA4);
   static Color greenColor = const Color(0xFF0B702D);
   static Color greenColorAccent = const Color(0xFF8BC24A);
   static Color greenColorAccept = const Color(0xFF00AC26);
+
+  static int _hash(String value) {
+    int hash = 0;
+    value.runes.forEach((code) {
+      hash = code + ((hash << 2) - hash);
+    });
+    return hash;
+  }
+
+  static Color stringToColor(String value) {
+    return Color(stringToHexInt(value));
+  }
+
+  static String stringToHexColor(String value) {
+    String c = (_hash(value) & 0x00FFFFFF).toRadixString(16).toUpperCase();
+    return "0xFF000000".substring(0, 10 - c.length) + c;
+  }
+
+  static int stringToHexInt(String value) {
+    String c = (_hash(value) & 0x00FFFFFF).toRadixString(16).toUpperCase();
+    String hex = "FF000000".substring(0, 8 - c.length) + c;
+    return int.parse(hex, radix: 16);
+  }
 }
