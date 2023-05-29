@@ -150,21 +150,18 @@ class _QuoteScreenState extends State<QuoteScreen> {
                           decoration: InputDecoration(
                               hintText: LabelString.lblSearch,
                               suffixIcon: Container(
-                                  decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
+                                  decoration: BoxDecoration(color: AppColors.primaryColor,
                                       borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(5),
                                           bottomRight: Radius.circular(5))),
-                                  child:
-                                      Icon(Icons.search, color: AppColors.whiteColor, size: 15.sp)),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                                  child: Icon(Icons.search,
+                                      color: AppColors.whiteColor,
+                                      size: 15.sp)),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
                                   borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
                                   borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
                                   borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
                               contentPadding: EdgeInsets.only(left: 10.sp, top: 0, bottom: 0)));
                     },
@@ -209,11 +206,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
                 : RefreshIndicator(
                     onRefresh: () => getQuote(),
                     child: AnimationLimiter(
-                      child: ListView.separated(
-                        padding: EdgeInsets.only(top: 10.sp),
+                      child: ListView.separated(padding: EdgeInsets.only(top: 10.sp),
                         physics: const BouncingScrollPhysics(),
-                        itemCount:
-                            searchKey.isNotEmpty ? searchItemList!.length : quoteItems!.length,
+                        itemCount: searchKey.isNotEmpty ? searchItemList!.length : quoteItems!.length,
                         itemBuilder: (context, index) {
                           //var quoteItem = quoteItems![index];
 
@@ -222,12 +217,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
                             if (quoteItems![index].assignedUserName!.contains(" ")) {
                               if (quoteItems![index].assignedUserName!.split(" ").length > 1) {
                                 if (quoteItems![index].assignedUserName!.split(" ")[1].isNotEmpty) {
-                                  name =
-                                      "${quoteItems![index].assignedUserName!.split(" ")[0][0]}${quoteItems![index].assignedUserName!.split(" ")[1][0]}"
-                                          .toUpperCase();
-                                } else {
-                                  name =
-                                      quoteItems![index].assignedUserName![0].trim().toUpperCase();
+                                  name = "${quoteItems![index].assignedUserName!.split(" ")[0][0]}${quoteItems![index].assignedUserName!.split(" ")[1][0]}".toUpperCase();
+                                } else {name = quoteItems![index].assignedUserName![0].trim().toUpperCase();
                                 }
                               } else {
                                 name = quoteItems![index].assignedUserName![0].trim().toUpperCase();
@@ -251,9 +242,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                   child: Stack(
                                     children: [
                                       Positioned.fill(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primaryColor,
+                                        child: Container(decoration: BoxDecoration(color: AppColors.primaryColor,
                                             borderRadius: BorderRadius.circular(12.sp),
                                           ),
                                         ),
@@ -292,24 +281,17 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                             duration:
                                                                 const Duration(milliseconds: 4000),
                                                             backgroundColor: Colors.green,
-                                                            content: Text(
-                                                              Message.generateJobMessage,
-                                                              style: TextStyle(
-                                                                  color: AppColors.whiteColor),
-                                                            ),
+                                                            content: Text(Message.generateJobMessage,
+                                                              style: TextStyle(color: AppColors.whiteColor)),
                                                             behavior: SnackBarBehavior.floating,
                                                           ),
                                                         );
                                                     }
                                                   });
                                                 } else {
-                                                  Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) => AddJobPage(
-                                                                  quoteItem: quoteItems![index])))
-                                                      .then((value) {
-                                                    if (value == "yes") {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                      AddJobPage(quoteItem: quoteItems![index]))).then((value) {
+                                                    if(value == "yes"){
                                                       ScaffoldMessenger.of(context)
                                                         ..hideCurrentSnackBar()
                                                         ..showSnackBar(
@@ -317,11 +299,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                             duration:
                                                                 const Duration(milliseconds: 5000),
                                                             backgroundColor: Colors.green,
-                                                            content: Text(
-                                                              Message.generateJobMessage,
-                                                              style: TextStyle(
-                                                                  color: AppColors.whiteColor),
-                                                            ),
+                                                            content: Text(Message.generateJobMessage,
+                                                              style: TextStyle(color: AppColors.whiteColor)),
                                                             behavior: SnackBarBehavior.floating,
                                                           ),
                                                         );
@@ -334,15 +313,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  RotatedBox(
-                                                      quarterTurns: -1,
-                                                      child: Text(
-                                                          textAlign: TextAlign.center,
-                                                          ButtonString.btnGenerateJob,
-                                                          style: GoogleFonts.roboto(
-                                                            textStyle: const TextStyle(
-                                                                color: Colors.white),
-                                                          ))),
+                                                  RotatedBox(quarterTurns: -1,
+                                                    child: Text(textAlign: TextAlign.center,
+                                                      ButtonString.btnGenerateJob,
+                                                      style: GoogleFonts.roboto(
+                                                        textStyle:const TextStyle(color: Colors.white)))),
                                                   SizedBox(height: 0.8.h),
                                                   const Icon(Icons.add_circle_outline,
                                                       color: Colors.white),
@@ -352,8 +327,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                           ],
                                         ),
                                         child: Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12.sp)),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.sp)),
                                           margin: EdgeInsets.zero,
                                           elevation: 2,
                                           child: InkWell(
@@ -377,8 +351,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                               }
                                             },
                                             child: Container(
-                                              decoration: BoxDecoration(
-                                                  color: AppColors.whiteColor,
+                                              decoration: BoxDecoration(color: AppColors.whiteColor,
                                                   borderRadius: BorderRadius.circular(12.sp)),
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -390,33 +363,18 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                     SizedBox(height: 1.0.h),
                                                     //if Contact name of quote is null then we set subject from the list and remove text after the "-"
                                                     Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
                                                         InkWell(
                                                           onTap: () {
                                                             if (searchKey.isNotEmpty) {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  PageTransition(
-                                                                      type: PageTransitionType
-                                                                          .rightToLeft,
-                                                                      child: ContactDetail(
-                                                                          searchItemList![index]
-                                                                              .contactId,
-                                                                          "quote",
-                                                                          [])));
+                                                              Navigator.push(context, PageTransition(
+                                                                      type: PageTransitionType.rightToLeft,
+                                                                      child: ContactDetail(searchItemList![index].contactId, "quote", [])));
                                                             } else {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  PageTransition(
-                                                                      type: PageTransitionType
-                                                                          .rightToLeft,
-                                                                      child: ContactDetail(
-                                                                          quoteItems![index]
-                                                                              .contactId,
-                                                                          "quote",
-                                                                          [])));
+                                                              Navigator.push(context, PageTransition(
+                                                                      type: PageTransitionType.rightToLeft,
+                                                                      child: ContactDetail(quoteItems![index].contactId, "quote", [])));
                                                             }
                                                           },
                                                           child: SizedBox(
@@ -424,47 +382,21 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                             child: Text.rich(
                                                               overflow: TextOverflow.clip,
                                                               TextSpan(
-                                                                text: searchKey.isNotEmpty
-                                                                    ? (searchItemList![index]
-                                                                                .contactName ==
-                                                                            null
-                                                                        ? searchItemList![index]
-                                                                            .subject!
-                                                                            .substring(
-                                                                                0,
-                                                                                searchItemList![
-                                                                                        index]
-                                                                                    .subject!
-                                                                                    .indexOf('-'))
-                                                                        : searchItemList![index]
-                                                                            .contactName
-                                                                            .toString())
-                                                                    : (quoteItems![index]
-                                                                                .contactName ==
-                                                                            null
-                                                                        ? quoteItems![index]
-                                                                            .subject!
-                                                                            .substring(
-                                                                                0,
-                                                                                quoteItems![index]
-                                                                                    .subject!
-                                                                                    .indexOf('-'))
-                                                                        : quoteItems![index]
-                                                                            .contactName
-                                                                            .toString()),
-                                                                style: GoogleFonts.roboto(
-                                                                    textStyle: TextStyle(
+                                                                text: searchKey.isNotEmpty ? (searchItemList![index].contactName == null
+                                                                        ? searchItemList![index].subject!.substring(0, searchItemList![index].subject!.indexOf('-'))
+                                                                        : searchItemList![index].contactName.toString())
+                                                                    : (quoteItems![index].contactName == null ? quoteItems![index].subject!.substring(0,
+                                                                            quoteItems![index].subject!.indexOf('-')) : quoteItems![index].contactName.toString()),
+                                                                style: GoogleFonts.roboto(textStyle: TextStyle(
                                                                         fontSize: 13.sp,
                                                                         color: AppColors.fontColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold)),
+                                                                        fontWeight: FontWeight.bold)),
                                                                 children: [
                                                                   TextSpan(
                                                                       text: searchKey.isNotEmpty
                                                                           ? " - ${searchItemList![index].quoteNo}"
                                                                           : " - ${quoteItems![index].quoteNo}",
-                                                                      style: GoogleFonts.roboto(
-                                                                          textStyle: TextStyle(
+                                                                      style: GoogleFonts.roboto(textStyle: TextStyle(
                                                                               fontSize: 13.sp,
                                                                               color: AppColors
                                                                                   .fontColor,
@@ -511,19 +443,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
 //                                                           ],
                                                         ),
                                                         Container(
-                                                          height: 30.sp,
-                                                          width: 30.sp,
+                                                          height: 30.sp, width: 30.sp,
                                                           alignment: Alignment.center,
-                                                          decoration: BoxDecoration(
-                                                              color: Colors.primaries[Random()
-                                                                  .nextInt(
-                                                                      Colors.primaries.length)],
-                                                              borderRadius:
-                                                                  BorderRadius.circular(50)),
-                                                          child: Text(
-                                                            name,
-                                                            style: TextStyle(
-                                                                fontSize: 13.sp,
+                                                          decoration: BoxDecoration(color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                                                              borderRadius: BorderRadius.circular(50)),
+                                                          child: Text(name,
+                                                            style: TextStyle(fontSize: 13.sp,
                                                                 fontWeight: FontWeight.bold,
                                                                 color: Colors.white),
                                                           ),
@@ -602,82 +527,44 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                     ),
                                                     SizedBox(height: 1.0.h),
                                                     Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        (searchKey.isNotEmpty
-                                                                    ? searchItemList![index]
-                                                                        .quotestage
-                                                                        .toString()
-                                                                    : quoteItems![index]
-                                                                        .quotestage
-                                                                        .toString()) ==
-                                                                "Processed"
-                                                            ? Container(
-                                                                decoration: BoxDecoration(
-                                                                  color: AppColors.greenColorAccept,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(30.sp),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal: 6.sp,
-                                                                      vertical: 4.sp),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Text(
-                                                                          quoteItems![index]
-                                                                              .quotestage
-                                                                              .toString(),
-                                                                          style: GoogleFonts.roboto(
-                                                                              textStyle: TextStyle(
-                                                                                  fontSize: 12.sp,
-                                                                                  color: AppColors
-                                                                                      .whiteColor,
-                                                                                  fontWeight:
-                                                                                      FontWeight
-                                                                                          .w600))),
-                                                                      SizedBox(width: 4.sp),
-                                                                      SvgPicture.asset(
-                                                                          ImageString.icAccepted,
-                                                                          height: 1.5.h)
-                                                                    ],
-                                                                  ),
-                                                                ))
-                                                            : Container(
-                                                                decoration: BoxDecoration(
-                                                                  color: AppColors.darkGray,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(30.sp),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal: 8.sp,
-                                                                      vertical: 5.sp),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Text(
-                                                                          quoteItems![index]
-                                                                              .quotestage
-                                                                              .toString(),
-                                                                          style: GoogleFonts.roboto(
-                                                                              textStyle: TextStyle(
-                                                                                  fontSize: 14.sp,
-                                                                                  color: AppColors
-                                                                                      .whiteColor,
-                                                                                  fontWeight:
-                                                                                      FontWeight
-                                                                                          .w600))),
-                                                                      SizedBox(width: 4.sp),
-                                                                      SvgPicture.asset(
-                                                                          ImageString
-                                                                              .icCreateProcessed,
-                                                                          height: 1.5.h)
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                        Text(
-                                                          formatted,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [(searchKey.isNotEmpty
+                                                            ? searchItemList![index].quotestage.toString()
+                                                            : quoteItems![index].quotestage.toString()) == "Processed" ?
+                                                        Container(decoration: BoxDecoration(
+                                                            color: AppColors.greenColorAccept,
+                                                            borderRadius: BorderRadius.circular(30.sp)),
+                                                          child: Padding(
+                                                            padding:  EdgeInsets.symmetric(horizontal: 6.sp, vertical: 4.sp),
+                                                            child: Row(
+                                                              children: [
+                                                                Text(quoteItems![index].quotestage.toString(), style: GoogleFonts.roboto(
+                                                                    textStyle: TextStyle(fontSize: 12.sp, color: AppColors.whiteColor,
+                                                                        fontWeight: FontWeight.w600))),
+                                                                 SizedBox(width: 4.sp),
+                                                                  SvgPicture.asset(ImageString.icAccepted, height: 1.5.h)
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ) :
+                                                        Container(
+                                                            decoration: BoxDecoration(
+                                                              color: AppColors.darkGray,
+                                                              borderRadius: BorderRadius.circular(30.sp)),
+                                                            child: Padding(
+                                                              padding:  EdgeInsets.symmetric(horizontal: 8.sp, vertical: 5.sp),
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(quoteItems![index].quotestage.toString(), style: GoogleFonts.roboto(
+                                                                      textStyle: TextStyle(fontSize: 14.sp, color: AppColors.whiteColor,
+                                                                          fontWeight: FontWeight.w600))),
+                                                                  SizedBox(width: 4.sp),
+                                                                  SvgPicture.asset(ImageString.icCreateProcessed, height: 1.5.h)
+                                                                ],
+                                                              ),
+                                                            )
+                                                        ),
+                                                        Text(formatted,
                                                           style: GoogleFonts.roboto(
                                                               textStyle: TextStyle(
                                                             fontSize: 10.sp,
@@ -755,7 +642,9 @@ class QuoteDetail extends StatefulWidget {
 
   Result? quoteData;
 
-  QuoteDetail(this.id, {Key? key, this.quoteData}) : super(key: key);
+  String? quoteNo;
+
+  QuoteDetail(this.id, {Key? key, this.quoteData, this.quoteNo}) : super(key: key);
 
   @override
   State<QuoteDetail> createState() => _QuoteDetailState();
@@ -798,7 +687,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
         backgroundColor: AppColors.backWhiteColor,
         appBar: BaseAppBar(
             appBar: AppBar(),
-            title: widget.quoteData?.quoteNo ?? "",
+            title: widget.quoteData?.quoteNo ?? widget.quoteNo.toString(),
             titleTextStyle: CustomTextStyle.labelBoldFontText,
             isBack: true,
             elevation: 1,
@@ -1372,8 +1261,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                           color: AppColors.primaryColor,
                           fontWeight: FontWeight.w500)),
                   children: [
-                    TextSpan(
-                        text:
+                    TextSpan(text:
                             "\n${dataQuote["bill_street"]}, ${dataQuote["bill_city"]}, ${dataQuote["bill_country"]}, ${dataQuote["bill_code"]}",
                         style: CustomTextStyle.labelText)
                   ]),
@@ -1382,14 +1270,11 @@ class _QuoteDetailState extends State<QuoteDetail> {
             RichText(
               text: TextSpan(
                   text: "${LabelString.lblInstallationAddress} : ",
-                  style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
-                          fontSize: 12.sp,
+                  style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 12.sp,
                           color: AppColors.primaryColor,
                           fontWeight: FontWeight.w500)),
                   children: [
-                    TextSpan(
-                        text:
+                    TextSpan(text:
                             "\n${dataQuote["ship_street"]}, ${dataQuote["ship_city"]}, ${dataQuote["ship_country"]}, ${dataQuote["ship_code"]}",
                         style: CustomTextStyle.labelText)
                   ]),
@@ -1405,8 +1290,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
     return Padding(
       padding: EdgeInsets.only(left: 15.sp, bottom: 16.sp),
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Column(mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -1483,8 +1367,7 @@ class QuoteTileField extends StatelessWidget {
           Expanded(
             child: Text("$field :",
                 style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                        fontSize: 12.sp,
+                    textStyle: TextStyle(fontSize: 12.sp,
                         color: AppColors.primaryColor,
                         fontWeight: FontWeight.w500))),
           ),

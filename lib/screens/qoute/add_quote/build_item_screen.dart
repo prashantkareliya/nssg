@@ -210,7 +210,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       insetAnimationCurve: Curves.decelerate,
                       insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
                       child: ThankYouScreen(state.quoteId.toString(),
-                          widget.contactEmail.toString()));
+                          widget.contactEmail.toString(), state.quoteNo.toString()));
                   });
             }
 
@@ -1148,8 +1148,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
     Map<String, String> bodyData = {
       'operation': "create",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonQuoteDetail,
       'elementType': 'Quotes',
       'appversion': Constants.of().appversion.toString(),
