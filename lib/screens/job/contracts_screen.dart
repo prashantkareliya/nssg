@@ -25,9 +25,10 @@ class ContractListScreen extends StatefulWidget {
 
 class _ContractListScreenState extends State<ContractListScreen> {
   Future<dynamic>? getDetail;
-  String searchKey = "";
 
   List contractList = [];
+  List searchItemList = [];
+  String searchKey = "";
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,8 @@ class _ContractListScreenState extends State<ContractListScreen> {
               return Column(
                 children: [
                   buildAppbar(context),
-                  buildSearchBar(context),
+                  if(snapshot.hasData)
+                  buildSearchBar(context, snapshot.data),
                   if (snapshot.hasData)
                     buildJobList(context, snapshot.data)
                   else if (snapshot.hasError)
@@ -83,7 +85,8 @@ class _ContractListScreenState extends State<ContractListScreen> {
   }
 
   //Design search field
-  AnimatedOpacity buildSearchBar(BuildContext context) {
+  AnimatedOpacity buildSearchBar(BuildContext context, contractData) {
+    contractList = contractData["result"];
     return AnimatedOpacity(
       opacity:
           Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 1,
@@ -109,26 +112,27 @@ class _ContractListScreenState extends State<ContractListScreen> {
                     builder: (context, updateKey, search) {
                       return TextField(
                           onChanged: (value) {
-                            Provider.of<WidgetChange>(context, listen: false)
-                                .updateSearch(value);
+                            Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
                             searchKey = updateKey.updateSearchText.toString();
+                            searchItemList = [];
 
-                            //searchItemList = [];
-                            /*for (var element in quoteItems!) {
-                              if (element.subject!.toLowerCase().contains(searchKey)) {
-                                searchItemList!.add(element);
-                              } else if (element.quotesCompany!.toLowerCase().contains(searchKey)) {
-                                searchItemList!.add(element);
-                              } else if (element.shipStreet!.toLowerCase().contains(searchKey)) {
-                                searchItemList!.add(element);
-                              } else if (element.shipCode!.toLowerCase().contains(searchKey)) {
-                                searchItemList!.add(element);
-                              }else if(element.quoteNo!.toLowerCase().contains(searchKey)){
-                                searchItemList!.add(element);
-                              }else if(element.quotesEmail!.toLowerCase().contains(searchKey)){
-                                searchItemList!.add(element);
+                           for (var element in contractList) {
+                              if (element["subject"]!.toLowerCase().contains(searchKey.toLowerCase())) {
+                                searchItemList.add(element);
+                              } else if (element["contract_no"]!.toLowerCase().contains(searchKey)) {
+                                searchItemList.add(element);
+                              } else if (element["email"].toLowerCase().contains(searchKey)) {
+                                searchItemList.add(element);
+                              } else if (element["ser_con_inv_address"].toLowerCase().contains(searchKey)) {
+                                searchItemList.add(element);
+                              }else if(element["ser_con_inv_city"].toLowerCase().contains(searchKey)){
+                                searchItemList.add(element);
+                              }else if(element["ser_con_inv_country"].toLowerCase().contains(searchKey)){
+                                searchItemList.add(element);
+                              }else if(element["ser_con_inv_postcode"].toLowerCase().contains(searchKey)){
+                                searchItemList.add(element);
                               }
-                            }*/
+                            }
                           },
                           keyboardType: TextInputType.text,
                           autofocus: false,
@@ -175,7 +179,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
         child: ListView.separated(
           padding: EdgeInsets.only(top: 10.sp),
           physics: const BouncingScrollPhysics(),
-          itemCount: contractList.length,
+          itemCount: searchKey.isNotEmpty ? searchItemList.length : contractList.length,
           itemBuilder: (context, index) {
             return AnimationConfiguration.staggeredList(
               position: index,
@@ -216,8 +220,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                               fontWeight: FontWeight.bold)),
                                       children: [
                                         TextSpan(
-                                            text: contractList[index]
-                                                ["subject"],
+                                            text: searchKey.isNotEmpty ? searchItemList[index]["subject"] : contractList[index]["subject"],
                                             style: GoogleFonts.roboto(
                                                 textStyle: TextStyle(
                                                     fontSize: 13.sp,
@@ -230,51 +233,42 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                 ),
 
                                 SizedBox(height: 2.0.h),
-                                Text(contractList[index]["contract_no"],
+                                Text(searchKey.isNotEmpty ? searchItemList[index]["contract_no"] : contractList[index]["contract_no"],
                                     style: CustomTextStyle.labelText),
                                 SizedBox(height: 0.5.h),
-                                Text.rich(
-                                  TextSpan(
-                                    text: contractList[index]
-                                            ["ser_con_inv_address"] ??
-                                        "",
+                                Text.rich(TextSpan(
+                                    text: searchKey.isNotEmpty ?
+                                    searchItemList[index]["ser_con_inv_address"] :
+                                    contractList[index]["ser_con_inv_address"] ?? "",
                                     style: CustomTextStyle.labelText,
+
                                     children: [
-                                      if (contractList[index]
-                                                  ["ser_con_inv_address"] !=
-                                              "" &&
-                                          contractList[index]
-                                                  ["ser_con_inv_address"] !=
-                                              null)
+                                      if (contractList[index]["ser_con_inv_address"] !="" &&
+                                          contractList[index]["ser_con_inv_address"] != null)
                                         const TextSpan(text: ", "),
+
                                       TextSpan(
-                                          text: contractList[index]
-                                                  ["ser_con_inv_city"] ??
-                                              "",
+                                          text: searchKey.isNotEmpty ?
+                                          searchItemList[index]["ser_con_inv_city"] :
+                                          contractList[index]["ser_con_inv_city"] ?? "",
                                           style: CustomTextStyle.labelText),
-                                      if (contractList[index]
-                                                  ["ser_con_inv_city"] !=
-                                              "" &&
-                                          contractList[index]
-                                                  ["ser_con_inv_city"] !=
-                                              null)
+                                      if (contractList[index]["ser_con_inv_city"] != "" &&
+                                          contractList[index] ["ser_con_inv_city"] != null)
                                         const TextSpan(text: ", "),
+
                                       TextSpan(
-                                          text: contractList[index]
-                                                  ["ser_con_inv_country"] ??
-                                              "",
+                                          text: searchKey.isNotEmpty ?
+                                          searchItemList[index]["ser_con_inv_country"] :
+                                          contractList[index]["ser_con_inv_country"] ?? "",
                                           style: CustomTextStyle.labelText),
-                                      if (contractList[index]
-                                                  ["ser_con_inv_country"] !=
-                                              "" &&
-                                          contractList[index]
-                                                  ["ser_con_inv_country"] !=
-                                              null)
+                                      if (contractList[index]["ser_con_inv_country"] != "" &&
+                                          contractList[index]["ser_con_inv_country"] != null)
                                         const TextSpan(text: ", "),
+
                                       TextSpan(
-                                          text: contractList[index]
-                                                  ["ser_con_inv_postcode"] ??
-                                              "",
+                                          text: searchKey.isNotEmpty ?
+                                          searchItemList[index]["ser_con_inv_postcode"] :
+                                          contractList[index]["ser_con_inv_postcode"] ?? "",
                                           style: CustomTextStyle.labelText)
                                     ],
                                   ),
@@ -293,10 +287,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
           },
           separatorBuilder: (BuildContext context, int index) {
             return Container(height: 10.sp);
-          },
-        ),
-      ),
-    );
+          })));
   }
 
   void closeSearchBar() {

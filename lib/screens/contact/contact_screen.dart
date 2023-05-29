@@ -149,39 +149,24 @@ class _ContactScreenState extends State<ContactScreen> {
                       builder: (context, updateKey, search) {
                     return TextField(
                         onChanged: (value) {
-                          Provider.of<WidgetChange>(context, listen: false)
-                              .updateSearch(value);
+                          Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
                           searchKey = updateKey.updateSearchText.toString();
-
                           searchItemList = [];
+
                           for (var element in contactItems!) {
-                            if (element.contactName!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase())) {
+                            if (element.contactName!.toLowerCase().contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if (element.contactCompany!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase())) {
+                            } else if (element.contactCompany!.toLowerCase().contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if (element.firstname!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase())) {
+                            } else if (element.firstname!.toLowerCase().contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if ((element.lastname!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase()))) {
+                            } else if ((element.lastname!.toLowerCase().contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.email!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase()))) {
+                            } else if ((element.email!.toLowerCase().contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.mailingzip!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase()))) {
+                            } else if ((element.mailingzip!.toLowerCase().contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.otherzip!
-                                .toLowerCase()
-                                .contains(searchKey.toLowerCase()))) {
+                            } else if ((element.otherzip!.toLowerCase().contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
                             }
                           }

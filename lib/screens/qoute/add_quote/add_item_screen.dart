@@ -698,15 +698,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
                     double amount = (double.parse(filterList![index].unitPrice.toString()) *
                         double.parse(filterList![index].quantity.toString()) -
-                        double.parse(discountPriceController[index].text == ""
-                            ? "0"
+                        double.parse(discountPriceController[index].text == "" ? "0"
                             : discountPriceController[index].text));
 
                     double profit = ((double.parse(filterList![index].unitPrice!) - double.parse(
                             filterList![index].costPrice.toString())) *
                         (filterList![index].quantity!) -
-                        double.parse(discountPriceController[index].text == ""
-                            ? "0"
+                        double.parse(discountPriceController[index].text == "" ? "0"
                             : discountPriceController[index].text));
                     return BlocConsumer<ProductListBloc, ProductListState>(
                       listener: (context, state) {},
@@ -721,8 +719,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.sp),
-                                border: Border.all(
-                                    color: AppColors.borderColor, width: 1),
+                                border: Border.all(color: AppColors.borderColor, width: 1),
                                 color: AppColors.whiteColor),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -737,8 +734,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       borderRadius: BorderRadius.circular(8.0),
                                       child: Container(
                                         color: AppColors.backWhiteColor,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(4.sp),
+                                        child: Padding(padding: EdgeInsets.all(4.sp),
                                           child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
                                           height: 9.h, width: 18.w),
                                         ),
@@ -753,31 +749,24 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       RichText(
                                         text: TextSpan(
                                           children: [
-                                            TextSpan(
-                                                text: filterList![index].productname.toString(),
+                                            TextSpan(text: filterList![index].productname.toString(),
                                                 style: CustomTextStyle.labelBoldFontText),
                                             WidgetSpan(
-                                              child: InkWell(
-                                                splashColor: AppColors.transparent,
-                                                highlightColor:
-                                                AppColors.transparent,
+                                              child: InkWell(splashColor: AppColors.transparent,
+                                                highlightColor:AppColors.transparent,
                                                 onTap: () {
-                                                  showDialog(
-                                                    context: context,
+                                                  showDialog(context: context,
                                                     builder: (context) {
                                                       return Dialog(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(10)),
+                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                                           elevation: 0,
                                                           insetPadding:EdgeInsets.symmetric(horizontal: 12.sp),
-                                                          child: itemDescription(
-                                                              filterList![index].productname.toString(),
+                                                          child: itemDescription(filterList![index].productname.toString(),
                                                               filterList![index].description.toString()));
                                                     },
                                                   );
                                                 },
-                                                child: Icon(
-                                                    Icons.info_outline,
+                                                child: Icon(Icons.info_outline,
                                                     color: AppColors.primaryColor,
                                                     size: 14.sp),
                                               ),

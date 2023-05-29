@@ -491,8 +491,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     return Padding(
       key: ValueKey(products.itemId.toString()),
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp, top: 5, bottom: 8.sp),
-      child: Container(
-        decoration: BoxDecoration(
+      child: Container(decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             color: AppColors.backWhiteColor),
         child: Slidable(
