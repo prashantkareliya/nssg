@@ -1195,7 +1195,8 @@ class _QuoteDetailState extends State<QuoteDetail> {
                               style: CustomTextStyle.labelBoldFontText),
                         ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
                               padding: const EdgeInsets.all(10),
@@ -1209,7 +1210,7 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                       "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} ",
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.roboto(
-                                        fontSize: 12.sp,
+                                        fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ))
@@ -1217,13 +1218,13 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                       "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} ",
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.roboto(
-                                        fontSize: 12.sp,
+                                        fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       )),
                             ),
                             SizedBox(
-                              height: 30.h,
+                              height: 30.sp,
                             ),
                             IconButton(
                                 onPressed: () {
@@ -1244,9 +1245,12 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   );
                                 },
                                 icon: Icon(Icons.info_outline, color: AppColors.blackColor)),
-                            const Text(""),
+                            // const Text(""),
                           ],
-                        )
+                        ),
+                        SizedBox(
+                          width: 5.sp,
+                        ),
                       ],
                     ),
                     Padding(
