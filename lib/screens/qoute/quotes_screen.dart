@@ -1197,16 +1197,33 @@ class _QuoteDetailState extends State<QuoteDetail> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(right: 8.sp, left: 10.sp),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                shape: BoxShape.circle,
+                              ),
                               child: itemList[index]["quantity"] == "1.000"
                                   ? // Condition for set item and items keywork
                                   Text(
                                       "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} ",
-                                      style: CustomTextStyle.labelBoldFontTextSmall)
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ))
                                   : Text(
                                       "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} ",
-                                      style: CustomTextStyle.labelBoldFontTextSmall),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      )),
+                            ),
+                            SizedBox(
+                              height: 30.h,
                             ),
                             IconButton(
                                 onPressed: () {
