@@ -177,8 +177,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
       'id': widget.isBack ? contactId : widget.contactId.toString(),//"12x5558",
       'relatedType': "SitesAddress",
       'relatedLabel': "Sites Address",
-      'sessionName':
-      preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
     };
     final response = await HttpActions()
         .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);

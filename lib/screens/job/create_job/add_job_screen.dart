@@ -29,7 +29,7 @@ import '../../../utils/helpers.dart';
 import '../../../utils/widgetChange.dart';
 import '../../../utils/widgets.dart';
 import '../../qoute/add_quote/quote_estimation_dialog.dart';
-import '../contracts_screen.dart';
+import '../../contracts/contracts_screen.dart';
 import 'create_job_bloc_dir/create_job_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -223,9 +223,7 @@ class _AddJobPageState extends State<AddJobPage> {
               children: List.generate(
                 jobFieldsData["priority_level"].length,
                 (index) {
-                  String priorityLevelLabel = jobFieldsData["priority_level"]
-                          [index]["label"]
-                      .toString();
+                  String priorityLevelLabel = jobFieldsData["priority_level"][index]["label"].toString();
                   priorityLevel.add(RadioModel(
                       priorityLevelLabel == "Medium" ? true : false,
                       jobFieldsData["priority_level"][index]["label"]));
@@ -239,10 +237,7 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       priorityLevel[index].isSelected = true;
-
-                      priorityLevelSelect =
-                          jobFieldsData["priority_level"][index]["label"];
-
+                      priorityLevelSelect = jobFieldsData["priority_level"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -262,9 +257,7 @@ class _AddJobPageState extends State<AddJobPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (jobFieldsData["priority_level"][index]["label"]
-                                    .toString() ==
-                                "High")
+                            if (jobFieldsData["priority_level"][index]["label"].toString() =="High")
                               Container(
                                 height: 2.h,
                                 width: 4.w,
@@ -274,10 +267,7 @@ class _AddJobPageState extends State<AddJobPage> {
                                     border: Border.all(
                                         color: const Color(0xFFFF5757))),
                               )
-                            else if (jobFieldsData["priority_level"][index]
-                                        ["label"]
-                                    .toString() ==
-                                "Medium")
+                            else if (jobFieldsData["priority_level"][index]["label"].toString() =="Medium")
                               Container(
                                 height: 2.h,
                                 width: 4.w,
@@ -325,10 +315,8 @@ class _AddJobPageState extends State<AddJobPage> {
                 jobFieldsData["works_schedule"].length,
                 (index) {
                   String worksScheduleLabel = jobFieldsData["works_schedule"]
-                          [index]["label"]
-                      .toString();
-                  worksSchedule.add(RadioModel(
-                      false, jobFieldsData["works_schedule"][index]["label"]));
+                          [index]["label"].toString();
+                  worksSchedule.add(RadioModel(false, jobFieldsData["works_schedule"][index]["label"]));
 
                   return InkWell(
                     splashColor: AppColors.transparent,
@@ -339,8 +327,7 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       worksSchedule[index].isSelected = true;
-                      workScheduleSelect =
-                          jobFieldsData["works_schedule"][index]["label"];
+                      workScheduleSelect = jobFieldsData["works_schedule"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -370,20 +357,15 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 2.5.h),
             Text(LabelString.lblPaymentMethod,
-                style: GoogleFonts.roboto(
-                    fontSize: 13.sp, fontWeight: FontWeight.w700)),
+                style: GoogleFonts.roboto(fontSize: 13.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 1.0.h),
-            Wrap(
-              spacing: 8.sp,
+            Wrap(spacing: 8.sp,
               direction: Axis.horizontal,
               alignment: WrapAlignment.start,
               runSpacing: 8.sp,
-              children: List.generate(
-                jobFieldsData["payment_method"].length,
+              children: List.generate(jobFieldsData["payment_method"].length,
                 (index) {
-                  String paymentMethodLabel = jobFieldsData["payment_method"]
-                          [index]["label"]
-                      .toString();
+                  String paymentMethodLabel = jobFieldsData["payment_method"][index]["label"].toString();
                   paymentMethod.add(RadioModel(
                       false, jobFieldsData["payment_method"][index]["label"]));
                   return InkWell(
@@ -438,8 +420,7 @@ class _AddJobPageState extends State<AddJobPage> {
                 jobFieldsData["payment_instructions"].length,
                 (index) {
                   String paymentInstructionsLabel =
-                      jobFieldsData["payment_instructions"][index]["label"]
-                          .toString();
+                      jobFieldsData["payment_instructions"][index]["label"].toString();
                   paymentInstructions.add(RadioModel(false,
                       jobFieldsData["payment_instructions"][index]["label"]));
                   return InkWell(
@@ -618,8 +599,7 @@ class _AddJobPageState extends State<AddJobPage> {
                                     insetAnimationCurve: Curves.decelerate,
                                     insetPadding:
                                         EdgeInsets.symmetric(horizontal: 12.sp),
-                                    child: QuoteEstimation(
-                                        dataQuote: dataForCreateJob, "job"));
+                                    child: QuoteEstimation(dataQuote: dataForCreateJob, "job"));
                               }).then((value) {
                             print(value);
                             setState(() {
@@ -865,13 +845,15 @@ class _AddJobPageState extends State<AddJobPage> {
 
     Map<String, String> bodyData = {
       'operation': "create",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonEncode(createJobRequest),
       'elementType': 'SalesOrder',
       'appversion': Constants.of().appversion.toString(),
       'contract_number': contractNumberPass.toString(),
       'job_type': dataForCreateJob["quote_quote_type"].toString(),
+      'contact_id_display': dataForCreateJob["contact_name"].toString(),
+      'jobs_system_type': dataForCreateJob["system_type"].toString(),
+      'jobs_project_manager_display': dataForCreateJob["project_manager_name"].toString(),
     };
     createJobBloc.add(CreateJobDetailEvent(bodyData));
 

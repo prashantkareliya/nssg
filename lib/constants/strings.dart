@@ -208,6 +208,10 @@ class ButtonString {
   static const String btnEmailShare = "Share Quote Email?";
   static const String btnViewCart = "View Cart";
   static const String btnGenerateJob = "Generate Job";
+  static const String btnCreateQuote = "Create Quote";
+  static const String btnInstallation = "Installation";
+  static const String btnBreakdown = "Breakdown";
+  static const String btnService = "Service";
 }
 
 //Image path Strings
@@ -245,6 +249,9 @@ class ImageString {
   static const String icCreateInstallation = "assets/images/ic_create_installation.svg";
   static const String icCreateProcessed = "assets/images/ic_processed.svg";
   static const String icAccepted = "assets/images/ic_accepted.svg";
+  static const String icInstallation2 = "assets/images/ic_installation.svg";
+  static const String icBreakdown = "assets/images/ic_breakdown.svg";
+  static const String icService = "assets/images/ic_services.svg";
 }
 
 class PreferenceString {
