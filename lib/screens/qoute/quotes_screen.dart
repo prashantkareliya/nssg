@@ -1030,18 +1030,36 @@ class _QuoteDetailState extends State<QuoteDetail> {
                               style: CustomTextStyle.labelBoldFontText),
                         ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(right: 8.sp, left: 10.sp),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                shape: BoxShape.circle,
+                              ),
                               child: itemList[index]["quantity"] == "1.000"
                                   ? // Condition for set item and items keywork
                                   Text(
                                       "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} ",
-                                      style: CustomTextStyle.labelBoldFontTextSmall)
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ))
                                   : Text(
                                       "${itemList[index]["quantity"].toString().substring(0, itemList[index]["quantity"].toString().indexOf("."))} ",
-                                      style: CustomTextStyle.labelBoldFontTextSmall),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      )),
+                            ),
+                            SizedBox(
+                              height: 30.sp,
                             ),
                             IconButton(
                                 onPressed: () {
@@ -1062,9 +1080,12 @@ class _QuoteDetailState extends State<QuoteDetail> {
                                   );
                                 },
                                 icon: Icon(Icons.info_outline, color: AppColors.blackColor)),
-                            const Text(""),
+                            // const Text(""),
                           ],
-                        )
+                        ),
+                        SizedBox(
+                          width: 5.sp,
+                        ),
                       ],
                     ),
                     Padding(
