@@ -5,7 +5,7 @@ import 'package:nssg/screens/qoute/quotes_screen.dart';
 import 'package:sizer/sizer.dart';
 import '../../components/custom_text_styles.dart';
 import '../../constants/strings.dart';
-import '../job/contracts_screen.dart';
+import '../contracts/contracts_screen.dart';
 import 'bottom_navbar_bloc.dart';
 
 class RootScreen extends StatefulWidget {

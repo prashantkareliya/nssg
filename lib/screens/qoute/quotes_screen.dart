@@ -130,29 +130,17 @@ class _QuoteScreenState extends State<QuoteScreen> {
 
                             searchItemList = [];
                             for (var element in quoteItems!) {
-                              if (element.subject!
-                                  .toLowerCase()
-                                  .contains(searchKey.toLowerCase())) {
+                              if (element.subject!.toLowerCase().contains(searchKey.toLowerCase())) {
                                 searchItemList!.add(element);
-                              } else if (element.quotesCompany!
-                                  .toLowerCase()
-                                  .contains(searchKey.toLowerCase())) {
+                              } else if (element.quotesCompany!.toLowerCase().contains(searchKey.toLowerCase())) {
                                 searchItemList!.add(element);
-                              } else if (element.shipStreet!
-                                  .toLowerCase()
-                                  .contains(searchKey.toLowerCase())) {
+                              } else if (element.shipStreet!.toLowerCase().contains(searchKey.toLowerCase())) {
                                 searchItemList!.add(element);
-                              } else if (element.shipCode!
-                                  .toLowerCase()
-                                  .contains(searchKey.toLowerCase())) {
+                              } else if (element.shipCode!.toLowerCase().contains(searchKey.toLowerCase())) {
                                 searchItemList!.add(element);
-                              } else if (element.quoteNo!
-                                  .toLowerCase()
-                                  .contains(searchKey.toLowerCase())) {
+                              } else if (element.quoteNo!.toLowerCase().contains(searchKey.toLowerCase())) {
                                 searchItemList!.add(element);
-                              } else if (element.quotesEmail!
-                                  .toLowerCase()
-                                  .contains(searchKey.toLowerCase())) {
+                              } else if (element.quotesEmail!.toLowerCase().contains(searchKey.toLowerCase())) {
                                 searchItemList!.add(element);
                               }
                             }
@@ -224,22 +212,18 @@ class _QuoteScreenState extends State<QuoteScreen> {
                       child: ListView.separated(
                         padding: EdgeInsets.only(top: 10.sp),
                         physics: const BouncingScrollPhysics(),
-                        itemCount:
-                            searchKey.isNotEmpty ? searchItemList!.length : quoteItems!.length,
+                        itemCount: searchKey.isNotEmpty ? searchItemList!.length : quoteItems!.length,
                         itemBuilder: (context, index) {
                           //var quoteItem = quoteItems![index];
-
                           String name = "";
                           if (quoteItems![index].assignedUserName != null) {
                             if (quoteItems![index].assignedUserName!.contains(" ")) {
                               if (quoteItems![index].assignedUserName!.split(" ").length > 1) {
                                 if (quoteItems![index].assignedUserName!.split(" ")[1].isNotEmpty) {
                                   name =
-                                      "${quoteItems![index].assignedUserName!.split(" ")[0][0]}${quoteItems![index].assignedUserName!.split(" ")[1][0]}"
-                                          .toUpperCase();
+                                      "${quoteItems![index].assignedUserName!.split(" ")[0][0]}${quoteItems![index].assignedUserName!.split(" ")[1][0]}".toUpperCase();
                                 } else {
-                                  name =
-                                      quoteItems![index].assignedUserName![0].trim().toUpperCase();
+                                  name = quoteItems![index].assignedUserName![0].trim().toUpperCase();
                                 }
                               } else {
                                 name = quoteItems![index].assignedUserName![0].trim().toUpperCase();
@@ -250,8 +234,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                           }
 
                           final DateFormat formatter = DateFormat('dd/MM/yyyy');
-                          final String formatted = formatter
-                              .format(DateTime.parse(quoteItems![index].createdDate.toString()));
+                          final String formatted = formatter.format(DateTime.parse(quoteItems![index].createdDate.toString()));
                           return AnimationConfiguration.staggeredList(
                             position: index,
                             child: SlideAnimation(
@@ -263,75 +246,53 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                   child: Stack(
                                     children: [
                                       Positioned.fill(
-                                        child: Container(
-                                          decoration: BoxDecoration(
+                                        child: Container(decoration: BoxDecoration(
                                             color: AppColors.primaryColor,
                                             borderRadius: BorderRadius.circular(12.sp),
                                           ),
                                         ),
                                       ),
                                       Slidable(
-                                        enabled: (searchKey.isNotEmpty
-                                                    ? searchItemList![index].quotestage.toString()
-                                                    : quoteItems![index].quotestage.toString()) ==
-                                                "Accepted"
-                                            ? false
-                                            : true,
+                                        enabled: (searchKey.isNotEmpty ? searchItemList![index].quotestage.toString()
+                                                    : quoteItems![index].quotestage.toString()) == "Accepted" ? false : true,
                                         endActionPane: ActionPane(
                                           extentRatio: 0.15,
                                           motion: const ScrollMotion(),
-                                          children: [
-                                            CustomSlidableAction(
-                                              borderRadius: const BorderRadius.only(
+                                          children: [CustomSlidableAction(borderRadius: const BorderRadius.only(
                                                   bottomRight: Radius.circular(20.0),
                                                   topRight: Radius.circular(20.0)),
                                               padding: EdgeInsets.zero,
                                               autoClose: true,
                                               onPressed: (value) {
                                                 if (searchKey.isNotEmpty) {
-                                                  Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) => AddJobPage(
-                                                                  quoteItem:
-                                                                      searchItemList![index])))
-                                                      .then((value) {
+                                                  Navigator.push(context, MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  AddJobPage(quoteItem: searchItemList![index]))).then((value) {
                                                     if (value == "yes") {
                                                       ScaffoldMessenger.of(context)
                                                         ..hideCurrentSnackBar()
-                                                        ..showSnackBar(
-                                                          SnackBar(
-                                                            duration:
-                                                                const Duration(milliseconds: 4000),
+                                                        ..showSnackBar(SnackBar(
+                                                            duration: const Duration(milliseconds: 4000),
                                                             backgroundColor: Colors.green,
-                                                            content: Text(
-                                                                Message.generateJobMessage,
-                                                                style: TextStyle(
-                                                                    color: AppColors.whiteColor)),
+                                                            content: Text(Message.generateJobMessage,
+                                                                style: TextStyle(color: AppColors.whiteColor)),
                                                             behavior: SnackBarBehavior.floating,
                                                           ),
                                                         );
                                                     }
                                                   });
                                                 } else {
-                                                  Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) => AddJobPage(
-                                                                  quoteItem: quoteItems![index])))
-                                                      .then((value) {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                                                  AddJobPage(quoteItem: quoteItems![index]))).then((value) {
                                                     if (value == "yes") {
                                                       ScaffoldMessenger.of(context)
                                                         ..hideCurrentSnackBar()
                                                         ..showSnackBar(
                                                           SnackBar(
-                                                            duration:
-                                                                const Duration(milliseconds: 5000),
+                                                            duration: const Duration(milliseconds: 5000),
                                                             backgroundColor: Colors.green,
-                                                            content: Text(
-                                                                Message.generateJobMessage,
-                                                                style: TextStyle(
-                                                                    color: AppColors.whiteColor)),
+                                                            content: Text(Message.generateJobMessage,
+                                                                style: TextStyle(color: AppColors.whiteColor)),
                                                             behavior: SnackBarBehavior.floating,
                                                           ),
                                                         );
@@ -344,43 +305,32 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  RotatedBox(
-                                                      quarterTurns: -1,
-                                                      child: Text(
-                                                          textAlign: TextAlign.center,
+                                                  RotatedBox(quarterTurns: -1,
+                                                      child: Text(textAlign: TextAlign.center,
                                                           ButtonString.btnGenerateJob,
-                                                          style: GoogleFonts.roboto(
-                                                              textStyle: const TextStyle(
-                                                                  color: Colors.white)))),
+                                                          style: GoogleFonts.roboto(textStyle: const TextStyle(color: Colors.white)))),
                                                   SizedBox(height: 0.8.h),
-                                                  const Icon(Icons.add_circle_outline,
-                                                      color: Colors.white),
+                                                  const Icon(Icons.add_circle_outline, color: Colors.white),
                                                 ],
                                               ),
                                             ),
                                           ],
                                         ),
                                         child: Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12.sp)),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.sp)),
                                           margin: EdgeInsets.zero,
                                           elevation: 2,
                                           child: InkWell(
                                             onTap: () {
                                               if (searchKey.isNotEmpty) {
-                                                Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                        type: PageTransitionType.rightToLeft,
-                                                        child: QuoteDetail(
-                                                            searchItemList![index].id,
+                                                Navigator.push(context,
+                                                    PageTransition(type: PageTransitionType.rightToLeft,
+                                                        child: QuoteDetail(searchItemList![index].id,
                                                             quoteData: searchItemList![index])));
                                                 //callNextScreen(context, QuoteDetail(searchItemList![index].id));
                                               } else {
-                                                Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                        type: PageTransitionType.rightToLeft,
+                                                Navigator.push(context,
+                                                    PageTransition(type: PageTransitionType.rightToLeft,
                                                         child: QuoteDetail(quoteItems![index].id,
                                                             quoteData: quoteItems![index])));
                                               }
@@ -399,86 +349,43 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                     SizedBox(height: 1.0.h),
                                                     //if Contact name of quote is null then we set subject from the list and remove text after the "-"
                                                     Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
                                                         InkWell(
                                                           onTap: () {
                                                             if (searchKey.isNotEmpty) {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  PageTransition(
-                                                                      type: PageTransitionType
-                                                                          .rightToLeft,
-                                                                      child: ContactDetail(
-                                                                          searchItemList![index]
-                                                                              .contactId,
-                                                                          "quote",
-                                                                          [])));
+                                                              Navigator.push(context,
+                                                                  PageTransition(type: PageTransitionType.rightToLeft,
+                                                                      child: ContactDetail(searchItemList![index].contactId,"quote", [])));
                                                             } else {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  PageTransition(
-                                                                      type: PageTransitionType
-                                                                          .rightToLeft,
-                                                                      child: ContactDetail(
-                                                                          quoteItems![index]
-                                                                              .contactId,
-                                                                          "quote",
-                                                                          [])));
+                                                              Navigator.push(context,
+                                                                  PageTransition(type: PageTransitionType.rightToLeft,
+                                                                      child: ContactDetail(quoteItems![index].contactId, "quote", [])));
                                                             }
                                                           },
-                                                          child: SizedBox(
-                                                            width: 70.w,
-                                                            child: Text.rich(
-                                                              overflow: TextOverflow.clip,
+                                                          child: SizedBox(width: 70.w,
+                                                            child: Text.rich(overflow: TextOverflow.clip,
                                                               TextSpan(
                                                                 text: searchKey.isNotEmpty
-                                                                    ? (searchItemList![index]
-                                                                                .contactName ==
-                                                                            null
-                                                                        ? searchItemList![index]
-                                                                            .subject!
-                                                                            .substring(
-                                                                                0,
-                                                                                searchItemList![
-                                                                                        index]
-                                                                                    .subject!
-                                                                                    .indexOf('-'))
-                                                                        : searchItemList![index]
-                                                                            .contactName
-                                                                            .toString())
-                                                                    : (quoteItems![index]
-                                                                                .contactName ==
-                                                                            null
-                                                                        ? quoteItems![index]
-                                                                            .subject!
-                                                                            .substring(
-                                                                                0,
-                                                                                quoteItems![index]
-                                                                                    .subject!
-                                                                                    .indexOf('-'))
-                                                                        : quoteItems![index]
-                                                                            .contactName
-                                                                            .toString()),
+                                                                    ? (searchItemList![index].contactName == null
+                                                                        ? searchItemList![index].subject!.substring(0,
+                                                                                searchItemList![index].subject!.indexOf('-'))
+                                                                        : searchItemList![index].contactName.toString())
+                                                                    : (quoteItems![index].contactName ==null
+                                                                        ? quoteItems![index].subject!.substring(0, quoteItems![index].subject!.indexOf('-'))
+                                                                        : quoteItems![index].contactName.toString()),
                                                                 style: GoogleFonts.roboto(
-                                                                    textStyle: TextStyle(
-                                                                        fontSize: 13.sp,
+                                                                    textStyle: TextStyle(fontSize: 13.sp,
                                                                         color: AppColors.fontColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold)),
+                                                                        fontWeight: FontWeight.bold)),
                                                                 children: [
-                                                                  TextSpan(
-                                                                      text: searchKey.isNotEmpty
+                                                                  TextSpan(text: searchKey.isNotEmpty
                                                                           ? " - ${searchItemList![index].quoteNo}"
                                                                           : " - ${quoteItems![index].quoteNo}",
                                                                       style: GoogleFonts.roboto(
-                                                                          textStyle: TextStyle(
-                                                                              fontSize: 13.sp,
-                                                                              color: AppColors
-                                                                                  .fontColor,
-                                                                              fontWeight: FontWeight
-                                                                                  .bold))),
+                                                                          textStyle: TextStyle(fontSize: 13.sp,
+                                                                              color: AppColors.fontColor,
+                                                                              fontWeight: FontWeight.bold))),
                                                                 ],
                                                               ),
                                                             ),
@@ -519,20 +426,14 @@ class _QuoteScreenState extends State<QuoteScreen> {
 //                                                                         fontWeight:FontWeight.bold)))
 //                                                           ],
                                                         ),
-                                                        Container(
-                                                          height: 30.sp,
+                                                        Container(height: 30.sp,
                                                           width: 30.sp,
                                                           alignment: Alignment.center,
                                                           decoration: BoxDecoration(
-                                                              color: AppColors.stringToColor(
-                                                                  quoteItems![index]
-                                                                      .assignedUserName!),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(50)),
-                                                          child: Text(
-                                                            name,
-                                                            style: TextStyle(
-                                                                fontSize: 13.sp,
+                                                              color: AppColors.stringToColor(quoteItems![index].assignedUserName!),
+                                                              borderRadius: BorderRadius.circular(50)),
+                                                          child: Text(name,
+                                                            style: TextStyle(fontSize: 13.sp,
                                                                 fontWeight: FontWeight.bold,
                                                                 color: Colors.white),
                                                           ),
@@ -541,18 +442,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                     ),
 
                                                     SizedBox(height: 2.0.h),
-                                                    Text(
-                                                        searchKey.isNotEmpty
-                                                            ? searchItemList![index]
-                                                                .systemType
-                                                                .toString()
-                                                            : quoteItems![index]
-                                                                .systemType
-                                                                .toString(),
+                                                    Text(searchKey.isNotEmpty
+                                                            ? searchItemList![index].systemType.toString()
+                                                            : quoteItems![index].systemType.toString(),
                                                         style: CustomTextStyle.labelText),
                                                     SizedBox(height: 0.5.h),
-                                                    Text(
-                                                        searchKey.isNotEmpty
+                                                    Text(searchKey.isNotEmpty
                                                             ? "${searchItemList![index].shipStreet} ${searchItemList![index].shipCode}"
                                                             : "${quoteItems![index].shipStreet} ${quoteItems![index].shipCode}",
                                                         style: CustomTextStyle.labelText),
@@ -564,132 +459,72 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                         children: [
                                                           TextSpan(
                                                               text: searchKey.isNotEmpty
-                                                                  ? searchItemList![index]
-                                                                      .quotesEmail
-                                                                      .toString()
-                                                                  : quoteItems![index]
-                                                                      .quotesEmail
-                                                                      .toString(),
-                                                              style: GoogleFonts.roboto(
-                                                                  textStyle: TextStyle(
-                                                                      fontSize: 12.sp,
-                                                                      color:
-                                                                          AppColors.primaryColor)),
+                                                                  ? searchItemList![index].quotesEmail.toString()
+                                                                  : quoteItems![index].quotesEmail.toString(),
+                                                              style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 12.sp,
+                                                                      color: AppColors.primaryColor)),
                                                               recognizer: TapGestureRecognizer()
                                                                 ..onTap = () {
-                                                                  sendMail(
-                                                                      quoteItems![index]
-                                                                          .quotesEmail
-                                                                          .toString(),
-                                                                      context);
+                                                                  sendMail(quoteItems![index].quotesEmail.toString(), context);
                                                                 }),
                                                           WidgetSpan(
-                                                              child: quoteItems![index]
-                                                                      .quoteMobileNumber!
-                                                                      .isEmpty
+                                                              child: quoteItems![index].quoteMobileNumber!.isEmpty
                                                                   ? Container()
-                                                                  : Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal: 8.sp),
-                                                                      child: Container(
-                                                                          color: AppColors
-                                                                              .hintFontColor,
-                                                                          height: 2.0.h,
-                                                                          width: 0.5.w))),
+                                                                  : Padding(padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                                                      child: Container(color: AppColors.hintFontColor,
+                                                                          height: 2.0.h, width: 0.5.w))),
                                                           TextSpan(
-                                                              text: quoteItems![index]
-                                                                  .quoteMobileNumber
-                                                                  .toString(),
+                                                              text: quoteItems![index].quoteMobileNumber.toString(),
                                                               style: CustomTextStyle.labelText,
                                                               recognizer: TapGestureRecognizer()
-                                                                ..onTap = () => callFromApp(
-                                                                    quoteItems![index]
-                                                                        .quoteMobileNumber
-                                                                        .toString()))
+                                                                ..onTap = () => callFromApp(quoteItems![index].quoteMobileNumber.toString()))
                                                         ],
                                                       ),
                                                     ),
                                                     SizedBox(height: 1.0.h),
                                                     Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        (searchKey.isNotEmpty
-                                                                    ? searchItemList![index]
-                                                                        .quotestage
-                                                                        .toString()
-                                                                    : quoteItems![index]
-                                                                        .quotestage
-                                                                        .toString()) ==
-                                                                "Accepted"
+                                                        (searchKey.isNotEmpty ? searchItemList![index].quotestage.toString()
+                                                                    : quoteItems![index].quotestage.toString()) == "Accepted"
                                                             ? Container(
-                                                                decoration: BoxDecoration(
-                                                                    color:
-                                                                        AppColors.greenColorAccept,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            30.sp)),
-                                                                child: Padding(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal: 6.sp,
-                                                                      vertical: 4.sp),
+                                                                decoration: BoxDecoration(color: AppColors.greenColorAccept,
+                                                                    borderRadius: BorderRadius.circular(30.sp)),
+                                                                child: Padding(padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 4.sp),
                                                                   child: Row(
                                                                     children: [
-                                                                      Text(
-                                                                          quoteItems![index]
-                                                                              .quotestage
-                                                                              .toString(),
+                                                                      Text(quoteItems![index].quotestage.toString(),
                                                                           style: GoogleFonts.roboto(
                                                                               textStyle: TextStyle(
                                                                                   fontSize: 12.sp,
-                                                                                  color: AppColors
-                                                                                      .whiteColor,
-                                                                                  fontWeight:
-                                                                                      FontWeight
-                                                                                          .w600))),
+                                                                                  color: AppColors.whiteColor,
+                                                                                  fontWeight: FontWeight.w600))),
                                                                       SizedBox(width: 4.sp),
-                                                                      SvgPicture.asset(
-                                                                          ImageString.icAccepted,
-                                                                          height: 1.5.h)
+                                                                      SvgPicture.asset(ImageString.icAccepted, height: 1.5.h)
                                                                     ],
                                                                   ),
                                                                 ))
                                                             : Container(
                                                                 decoration: BoxDecoration(
                                                                     color: AppColors.darkGray,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            30.sp)),
+                                                                    borderRadius: BorderRadius.circular(30.sp)),
                                                                 child: Padding(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal: 8.sp,
-                                                                      vertical: 5.sp),
+                                                                  padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 4.sp),
                                                                   child: Row(
                                                                     children: [
-                                                                      Text(
-                                                                          quoteItems![index]
-                                                                              .quotestage
-                                                                              .toString(),
-                                                                          style: GoogleFonts.roboto(
-                                                                              textStyle: TextStyle(
-                                                                                  fontSize: 14.sp,
-                                                                                  color: AppColors
-                                                                                      .whiteColor,
-                                                                                  fontWeight:
-                                                                                      FontWeight
-                                                                                          .w600))),
+                                                                      Text(quoteItems![index].quotestage.toString(),
+                                                                          style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                                                  fontSize: 12.sp,
+                                                                                  color: AppColors.whiteColor,
+                                                                                  fontWeight: FontWeight.w600))),
                                                                       SizedBox(width: 4.sp),
-                                                                      SvgPicture.asset(
-                                                                          ImageString
-                                                                              .icCreateProcessed,
-                                                                          height: 1.5.h)
+                                                                      SvgPicture.asset(ImageString.icCreateProcessed, height: 1.5.h)
                                                                     ],
                                                                   ),
                                                                 )),
                                                         Text(
                                                           formatted,
-                                                          style: GoogleFonts.roboto(
-                                                              textStyle: TextStyle(
+                                                          style: GoogleFonts.roboto(textStyle: TextStyle(
                                                                   fontSize: 10.sp,
                                                                   color: AppColors.hintFontColor)),
                                                         ),
