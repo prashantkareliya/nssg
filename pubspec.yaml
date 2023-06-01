@@ -76,6 +76,7 @@ dependencies:
   flutter_bloc: ^8.1.1
   provider: ^6.0.5
   fluttertoast: ^8.2.1
+  restart_app: ^1.1.2
 
 
 dev_dependencies:

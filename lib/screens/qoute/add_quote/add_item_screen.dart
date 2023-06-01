@@ -731,16 +731,14 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     return BlocConsumer<ProductListBloc, ProductListState>(
                       listener: (context, state) {},
                       builder: (context, productState) {
-                        final bool isItemAdded = productState.productList
-                            .firstWhereOrNull((element) =>
+                        final bool isItemAdded = productState.productList.firstWhereOrNull((element) =>
                         element.productId == filterList![index].id) != null;
                         print("@@@@@@@@@@@@@@@@@ ${filterList![index].imagename!.replaceAll("&ndash;", "–")}");
                         return filterList![index].discontinued == "1" ?
                         Padding(
                           padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                           child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.sp),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.sp),
                                 border: Border.all(color: AppColors.borderColor, width: 1),
                                 color: AppColors.whiteColor),
                             child: Row(
@@ -749,7 +747,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               children: [
                                 SizedBox(width: 2.w),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                   child: filterList![index].imagename == "" ?
                                   SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h, width: 16.w) :
                                   ClipRRect(
@@ -759,9 +757,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                         child: Padding(padding: EdgeInsets.all(4.sp),
                                           child: Image.network("${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
                                           height: 9.h, width: 18.w),
-                                        ),
-                                      ))
-                                ),
+                                        )))),
                                 SizedBox(width: 5.w),
                                 Expanded(
                                   child: Column(

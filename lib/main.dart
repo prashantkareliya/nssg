@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           create: (context) => ProductListBloc(),
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'National Security System ',
+            title: 'National Security System',
             theme: ThemeData(
                 pageTransitionsTheme: const PageTransitionsTheme(builders: {
                   TargetPlatform.android: CupertinoPageTransitionsBuilder(),

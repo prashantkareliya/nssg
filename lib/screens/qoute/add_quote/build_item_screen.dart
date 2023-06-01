@@ -203,7 +203,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             }
             if (state is LoadedAddQuote) {
               print(state.quoteId);
-
+              context.read<ProductListBloc>().add(ClearProductToListEvent());
               showDialog(
                   context: context,
                   barrierDismissible: false,
@@ -1102,7 +1102,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         isPoliceAppliConfirm: "0",
         quoteCorrespondencesDocs: "",
         quoteQuoteType: "Installation",
-        quotesContractId: "",
+        quotesContractId: widget.operationType == "contract" ? widget.contractList["id"].toString().replaceAll("24x", "") : "" ,
         quoteStopEmailDocReminder: "0",
         quotePriorityLevel: "",
         quoteWorksSchedule: "",
@@ -1149,7 +1149,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     String jsonQuoteDetail = jsonEncode(createQuoteRequest);
 
     debugPrint(" jsonQuoteDetail add ----- $jsonQuoteDetail");
-//s.substring(0, s.indexOf('.'));
     if(widget.operationType == "contract"){
       Map<String, String> bodyData = {
         'operation': "create",
@@ -1158,6 +1157,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         'elementType': 'Quotes',
         'appversion': Constants.of().appversion.toString(),
         'quotes_contract_id': widget.contractList["id"].toString().replaceAll("24x", ""),
+        'system_type': widget.systemTypeSelect.toString()
       };
       addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
     } else {
@@ -1269,7 +1269,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteMobileNumber: widget.mobileNumber,
         quoteTelephoneNumber: widget.telephoneNumber,
         isQuotesConfirm: "0",
-        quotesPayment: depositValue == "false" ? "No Deposit" : "Deposit",
+        quotesPayment: depositValue == "false" || depositValue == "" ? "No Deposit" : "Deposit",
         isQuotesPaymentConfirm: "0",
         quotesDepositeAmount: depositAmount,
         quotesDepoReceivedAmount: "0.00",

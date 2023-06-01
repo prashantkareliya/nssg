@@ -41,18 +41,21 @@ class _ContractListScreenState extends State<ContractListScreen> {
         body: FutureBuilder<dynamic>(
             future: getDetail,
             builder: (context, snapshot) {
-              return Column(
-                children: [
-                  buildAppbar(context),
-                  if(snapshot.hasData)
-                  buildSearchBar(context, snapshot.data),
-                  if (snapshot.hasData)
-                    buildJobList(context, snapshot.data)
-                  else if (snapshot.hasError)
-                    Text(HandleAPI.handleAPIError(snapshot.error))
-                  else
-                    SizedBox(height: 70.h, child: loadingView())
-                ],
+              return RefreshIndicator(
+                onRefresh: () => getData(),
+                child: Column(
+                  children: [
+                    buildAppbar(context),
+                    if(snapshot.hasData)
+                    buildSearchBar(context, snapshot.data),
+                    if (snapshot.hasData)
+                      buildJobList(context, snapshot.data)
+                    else if (snapshot.hasError)
+                      Text(HandleAPI.handleAPIError(snapshot.error))
+                    else
+                      SizedBox(height: 70.h, child: loadingView())
+                  ],
+                ),
               );
             }),
       ),
@@ -62,8 +65,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
   //Design appbar field
   AnimatedOpacity buildAppbar(BuildContext context) {
     return AnimatedOpacity(
-      opacity:
-          Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 0,
+      opacity: Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 0,
       duration: const Duration(milliseconds: 500),
       // child: Visibility(
       //   visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow,

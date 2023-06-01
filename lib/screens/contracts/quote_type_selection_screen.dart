@@ -81,7 +81,10 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
                   onTap: (){
-
+                    callNextScreen(context,
+                        AddQuotePage(true, "breakdown", "contract",
+                            contactId: widget.contractList["sc_related_to"],
+                            contractList: widget.contractList));
                   },
                   child: quoteTypeWidget(query: query, text: ButtonString.btnBreakdown,
                       imageString: ImageString.icBreakdown),
@@ -91,7 +94,10 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
                   onTap: (){
-
+                    callNextScreen(context,
+                        AddQuotePage(true, "service", "contract",
+                            contactId: widget.contractList["sc_related_to"],
+                            contractList: widget.contractList));
                   },
                   child: quoteTypeWidget(query: query, text: ButtonString.btnService,
                       imageString: ImageString.icService),
