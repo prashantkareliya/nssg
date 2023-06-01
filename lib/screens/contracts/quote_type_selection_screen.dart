@@ -5,8 +5,10 @@ import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
 import '../../components/custom_text_styles.dart';
+import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
 import '../../utils/app_colors.dart';
+import '../qoute/add_quote/add_quote_screen.dart';
 
 class QuoteTypeSelection extends StatefulWidget {
   var contractList;
@@ -66,8 +68,10 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
                   onTap: (){
-                    /*callNextScreen(context,
-                        AddQuotePage(true, "","", contactId: widget.contractList["sc_related_to"] ,contractDetail: widget.contractList));*/
+                    callNextScreen(context,
+                        AddQuotePage(true, "installation","contract",
+                            contactId: widget.contractList["sc_related_to"],
+                            contractList: widget.contractList));
                   },
                   child: quoteTypeWidget(query: query, text: ButtonString.btnInstallation,
                       imageString: ImageString.icInstallation2),

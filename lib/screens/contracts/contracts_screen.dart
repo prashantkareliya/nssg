@@ -201,7 +201,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
                           ),
                         ),
                         Slidable(
-                          enabled: false,
+                          enabled: true,
                           endActionPane: ActionPane(
                             extentRatio: 0.15,
                             motion: const ScrollMotion(),

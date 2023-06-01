@@ -62,6 +62,7 @@ class LabelString {
   static const String lblEngineerNote = "Engineer Note";
   static const String lblEngineerInstruction = "Engineer Instruction";
   static const String lblSpecialInstruction = "Special Instruction";
+  static const String lblContractNumber = "Contract Number";
   static const String lblQuestionsForProjectManagers = "Questions for Project Managers";
   static const String lblJobInstructions = "Job Instructions";
   static const String lblPriorityLevel = "Priority Level";

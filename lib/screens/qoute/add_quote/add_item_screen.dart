@@ -56,6 +56,7 @@ class AddItemDetail extends StatefulWidget {
   String? contactCompany;
   String? mobileNumber;
   String? telephoneNumber;
+  String? quoteTypeContract;
 
   var termsList;
 
@@ -63,6 +64,7 @@ class AddItemDetail extends StatefulWidget {
   String? operationType;
 
   var siteAddress;
+  var contractList;
 
   AddItemDetail(
       this.eAmount,
@@ -89,8 +91,9 @@ class AddItemDetail extends StatefulWidget {
       this.telephoneNumber,
       this.termsList,
       this.contactEmail,
-      this.siteAddress, this.operationType,
-      {super.key});
+      this.siteAddress,
+      this.operationType,
+      {super.key, this.contractList, this.quoteTypeContract});
 
   @override
   // ignore: no_logic_in_create_state
@@ -658,20 +661,39 @@ class _AddItemDetailState extends State<AddItemDetail> {
                 var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) =>
                 element.itemId == element.itemId);
                 if(productList == null){
-                  context.read<ProductListBloc>().add(
-                      AddProductToListEvent(productsList: ProductsList(
-                        itemId:  element.id,
-                        productId: element.id,
-                        itemName: element.productname,
-                        costPrice: element.costPrice,
-                        sellingPrice: element.unitPrice,
-                        quantity: 1,
-                        discountPrice: "0",
-                        amountPrice: element.costPrice,
-                        profit: profit,
-                        description: element.description,
-                        productImage: ImageString.imgDemo,
-                      )));
+                  if(widget.contractList != null){
+                    if(widget.quoteTypeContract == "installation"){
+                      context.read<ProductListBloc>().add(
+                          AddProductToListEvent(productsList: ProductsList(
+                            itemId:  element.id,
+                            productId: element.id,
+                            itemName: element.productname,
+                            costPrice: element.costPrice,
+                            sellingPrice: element.unitPrice,
+                            quantity: 1,
+                            discountPrice: "0",
+                            amountPrice: element.costPrice,
+                            profit: profit,
+                            description: element.description,
+                            productImage: ImageString.imgDemo,
+                          )));
+                    }
+                  } else {
+                    context.read<ProductListBloc>().add(
+                        AddProductToListEvent(productsList: ProductsList(
+                          itemId:  element.id,
+                          productId: element.id,
+                          itemName: element.productname,
+                          costPrice: element.costPrice,
+                          sellingPrice: element.unitPrice,
+                          quantity: 1,
+                          discountPrice: "0",
+                          amountPrice: element.costPrice,
+                          profit: profit,
+                          description: element.description,
+                          productImage: ImageString.imgDemo,
+                        )));
+                  }
                 }
               }
             }
@@ -794,8 +816,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                     onPressed: () {
                                                       if (isItemAdded) {
                                                         context.read<ProductListBloc>().add(
-                                                            UpdateProductQuantityByIdEvent(
-                                                                productId: filterList![index].id!,
+                                                            UpdateProductQuantityByIdEvent(productId: filterList![index].id!,
                                                                 quantity: filterList![index].quantity! - 1));
                                                       }
                                                       filterList![index].isItemAdded = false;
@@ -813,16 +834,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                     width: query.width * 0.15,
                                                     height: query.height,
                                                     child: Center(
-                                                        child: Text(
-                                                            "${filterList![index].quantity}",
-                                                            style: CustomTextStyle
-                                                                .labelBoldFontText))),
+                                                        child: Text("${filterList![index].quantity}",
+                                                            style: CustomTextStyle.labelBoldFontText))),
                                                 IconButton(
                                                     onPressed: () {
                                                       if (isItemAdded) {
                                                         context.read<ProductListBloc>().add(
-                                                            UpdateProductQuantityByIdEvent(
-                                                                productId:filterList![index].id!,
+                                                            UpdateProductQuantityByIdEvent(productId:filterList![index].id!,
                                                                 quantity: filterList![index].quantity! +1));
                                                       }
                                                       filterList![index].isItemAdded = false;
@@ -1047,6 +1065,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
             telephoneNumber,
             termsList,
             contactEmail,
-            siteAddress, widget.operationType));
+            siteAddress,
+            widget.operationType,
+            quoteTypeContract: widget.quoteTypeContract, contractList : widget.contractList));
   }
 }

@@ -70,6 +70,10 @@ class BuildItemScreen extends StatefulWidget {
   List<dynamic>? itemList = [];
   var dataQuote;
 
+  var contractList;
+
+  var quoteTypeContract;
+
   BuildItemScreen(
       this.eAmount,
       this.systemTypeSelect,
@@ -99,7 +103,8 @@ class BuildItemScreen extends StatefulWidget {
       this.operationType,
       {super.key,
       this.itemList,
-      this.dataQuote});
+      this.dataQuote,
+        this.contractList, this.quoteTypeContract});
 
   @override
   State<BuildItemScreen> createState() => _BuildItemScreenState();
@@ -109,8 +114,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   List templateOptionList = [
     LabelString.lblHideProductPrice,
     LabelString.lblHideProduct,
-    LabelString.lblNone
-  ];
+    LabelString.lblNone];
   List<RadioModel> templateOption = <RadioModel>[]; //step 1
 
   TextEditingController sellingPriceController = TextEditingController();
@@ -1023,8 +1027,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     }
     //for create data in json format
     CreateQuoteRequest createQuoteRequest = CreateQuoteRequest(
-        subject:
-            "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}",
+        subject: widget.contactSelect!.contains("-") ?
+            "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}" :
+        "${widget.contactSelect!}-${widget.systemTypeSelect}",
         quotestage: "Processed",
         contactId: widget.contactId,
         subtotal: subTotal.toString(),
@@ -1144,15 +1149,27 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     String jsonQuoteDetail = jsonEncode(createQuoteRequest);
 
     debugPrint(" jsonQuoteDetail add ----- $jsonQuoteDetail");
-
-    Map<String, String> bodyData = {
-      'operation': "create",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
-      'element': jsonQuoteDetail,
-      'elementType': 'Quotes',
-      'appversion': Constants.of().appversion.toString(),
-    };
-    addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+//s.substring(0, s.indexOf('.'));
+    if(widget.operationType == "contract"){
+      Map<String, String> bodyData = {
+        'operation': "create",
+        'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+        'element': jsonQuoteDetail,
+        'elementType': 'Quotes',
+        'appversion': Constants.of().appversion.toString(),
+        'quotes_contract_id': widget.contractList["id"].toString().replaceAll("24x", ""),
+      };
+      addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+    } else {
+      Map<String, String> bodyData = {
+        'operation': "create",
+        'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+        'element': jsonQuoteDetail,
+        'elementType': 'Quotes',
+        'appversion': Constants.of().appversion.toString(),
+      };
+      addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+    }
   }
 
   Future<void> updateCreateQuoteAPI(

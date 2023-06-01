@@ -54,6 +54,7 @@ class _AddJobPageState extends State<AddJobPage> {
   TextEditingController engineerInstructionController = TextEditingController();
   TextEditingController specialInstructionController = TextEditingController();
   TextEditingController specialInstructionController1 = TextEditingController();
+  TextEditingController contractNumberController = TextEditingController();
 
   bool isLoading = false;
 
@@ -106,6 +107,7 @@ class _AddJobPageState extends State<AddJobPage> {
         .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
     setState(() {
       contractNumberPass = response["result"].toString();
+      contractNumberController.text = contractNumberPass;
     });
     debugPrint("getContractNumberAPI --- $response");
     return response;
@@ -211,7 +213,44 @@ class _AddJobPageState extends State<AddJobPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 1.h),
+            SizedBox(height: 2.h),
+            Text(LabelString.lblContractNumber,
+                style: GoogleFonts.roboto(
+                    fontSize: 13.sp, fontWeight: FontWeight.w700)),
+            SizedBox(height: 2.w),
+            TextFormField(
+              controller: contractNumberController,
+              decoration: InputDecoration(border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+                borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
+              ),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: EdgeInsets.only(left: 12.sp),
+                  hintText: LabelString.lblContractNumber,
+                  hintStyle: CustomTextStyle.labelFontHintText,
+                  counterText: "",
+                  labelStyle: CustomTextStyle.labelFontHintText),
+            ),
+          /*  CustomTextField(
+              keyboardType: TextInputType.text,
+              readOnly: false,
+              controller: contractNumberController,
+              obscureText: false,
+              hint: LabelString.lblContractNumber,
+              titleText: "",
+              textInputAction: TextInputAction.next,
+              maxLines: 1,
+              minLines: 1,
+              isRequired: true,
+            ),*/
+            SizedBox(height: 2.5.h),
             Text(LabelString.lblPriorityLevel,
                 style: GoogleFonts.roboto(
                     fontSize: 13.sp, fontWeight: FontWeight.w700)),
@@ -849,7 +888,7 @@ class _AddJobPageState extends State<AddJobPage> {
       'element': jsonEncode(createJobRequest),
       'elementType': 'SalesOrder',
       'appversion': Constants.of().appversion.toString(),
-      'contract_number': contractNumberPass.toString(),
+      'contract_number': contractNumberController.text.toString(),
       'job_type': dataForCreateJob["quote_quote_type"].toString(),
       'contact_id_display': dataForCreateJob["contact_name"].toString(),
       'jobs_system_type': dataForCreateJob["system_type"].toString(),
