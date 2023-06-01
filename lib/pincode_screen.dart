@@ -35,8 +35,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
   final StreamController<bool> _verificationNotifier = StreamController<bool>.broadcast();
 
   bool isAuthenticated = false;
-  LoginBloc loginBloc =
-      LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
+  LoginBloc loginBloc = LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
   bool isLoading = false;
 
   @override
@@ -79,16 +78,15 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                         borderColor: AppColors.blackColor,
                         fillColor: AppColors.blackColor,
                         circleSize: 10.sp),
-
                     keyboardUIConfig: KeyboardUIConfig(
-                      primaryColor: AppColors.primaryColorLawOpacity,
-                      digitBorderWidth: 2,
-                      digitTextStyle: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                              fontSize: 20.sp,
-                              color: AppColors.fontColor,
-                              fontWeight: FontWeight.w500)),
-                      digitFillColor: AppColors.primaryColorLawOpacity),
+                        primaryColor: AppColors.primaryColorLawOpacity,
+                        digitBorderWidth: 2,
+                        digitTextStyle: GoogleFonts.roboto(
+                            textStyle: TextStyle(
+                                fontSize: 20.sp,
+                                color: AppColors.fontColor,
+                                fontWeight: FontWeight.w500)),
+                        digitFillColor: AppColors.primaryColorLawOpacity),
                     title: Text(
                       Message.enterYourPasscodeToUnlock,
                       textAlign: TextAlign.center,
@@ -97,7 +95,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                     passwordEnteredCallback: _onPasscodeEntered,
                     deleteButton: Icon(Icons.backspace, color: AppColors.blackColor),
                     shouldTriggerVerification: _verificationNotifier.stream,
-                    backgroundColor: AppColors.backWhiteColor,
+                    backgroundColor: AppColors.whiteColor,
                     cancelCallback: _onPasscodeCancelled,
                     digits: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
                     passwordDigits: 4,
@@ -149,29 +147,28 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
 
     String accessKey = "";
     switch (preferences.getString(PreferenceString.userName).toString()) {
-
       case "iih.admin":
-        accessKey =  "CBfPHDoMNjtE99vx";
+        accessKey = "CBfPHDoMNjtE99vx";
         break;
 
       case "dn@nssg.co.uk":
-        accessKey ="S8QzomH4Q4QYxaFb";
+        accessKey = "S8QzomH4Q4QYxaFb";
         break;
 
       case "vn@nssg.co.uk":
-        accessKey ="EsqKnIihnpQ8YKl2";
+        accessKey = "EsqKnIihnpQ8YKl2";
         break;
 
-      case "ak@nssg.co.uk" :
-        accessKey= "l6ArnYzg21P92JrT";
+      case "ak@nssg.co.uk":
+        accessKey = "l6ArnYzg21P92JrT";
         break;
 
       case "rj@nssg.co.uk":
-        accessKey= "uLhjPz1Rr3Ef3xoc";
+        accessKey = "uLhjPz1Rr3Ef3xoc";
         break;
 
       case "sanjay.iih":
-        accessKey ="NiWZP7MDRsh0qh";
+        accessKey = "NiWZP7MDRsh0qh";
         break;
     }
 
