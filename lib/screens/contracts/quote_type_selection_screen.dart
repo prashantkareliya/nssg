@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nssg/screens/contracts/get_contract/contract_model_dir/get_contract_response_model.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../components/custom_appbar.dart';
@@ -13,13 +14,17 @@ import '../qoute/add_quote/add_quote_screen.dart';
 class QuoteTypeSelection extends StatefulWidget {
   var contractList;
 
-  QuoteTypeSelection({Key? key, required this.contractList}) : super(key: key);
+
+  QuoteTypeSelection(this.contractList, {Key? key}) : super(key: key);
 
   @override
   State<QuoteTypeSelection> createState() => _QuoteTypeSelectionState();
 }
 
 class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
+
+  _QuoteTypeSelectionState();
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +51,9 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
             Column(
               children: [
                 SizedBox(height: 1.5.h),
-                Text(widget.contractList["subject"].toString().substring(0, widget.contractList["subject"].toString().indexOf("-")),
+                Text(widget.contractList.subject.toString().contains("-") ?
+                    widget.contractList.subject.toString().substring(0, widget.contractList.subject.toString().indexOf("-")):
+                widget.contractList.subject.toString(),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.roboto(
                         textStyle: TextStyle(
@@ -54,7 +61,7 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.bold))),
                 SizedBox(height: 1.5.h),
-                Text("Contract# ${widget.contractList["ser_con_contract_number"]}", style: GoogleFonts.roboto(
+                Text("Contract# ${widget.contractList.serConContractNumber}", style: GoogleFonts.roboto(
                     textStyle: TextStyle(
                         fontSize: 14.sp,
                         color: AppColors.primaryColor,
@@ -68,9 +75,10 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
                   onTap: (){
+                    Navigator.pop(context);
                     callNextScreen(context,
-                        AddQuotePage(true, "installation","contract",
-                            contactId: widget.contractList["sc_related_to"],
+                        AddQuotePage(true, "installation", "contract",
+                            contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
                   child: quoteTypeWidget(query: query, text: ButtonString.btnInstallation,
@@ -81,9 +89,10 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
                   onTap: (){
+                    Navigator.pop(context);
                     callNextScreen(context,
                         AddQuotePage(true, "breakdown", "contract",
-                            contactId: widget.contractList["sc_related_to"],
+                            contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
                   child: quoteTypeWidget(query: query, text: ButtonString.btnBreakdown,
@@ -94,9 +103,10 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
                   onTap: (){
+                    Navigator.pop(context);
                     callNextScreen(context,
                         AddQuotePage(true, "service", "contract",
-                            contactId: widget.contractList["sc_related_to"],
+                            contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
                   child: quoteTypeWidget(query: query, text: ButtonString.btnService,

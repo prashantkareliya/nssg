@@ -10,8 +10,7 @@ class SvgExtension extends StatelessWidget {
   String? itemName;
   Color? iconColor;
 
-  SvgExtension({Key? key, required this.itemName, required this.iconColor})
-      : super(key: key);
+  SvgExtension({Key? key, required this.itemName, required this.iconColor}) : super(key: key);
 
   String itemNameText(String str) {
     str = str.replaceAll(" ", "");
@@ -27,7 +26,6 @@ class SvgExtension extends StatelessWidget {
     return SvgPicture.network(
         "${ImageBaseUrl.imageBaseUrl}${itemName?.toLowerCase()}.svg", height: 4.5.h,
         color: iconColor,
-        placeholderBuilder: (BuildContext context) =>
-            SvgPicture.asset(ImageString.imgPlaceHolder, height: 5.5.h));
+        placeholderBuilder: (BuildContext context) => SvgPicture.asset(ImageString.imgPlaceHolder, height: 5.5.h));
   }
 }

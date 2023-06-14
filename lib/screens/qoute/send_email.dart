@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:nssg/utils/extention_text.dart';
-import 'package:nssg/utils/helpers.dart';
-import 'package:nssg/utils/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
@@ -10,11 +7,9 @@ import '../../components/custom_button.dart';
 import '../../components/custom_text_styles.dart';
 import '../../components/custom_textfield.dart';
 import '../../constants/constants.dart';
-import '../../constants/navigation.dart';
 import '../../constants/strings.dart';
 import '../../httpl_actions/app_http.dart';
 import '../../utils/app_colors.dart';
-import '../dashboard/root_screen.dart';
 
 class SendEmail extends StatefulWidget {
   List<String> contactList;

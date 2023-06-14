@@ -35,29 +35,10 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? IconButton(
               highlightColor: AppColors.transparent,
               splashColor: AppColors.transparent,
-              onPressed: () {
-                /*showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (ctx) => ValidationDialog(
-                    Message.quoteExit,
-
-                    //Yes button
-                    () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    //No   button
-                    () => Navigator.pop(context), //No button
-                  ),
-                );*/
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               icon: Icon(Icons.arrow_back_ios_outlined,
                   color: AppColors.blackColor, size: 14.sp),
-            )
-          : Container(),
-    );
+            ) : Container());
   }
 
   @override

@@ -25,9 +25,9 @@ class AppColors {
 
   static int _hash(String value) {
     int hash = 0;
-    value.runes.forEach((code) {
+    for (var code in value.runes) {
       hash = code + ((hash << 2) - hash);
-    });
+    }
     return hash;
   }
 

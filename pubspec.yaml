@@ -60,7 +60,6 @@ dependencies:
   flutter_shake_animated: ^0.0.5
   flutter_chips_input: ^2.0.0
 
-
   #Storage
   shared_preferences:
 

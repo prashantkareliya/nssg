@@ -10,4 +10,10 @@ class ProductDatasource extends HttpActions {
     debugPrint("getProductListApi $response");
     return response;
   }
+
+  Future<dynamic> getSubProductList(Map<String, dynamic> parameters) async {
+    final response = await getMethod(ApiEndPoint.mainApiEnd, queryParams: parameters);
+    debugPrint("getSubProductListApi $response");
+    return response;
+  }
 }

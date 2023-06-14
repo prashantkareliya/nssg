@@ -653,18 +653,14 @@ class _AddContactPageState extends State<AddContactPage> {
           decoration: InputDecoration(
               suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
               border: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               focusedBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               enabledBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               filled: true,
               fillColor: Colors.white,
-              contentPadding:
-                  EdgeInsets.only(left: 12.sp, top: 12.sp, bottom: 12),
+              contentPadding: EdgeInsets.only(left: 12.sp, top: 12.sp, bottom: 12),
               hintText: LabelString.lblTypeToSearch,
               hintStyle: CustomTextStyle.labelFontHintText,
               counterText: "",
@@ -677,6 +673,7 @@ class _AddContactPageState extends State<AddContactPage> {
             FocusScope.of(context).unfocus();
           },
           onSubmitted: (String value) {},
+
         );
       },
       optionsBuilder: (TextEditingValue textEditingValue) async {
@@ -684,8 +681,7 @@ class _AddContactPageState extends State<AddContactPage> {
           return const Iterable<String>.empty();
         } else {
           //API call for get ID
-          var url =
-                "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
+          var url = "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069&all=true";
 
           final response = await http.get(Uri.parse(url),
               headers: <String, String>{
@@ -724,14 +720,10 @@ class _AddContactPageState extends State<AddContactPage> {
                 invoiceCountryController.text = "${responseJson["county"]}";
                 invoicePostalController.text = "${responseJson["postcode"]}";
               } else {
-                installationAddressController.text =
-                    "${responseJson["line_1"]}  ${responseJson["line_2"]}";
-                installationCityController.text =
-                    "${responseJson["town_or_city"]}";
-                installationCountryController.text =
-                    "${responseJson["county"]}";
-                installationPostalController.text =
-                    "${responseJson["postcode"]}";
+                installationAddressController.text = "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                installationCityController.text = "${responseJson["town_or_city"]}";
+                installationCountryController.text = "${responseJson["county"]}";
+                installationPostalController.text = "${responseJson["postcode"]}";
               }
             } else {
               Helpers.showSnackBar(context, responseJson["Message"].toString());

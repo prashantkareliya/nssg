@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:nssg/screens/qoute/get_quote/quote_model_dir/get_quote_response_model.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../components/custom_button.dart';

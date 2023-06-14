@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:collection/collection.dart';
 
+import '../../../components/custom_appbar.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../constants/constants.dart';
 import '../../../constants/strings.dart';
@@ -58,6 +59,20 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
     };
     productBloc.add(GetProductListEvent(queryParameters));
   }
+
+  Future<void> getSubProduct(String productID) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': "retrieve_related",
+      'id': productID,
+      'relatedType': "Products",
+      'relatedLabel': "Product Bundles",
+      'sessionName':preferences.getString(PreferenceString.sessionName).toString(),
+    };
+    productBloc.add(GetSubProductListEvent(queryParameters));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -149,6 +164,10 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
         if (state is ProductLoadedFail) {
           Helpers.showSnackBar(context, state.error.toString());
         }
+
+        if(state is SubProductLoadedState){
+          context.read<ProductListBloc>().add(AddSubProductListEvent(subProductList: state.subProductList));
+        }
       },
       child: BlocBuilder<GetProductBloc, GetProductState>(
         bloc: productBloc,
@@ -178,8 +197,6 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                   : productItems!.length,
               itemBuilder: (context, index) {
                 discountPriceController.add(TextEditingController());
-
-
                 double amount = searchKey.isNotEmpty ?
                 (double.parse(searchItemList![index].unitPrice.toString()) *
                     double.parse(searchItemList![index].quantity.toString()) -
@@ -220,6 +237,8 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                   searchKey.isNotEmpty ? itemNumber.remove(searchItemList![index].id) : itemNumber.remove(productItems![index].id);
                                 } :
                                     () {
+
+                                      getSubProduct(searchKey.isNotEmpty ? searchItemList![index].id.toString() : productItems![index].id.toString());
                                   List<String> documentType = [];
 
                                   if(searchKey.isNotEmpty){
@@ -283,7 +302,14 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                 leading: Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5.sp),
                                     child:(searchKey.isNotEmpty ? searchItemList![index].imagename == "" : productItems![index].imagename == "") ?
-                                    SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h, width: 20.w,) :
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: Container(
+                                            color: AppColors.backWhiteColor,
+                                            child: Padding(
+                                              padding:  EdgeInsets.all(4.sp),
+                                              child: SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h, width: 20.w,),
+                                            ))) :
                                     ClipRRect(
                                         borderRadius: BorderRadius.circular(8.0),
                                         child: Container(
@@ -336,6 +362,7 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                 searchKey.isNotEmpty ? itemNumber.remove(searchItemList![index].id) : itemNumber.remove(productItems![index].id);
                               } :
                                   () {
+                                    getSubProduct(searchKey.isNotEmpty ? searchItemList![index].id.toString() : productItems![index].id.toString());
                                 List<String> documentType = [];
 
                                 if(searchKey.isNotEmpty){

@@ -38,7 +38,6 @@ class _SelectLocationState extends State<SelectLocation> {
         textControllers.add(TextEditingController());
         titleControllers.add(widget.productTitle);
       }
-
     }
   }
 
@@ -61,14 +60,11 @@ class _SelectLocationState extends State<SelectLocation> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget> [
-              Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                      highlightColor: AppColors.transparent,
+              Align(alignment: Alignment.topRight,
+                  child: IconButton(highlightColor: AppColors.transparent,
                       splashColor: AppColors.transparent,
                       onPressed: () => Navigator.pop(context, "cancel"),
-                      icon: Icon(Icons.close_rounded,
-                          color: AppColors.blackColor))),
+                      icon: Icon(Icons.close_rounded, color: AppColors.blackColor))),
               Align(alignment: Alignment.topLeft,
                   child: Text(widget.productName, style: CustomTextStyle.labelBoldFontText)),
 

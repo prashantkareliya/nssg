@@ -21,7 +21,6 @@ class RadioItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 4.sp, bottom: 4.sp, right: 6.sp),
-
       decoration: BoxDecoration(
           color: item.isSelected ? AppColors.primaryColor : AppColors.transparent,
           border: Border.all(width: 1.0, color: AppColors.primaryColor),
@@ -31,12 +30,10 @@ class RadioItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.sp),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 8.sp),
             child: Text(item.buttonText,
                 style: item.isSelected
-                    ? GoogleFonts.roboto(
-                    textStyle: TextStyle(fontSize: 12.sp, color: AppColors.whiteColor))
+                    ? GoogleFonts.roboto(textStyle: TextStyle(fontSize: 12.sp, color: AppColors.whiteColor))
                     : CustomTextStyle.labelFontText),
           ),
         ],

@@ -9,8 +9,7 @@ class Constants {
     required this.apiKeyProduct,
     required this.apiKeyContract,
     required this.apiKyeForAddress,
-    this.appversion,
-  });
+    this.appversion});
 
   factory Constants.of() {
     if (_instance != null) return _instance!;
@@ -20,23 +19,18 @@ class Constants {
 
   factory Constants._prd() {
     return const Constants(
-      //endpoint: 'http://122.170.107.160/nssg/',
-         endpoint: 'https://nssgapp.co.uk/',
+     endpoint: 'http://122.170.107.160/nssg/',
+        //  endpoint: 'https://nssgapp.co.uk/',
         //Base URl
-        apiKeyContact:
-            'VmxSQ1YxUldTbFpVYkZaS1UwVTFiMWxyYUZkTlJteFpWVzVDYVUxcVZYZGFWbWhEWWtWNFNGZHVRbXBpYXpSM1dXMHhSMlJHY0ZSbFIzQnBUV3BWZDFkV1pFOU5SbWQ1VGxoYVRWTkZTblpaYWtreFlrVjRTR1ZIYUdwTk1Vb3hWMVpqZUdKRmVFaE5XRnBhWWxkNGVsZHNUalJpUjBwWVVtNUNhVkV6YUhGWmFra3hUVVpzV0ZScVFsbE5helV5V1d4b1EyRkhTblZoTTA1cFZqQmFkMWxyWkhOa1ZtOTZWR3BDYW1KV1duTmFSVTQwWkVac1dHSklUbWhXZWxaMVYxUktjMDFIVmxSbFNGSmFWako0ZWxsV1l6RmliR3Q1VDFSR2FXSnNTalZhVms0MFpFWnNXR0pJVG1oV2VsWjFXbGN4YzJRd2VFaFBWRUpvVWpGYU5WbDZUbE5sVm5CWVZtcENUVko2YTNkWlZXUlhaVlpyZVdKRVFteFZNMmd5V2tWa2IySkhUblJVYmxwclZucFZkMWt5TlhKak1rbDZWVzA1WVZkRmJ6SlpWbWhDV2pGS2MxTnNRbFZWTUVwRldXcEpNVTFHYkZoVWFrSnFaVzVOT1E9PQ==',
+        apiKeyContact: 'VmxSQ1YxUldTbFpVYkZaS1UwVTFiMWxyYUZkTlJteFpWVzVDYVUxcVZYZGFWbWhEWWtWNFNGZHVRbXBpYXpSM1dXMHhSMlJHY0ZSbFIzQnBUV3BWZDFkV1pFOU5SbWQ1VGxoYVRWTkZTblpaYWtreFlrVjRTR1ZIYUdwTk1Vb3hWMVpqZUdKRmVFaE5XRnBhWWxkNGVsZHNUalJpUjBwWVVtNUNhVkV6YUhGWmFra3hUVVpzV0ZScVFsbE5helV5V1d4b1EyRkhTblZoTTA1cFZqQmFkMWxyWkhOa1ZtOTZWR3BDYW1KV1duTmFSVTQwWkVac1dHSklUbWhXZWxaMVYxUktjMDFIVmxSbFNGSmFWako0ZWxsV1l6RmliR3Q1VDFSR2FXSnNTalZhVms0MFpFWnNXR0pJVG1oV2VsWjFXbGN4YzJRd2VFaFBWRUpvVWpGYU5WbDZUbE5sVm5CWVZtcENUVko2YTNkWlZXUlhaVlpyZVdKRVFteFZNMmd5V2tWa2IySkhUblJVYmxwclZucFZkMWt5TlhKak1rbDZWVzA1WVZkRmJ6SlpWbWhDV2pGS2MxTnNRbFZWTUVwRldXcEpNVTFHYkZoVWFrSnFaVzVOT1E9PQ==',
         //for use in future
-        apiKeyQuote:
-            'VmxSQ1YxUldTbFpVYkZaS1UwVlplRmxxVGxOaVJtZDVUbGhhVFZORk5IaFhWekYzWWtacmVsVllUbXBYUmxveVdrVmtWMlZzWjNsV2JsSmFWako0ZWxSRmFFZE5WMGw2VlcxNFdVMXFSakpYVnpGell6RndWMDlZVm10V2VrWndWMnhvU21NeVRsbFdibHByVWpGYU5scEZaRWRpYkhCVVpVZHdhVTFxVlhkWFZtUlBUVVpuZVdKSGRFMVRSVFF4V1hwT1UySkhTbGRQVkVKc1YwVktjMVJGYUVkTlYwbDZWVzE0YWsxVWJIRlpha2w0WkRGc1dFNVVWazFUUlRWMldWWm9RMXB0VFhwVmJteGhWakZaZDFSRmFFOWlNa1paVVcxYVdrMXRkM2RhVms0MFpXMUdTR0pJWkZsTmF6VXlXa1pqTVUxSFRuVmhNMDVxVFcxb2Qxa3dXVFZoYlVsNVZXMTRUVkl3TlRWWGJHUkhUVVp3V0ZWcVFtaFdla1p6VkVWa1IyVnRUWGxpUnpWcFlsWmFjbGRFVGxkbGJIQlpVMjFhYUZZeFJtNVZiWGhMVlVaU1ZGRnNTbXRXZW10M1YyeG9UazUzUFQwPQ==',
+        apiKeyQuote: 'VmxSQ1YxUldTbFpVYkZaS1UwVlplRmxxVGxOaVJtZDVUbGhhVFZORk5IaFhWekYzWWtacmVsVllUbXBYUmxveVdrVmtWMlZzWjNsV2JsSmFWako0ZWxSRmFFZE5WMGw2VlcxNFdVMXFSakpYVnpGell6RndWMDlZVm10V2VrWndWMnhvU21NeVRsbFdibHByVWpGYU5scEZaRWRpYkhCVVpVZHdhVTFxVlhkWFZtUlBUVVpuZVdKSGRFMVRSVFF4V1hwT1UySkhTbGRQVkVKc1YwVktjMVJGYUVkTlYwbDZWVzE0YWsxVWJIRlpha2w0WkRGc1dFNVVWazFUUlRWMldWWm9RMXB0VFhwVmJteGhWakZaZDFSRmFFOWlNa1paVVcxYVdrMXRkM2RhVms0MFpXMUdTR0pJWkZsTmF6VXlXa1pqTVUxSFRuVmhNMDVxVFcxb2Qxa3dXVFZoYlVsNVZXMTRUVkl3TlRWWGJHUkhUVVp3V0ZWcVFtaFdla1p6VkVWa1IyVnRUWGxpUnpWcFlsWmFjbGRFVGxkbGJIQlpVMjFhYUZZeFJtNVZiWGhMVlVaU1ZGRnNTbXRXZW10M1YyeG9UazUzUFQwPQ==',
 //         'VmxSQ1YxUldTbFpVYkZaS1UwVlplRmxxVGxOaVJtZDVUbGhhVFZORk5IaFhWekYzWWtacmVsVllUbXBYUmxveVdrVmtWMlZzWjNsV2JsSmFWako0ZWxSRmFFZE5WMGw2VlcxNFdVMXFSakpYVnpGell6RndWMDlZVm10V2VrWndWMnhvU21NeVRsbFdibHByVWpGYU5scEZaRWRpYkhCVVpVZHdhVTFxVlhkWFZtUlBUVVpuZVdKSGRFMVRSVFF4V1hwT1UySkhTbGRQVkVKc1YwVktjMVJGYUVkTlYwbDZWVzE0YWsxVWJIRlpha2w0WkRGc1dFNVVWazFUUlRWMldWWm9RMXB0VFhwVmJteGhWakZaZDFSRmFFOWlNa1paVVcxYVdrMXRkM2RhVms0MFpXMUdTR0pJWkZsTmF6VXlXa1pqTVUxSFRuVmhNMDVxVFcxb2Qxa3dXVFZoYlVsNVZXMTRUVkl3TlRWWGJHUkhUVVp3V0ZWcVFtaFdla1p6VkVWa1IyVnRUWGxpUnpWcFlsWmFjbGRFVGxkbGJIQlpVMjFhYUZZeFJtNVZiWGhMVlVaU1ZGRnNTbXRXZW10M1YyeG9UazUzUFQwPQ==',
 
-        apiKeyProduct:
-            'VmxSQ1YxUldTbFpVYkZaS1VUSTVibFZ0ZUV0VlJsSlVVV3hHYW1KVWJISmFSbVJQVFVkT05tTjZNRDA9',
-        apiKeyContract:
-            'VmxSQ1YxUldTbFpVYkZaS1VUSTVibFZ0ZUV0VlJsSlVVV3hTWVZkRmIzbFpWbVJQWWtaRmVVOVlWbXRUUlhCdlYxUk9VMlZyT1ROUVZEQTk=',
+        apiKeyProduct: 'VmxSQ1YxUldTbFpVYkZaS1VUSTVibFZ0ZUV0VlJsSlVVV3hHYW1KVWJISmFSbVJQVFVkT05tTjZNRDA9',
+        apiKeyContract: 'VmxSQ1YxUldTbFpVYkZaS1VUSTVibFZ0ZUV0VlJsSlVVV3hTWVZkRmIzbFpWbVJQWWtaRmVVOVlWbXRUUlhCdlYxUk9VMlZyT1ROUVZEQTk=',
         //for use in future
         appversion: "2.0", //Application version
-
         apiKyeForAddress: "");
   }
 
@@ -67,8 +61,7 @@ class ApiEndPoint {
 
 //class for image/icon base url
 class ImageBaseUrl {
-  static const String imageBaseUrl =
-      "https://nssgdata.ams3.digitaloceanspaces.com/NSSG-App-icon/";
-//  static const String productImageBaseUrl = 'http://122.170.107.160/nssg/';
- static const String productImageBaseUrl = 'https://nssgapp.co.uk/';
+  static const String imageBaseUrl = "https://nssgdata.ams3.digitaloceanspaces.com/NSSG-App-icon/";
+  static const String productImageBaseUrl = 'http://122.170.107.160/nssg/';
+// static const String productImageBaseUrl = 'https://nssgapp.co.uk/';
 }

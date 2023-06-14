@@ -165,6 +165,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       termsSelect = widget.dataQuote["quotes_terms"];
       descripation = widget.dataQuote["description"];
     }
+
   }
 
   void callToUpdateEditItemList() {
@@ -203,7 +204,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             }
             if (state is LoadedAddQuote) {
               print(state.quoteId);
-              context.read<ProductListBloc>().add(ClearProductToListEvent());
+
               showDialog(
                   context: context,
                   barrierDismissible: false,
@@ -219,10 +220,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             }
 
             if (state is UpdateAddQuote) {
+              context.read<ProductListBloc>().add(ClearProductToListEvent());
               Helpers.showSnackBar(context, Message.quoteUpdateMessage);
               Navigator.pop(context);
               Navigator.pop(context);
-              Navigator.pop(context);
+             // Navigator.pop(context);
             }
           },
           child: BlocBuilder<AddQuoteBloc, AddQuoteState>(
@@ -257,10 +259,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     style: CustomTextStyle.labelText)),
                             SizedBox(height: 1.h),
                             //Template option design
-                            Padding(
-                              padding: EdgeInsets.only(left: 8.sp),
-                              child: Wrap(
-                                spacing: 2,
+                            Padding(padding: EdgeInsets.only(left: 8.sp),
+                              child: Wrap(spacing: 2,
                                 direction: Axis.horizontal,
                                 children: List.generate(
                                   growable: false,
@@ -278,9 +278,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                           templateOptionList[index]));
                                     }
                                     Provider.of<WidgetChange>(context).isSelectTemplateOption;
-
-                                    return SizedBox(
-                                      height: 6.h,
+                                    return SizedBox(height: 6.h,
                                       child: InkWell(
                                         splashColor: AppColors.transparent,
                                         highlightColor: AppColors.transparent,
@@ -310,13 +308,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               padding: const EdgeInsets.only(left: 12),
                               child: Row(
                                 children: [
-                                  SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: Checkbox(
-                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(4.0)),
+                                  SizedBox(height: 20, width: 20,
+                                    child: Checkbox(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                                         activeColor: AppColors.primaryColor,
                                         onChanged: (value) {
                                           setState(() {
@@ -328,10 +322,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     padding: EdgeInsets.only(left: 10.sp),
                                     child: Text(LabelString.lblQuoteEmailReminder,
                                         style: CustomTextStyle.labelFontText),
-                                  )
-                                ],
-                              ),
-                            ),
+                                  )])),
                             SizedBox(height: 10.sp),
                             quoteEstimationWidget(query, state.productList),
                             SizedBox(height: 10.sp),
@@ -341,13 +332,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               children: state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
                               onReorder: (oldIndex, newIndex) {
                                 context.read<ProductListBloc>().add(ChangeProductOrderEvent(oldIndex, newIndex));
+
                               },
                             ),
-                            // ...state.productList
-                            //     .map((e) =>
-                            //         buildDetailItemTile(e, context, state))
-                            //     .toList(),
-                            //item list
                             SizedBox(height: query.height * 0.08)
                           ],
                         );
@@ -371,18 +358,14 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton(
-              onPressed: () {
-                modelBottomSheetMenu(query);
-              },
+              onPressed: () => modelBottomSheetMenu(query),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  //TODO: Same operation on submit button
                   Text(LabelString.lblShowAmount, style: CustomTextStyle.labelBoldFontText),
                   SizedBox(width: 3.w),
-                  Image.asset(ImageString.icShowAmount, height: 2.h)
-                ],
+                  Image.asset(ImageString.icShowAmount, height: 2.h)],
               ),
             ),
           ],
@@ -391,22 +374,17 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
       ///Open add item screen
       ///Make new class and using pageView for add item detail
-      floatingActionButton: SizedBox(
-        height: 8.h,
+      floatingActionButton: SizedBox(height: 8.h,
         child: FittedBox(
           child: FloatingActionButton.small(
-              onPressed: () { callNextScreen(context, const SearchAndAddProduct()); },
-              child: Lottie.asset('assets/lottie/adding.json')),
-        ),
-      ),
-    );
+              onPressed: () => callNextScreen(context, const SearchAndAddProduct()),
+              child: Lottie.asset('assets/lottie/adding.json')))));
   }
 
   Padding quoteEstimationWidget(Size query, List<ProductsList> productList) {
     return Padding(
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp, top: 5, bottom: 5),
-      child: Container(
-          width: query.width,
+      child: Container(width: query.width,
           height: query.height * 0.08,
           decoration: BoxDecoration(
               border: Border.all(color: AppColors.primaryColor, width: 1),
@@ -421,8 +399,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   color: AppColors.primaryColorLawOpacity,
                   child: IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.info_outline,
-                          color: AppColors.primaryColor))),
+                      icon: Icon(Icons.info_outline, color: AppColors.primaryColor))),
               SizedBox(width: 3.w),
               Expanded(
                 child: RichText(
@@ -536,8 +513,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           height: 2.5.h),
                       SizedBox(height: 0.8.h),
                       Text(LabelString.lblDiscountFormal,
-                          style: GoogleFonts.roboto(
-                              textStyle: TextStyle(
+                          style: GoogleFonts.roboto(textStyle: TextStyle(
                                   fontSize: 10.sp,
                                   color: AppColors.primaryColor)))
                     ],
@@ -659,9 +635,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                                 ? SizedBox(
                                                     height: 10.h,
                                                     width: 23.w,
-                                                    child: SvgPicture.asset(
-                                                        ImageString
-                                                            .imgPlaceHolder))
+                                                    child: SvgPicture.asset(ImageString.imgPlaceHolder))
                                                 : Image.network(
                                                     "${ImageBaseUrl.productImageBaseUrl}${products.productImage!.replaceAll("&ndash;", "–")}",
                                                     height: 8.h),
@@ -914,18 +888,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               children: [
                                 ToggleSwitch((value) {
                                   setState(() {});
-                                  Provider.of<WidgetChange>(context,
-                                          listen: false)
-                                      .isTermsSelect(e['value']);
+                                  Provider.of<WidgetChange>(context,listen: false).isTermsSelect(e['value']);
                                   termsSelect = e['value'].toString();
                                 },
                                     //30 Day Account(for Agreed Clients only)
                                     valueBool: widget.dataQuote != null
-                                        ? termsSelect == e['value']
-                                        : e['value'] ==
-                                            Provider.of<WidgetChange>(context,
-                                                    listen: false)
-                                                .isTermsBS),
+                                        ? termsSelect == e['value'] : e['value'] == Provider.of<WidgetChange>(context, listen: false).isTermsBS),
                                 SizedBox(width: 5.w),
                                 Expanded(
                                     child: Text(e["label"].toString(),
@@ -1039,8 +1007,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         hdnDiscountPercent: "0.00",
         hdnDiscountAmount: disc.toString(),
         hdnSHAmount: "0.00",
-        assignedUserId:
-            preferences.getString(PreferenceString.userId).toString(),
+        assignedUserId: preferences.getString(PreferenceString.userId).toString(),
         currencyId: "21x1",
         conversionRate: "0.00",
         //widget.siteAddress.toString() == "{}"
@@ -1065,8 +1032,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 : Message.termsCondition2,
         preTaxTotal: vatTotal.toString(),
         hdnSHPercent: "0",
-        siteAddressId:
-            widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
+        siteAddressId: widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
         quotesTerms: termsSelect,
         hdnprofitTotal: profit.toString(),
         markup: "0.00",
@@ -1075,8 +1041,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         systemType: widget.systemTypeSelect,
         signallingType: widget.signallingTypeSelect,
         premisesType: widget.premisesTypeSelect,
-        projectManager:
-            preferences.getString(PreferenceString.userId).toString(),
+        projectManager: preferences.getString(PreferenceString.userId).toString(),
         quotesEmail: widget.contactEmail,
         quotesTemplateOptions: selectTemplateOption,
         quoteRelatedId: "0",
@@ -1101,8 +1066,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         isMaintenanceConConfirm: "0",
         isPoliceAppliConfirm: "0",
         quoteCorrespondencesDocs: "",
-        quoteQuoteType: "Installation",
-        quotesContractId: widget.operationType == "contract" ? widget.contractList["id"].toString().replaceAll("24x", "") : "" ,
+        quoteQuoteType: widget.operationType == "contract" ? widget.quoteTypeContract : "Installation",
+        quotesContractId: widget.operationType == "contract" ? widget.contractList.id.toString().replaceAll("24x", "") : "" ,
         quoteStopEmailDocReminder: "0",
         quotePriorityLevel: "",
         quoteWorksSchedule: "",
@@ -1133,14 +1098,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             requiredDocument: e.requiredDocument,
             //"Keyholder form###Maintenance contract###Police application###Direct Debit",
             profit: e.profit ?? "",
-
-            /*
-            "product_nss_keyholder_form": "1",  Keyholder form
-            "product_security_agree_form": "0", Maintenance contract
-            "product_police_app_form": "0", Police application
-            "product_direct_debit_form": "0", Direct Debit
-           */
-
             proShortDescription: e.description,
             proName: e.itemName.toString(),
           );
@@ -1156,7 +1113,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         'element': jsonQuoteDetail,
         'elementType': 'Quotes',
         'appversion': Constants.of().appversion.toString(),
-        'quotes_contract_id': widget.contractList["id"].toString().replaceAll("24x", ""),
+        'quotes_contract_id': widget.contractList.id.toString().replaceAll("24x", ""),
         'system_type': widget.systemTypeSelect.toString()
       };
       addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
@@ -1281,12 +1238,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteCorrespondencesDocs: "",
         quoteQuoteType: widget.dataQuote["quote_quote_type"],
         quotesContractId: widget.dataQuote["quotes_contract_id"],
-        quoteStopEmailDocReminder:
-            widget.dataQuote["quote_stop_email_doc_reminder"],
+        quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
         quotePriorityLevel: widget.dataQuote["quote_priority_level"],
         quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
-        quoteNoOfEngineer: widget.engineerNumbers,
-        quoteReqToCompleteWork: widget.timeType,
+        quoteNoOfEngineer: widget.engineerNumbers == "" ||  widget.engineerNumbers == null ? widget.dataQuote["quote_no_of_engineer"] : widget.engineerNumbers,
+        quoteReqToCompleteWork: widget.timeType == "" || widget.timeType == null ? widget.dataQuote["quote_req_to_complete_work"] : widget.timeType,
         quotePoNumber: widget.dataQuote["quote_po_number"],
         quoteGradeOfNoti: widget.dataQuote["quote_grade_of_noti"],
         id: widget.dataQuote["id"].toString(),
@@ -1431,14 +1387,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         isMaintenanceConConfirm: "0",
         isPoliceAppliConfirm: "0",
         quoteCorrespondencesDocs: "",
-        quoteQuoteType: "Installation",
+        quoteQuoteType: widget.dataQuote["quote_quote_type"],
         quotesContractId: "",
-        quoteStopEmailDocReminder:
-            widget.dataQuote["quote_stop_email_doc_reminder"],
+        quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
         quotePriorityLevel: "",
         quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
-        quoteNoOfEngineer: widget.engineerNumbers,
-        quoteReqToCompleteWork: widget.timeType,
+        quoteNoOfEngineer: widget.engineerNumbers == "" ||  widget.engineerNumbers == null ? widget.dataQuote["quote_no_of_engineer"] : widget.engineerNumbers,
+        quoteReqToCompleteWork: widget.timeType == "" || widget.timeType == null ? widget.dataQuote["quote_req_to_complete_work"] : widget.timeType,
         quotePoNumber: "",
         quoteGradeOfNoti: "",
         lineItems: productList
@@ -1475,8 +1430,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
     Map<String, String> bodyData = {
       'operation': "create",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonQuoteDetail,
       'elementType': 'Quotes',
       'appversion': Constants.of().appversion.toString(),

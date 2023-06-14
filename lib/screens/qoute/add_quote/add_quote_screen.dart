@@ -30,6 +30,7 @@ import '../../contact/contact_datasource.dart';
 import '../../contact/contact_repository.dart';
 import '../../contact/get_contact/contact_bloc_dir/get_contact_bloc.dart';
 import '../../contact/get_contact/contact_model_dir/get_contact_response_model.dart';
+import '../bloc/product_list_bloc.dart';
 import 'add_item_screen.dart';
 import 'build_item_screen.dart';
 
@@ -121,6 +122,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
       installationCity = widget.contactDetail.othercity;
       installationCountry = widget.contactDetail.othercountry;
       installationPostal = widget.contactDetail.otherzip;
+
     } else if (dataQuote != null){
       contactId = dataQuote["contact_id"];
       contactCompany = dataQuote["quotes_company"];
@@ -137,28 +139,30 @@ class _AddQuotePageState extends State<AddQuotePage> {
       installationCity = dataQuote["ship_city"];
       installationCountry = dataQuote["ship_country"];
       installationPostal = dataQuote["ship_pobox"];
+
     } else if(contractList != null){
-      contactId = contractList["sc_related_to"];
-      contactCompany = contractList["ser_con_company"];
-      mobileNumber = contractList["mobile_number"];
-      telephoneNumber = contractList["telephone_number"];
-      contactEmail = contractList["email"];
+      contactId = contractList.scRelatedTo;
+      contactCompany = contractList.serConCompany;
+      mobileNumber = contractList.mobileNumber;
+      telephoneNumber = contractList.telephoneNumber;
+      contactEmail = contractList.email;
 
-      invoiceAddress = contractList["ser_con_inv_address"];
-      invoiceCity = contractList["ser_con_inv_city"];
-      invoiceCountry = contractList["ser_con_inv_country"];
-      invoicePostal = contractList["ser_con_inv_postcode"];
+      invoiceAddress = contractList.serConInvAddress;
+      invoiceCity = contractList.serConInvCity;
+      invoiceCountry = contractList.serConInvCountry;
+      invoicePostal = contractList.serConInvPostcode;
 
-      installationAddress = contractList["ser_con_address"];
-      installationCity = contractList["ser_con_city"];
-      installationCountry = contractList["ser_con_country"];
-      installationPostal = contractList["postcode"];
+      installationAddress = contractList.serConAddress;
+      installationCity = contractList.serConCity;
+      installationCountry = contractList.serConCountry;
+      installationPostal = contractList.postcode;
     }
 
     if(widget.lastName == "edit" || widget.lastName == "contract"){
       getSiteAddressList();
       //dropdownvalue = dataQuote["quotestage"].toString().toMap();
     }
+    context.read<ProductListBloc>().add(ClearProductToListEvent());
   }
 
   GetContactBloc contactBloc =
@@ -414,7 +418,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
     );
   }
 
-  //Premises type and select contact
+  ///step 1- Premises type and select contact
   Padding buildStepOne(BuildContext context, Size query, stepOneData) {
     ValueNotifier<bool> notifier = ValueNotifier(false);
     //Contact name shows in all different conditions.
@@ -422,8 +426,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
     if(dataQuote != null){
       contactName = dataQuote["contact_name"];
     }else if(contractList != null){
-      contactName = contractList["subject"].toString().substring(0, contractList["subject"].toString().indexOf("-"));
-    }else { contactName = "${widget.firstName} ${widget.lastName}";}
+      contactName = contractList.subject.toString().contains("-") ?
+      contractList.subject.toString().substring(0, contractList.subject.toString().indexOf("-")) :
+      contractList.subject.toString();
+    }else { contactName = "${widget.firstName}${widget.lastName}";}
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
@@ -435,16 +441,17 @@ class _AddQuotePageState extends State<AddQuotePage> {
             //Design Auto filled contact
             Autocomplete(
               initialValue: TextEditingValue(text: contactName),
-              fieldViewBuilder: (context, textEditingController, focusNode,
-                  VoidCallback onFieldSubmitted) {
+              fieldViewBuilder: (context, textEditingController, focusNode, VoidCallback onFieldSubmitted) {
                 FocusNode focus = focusNode;
                 if(dataQuote != null){
                   contactSelect = dataQuote["contact_name"];
                 }else if(contractList != null){
-                  contactSelect = contractList["subject"].toString().substring(0, contractList["subject"].toString().indexOf("-"));
+                  contactSelect = contractList.subject.toString().contains("-") ?
+                      contractList.subject.toString().substring(0, contractList.subject.toString().indexOf("-")):
+                  contractList.subject.toString();
                 }
                 //dataQuote != null ? contactSelect = dataQuote["contact_name"] : "";
-                //textEditingController.text = contactSelect;
+                textEditingController.text = contactSelect;
                 return TextField(
                   autofocus: widget.isBack || dataQuote != null || contractList != null ? false : true,
                   style: TextStyle(color: AppColors.blackColor),
@@ -455,25 +462,22 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   cursorColor: AppColors.blackColor,
                   decoration: InputDecoration(
                     suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
-                            width: 2, color: AppColors.primaryColor)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
-                            width: 2, color: AppColors.primaryColor)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(
-                            width: 2, color: AppColors.primaryColor)),
+
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+
                     filled: true,
                     fillColor: Colors.white,
                     contentPadding: EdgeInsets.only(left: 12.sp),
                     hintText: LabelString.lblTypeToSearch,
                     hintStyle: CustomTextStyle.labelFontHintText,
-                    counterText: "",
-                  ),
+                    counterText: ""),
                   controller: textEditingController,
                   focusNode: focus,
                   onEditingComplete: () {},
@@ -541,7 +545,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         context,
                         PageTransition(
                             type: PageTransitionType.rightToLeft,
-                            child: ContactDetail(contactId, "quote", dropdownvalue ?? [])));
+                            child: ContactDetail(contactId, "quote", dropdownvalue ?? [], dataQuote: dataQuote, contactList: contractList)));
                   } else {
                     Helpers.showSnackBar(context, ErrorString.selectOneContact,
                         isError: true);
@@ -617,13 +621,16 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     premisesType.add(RadioModel(
                         stepOneData["premises_type"][index]["label"].toString().contains(dataQuote["premises_type"]) ?
                             true : false, stepOneData["premises_type"][index]["label"]));
-                  }else if(contractList != null && contractList["sc_premises_type"] != ""){
+                    premisesTypeSelect = dataQuote["premises_type"];
+                  }else if(contractList != null && contractList.scPremisesType != ""){
                     premisesType.add(RadioModel(
-                        stepOneData["premises_type"][index]["label"].toString().contains(contractList["sc_premises_type"]) ?
+                        stepOneData["premises_type"][index]["label"].toString().contains(contractList.scPremisesType) ?
                         true : false, stepOneData["premises_type"][index]["label"]));
+                    premisesTypeSelect = contractList.scPremisesType;
                   }
                   else {
                     premisesType.add(RadioModel(false, stepOneData["premises_type"][index]["label"]));
+                    premisesTypeSelect = stepOneData["premises_type"][index]["label"];
                   }
 
                  //dataQuote != null ? dataQuote["premises_type"] : ;
@@ -639,7 +646,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       premisesType[index].isSelected = true;
                       // Provider.of<WidgetChange>(context, listen: false).isSetPremises;
 
-                      premisesTypeSelect = stepOneData["premises_type"][index]["label"];
+
                       notifier.value = !notifier.value;
                       if (contactId != null) {
                         pageController.nextPage(
@@ -774,9 +781,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         dataQuote["system_type"].toString().contains(stepTwoData["system_type"][index]["label"]) ?
                         true : false,
                         stepTwoData["system_type"][index]["label"]));
-                  }else if(widget.lastName == "contract" && contractList["sc_system_type"] != ""){
+                  }else if(widget.lastName == "contract" && contractList.scSystemType != ""){
                     systemType.add(RadioModel(
-                        contractList["sc_system_type"].toString().contains(stepTwoData["system_type"][index]["label"]) ?
+                        contractList.scSystemType.toString().contains(stepTwoData["system_type"][index]["label"]) ?
                         true : false,
                         stepTwoData["system_type"][index]["label"]));
                   }
@@ -1012,9 +1019,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       gradeAndFire.add(RadioModel(
                           dataQuote["grade_number"].toString().contains(stepThreeData["grade_number"][index]["label"]) ?
                           true : false, dataGrade[index]["label"]));
-                    }else if(contractList != null && contractList["sc_security_grade"] != null){
+                    }else if(contractList != null && contractList.scSecurityGrade != null){
                       gradeAndFire.add(RadioModel(
-                          contractList["sc_security_grade"].toString().contains(stepThreeData["grade_number"][index]["label"]) ?
+                          contractList.scSecurityGrade.toString().contains(stepThreeData["grade_number"][index]["label"]) ?
                           true : false, dataGrade[index]["label"]));
                     }
                     else {
@@ -1225,10 +1232,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           dataQuote["signalling_type"].toString().contains(stepThreeData["signalling_type"][index]["label"])
                               ? true : false,
                           stepThreeData["signalling_type"][index]["label"]));
-                }else if(contractList != null && contractList["sc_primary_signal_type"] != null){
+                }else if(contractList != null && contractList.scPrimarySignalType != null){
                   signallingType.add(
                       RadioModel(
-                          contractList["sc_primary_signal_type"].toString().contains(stepThreeData["signalling_type"][index]["label"])
+                          contractList.scPrimarySignalType.toString().contains(stepThreeData["signalling_type"][index]["label"])
                               ? true : false,
                           stepThreeData["signalling_type"][index]["label"]));
                 }

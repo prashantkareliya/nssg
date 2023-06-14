@@ -206,22 +206,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
     var profit = (double.parse("450") - 80.0).formatAmount();
     var productList = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) =>
     element.itemId == "123456");
-    /*if(productList == null){
-      context.read<ProductListBloc>().add(
-          AddProductToListEvent(productsList: ProductsList(
-          itemId:  "123456",
-          productId: "1188",
-          itemName: 'Installation (1st & 2nd fix)',
-          costPrice: '80.00',
-          sellingPrice: "450",
-          quantity: 1,
-          discountPrice: "0",
-          amountPrice: "450",
-          profit: profit,
-          description: "Installation of all devices, commission and handover Monday - Friday 8.00am - 5.00pm",
-          productImage: ImageString.imgDemo,
-      )));
-    }*/
   }
 
   List<RadioModel> manufacturingType = <RadioModel>[]; //step 1
@@ -237,13 +221,25 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "query",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyProduct
     };
     productBloc.add(GetProductListEvent(queryParameters));
   }
-//3400+4256+7904.87
+
+  Future<void> getSubProduct(String productID) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': "retrieve_related",
+      'id': productID,
+      'relatedType': "Products",
+      'relatedLabel': "Product Bundles",
+      'sessionName':preferences.getString(PreferenceString.sessionName).toString(),
+    };
+    productBloc.add(GetSubProductListEvent(queryParameters));
+  }
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -254,7 +250,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           elevation: 1,
           centerTitle: true,
           automaticallyImplyLeading: false,
-          leadingWidth: 12.w,
+
           leading: InkWell(
             highlightColor: AppColors.transparent,
             splashColor: AppColors.transparent,
@@ -270,43 +266,34 @@ class _AddItemDetailState extends State<AddItemDetail> {
             child: Icon(Icons.arrow_back_ios_outlined,
                 color: AppColors.blackColor, size: 14.sp),
           ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(),
-              Text(LabelString.lblItemDetail, style: CustomTextStyle.labelBoldFontText),
-              InkWell(
-                splashColor: AppColors.transparent,
-                highlightColor: AppColors.transparent,
-                onTap: () => goToCartPage(),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.all(12.sp),
-                        child: Image.asset(ImageString.imgCart, width: 6.0.w)),
-                    itemNumber.isEmpty ? Container()
-                        : Positioned(
-                          top: 10.sp, right: 5.sp,
-                          child: Container(
-                          height: 2.h,
-                          width: 4.w,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20.0),
-                              color: AppColors.redColor),
-                          child: Center(
-                              child: Text(itemNumber.length.toString(),
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.roboto(
-                                      textStyle: TextStyle(
-                                          color: AppColors.whiteColor,
-                                          fontSize: 8.sp))))),
-                    ),
-                  ],
-                ),
+          title: Text(LabelString.lblItemDetail, style: CustomTextStyle.labelBoldFontText),
+          actions: [
+            InkWell(splashColor: AppColors.transparent,
+            highlightColor: AppColors.transparent,
+            onTap: () => goToCartPage(),
+            child: Padding(
+              padding: EdgeInsets.only(right: 5.sp),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                      padding: EdgeInsets.only(right: 12.sp),
+                      child: SvgPicture.asset(ImageString.imgCart, width: 6.0.w)),
+                  itemNumber.isEmpty ? Container()
+                      : Positioned(top: 10.sp, right: 5.sp,
+                    child: Container(height: 2.h, width: 4.w,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0),
+                            color: AppColors.redColor),
+                        child: Center(
+                            child: Text(itemNumber.length.toString(),
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.roboto(textStyle: TextStyle(
+                                        color: AppColors.whiteColor,
+                                        fontSize: 8.sp)))))),
+                ],
               ),
-            ],
-          ),
+            ),
+          ),],
         ),
 
         body: PageView(
@@ -360,14 +347,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   Text(LabelString.lblManufacturing,
                       style: CustomTextStyle.labelBoldFontText),
                   SizedBox(height: 4.h),
-
-                  Wrap(
-                    spacing: 15.sp,
+                  Wrap(spacing: 15.sp,
                     direction: Axis.horizontal,
                     alignment: WrapAlignment.spaceBetween,
                     runSpacing: 15.sp,
-                    children: List.generate(
-                      fieldsData["product_manufacturer"].length,
+                    children: List.generate(fieldsData["product_manufacturer"].length,
                       (index) {
                         manufacturingType.add(RadioModel(false, fieldsData["product_manufacturer"][index]["label"]));
                         return InkWell(
@@ -375,7 +359,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
                             for (var element in manufacturingType) {
                               element.isSelected = false;
                             }
-
                             Provider.of<WidgetChange>(context, listen: false).isManufacture();
                             manufacturingType[index].isSelected = true;
 
@@ -385,12 +368,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               manufactureSelect = "";
                               manufactureSelect = fieldsData["product_manufacturer"][index]["label"];
                             }
-                            pageController.nextPage(
-                                  duration: const Duration(milliseconds: 500),
+                            pageController.nextPage(duration: const Duration(milliseconds: 500),
                                   curve: Curves.decelerate);
                           },
-                          child: Container(
-                            height: 15.h,
+                          child: Container(height: 15.h,
                             width: 42.w,
                             decoration: BoxDecoration(
                                 color: manufacturingType[index].isSelected
@@ -402,8 +383,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                         : AppColors.borderColor,
                                     width: 1),
                                 borderRadius: BorderRadius.circular(10.0)),
-                            child: Stack(
-                              alignment: Alignment.center,
+                            child: Stack(alignment: Alignment.center,
                               children: [
                                 Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -414,13 +394,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           iconColor: manufacturingType[index].isSelected
                                               ? AppColors.primaryColor
                                               : AppColors.blackColor,
-                                          itemName:
-                                              fieldsData["product_manufacturer"][index]["label"].toString()),
+                                          itemName: fieldsData["product_manufacturer"][index]["label"].toString()),
                                       SizedBox(height: 1.h),
-                                      SizedBox(
-                                        width: query.width * 0.3,
-                                        child: Text(
-                                            fieldsData["product_manufacturer"][index]["label"],
+                                      SizedBox(width: query.width * 0.3,
+                                        child: Text(fieldsData["product_manufacturer"][index]["label"],
                                             textAlign: TextAlign.center,
                                             style: manufacturingType[index].isSelected
                                                 ? CustomTextStyle.commonTextBlue
@@ -429,10 +406,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       SizedBox(height: 1.h),
                                     ]),
                                 Visibility(
-                                  visible: manufacturingType[index].isSelected
-                                      ? true : false,
-                                  child: Positioned(
-                                    right: 10, top: 5,
+                                  visible: manufacturingType[index].isSelected ? true : false,
+                                  child: Positioned(right: 10, top: 5,
                                     child: Container(
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(80.0),
@@ -479,13 +454,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var stepThreeData = snapshot.data["result"];
-            /*if(stepThreeData["product_prod_category"].length == 0){
-              pageController.jumpToPage(2);
-            }*/
             return SingleChildScrollView(
               child: Padding(
-                padding:
-                    EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
+                padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -497,12 +468,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     Center(
                         child: Column(
                           children: [
-                            Text(LabelString.lblNoData,
-                                style: CustomTextStyle.labelBoldFontText),
+                            Text(LabelString.lblNoData, style: CustomTextStyle.labelBoldFontText),
                             SizedBox(height: 2.h),
-                            SizedBox(
-
-                              height: query.height * 0.06,
+                            SizedBox(height: query.height * 0.06,
                               child: CustomButton(title: "See Products",
                                 buttonColor: AppColors.primaryColor,
                                 onClick: (){
@@ -521,15 +489,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                       children: List.generate(
                         stepThreeData["product_prod_category"].length,
                         (index) {
-
                           categoryType.add(RadioModel(false, stepThreeData["product_prod_category"][index]["label"]));
-
                           return InkWell(
                             onTap: () {
                               for (var element in categoryType) {
                                 element.isSelected = false;
                               }
-
                               Provider.of<WidgetChange>(context, listen: false).isCategoryItemDetail();
                               categoryType[index].isSelected = true;
 
@@ -547,15 +512,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     curve: Curves.decelerate);
                               }
                             },
-                            child: Container(
-                              height: 15.h,
-                              width: 42.w,
-                              decoration: BoxDecoration(
-                                  color: categoryType[index].isSelected
+                            child: Container(height: 15.h, width: 42.w,
+                              decoration: BoxDecoration(color: categoryType[index].isSelected
                                       ? AppColors.primaryColorLawOpacity
                                       : AppColors.whiteColor,
-                                  border: Border.all(
-                                      color: categoryType[index].isSelected
+                                  border: Border.all(color: categoryType[index].isSelected
                                           ? AppColors.primaryColor
                                           : AppColors.borderColor,
                                       width: 1),
@@ -575,32 +536,22 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                         SizedBox(height: 1.h),
                                         SizedBox(
                                           width: query.width * 0.3,
-                                          child: Text(
-                                              categoryType[index].buttonText,
+                                          child: Text(categoryType[index].buttonText,
                                               textAlign: TextAlign.center,
                                               style: categoryType[index].isSelected
                                                   ? CustomTextStyle.commonTextBlue
-                                                  : CustomTextStyle.commonText),
-                                        ),
-                                        SizedBox(height: 1.h),
-                                      ]),
-                                  Visibility(
-                                    visible: categoryType[index].isSelected
-                                        ? true : false,
-                                    child: Positioned(
-                                      right: 10,
-                                      top: 5,
+                                                  : CustomTextStyle.commonText)),
+                                        SizedBox(height: 1.h)]),
+                                  Visibility(visible: categoryType[index].isSelected ? true : false,
+                                    child: Positioned(right: 10, top: 5,
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(80.0),
+                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(80.0),
                                             color: AppColors.greenColor),
                                         child: Padding(
                                           padding: const EdgeInsets.all(2.0),
                                           child: Icon(Icons.done,
                                               color: AppColors.whiteColor,
-                                              size: 14.sp),
-                                        ),
+                                              size: 14.sp)),
                                       ),
                                     ),
                                   )
@@ -631,6 +582,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
       listener: (context, state) {
         if (state is ProductLoadedFail) {
           Helpers.showSnackBar(context, state.error.toString());
+        }
+        if(state is SubProductLoadedState){
+          context.read<ProductListBloc>().add(AddSubProductListEvent(subProductList: state.subProductList));
         }
       },
       child: BlocBuilder<GetProductBloc, GetProductState>(
@@ -672,7 +626,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                             sellingPrice: element.unitPrice,
                             quantity: 1,
                             discountPrice: "0",
-                            amountPrice: element.costPrice,
+                            amountPrice: element.unitPrice,
                             profit: profit,
                             description: element.description,
                             productImage: ImageString.imgDemo,
@@ -688,7 +642,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                           sellingPrice: element.unitPrice,
                           quantity: 1,
                           discountPrice: "0",
-                          amountPrice: element.costPrice,
+                          amountPrice: element.unitPrice,
                           profit: profit,
                           description: element.description,
                           productImage: ImageString.imgDemo,
@@ -701,17 +655,17 @@ class _AddItemDetailState extends State<AddItemDetail> {
           if (state is ProductLoadedFail) {
             isLoading = false;
           }
+          if(state is SubProductLoadedState){
+
+          }
           if (filterList!.isEmpty) {
             return Center(
-                child: Text(LabelString.lblNoData,
-                    style: CustomTextStyle.labelBoldFontText));
+                child: Text(LabelString.lblNoData, style: CustomTextStyle.labelBoldFontText));
           } else {
-
             return ListView(
               physics: const BouncingScrollPhysics(),
               children: [
-                ListView.separated(
-                  shrinkWrap: true,
+                ListView.separated(shrinkWrap: true,
                   padding: EdgeInsets.symmetric(vertical: 10.sp),
                   physics: const BouncingScrollPhysics(),
                   itemCount: filterList!.length,
@@ -795,18 +749,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       SizedBox(height: 2.h),
                                       Row(
                                         children: [
-                                          Container(
-                                            //  width: query.width * 0.40,
-                                            height: 5.h,
+                                          Container(height: 5.h,
                                             decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(8.0),
-                                                border: Border.all(
-                                                    color: AppColors.primaryColor,
-                                                    width: 1),
+                                                border: Border.all(color: AppColors.primaryColor, width: 1),
                                                 color: AppColors.primaryColor),
                                             child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 IconButton(
                                                     onPressed: () {
@@ -852,31 +801,34 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           ),
                                           SizedBox(width: 3.w),
                                           InkWell(
-                                            onTap: isItemAdded
-                                                ? () {
-                                              context.read<ProductListBloc>().add(RemoveProductFromCardByIdEvent(productId: filterList![index].id ?? ""));
-                                              setState(() {
-                                                itemNumber.remove(filterList![index].id);
-                                              });
-                                            }
-                                                : () {
+                                            onTap: isItemAdded ? () {
+                                              context.read<ProductListBloc>().add(
+                                                  RemoveProductFromCardByIdEvent(productId: filterList![index].id ?? ""));
+                                              setState(() { itemNumber.remove(filterList![index].id); });
+                                            } :
+                                                () {
+
+                                                  getSubProduct(filterList![index].id.toString());
 
                                               List<String> documentType = [];
 
-                                              if (filterList![index].productNssKeyholderForm == "1") {
+                                              if(filterList![index].productNssKeyholderForm == "1"){
                                                 documentType.add("Keyholder form");
-                                                if (filterList![index].productSecurityAgreeForm == "1") {
-                                                  documentType.add("Maintenance contract");
-                                                  if (filterList![index].productPoliceAppForm == "1") {
-                                                    documentType.add("Maintenance contract");
-                                                    if (filterList![index].productDirectDebitForm == "1") {
-                                                      documentType.add("Direct Debit");
-                                                    }
-                                                  }
-                                                }
-                                                print((documentType).join('###'));
                                               }
 
+                                              if(filterList![index].productSecurityAgreeForm == "1"){
+                                                documentType.add("Maintenance contract");
+                                              }
+
+                                              if(filterList![index].productPoliceAppForm == "1"){
+                                                documentType.add("Maintenance contract");
+                                              }
+
+                                              if(filterList![index].productDirectDebitForm == "1"){
+                                                documentType.add("Direct Debit");
+                                              }
+
+                                              print((documentType).join('###'));
                                               ProductsList productsList = ProductsList(
                                                   itemId: DateTime.now().millisecondsSinceEpoch.toString(),
                                                   productId: filterList![index].id.toString(),
@@ -892,12 +844,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   selectLocation: (filterList![index].locationList ?? []).join('###'),
                                                   titleLocation: (filterList![index].titleLocationList ?? []).join("###"),
                                                   itemAdd: filterList![index].isItemAdded,
-                                                productImage: filterList![index].imagename,
-                                                requiredDocument: (documentType).join('###'),
-                                                productTitle: filterList![index].productsTitle
-                                              );
-                                              context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
-                                              //Helpers.showSnackBar(context, "Item Added", isError: false);
+                                                  productImage: filterList![index].imagename,
+                                                  requiredDocument: (documentType).join('###'),
+                                                  productTitle: filterList![index].productsTitle);
+                                                  context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
                                               setState(() {
                                                 itemNumber.add(filterList![index].id);
                                               });
@@ -926,24 +876,15 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          if(isItemAdded){
-                                            context.read<ProductListBloc>().add(RemoveProductFromCardByIdEvent(productId: filterList![index].id ?? ""));
-                                            setState(() {
-                                              itemNumber.remove(filterList![index].id);
-                                            });
-                                          }
                                           showDialog(
                                             barrierDismissible: true,
                                             context: context,
                                             builder: (context) {
                                               ///Make new class for dialog
                                               return Dialog(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(10)),
-                                                  insetPadding:
-                                                  EdgeInsets.symmetric(horizontal: 8.sp),
-                                                  child: SelectLocation(
-                                                      filterList![index].quantity,
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                  insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                                  child: SelectLocation(filterList![index].quantity,
                                                       filterList![index].productname,
                                                       filterList![index].locationList,
                                                       filterList![index].titleLocationList,
@@ -956,16 +897,23 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                 r.locationList = value[0] as List<String>?;
                                                 r.titleLocationList = value[1] as List<String>?;
                                                 filterList![index] = r;
+
+                                                ProductsList? p = context.read<ProductListBloc>().state.productList.firstWhereOrNull((element) => element.productId == r.id);
+
+                                                if(p!= null){
+                                                  p.locationList = r.locationList;
+                                                  p.selectLocation = r.locationList!.join("###");
+                                                  p.titleLocationList = r.titleLocationList;
+                                                  p.titleLocation = r.titleLocationList!.join("###");
+                                                  context.read<ProductListBloc>().add(UpdateProductToListEvent(productsList: p));
+                                                }
                                               }
                                             }
                                           });
                                         },
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 10.sp, bottom: 10.sp),
-                                          child: Text(LabelString.lblSelectLocation,
-                                              style:
-                                              CustomTextStyle.commonTextBlue),
+                                          padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
+                                          child: Text(LabelString.lblSelectLocation, style: CustomTextStyle.commonTextBlue),
                                         ),
                                       ),
                                     ],

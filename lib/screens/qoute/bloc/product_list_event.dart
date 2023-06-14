@@ -49,3 +49,8 @@ class ChangeProductOrderEvent extends ProductListEvent {
 
   ChangeProductOrderEvent(this.oldIndex, this.newIndex);
 }
+
+class AddSubProductListEvent extends ProductListEvent{
+  final List<SubProductResult>? subProductList;
+  AddSubProductListEvent({required this.subProductList});
+}

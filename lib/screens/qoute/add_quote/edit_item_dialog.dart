@@ -39,7 +39,6 @@ class _EditItemState extends State<EditItem> {
     super.initState();
     productsList = widget.productsList;
 
-
     if(productsList.selectLocation != null && productsList.titleLocation != null){
       listLocation = productsList.selectLocation!.split("###");
       listLocationTitle = productsList.titleLocation!.split("###");
