@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:nssg/screens/contact/contact_screen.dart';
 import 'package:nssg/screens/qoute/quotes_screen.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/custom_text_styles.dart';
 import '../../constants/strings.dart';
 import '../contracts/contracts_screen.dart';
@@ -64,7 +65,8 @@ class _RootScreenState extends State<RootScreen> {
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                  topLeft: (Radius.circular(20.0)), topRight: (Radius.circular(20.0))),
+                  topLeft: (Radius.circular(20.0)),
+                  topRight: (Radius.circular(20.0))),
             ),
             child: BottomNavigationBar(
               currentIndex: snapshot.data!.index,
@@ -78,9 +80,13 @@ class _RootScreenState extends State<RootScreen> {
               type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.group_rounded), label: LabelString.lblContact),
+                    icon: Icon(
+                      Icons.group_rounded,
+                    ),
+                    label: LabelString.lblContact),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.help_rounded), label: LabelString.lblQuotes),
+                    icon: Icon(Icons.help_rounded),
+                    label: LabelString.lblQuotes),
                 BottomNavigationBarItem(
                     icon: ImageIcon(AssetImage("assets/images/contract.png")),
                     label: LabelString.lblContracts),

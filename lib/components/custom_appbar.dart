@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nssg/utils/app_colors.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // ignore: must_be_immutable
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -54,7 +55,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.pop(context);
               },
               icon: Icon(Icons.arrow_back_ios_outlined,
-                  color: AppColors.blackColor, size: 14.sp),
+                  color: AppColors.blackColor, size: 16.sp),
             )
           : Container(),
     );

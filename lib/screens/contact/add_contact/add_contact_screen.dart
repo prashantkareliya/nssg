@@ -9,7 +9,9 @@ import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
@@ -108,7 +110,7 @@ class _AddContactPageState extends State<AddContactPage> {
         elevation: 1,
         backgroundColor: AppColors.whiteColor,
         searchWidget: Container(),
-        titleTextStyle: CustomTextStyle.labelBoldFontText,
+        titleTextStyle: CustomTextStyle.labelMediumBoldFontText,
       ),
       body: Column(
         children: [
@@ -165,13 +167,10 @@ class _AddContactPageState extends State<AddContactPage> {
                   print(state.contactDetail);
                   removeAndCallNextScreen(
                       context,
-                      AddQuotePage(
-                        false,
-                        firstNameController.text,
-                        lastNameController.text,
-                        contactId: state.contactId,
-                        contactDetail: state.contactDetail
-                      ));
+                      AddQuotePage(false, firstNameController.text,
+                          lastNameController.text,
+                          contactId: state.contactId,
+                          contactDetail: state.contactDetail));
                 } else {
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (c) => const RootScreen()),
@@ -237,7 +236,9 @@ class _AddContactPageState extends State<AddContactPage> {
                       ? loadingView()
                       : PageView(
                           pageSnapping: true,
-                          physics: contactBasicDetailFormKey.currentState?.validate() == true ||
+                          physics: contactBasicDetailFormKey.currentState
+                                          ?.validate() ==
+                                      true ||
                                   widget.contactId != "NoId"
                               ? const BouncingScrollPhysics()
                               : const NeverScrollableScrollPhysics(),
@@ -279,7 +280,6 @@ class _AddContactPageState extends State<AddContactPage> {
                   maxLines: 1,
                   minLines: 1,
                   textInputAction: TextInputAction.next,
-
                 ),
               ),
               CustomTextField(
@@ -373,7 +373,9 @@ class _AddContactPageState extends State<AddContactPage> {
                         buttonColor: AppColors.primaryColor,
                         onClick: () {
                           FocusScope.of(context).unfocus();
-                          if (contactBasicDetailFormKey.currentState?.validate() ==true) {
+                          if (contactBasicDetailFormKey.currentState
+                                  ?.validate() ==
+                              true) {
                             /*if (primaryEmailController.text.isValidEmail &&
                                 secondaryEmailController.text.isValidEmail) {
                               pageController.nextPage(
@@ -412,7 +414,11 @@ class _AddContactPageState extends State<AddContactPage> {
           children: [
             Center(
                 child: Text(LabelString.lblInvoiceAddressDetails,
-                    style: CustomTextStyle.labelBoldFontTextBlue)),
+                    style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryColor)))),
             SizedBox(height: 2.0.h),
             /*Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,9 +482,13 @@ class _AddContactPageState extends State<AddContactPage> {
             SizedBox(height: 1.0.h),
             Center(
               child: Text(LabelString.lblInstallationAddressDetails,
-                  style: CustomTextStyle.labelBoldFontTextBlue),
+                  style: GoogleFonts.roboto(
+                      textStyle: TextStyle(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primaryColor))),
             ),
-            SizedBox(height: 2.0.h),
+            SizedBox(height: 10.h),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -499,7 +509,7 @@ class _AddContactPageState extends State<AddContactPage> {
                   padding: EdgeInsets.only(right: 8.sp),
                   child: InkWell(
                     onTap: () => copyAddressFields(),
-                    child: Image.asset(ImageString.icCopy, height: 3.h),
+                    child: Image.asset(ImageString.icCopy, height: 20.h),
                   ),
                 ),
                 SizedBox(height: 1.h),
@@ -651,7 +661,11 @@ class _AddContactPageState extends State<AddContactPage> {
           maxLines: 1,
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
-              suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
+              suffixIcon: Icon(
+                Icons.search,
+                color: AppColors.blackColor,
+                size: 25.sp,
+              ),
               border: UnderlineInputBorder(
                   borderSide:
                       BorderSide(width: 1, color: AppColors.primaryColor)),
@@ -685,7 +699,7 @@ class _AddContactPageState extends State<AddContactPage> {
         } else {
           //API call for get ID
           var url =
-                "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
+              "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
 
           final response = await http.get(Uri.parse(url),
               headers: <String, String>{
@@ -711,7 +725,8 @@ class _AddContactPageState extends State<AddContactPage> {
             String addressId = addressList[i]["id"].toString();
 
             //Call API for get address detail
-            var url = "https://api.getAddress.io/get/$addressId?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
+            var url =
+                "https://api.getAddress.io/get/$addressId?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
 
             final response = await http.get(Uri.parse(url));
             final responseJson = json.decode(response.body);
@@ -719,7 +734,8 @@ class _AddContactPageState extends State<AddContactPage> {
             //set address detail in field
             if (response.statusCode == 200) {
               if (autoCompleteType == "invoice") {
-                invoiceAddressController.text = "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                invoiceAddressController.text =
+                    "${responseJson["line_1"]}  ${responseJson["line_2"]}";
                 invoiceCityController.text = "${responseJson["town_or_city"]}";
                 invoiceCountryController.text = "${responseJson["county"]}";
                 invoicePostalController.text = "${responseJson["postcode"]}";
@@ -813,7 +829,8 @@ class _AddContactPageState extends State<AddContactPage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "create",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonContactDetail,
       'elementType': 'Contacts',
     };

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nssg/components/custom_text_styles.dart';
 import 'package:nssg/utils/app_colors.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField(
@@ -58,7 +59,7 @@ class CustomTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-       /* Row(
+        /* Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (titleText != null) ...[
@@ -78,7 +79,7 @@ class CustomTextField extends StatelessWidget {
             copyWidget ?? Container(),
           ],
         ),*/
-        SizedBox(height: 1.h),
+        SizedBox(height: 10.h),
         TextFormField(
           controller: controller,
           style: TextStyle(color: AppColors.blackColor),
@@ -99,7 +100,7 @@ class CustomTextField extends StatelessWidget {
               suffixIcon: suffixWidget,
               prefixIcon: prefixIcon,
 
-             /* border: OutlineInputBorder(
+              /* border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),
@@ -111,30 +112,28 @@ class CustomTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
               ),*/
-             /* enabledBorder: UnderlineInputBorder(
+              /* enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                     width: 1, color: AppColors.primaryColor)
               ),*/
 
               border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)),
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
               focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)),
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
               enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)
-              ),
+                  borderSide:
+                      BorderSide(width: 1, color: AppColors.primaryColor)),
               filled: true,
               fillColor: Colors.white,
               contentPadding: EdgeInsets.only(left: 12.sp),
               hintText: hint,
               hintStyle: CustomTextStyle.labelFontHintText,
               counterText: "",
-            labelStyle: CustomTextStyle.labelFontHintText,
-            labelText: titleText! + "${star ?? ""}"
-          ),
+              labelStyle: CustomTextStyle.labelFontHintText,
+              labelText: titleText! + "${star ?? ""}"),
           validator: (validator != null)
               ? validator
               : (isRequired == true)
@@ -147,7 +146,7 @@ class CustomTextField extends StatelessWidget {
                     }
                   : null,
         ),
-        SizedBox(height: 2.5.h),
+        SizedBox(height: 10.h),
       ],
     );
   }

@@ -16,7 +16,8 @@ import 'package:nssg/screens/qoute/quote_repository.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
@@ -153,8 +154,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       }
       //widget.itemList!.map((e) => productListLocal.add(ProductsList.fromJsonOne(e))).toList();
       callToUpdateEditItemList();
-      depositValue =
-          widget.dataQuote["quotes_payment"] == "Deposit" ? "true" : "false";
+      depositValue = widget.dataQuote["quotes_payment"] == "Deposit" ? "true" : "false";
       selectTemplateOption = widget.dataQuote["quotes_template_options"];
       assignTo = widget.dataQuote["assigned_user_id"];
       projectManager = widget.dataQuote["project_manager"];
@@ -172,8 +172,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         .add(UpdateEditProductListEvent(productsList: productListLocal1));
   }
 
-  AddQuoteBloc addQuoteBloc =
-      AddQuoteBloc(QuoteRepository(quoteDatasource: QuoteDatasource()));
+  AddQuoteBloc addQuoteBloc = AddQuoteBloc(QuoteRepository(quoteDatasource: QuoteDatasource()));
 
   @override
   Widget build(BuildContext context) {
@@ -187,10 +186,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         elevation: 1,
         backgroundColor: AppColors.whiteColor,
         searchWidget: Container(),
-        titleTextStyle: CustomTextStyle.labelBoldFontText,
+        titleTextStyle: CustomTextStyle.labelMediumBoldFontText,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+        padding: EdgeInsets.symmetric(vertical: 15.sp, horizontal: 5.sp),
         child: BlocListener<AddQuoteBloc, AddQuoteState>(
           bloc: addQuoteBloc,
           listener: (context, state) {
@@ -205,12 +204,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   barrierDismissible: false,
                   builder: (context) {
                     return Dialog(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      elevation: 0,
-                      insetAnimationCurve: Curves.decelerate,
-                      insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
-                      child: ThankYouScreen(state.quoteId.toString(),
-                          widget.contactEmail.toString(), state.quoteNo.toString()));
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 0,
+                        insetAnimationCurve: Curves.decelerate,
+                        insetPadding: EdgeInsets.symmetric(horizontal: 8.sp),
+                        child: ThankYouScreen(state.quoteId.toString(),
+                            widget.contactEmail.toString(), state.quoteNo.toString()));
                   });
             }
 
@@ -264,13 +263,19 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   (index) {
                                     if (widget.dataQuote != null) {
                                       templateOption.add(RadioModel(
-                                          widget.dataQuote["quotes_template_options"].toString().contains(
-                                                      templateOptionList[index].toString().replaceAll(" ", "_"))
-                                              ? true : false,
+                                          widget.dataQuote["quotes_template_options"]
+                                                  .toString()
+                                                  .contains(templateOptionList[index]
+                                                      .toString()
+                                                      .replaceAll(" ", "_"))
+                                              ? true
+                                              : false,
                                           templateOptionList[index]));
                                     } else {
                                       templateOption.add(RadioModel(
-                                          templateOptionList[index] == "Hide Product Price" ? true : false,
+                                          templateOptionList[index] == "Hide Product Price"
+                                              ? true
+                                              : false,
                                           templateOptionList[index]));
                                     }
                                     Provider.of<WidgetChange>(context).isSelectTemplateOption;
@@ -287,12 +292,19 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                           for (var element in templateOption) {
                                             element.isSelected = false;
                                           }
-                                          Provider.of<WidgetChange>(context, listen: false).isTemplateOption();
+                                          Provider.of<WidgetChange>(context, listen: false)
+                                              .isTemplateOption();
                                           templateOption[index].isSelected = true;
                                           setState(() {
-                                            selectTemplateOption = templateOption[index].buttonText.toString().replaceAll(" ", "_");
+                                            selectTemplateOption = templateOption[index]
+                                                .buttonText
+                                                .toString()
+                                                .replaceAll(" ", "_");
                                           });
-                                          print(templateOption[index].buttonText.toString().replaceAll(" ", "_"));
+                                          print(templateOption[index]
+                                              .buttonText
+                                              .toString()
+                                              .replaceAll(" ", "_"));
                                         },
                                         child: RadioItem(templateOption[index]),
                                       ),
@@ -307,19 +319,19 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: Checkbox(
-                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(4.0)),
-                                        activeColor: AppColors.primaryColor,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            isEmailRemind = value!;
-                                          });
-                                        },
-                                        value: isEmailRemind)),
+                                      height: 20,
+                                      width: 20,
+                                      child: Checkbox(
+                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(4.0)),
+                                          activeColor: AppColors.primaryColor,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              isEmailRemind = value!;
+                                            });
+                                          },
+                                          value: isEmailRemind)),
                                   Padding(
                                     padding: EdgeInsets.only(left: 10.sp),
                                     child: Text(LabelString.lblQuoteEmailReminder,
@@ -334,9 +346,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             ReorderableListView(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              children: state.productList.map((e) => buildDetailItemTile(e, context, state)).toList(),
+                              children: state.productList
+                                  .map((e) => buildDetailItemTile(e, context, state))
+                                  .toList(),
                               onReorder: (oldIndex, newIndex) {
-                                context.read<ProductListBloc>().add(ChangeProductOrderEvent(oldIndex, newIndex));
+                                context
+                                    .read<ProductListBloc>()
+                                    .add(ChangeProductOrderEvent(oldIndex, newIndex));
                               },
                             ),
                             // ...state.productList
@@ -361,8 +377,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         decoration: BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15.sp),
-                topLeft: Radius.circular(15.sp))),
+                topRight: Radius.circular(15.sp), topLeft: Radius.circular(15.sp))),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -375,9 +390,16 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   //TODO: Same operation on submit button
-                  Text(LabelString.lblShowAmount, style: CustomTextStyle.labelBoldFontText),
-                  SizedBox(width: 3.w),
-                  Image.asset(ImageString.icShowAmount, height: 2.h)
+                  Text(LabelString.lblShowAmount,
+                      style: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                              fontSize: 16.sp, fontWeight: FontWeight.w500, color: Colors.black))),
+                  SizedBox(width: 5.w),
+                  Image.asset(
+                    ImageString.icShowAmount,
+                    height: 13.5.h,
+                    width: 15.w,
+                  )
                 ],
               ),
             ),
@@ -388,10 +410,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       ///Open add item screen
       ///Make new class and using pageView for add item detail
       floatingActionButton: SizedBox(
-        height: 8.h,
+        height: 46.h,
+        width: 46.w,
         child: FittedBox(
           child: FloatingActionButton.small(
-              onPressed: () { callNextScreen(context, const SearchAndAddProduct()); },
+              onPressed: () {
+                callNextScreen(context, const SearchAndAddProduct());
+              },
               child: Lottie.asset('assets/lottie/adding.json')),
         ),
       ),
@@ -417,8 +442,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   color: AppColors.primaryColorLawOpacity,
                   child: IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.info_outline,
-                          color: AppColors.primaryColor))),
+                      icon: Icon(Icons.info_outline, color: AppColors.primaryColor))),
               SizedBox(width: 3.w),
               Expanded(
                 child: RichText(
@@ -437,11 +461,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               builder: (context) {
                                 ///Make new class for dialog
                                 return Dialog(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)),
                                     elevation: 0,
                                     insetAnimationCurve: Curves.decelerate,
                                     insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                    child: QuoteEstimation(dataQuote: widget.dataQuote, "createQuote"));
+                                    child: QuoteEstimation(
+                                        dataQuote: widget.dataQuote, "createQuote"));
                               }).then((value) {
                             if (value != null) {
                               setState(() {
@@ -450,7 +476,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                 widget.timeType = value["keyTimeType"];
                               });
                               var profit = (double.parse(value["keyAmount"]) -
-                                      double.parse(productList.first.costPrice.toString())).formatAmount();
+                                      double.parse(productList.first.costPrice.toString()))
+                                  .formatAmount();
                               context.read<ProductListBloc>().add(
                                     UpdateProductToListEvent(
                                         productsList: ProductsList(
@@ -470,9 +497,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           });
                         },
                       children: [
-                        TextSpan(text: Message.quoteEstimation,
+                        TextSpan(
+                            text: Message.quoteEstimation,
                             style: GoogleFonts.roboto(
-                                textStyle: TextStyle(fontSize: 12.sp,
+                                textStyle: TextStyle(
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.normal,
                                     fontStyle: FontStyle.normal,
                                     color: AppColors.blackColor,
@@ -486,14 +515,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
   }
 
   //product list
-  Padding buildDetailItemTile(
-      ProductsList products, BuildContext context, ProductListState state) {
+  Padding buildDetailItemTile(ProductsList products, BuildContext context, ProductListState state) {
     return Padding(
       key: ValueKey(products.itemId.toString()),
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp, top: 5, bottom: 8.sp),
-      child: Container(decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: AppColors.backWhiteColor),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0), color: AppColors.backWhiteColor),
         child: Slidable(
             closeOnScroll: false,
             key: ValueKey(products.itemId),
@@ -502,8 +530,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               extentRatio: 0.2,
               children: [
                 CustomSlidableAction(
-                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10.0),
-                      topLeft: Radius.circular(10.0)),
+                  borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(10.0), topLeft: Radius.circular(10.0)),
                   padding: EdgeInsets.zero,
                   autoClose: true,
                   onPressed: (context) {
@@ -512,8 +540,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         builder: (context) {
                           ///Make new class for dialog
                           return Dialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
+                              shape:
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               elevation: 0,
                               insetPadding: EdgeInsets.zero,
                               child: DiscountDialog(productsList: products));
@@ -529,13 +557,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       SvgPicture.asset(ImageString.icDiscount,
                           color: AppColors.primaryColor,
                           fit: BoxFit.fill,
-                          height: 2.5.h),
+                          width: 14.4.w,
+                          height: 15.h),
                       SizedBox(height: 0.8.h),
                       Text(LabelString.lblDiscountFormal,
                           style: GoogleFonts.roboto(
-                              textStyle: TextStyle(
-                                  fontSize: 10.sp,
-                                  color: AppColors.primaryColor)))
+                              textStyle: TextStyle(fontSize: 12.sp, color: AppColors.primaryColor)))
                     ],
                   ),
                 ),
@@ -553,8 +580,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           builder: (context) {
                             ///Make new class for dialog
                             return Dialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
+                                shape:
+                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 elevation: 0,
                                 insetPadding: EdgeInsets.zero,
                                 child: widget.dataQuote != null
@@ -568,29 +595,30 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(ImageString.icEditProd,
-                            color: AppColors.greenColorAccent,
-                            fit: BoxFit.fill,
-                            height: 2.5.h),
+                        SvgPicture.asset(
+                          ImageString.icEditProd,
+                          color: AppColors.greenColorAccent,
+                          fit: BoxFit.fill,
+                          height: 12.h,
+                          width: 12.w,
+                        ),
                         SizedBox(height: 0.8.h),
                         Text(ButtonString.btnEdit,
                             style: GoogleFonts.roboto(
-                                textStyle: TextStyle(
-                                    fontSize: 10.sp,
-                                    color: AppColors.greenColorAccent)))
+                                textStyle:
+                                    TextStyle(fontSize: 12.sp, color: AppColors.greenColorAccent)))
                       ],
                     )),
                 CustomSlidableAction(
                   borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(10.0),
-                      topRight: Radius.circular(10.0)),
+                      bottomRight: Radius.circular(10.0), topRight: Radius.circular(10.0)),
                   padding: EdgeInsets.zero,
                   autoClose: true,
                   onPressed: (value) {
                     setState(() {
-                      context.read<ProductListBloc>().add(
-                          RemoveProductFromCardByIdEvent(
-                              productId: products.productId ?? ""));
+                      context
+                          .read<ProductListBloc>()
+                          .add(RemoveProductFromCardByIdEvent(productId: products.productId ?? ""));
                     });
                   },
                   backgroundColor: AppColors.backWhiteColor,
@@ -598,16 +626,18 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(ImageString.icDeleteProd,
-                          color: AppColors.redColor,
-                          fit: BoxFit.fill,
-                          height: 2.5.h),
+                      SvgPicture.asset(
+                        ImageString.icDeleteProd,
+                        color: AppColors.redColor,
+                        fit: BoxFit.fill,
+                        height: 12.h,
+                        width: 12.w,
+                      ),
                       SizedBox(height: 0.8.h),
                       Text(
                         ButtonString.btnDelete,
                         style: GoogleFonts.roboto(
-                            textStyle: TextStyle(
-                                fontSize: 10.sp, color: AppColors.redColor)),
+                            textStyle: TextStyle(fontSize: 12.sp, color: AppColors.redColor)),
                       )
                     ],
                   ),
@@ -620,8 +650,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               color: products.itemName!.contains("Installation")
                   ? AppColors.primaryColorLawOpacityBack
                   : AppColors.whiteColor,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.sp)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(0.sp, 3.sp, 0.sp, 3.sp),
                 child: SizedBox(
@@ -635,32 +664,28 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                           child: products.itemName!.contains("Installation")
                               ? Lottie.asset(
                                   'assets/lottie/gear.json',
-                                  height: 9.h,
+                                  height: 60.h,
                                 )
-                              : products.productImage == null ||
-                                      products.productImage == ""
-                                  ? SvgPicture.asset(ImageString.imgPlaceHolder,
-                                      height: 8.h)
+                              : products.productImage == null || products.productImage == ""
+                                  ? SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h)
                                   : Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 4.sp),
+                                      padding: EdgeInsets.symmetric(horizontal: 4.sp),
                                       child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
+                                        borderRadius: BorderRadius.circular(8.0),
                                         child: Container(
                                           color: AppColors.backWhiteColor,
                                           child: Padding(
-                                            padding: EdgeInsets.all(4.sp),
+                                            padding: EdgeInsets.all(5.sp),
                                             child: products.productImage == "_"
                                                 ? SizedBox(
-                                                    height: 10.h,
-                                                    width: 23.w,
+                                                    height: 55.h,
+                                                    width: 55.w,
                                                     child: SvgPicture.asset(
-                                                        ImageString
-                                                            .imgPlaceHolder))
+                                                        ImageString.imgPlaceHolder))
                                                 : Image.network(
                                                     "${ImageBaseUrl.productImageBaseUrl}${products.productImage!.replaceAll("&ndash;", "–")}",
-                                                    height: 8.h),
+                                                    height: 55.h,
+                                                  ),
                                           ),
                                         ),
                                       ),
@@ -682,16 +707,19 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                         "£${(double.parse(products.amountPrice!) - (products.discountPrice == "0" || products.discountPrice == "" || products.discountPrice == null ? double.parse("0.0") : double.parse(products.discountPrice!))).toString().formatAmount}",
                                         style: GoogleFonts.roboto(
                                             textStyle: TextStyle(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w600,
                                                 fontStyle: FontStyle.normal,
-                                                color:
-                                                    AppColors.primaryColor))))
+                                                color: AppColors.primaryColor))))
                               ],
                             ),
-                            SizedBox(height: 1.h),
+                            SizedBox(height: 5.h),
                             Text("${products.itemName}",
-                                style: CustomTextStyle.labelText),
+                                style: GoogleFonts.roboto(
+                                    textStyle: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black))),
                           ],
                         ),
                       ),
@@ -737,9 +765,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 //total of amount
                 for (ProductsList p in state.productList) {
                   subTotal += p.amountPrice.formatDouble();
-                  disc += (p.discountPrice == ""
-                      ? 0.0
-                      : p.discountPrice.formatDouble());
+                  disc += (p.discountPrice == "" ? 0.0 : p.discountPrice.formatDouble());
                   profit += p.profit.formatDouble();
                   //}
                   print(subTotal);
@@ -748,15 +774,13 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                 }
                 //initial text for deposit textField
                 if (isChangedDeposit) {
-                  depositAmountController.text =
-                      grandTotal.toString().formatAmount;
+                  depositAmountController.text = grandTotal.toString().formatAmount;
                 }
                 return Container(
                     decoration: BoxDecoration(
                         color: AppColors.whiteColor,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15.sp),
-                            topRight: Radius.circular(15.sp))),
+                            topLeft: Radius.circular(15.sp), topRight: Radius.circular(15.sp))),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -769,11 +793,16 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(LabelString.lblHideAmount,
-                                    style: CustomTextStyle.labelBoldFontText),
-                                SizedBox(width: 3.w),
+                                    style: GoogleFonts.roboto(
+                                        textStyle: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black))),
+                                SizedBox(width: 5.w),
                                 Image.asset(
                                   ImageString.icHideAmount,
-                                  height: 2.h,
+                                  height: 13.5.h,
+                                  width: 15.w,
                                 )
                               ],
                             ),
@@ -784,62 +813,52 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             LabelString.lblSubTotal,
                             (subTotal + disc).formatAmount(),
                             CustomTextStyle.labelText),*/
-                        BottomSheetDataTile(LabelString.lblSubTotal,
-                            subTotal.formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(LabelString.lblSubTotal, subTotal.formatAmount(),
+                            CustomTextStyle.labelText),
 
                         //Entered by user in textField
-                        BottomSheetDataTile(LabelString.lblDiscountAmount,
-                            disc.formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(LabelString.lblDiscountAmount, disc.formatAmount(),
+                            CustomTextStyle.labelText),
 
                         //subTotal - discount = itemTotal
                         /*BottomSheetDataTile(
                             LabelString.lblItemsTotal, subTotal.formatAmount(),
                             CustomTextStyle.labelText),*/
 
-                        BottomSheetDataTile(
-                            LabelString.lblItemsTotal,
-                            (subTotal - disc).formatAmount(),
-                            CustomTextStyle.labelText),
+                        BottomSheetDataTile(LabelString.lblItemsTotal,
+                            (subTotal - disc).formatAmount(), CustomTextStyle.labelText),
 
                         //itemTotal * 0.2(Means 20%) = vat (20% vat on itemTotal)
-                        BottomSheetDataTile(LabelString.lblVatTotal,
-                            vatTotal.formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(LabelString.lblVatTotal, vatTotal.formatAmount(),
+                            CustomTextStyle.labelText),
                         //show textField for enter deposit mount if user select deposit otherwise field is invisible
-                        Provider.of<WidgetChange>(context, listen: true)
-                                    .isDeposit &&
+                        Provider.of<WidgetChange>(context, listen: true).isDeposit &&
                                 depositValue == "true"
                             ? Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 14.sp),
+                                padding: EdgeInsets.symmetric(horizontal: 14.sp),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(LabelString.lblDepositAmount,
                                         style: CustomTextStyle.labelText),
                                     Container(
-                                      height: 4.h,
-                                      width: 20.w,
+                                      height: 31.h,
+                                      width: 78.w,
                                       decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1,
-                                              color: AppColors.primaryColor),
+                                          border:
+                                              Border.all(width: 1, color: AppColors.primaryColor),
                                           color: AppColors.whiteColor,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5.sp))),
+                                          borderRadius: BorderRadius.all(Radius.circular(5.sp))),
                                       child: Center(
                                         child: Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              3.sp, 0, 3.sp, 0),
+                                          padding: EdgeInsets.fromLTRB(3.sp, 0, 3.sp, 0),
                                           child: TextField(
                                             controller: depositAmountController,
                                             keyboardType: TextInputType.number,
-                                            decoration:
-                                                InputDecoration.collapsed(
-                                                    hintText: grandTotal
-                                                        .formatAmount(),
-                                                    hintStyle: CustomTextStyle
-                                                        .labelText),
+                                            style: CustomTextStyle.labelText,
+                                            decoration: InputDecoration.collapsed(
+                                                hintText: grandTotal.formatAmount(),
+                                                hintStyle: CustomTextStyle.labelText),
                                             textAlign: TextAlign.right,
                                             onChanged: (value) {
                                               setState(() {
@@ -855,36 +874,29 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                               )
                             : Container(),
                         //itemTotal + vatTotal = GrandTotal
-                        BottomSheetDataTile(
-                            LabelString.lblGrandTotal,
-                            grandTotal.formatAmount(),
+                        BottomSheetDataTile(LabelString.lblGrandTotal, grandTotal.formatAmount(),
                             CustomTextStyle.labelText),
 
                         //Sum of all profit amount
-                        BottomSheetDataTile(LabelString.lblTotalProfit,
-                            profit.formatAmount(), CustomTextStyle.labelText),
+                        BottomSheetDataTile(LabelString.lblTotalProfit, profit.formatAmount(),
+                            CustomTextStyle.labelText),
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 14.sp, vertical: 10.sp),
+                          padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
                           child: Row(
                             children: [
                               ToggleSwitch((value) {
-                                Provider.of<WidgetChange>(context,
-                                        listen: false)
+                                Provider.of<WidgetChange>(context, listen: false)
                                     .isDepositAmount(value);
                                 depositValue = value.toString();
                                 setState(() {});
                               },
                                   valueBool: depositValue == "false"
                                       ? false
-                                      : Provider.of<WidgetChange>(context,
-                                              listen: false)
+                                      : Provider.of<WidgetChange>(context, listen: false)
                                           .isDeposit),
                               SizedBox(width: 5.w),
                               Text(
-                                  Provider.of<WidgetChange>(context,
-                                              listen: false)
-                                          .isDeposit
+                                  Provider.of<WidgetChange>(context, listen: false).isDeposit
                                       ? LabelString.lblDeposit
                                       : LabelString.lblNoDeposit,
                                   style: CustomTextStyle.labelText)
@@ -894,24 +906,20 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                         Align(
                             alignment: Alignment.topLeft,
                             child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 14.sp, vertical: 10.sp),
+                              padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
                               child: Text(LabelString.lblTerms,
-                                  style:
-                                      CustomTextStyle.labelMediumBoldFontText),
+                                  style: CustomTextStyle.labelMediumBoldFontText),
                             )),
                         ...widget.termsList.map((e) {
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 14.sp, vertical: 10.sp),
+                            padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 10.sp),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ToggleSwitch((value) {
                                   setState(() {});
-                                  Provider.of<WidgetChange>(context,
-                                          listen: false)
+                                  Provider.of<WidgetChange>(context, listen: false)
                                       .isTermsSelect(e['value']);
                                   termsSelect = e['value'].toString();
                                 },
@@ -919,8 +927,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     valueBool: widget.dataQuote != null
                                         ? termsSelect == e['value']
                                         : e['value'] ==
-                                            Provider.of<WidgetChange>(context,
-                                                    listen: false)
+                                            Provider.of<WidgetChange>(context, listen: false)
                                                 .isTermsBS),
                                 SizedBox(width: 5.w),
                                 Expanded(
@@ -1034,8 +1041,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         hdnDiscountPercent: "0.00",
         hdnDiscountAmount: disc.toString(),
         hdnSHAmount: "0.00",
-        assignedUserId:
-            preferences.getString(PreferenceString.userId).toString(),
+        assignedUserId: preferences.getString(PreferenceString.userId).toString(),
         currencyId: "21x1",
         conversionRate: "0.00",
         //widget.siteAddress.toString() == "{}"
@@ -1054,14 +1060,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         shipCode: code,
         description: Message.descriptionForQuote,
-        termsConditions:
-            termsSelect == "50% Deposit Balance on Account(Agreed terms)"
-                ? Message.termsCondition1
-                : Message.termsCondition2,
+        termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
+            ? Message.termsCondition1
+            : Message.termsCondition2,
         preTaxTotal: vatTotal.toString(),
         hdnSHPercent: "0",
-        siteAddressId:
-            widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
+        siteAddressId: widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
         quotesTerms: termsSelect,
         hdnprofitTotal: profit.toString(),
         markup: "0.00",
@@ -1070,8 +1074,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         systemType: widget.systemTypeSelect,
         signallingType: widget.signallingTypeSelect,
         premisesType: widget.premisesTypeSelect,
-        projectManager:
-            preferences.getString(PreferenceString.userId).toString(),
+        projectManager: preferences.getString(PreferenceString.userId).toString(),
         quotesEmail: widget.contactEmail,
         quotesTemplateOptions: selectTemplateOption,
         quoteRelatedId: "0",
@@ -1084,9 +1087,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteMobileNumber: widget.mobileNumber,
         quoteTelephoneNumber: widget.telephoneNumber,
         isQuotesConfirm: "0",
-        quotesPayment: depositValue == "false" || depositValue == ""
-            ? "No Deposit"
-            : "Deposit",
+        quotesPayment: depositValue == "false" || depositValue == "" ? "No Deposit" : "Deposit",
         isQuotesPaymentConfirm: "0",
         quotesDepositeAmount: depositAmount,
         quotesDepoReceivedAmount: "0.00",
@@ -1175,18 +1176,10 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
       country = widget.siteAddress["country"];
       code = widget.siteAddress["postcode"];
     } else {
-      street = widget.dataQuote["ship_street"] == ""
-          ? " "
-          : widget.dataQuote["ship_street"];
-      city = widget.dataQuote["ship_city"] == ""
-          ? " "
-          : widget.dataQuote["ship_city"];
-      country = widget.dataQuote["ship_country"] == ""
-          ? " "
-          : widget.dataQuote["ship_country"];
-      code = widget.dataQuote["ship_code"] == ""
-          ? " "
-          : widget.dataQuote["ship_code"];
+      street = widget.dataQuote["ship_street"] == "" ? " " : widget.dataQuote["ship_street"];
+      city = widget.dataQuote["ship_city"] == "" ? " " : widget.dataQuote["ship_city"];
+      country = widget.dataQuote["ship_country"] == "" ? " " : widget.dataQuote["ship_country"];
+      code = widget.dataQuote["ship_code"] == "" ? " " : widget.dataQuote["ship_code"];
     }
 
     UpdateQuoteRequest updateQuoteRequest = UpdateQuoteRequest(
@@ -1223,14 +1216,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         shipCode: code,
         description: descripation.toString(),
-        termsConditions:
-            termsSelect == "50% Deposit Balance on Account(Agreed terms)"
-                ? Message.termsCondition1
-                : Message.termsCondition2,
+        termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
+            ? Message.termsCondition1
+            : Message.termsCondition2,
         preTaxTotal: vatTotal.toString(),
         hdnSHPercent: "0",
-        siteAddressId:
-            widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
+        siteAddressId: widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
         quotesTerms: termsSelect,
         hdnprofitTotal: profit.toString(),
         markup: "0.00",
@@ -1264,8 +1255,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteCorrespondencesDocs: "",
         quoteQuoteType: widget.dataQuote["quote_quote_type"],
         quotesContractId: widget.dataQuote["quotes_contract_id"],
-        quoteStopEmailDocReminder:
-            widget.dataQuote["quote_stop_email_doc_reminder"],
+        quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
         quotePriorityLevel: widget.dataQuote["quote_priority_level"],
         quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
         quoteNoOfEngineer: widget.engineerNumbers,
@@ -1307,8 +1297,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
     Map<String, String> bodyData = {
       'operation': "update",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonQuoteDetail,
       'appversion': Constants.of().appversion.toString(),
       'old_document_name': ""
@@ -1375,14 +1364,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         //shipCode : widget.shipCode == "" ? " " : widget.shipCode,
         shipCode: code,
         description: descripation.toString(),
-        termsConditions:
-            termsSelect == "50% Deposit Balance on Account(Agreed terms)"
-                ? Message.termsCondition1
-                : Message.termsCondition2,
+        termsConditions: termsSelect == "50% Deposit Balance on Account(Agreed terms)"
+            ? Message.termsCondition1
+            : Message.termsCondition2,
         preTaxTotal: vatTotal.toString(),
         hdnSHPercent: "0",
-        siteAddressId:
-            widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
+        siteAddressId: widget.siteAddress["id"] == "" ? "" : widget.siteAddress["id"],
         quotesTerms: termsSelect,
         hdnprofitTotal: profit.toString(),
         markup: "0.00",
@@ -1416,8 +1403,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteCorrespondencesDocs: "",
         quoteQuoteType: "Installation",
         quotesContractId: "",
-        quoteStopEmailDocReminder:
-            widget.dataQuote["quote_stop_email_doc_reminder"],
+        quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
         quotePriorityLevel: "",
         quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
         quoteNoOfEngineer: widget.engineerNumbers,
@@ -1458,8 +1444,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
 
     Map<String, String> bodyData = {
       'operation': "create",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonQuoteDetail,
       'elementType': 'Quotes',
       'appversion': Constants.of().appversion.toString(),
@@ -1477,13 +1462,14 @@ class BottomSheetDataTile extends StatelessWidget {
   String? valueText;
   TextStyle? textStyle;
 
-  BottomSheetDataTile(this.keyText, this.valueText, this.textStyle,
-      {super.key});
+  BottomSheetDataTile(this.keyText, this.valueText, this.textStyle, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 14.sp),
+      padding: EdgeInsets.symmetric(
+        horizontal: 14.sp,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

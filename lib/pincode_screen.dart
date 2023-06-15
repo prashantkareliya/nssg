@@ -18,7 +18,8 @@ import 'package:passcode_screen/circle.dart';
 import 'package:passcode_screen/keyboard.dart';
 import 'package:passcode_screen/passcode_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'constants/navigation.dart';
 
@@ -32,10 +33,12 @@ class PinCodeScreen extends StatefulWidget {
 }
 
 class _PinCodeScreenState extends State<PinCodeScreen> {
-  final StreamController<bool> _verificationNotifier = StreamController<bool>.broadcast();
+  final StreamController<bool> _verificationNotifier =
+      StreamController<bool>.broadcast();
 
   bool isAuthenticated = false;
-  LoginBloc loginBloc = LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
+  LoginBloc loginBloc =
+      LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
   bool isLoading = false;
 
   @override
@@ -53,8 +56,10 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
 
           if (state is LoginLoaded) {
             preferences.setPreference(PreferenceString.userId, state.userId);
-            preferences.setPreference(PreferenceString.sessionName, state.sessionName);
-            preferences.setPreference(PreferenceString.userName, state.userName);
+            preferences.setPreference(
+                PreferenceString.sessionName, state.sessionName);
+            preferences.setPreference(
+                PreferenceString.userName, state.userName);
             //Helpers.showSnackBar(context, state.msg.toString());
             removeAndCallNextScreen(context, const RootScreen());
           }
@@ -90,14 +95,30 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                     title: Text(
                       Message.enterYourPasscodeToUnlock,
                       textAlign: TextAlign.center,
-                      style: CustomTextStyle.labelMediumBoldFontText,
+                      style: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black)),
                     ),
                     passwordEnteredCallback: _onPasscodeEntered,
-                    deleteButton: Icon(Icons.backspace, color: AppColors.blackColor),
+                    deleteButton:
+                        Icon(Icons.backspace, color: AppColors.blackColor),
                     shouldTriggerVerification: _verificationNotifier.stream,
                     backgroundColor: AppColors.whiteColor,
                     cancelCallback: _onPasscodeCancelled,
-                    digits: const ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+                    digits: const [
+                      '1',
+                      '2',
+                      '3',
+                      '4',
+                      '5',
+                      '6',
+                      '7',
+                      '8',
+                      '9',
+                      '0'
+                    ],
                     passwordDigits: 4,
                     cancelButton: Text("", style: CustomTextStyle.labelText),
                   ),
@@ -110,7 +131,8 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                           child: Container(
                             height: MediaQuery.of(context).size.height,
                             width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0)),
                             child: loadingView(),
                           ),
                         )),

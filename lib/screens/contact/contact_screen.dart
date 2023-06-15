@@ -18,7 +18,8 @@ import 'package:nssg/utils/widgets.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/custom_appbar.dart';
 import '../../components/custom_dialog.dart';
 import '../../components/global_api_call.dart';
@@ -134,7 +135,7 @@ class _ContactScreenState extends State<ContactScreen> {
             : true,
         child: Padding(
           padding:
-              EdgeInsets.only(right: 15.sp, top: 8.sp, left: 0.sp, bottom: 8),
+              EdgeInsets.only(right: 18.sp, top: 9.sp, left: 18.sp, bottom: 7),
           child: Padding(
             padding: EdgeInsets.only(bottom: 0.sp),
             child: Row(
@@ -143,38 +144,55 @@ class _ContactScreenState extends State<ContactScreen> {
                 //     onTap: () => closeSearchBar(),
                 //     child: Icon(Icons.arrow_back_ios_rounded,
                 //         color: AppColors.blackColor)),
-                SizedBox(width: 5.w),
+                // SizedBox(width: 5.w),
                 Expanded(
                   child: Consumer<WidgetChange>(
                       builder: (context, updateKey, search) {
                     return TextField(
                         onChanged: (value) {
-                          Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
+                          Provider.of<WidgetChange>(context, listen: false)
+                              .updateSearch(value);
                           searchKey = updateKey.updateSearchText.toString();
                           searchItemList = [];
 
                           for (var element in contactItems!) {
-                            if (element.contactName!.toLowerCase().contains(searchKey.toLowerCase())) {
+                            if (element.contactName!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if (element.contactCompany!.toLowerCase().contains(searchKey.toLowerCase())) {
+                            } else if (element.contactCompany!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if (element.firstname!.toLowerCase().contains(searchKey.toLowerCase())) {
+                            } else if (element.firstname!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if ((element.lastname!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.lastname!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.email!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.email!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.mailingzip!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.mailingzip!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.otherzip!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.otherzip!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
                             }
                           }
                         },
+                        style: TextStyle(fontSize: 16.sp),
                         keyboardType: TextInputType.text,
                         autofocus: false,
                         decoration: InputDecoration(
                             hintText: LabelString.lblSearch,
+                            hintStyle: TextStyle(fontSize: 16.sp),
                             suffixIcon: Container(
                                 decoration: BoxDecoration(
                                     color: AppColors.primaryColor,
@@ -182,7 +200,7 @@ class _ContactScreenState extends State<ContactScreen> {
                                         topRight: Radius.circular(5),
                                         bottomRight: Radius.circular(5))),
                                 child: Icon(Icons.search,
-                                    color: AppColors.whiteColor, size: 15.sp)),
+                                    color: AppColors.whiteColor, size: 20.sp)),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5),
                                 borderSide: BorderSide(
@@ -256,7 +274,7 @@ class _ContactScreenState extends State<ContactScreen> {
                               child: FadeInAnimation(
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                      left: 12.sp, right: 12.sp),
+                                      left: 15.sp, right: 15.sp),
                                   child: Card(
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
@@ -312,11 +330,11 @@ class _ContactScreenState extends State<ContactScreen> {
                                                   color: AppColors.whiteColor,
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          12.sp)),
+                                                          12.r)),
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
-                                                    vertical: 8.sp,
-                                                    horizontal: 15.sp),
+                                                    vertical: 10.sp,
+                                                    horizontal: 16.sp),
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -341,10 +359,16 @@ class _ContactScreenState extends State<ContactScreen> {
                                                                           index]
                                                                       .contactName
                                                                       .toString(),
-                                                              style: CustomTextStyle
-                                                                  .labelMediumBoldFontText),
-                                                          SizedBox(
-                                                              height: 1.3.h),
+                                                              style: GoogleFonts.roboto(
+                                                                  textStyle: TextStyle(
+                                                                      fontSize:
+                                                                          18.sp,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: Colors
+                                                                          .black))),
+                                                          SizedBox(height: 4.h),
                                                           InkWell(
                                                             onTap: () {
                                                               if (searchKey
@@ -375,13 +399,12 @@ class _ContactScreenState extends State<ContactScreen> {
                                                                         .toString(),
                                                                 style: GoogleFonts.roboto(
                                                                     textStyle: TextStyle(
-                                                                        fontSize: 12
+                                                                        fontSize: 14
                                                                             .sp,
                                                                         color: AppColors
                                                                             .primaryColor))),
                                                           ),
-                                                          SizedBox(
-                                                              height: 0.7.h),
+                                                          SizedBox(height: 2.h),
                                                           InkWell(
                                                             onTap: () => callFromApp(searchKey
                                                                     .isNotEmpty
@@ -415,14 +438,22 @@ class _ContactScreenState extends State<ContactScreen> {
                                                         Text(
                                                             LabelString
                                                                 .lblViewMore,
-                                                            style:
-                                                                CustomTextStyle
-                                                                    .commonText),
+                                                            style: GoogleFonts.roboto(
+                                                                textStyle: TextStyle(
+                                                                    fontSize:
+                                                                        12.sp,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color: Colors
+                                                                        .black))),
                                                         SizedBox(width: 2.w),
                                                         Image.asset(
-                                                            ImageString
-                                                                .imgViewMore,
-                                                            height: 2.h)
+                                                          ImageString
+                                                              .imgViewMore,
+                                                          height: 10.h,
+                                                          width: 10.w,
+                                                        )
                                                       ],
                                                     )
                                                   ],
@@ -580,7 +611,7 @@ class _ContactScreenState extends State<ContactScreen> {
   //Add contact button
   SizedBox buildAddContactButton(BuildContext context) {
     return SizedBox(
-      height: 8.h,
+      height: 55.h,
       child: FittedBox(
           child: FloatingActionButton.small(
               elevation: 0,
@@ -711,8 +742,10 @@ class ContactDetail extends StatelessWidget {
                                                   AddContactPage(
                                                       id.toString())),
                                               icon: Image.asset(
-                                                  ImageString.icEdit,
-                                                  height: 2.5.h)),
+                                                ImageString.icEdit,
+                                                height: 14.h,
+                                                width: 14.w,
+                                              )),
                                           SizedBox(height: 2.h),
                                           if (quote != "quote")
                                             InkWell(
@@ -739,14 +772,17 @@ class ContactDetail extends StatelessWidget {
                                                 );
                                               },
                                               child: Image.asset(
-                                                  ImageString.icDelete,
-                                                  height: 2.5.h),
+                                                ImageString.icDelete,
+                                                height: 14.h,
+                                                width: 14.w,
+                                              ),
                                             ),
                                           IconButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
                                               icon: Icon(Icons.close_rounded,
+                                                  size: 20.sp,
                                                   color: AppColors.blackColor),
                                               highlightColor:
                                                   AppColors.transparent,
@@ -759,20 +795,21 @@ class ContactDetail extends StatelessWidget {
                                           "${dataContact["lastname"].toString().isNotEmpty ? dataContact["lastname"].toString().capitalize() : dataContact["lastname"]}",
                                           style: GoogleFonts.roboto(
                                               textStyle: TextStyle(
-                                                  fontSize: 20.sp,
+                                                  fontSize: 24.sp,
                                                   color: AppColors.fontColor,
                                                   fontWeight:
                                                       FontWeight.w500))),
-                                      SizedBox(height: 3.h),
+                                      SizedBox(height: 15.h),
                                       Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           SvgPicture.asset(
                                               ImageString.icCompany,
-                                              height: 2.h,
+                                              height: 16.h,
+                                              width: 16.w,
                                               color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 5.w),
                                           Expanded(
                                               child: dropdownvalue != "" &&
                                                       dropdownvalue.isNotEmpty
@@ -794,15 +831,22 @@ class ContactDetail extends StatelessWidget {
                                                           .labelText))
                                         ],
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           SvgPicture.asset(ImageString.icPhone,
-                                              height: 2.h,
+                                              height: 16.h,
+                                              width: 16.w,
                                               color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 5.w),
                                           Expanded(
                                             child: RichText(
                                               text: TextSpan(children: [
@@ -830,8 +874,8 @@ class ContactDetail extends StatelessWidget {
                                                                     horizontal:
                                                                         8.sp),
                                                             child: Container(
-                                                                height: 2.5.h,
-                                                                width: 0.3.w,
+                                                                height: 15.h,
+                                                                width: 1.w,
                                                                 color: AppColors
                                                                     .blackColor),
                                                           )),
@@ -851,24 +895,30 @@ class ContactDetail extends StatelessWidget {
                                           )
                                         ],
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       Text.rich(
                                         TextSpan(
                                           children: [
                                             WidgetSpan(
                                                 child: Icon(
-                                                    Icons.email_outlined,
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                    size: 13.sp)),
+                                              Icons.email_outlined,
+                                              color: AppColors.primaryColor,
+                                              size: 18.sp,
+                                            )),
                                             WidgetSpan(
-                                                child: SizedBox(width: 2.w)),
+                                                child: SizedBox(width: 5.w)),
                                             TextSpan(
                                                 text: dataContact["email"]
                                                     .toString(),
                                                 style: GoogleFonts.roboto(
                                                     textStyle: TextStyle(
-                                                        fontSize: 12.sp,
+                                                        fontSize: 14.sp,
                                                         color: AppColors
                                                             .primaryColor)),
                                                 recognizer:
@@ -885,7 +935,7 @@ class ContactDetail extends StatelessWidget {
                                                     "${dataContact["secondaryemail"]}",
                                                 style: GoogleFonts.roboto(
                                                     textStyle: TextStyle(
-                                                        fontSize: 12.sp,
+                                                        fontSize: 14.sp,
                                                         color: AppColors
                                                             .primaryColor)),
                                                 recognizer:
@@ -900,16 +950,23 @@ class ContactDetail extends StatelessWidget {
                                           ],
                                         ),
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           SvgPicture.asset(
                                               ImageString.icAddress,
-                                              height: 2.h,
+                                              height: 16.h,
+                                              width: 16.w,
                                               color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 5.w),
                                           Expanded(
                                             child: RichText(
                                               text: TextSpan(
@@ -921,7 +978,7 @@ class ContactDetail extends StatelessWidget {
                                                           color: AppColors
                                                               .primaryColor,
                                                           fontWeight:
-                                                              FontWeight.bold)),
+                                                              FontWeight.w500)),
                                                   children: [
                                                     TextSpan(
                                                         text:
@@ -929,7 +986,7 @@ class ContactDetail extends StatelessWidget {
                                                         style: GoogleFonts.roboto(
                                                             textStyle: TextStyle(
                                                                 height: 1.5,
-                                                                fontSize: 12.sp,
+                                                                fontSize: 14.sp,
                                                                 color: AppColors
                                                                     .blackColor,
                                                                 fontWeight:
@@ -940,16 +997,23 @@ class ContactDetail extends StatelessWidget {
                                           )
                                         ],
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           SvgPicture.asset(
                                               ImageString.icAddress,
-                                              height: 2.h,
+                                              height: 16.h,
+                                              width: 16.w,
                                               color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 5.w),
                                           Expanded(
                                             child: RichText(
                                               text: TextSpan(
@@ -961,7 +1025,7 @@ class ContactDetail extends StatelessWidget {
                                                           color: AppColors
                                                               .primaryColor,
                                                           fontWeight:
-                                                              FontWeight.bold)),
+                                                              FontWeight.w500)),
                                                   children: [
                                                     TextSpan(
                                                         text: dropdownvalue !=
@@ -973,7 +1037,7 @@ class ContactDetail extends StatelessWidget {
                                                         style: GoogleFonts.roboto(
                                                             textStyle: TextStyle(
                                                                 height: 1.5,
-                                                                fontSize: 12.sp,
+                                                                fontSize: 14.sp,
                                                                 color: AppColors
                                                                     .blackColor,
                                                                 fontWeight:
@@ -984,7 +1048,13 @@ class ContactDetail extends StatelessWidget {
                                           )
                                         ],
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                     ],
                                   ),
                                 ),

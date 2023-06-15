@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/utils/extention_text.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../components/custom_button.dart';
 import '../../../components/custom_text_styles.dart';
@@ -39,8 +41,8 @@ class _EditItemState extends State<EditItem> {
     super.initState();
     productsList = widget.productsList;
 
-
-    if(productsList.selectLocation != null && productsList.titleLocation != null){
+    if (productsList.selectLocation != null &&
+        productsList.titleLocation != null) {
       listLocation = productsList.selectLocation!.split("###");
       listLocationTitle = productsList.titleLocation!.split("###");
     }
@@ -48,7 +50,8 @@ class _EditItemState extends State<EditItem> {
     itemDescriptionController.text = widget.productsList.description.toString();
     itemNameController.text = widget.productsList.itemName.toString();
     itemCostPriceController.text = widget.productsList.costPrice.toString();
-    itemSellingPriceController.text = widget.productsList.sellingPrice.formatAmount();
+    itemSellingPriceController.text =
+        widget.productsList.sellingPrice.formatAmount();
     itemQuantityController.text = widget.productsList.quantity.toString();
     itemDiscountController.text = widget.productsList.discountPrice.toString();
   }
@@ -58,23 +61,39 @@ class _EditItemState extends State<EditItem> {
     var query = MediaQuery.of(context).size;
 
     //this is for show amount on edit dialog
-    String finalAmountShow = (itemSellingPriceController.text == "" ? 0.0 : (double.parse(itemSellingPriceController.text) *
-        productsList.quantity!)- (itemDiscountController.text == "" ? 0.0
-        : double.parse(itemDiscountController.text))).formatAmount();
+    String finalAmountShow = (itemSellingPriceController.text == ""
+            ? 0.0
+            : (double.parse(itemSellingPriceController.text) *
+                    productsList.quantity!) -
+                (itemDiscountController.text == ""
+                    ? 0.0
+                    : double.parse(itemDiscountController.text)))
+        .formatAmount();
 
     //this is for data pass
-    String finalAmount = (itemSellingPriceController.text == "" ? 0.0 : (double.parse(itemSellingPriceController.text) *
-        productsList.quantity!)- (0.0)).formatAmount();
+    String finalAmount = (itemSellingPriceController.text == ""
+            ? 0.0
+            : (double.parse(itemSellingPriceController.text) *
+                    productsList.quantity!) -
+                (0.0))
+        .formatAmount();
 
     /*(double.parse(productsList.amountPrice!) -
             (itemDiscountController.text == "" ? 0.0
                 : double.parse(itemDiscountController.text))).formatAmount();*/
 
-    String finalProfit = (itemSellingPriceController.text == "" ? 0.0 :
-    ((double.parse(itemSellingPriceController.text) * productsList.quantity!) -
-        (itemCostPriceController.text == "" ? 0.0 : double.parse(itemCostPriceController.text) * productsList.quantity!))
-        - (itemDiscountController.text == "" ? 0.0
-            : double.parse(itemDiscountController.text))).formatAmount();
+    String finalProfit = (itemSellingPriceController.text == ""
+            ? 0.0
+            : ((double.parse(itemSellingPriceController.text) *
+                        productsList.quantity!) -
+                    (itemCostPriceController.text == ""
+                        ? 0.0
+                        : double.parse(itemCostPriceController.text) *
+                            productsList.quantity!)) -
+                (itemDiscountController.text == ""
+                    ? 0.0
+                    : double.parse(itemDiscountController.text)))
+        .formatAmount();
 
     /*(double.parse(productsList.profit!) -
             (itemDiscountController.text == "" ? 0.0
@@ -87,7 +106,7 @@ class _EditItemState extends State<EditItem> {
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
-            SizedBox(height: 1.h),
+            SizedBox(height: 10.h),
             Align(
                 alignment: Alignment.topRight,
                 child: InkWell(
@@ -133,20 +152,22 @@ class _EditItemState extends State<EditItem> {
                             insetPadding:
                                 EdgeInsets.symmetric(horizontal: 12.sp),
                             child: SelectLocation(
-                                productsList.quantity,
-                                productsList.itemName,
-                                listLocation,
-                                listLocationTitle,
-                              productsList.productTitle,));
+                              productsList.quantity,
+                              productsList.itemName,
+                              listLocation,
+                              listLocationTitle,
+                              productsList.productTitle,
+                            ));
                       },
                     ).then((value) {
                       if (value != null) {
                         if (value is List) {
-                          productsList = productsList.copyWith(locationList: value[0] as List<String>?,
+                          productsList = productsList.copyWith(
+                              locationList: value[0] as List<String>?,
                               titleLocationList: value[1] as List<String>?);
                           listLocation = value[0] as List<String>?;
                           listLocationTitle = value[1] as List<String>?;
-                          setState(() { });
+                          setState(() {});
                         }
                       }
                     });
@@ -221,10 +242,14 @@ class _EditItemState extends State<EditItem> {
                     onTap: () {
                       if (productsList.quantity! > 1) {
                         setState(() {
-                          productsList.quantity = (productsList.quantity ?? 0) - 1;
-                          productsList.amountPrice = ((productsList.quantity ?? 0) *
-                                      productsList.sellingPrice.formatDouble()).formatAmount();
-                          itemQuantityController.text = productsList.quantity.toString();
+                          productsList.quantity =
+                              (productsList.quantity ?? 0) - 1;
+                          productsList.amountPrice =
+                              ((productsList.quantity ?? 0) *
+                                      productsList.sellingPrice.formatDouble())
+                                  .formatAmount();
+                          itemQuantityController.text =
+                              productsList.quantity.toString();
                         });
                       }
                     },
@@ -239,16 +264,20 @@ class _EditItemState extends State<EditItem> {
                     ),
                   ),
                 ),
-                SizedBox(width: 3.w),
+                SizedBox(width: 10.w),
                 Flexible(
                   flex: 1,
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        productsList.quantity = (productsList.quantity ?? 0) + 1;
-                        productsList.amountPrice = ((productsList.quantity ?? 0) *
-                                    productsList.sellingPrice.formatDouble()).formatAmount();
-                        itemQuantityController.text = productsList.quantity.toString();
+                        productsList.quantity =
+                            (productsList.quantity ?? 0) + 1;
+                        productsList.amountPrice =
+                            ((productsList.quantity ?? 0) *
+                                    productsList.sellingPrice.formatDouble())
+                                .formatAmount();
+                        itemQuantityController.text =
+                            productsList.quantity.toString();
                       });
                     },
                     child: Container(
@@ -299,7 +328,8 @@ class _EditItemState extends State<EditItem> {
                         style: CustomTextStyle.labelFontHintText,
                         children: [
                           TextSpan(
-                              text: finalProfit == "-0.00" ? "0.00" : finalProfit,
+                              text:
+                                  finalProfit == "-0.00" ? "0.00" : finalProfit,
                               //productsList.profit.formatAmount(),
                               style: CustomTextStyle.labelText)
                         ]),
@@ -307,27 +337,29 @@ class _EditItemState extends State<EditItem> {
                 ),
               ],
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 20.h),
             SizedBox(
                 width: query.width,
                 height: query.height * 0.06,
                 child: CustomButton(
                     title: ButtonString.btnAddProduct,
                     onClick: () {
-                      context.read<ProductListBloc>().add(
-                          UpdateProductToListEvent(
+                      context
+                          .read<ProductListBloc>()
+                          .add(UpdateProductToListEvent(
                               productsList: productsList.copyWith(
-                                  itemName: itemNameController.text,
-                                  description: itemDescriptionController.text,
-                                  profit: finalProfit,
-                                  amountPrice: finalAmount,
-                                  costPrice: itemCostPriceController.text,
-                                  sellingPrice: itemSellingPriceController.text,
-                                  quantity: int.parse(itemQuantityController.text),
-                                  discountPrice: itemDiscountController.text,
-                                  selectLocation: (listLocation ?? []).join('###'),
-                                  titleLocation: (listLocationTitle ?? []).join('###'),
-                              )));
+                            itemName: itemNameController.text,
+                            description: itemDescriptionController.text,
+                            profit: finalProfit,
+                            amountPrice: finalAmount,
+                            costPrice: itemCostPriceController.text,
+                            sellingPrice: itemSellingPriceController.text,
+                            quantity: int.parse(itemQuantityController.text),
+                            discountPrice: itemDiscountController.text,
+                            selectLocation: (listLocation ?? []).join('###'),
+                            titleLocation:
+                                (listLocationTitle ?? []).join('###'),
+                          )));
                       Navigator.pop(context, finalAmountShow);
                     })),
             SizedBox(height: 1.h),
@@ -340,7 +372,8 @@ class _EditItemState extends State<EditItem> {
 
 class DiscountDialog extends StatefulWidget {
   final ProductsList productsList;
-  const DiscountDialog({Key? key, required this.productsList}) : super(key: key);
+  const DiscountDialog({Key? key, required this.productsList})
+      : super(key: key);
 
   @override
   State<DiscountDialog> createState() => _DiscountDialogState();
@@ -373,7 +406,11 @@ class _DiscountDialogState extends State<DiscountDialog> {
                 Padding(
                   padding: EdgeInsets.only(left: 12.sp),
                   child: Text(LabelString.lblAddDiscount,
-                      style: CustomTextStyle.labelBoldFontText),
+                      style: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                              fontSize: 17.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black))),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -407,30 +444,53 @@ class _DiscountDialogState extends State<DiscountDialog> {
                 child: CustomButton(
                     title: ButtonString.btnSubmit,
                     onClick: () {
-                      String finalAmount = (widget.productsList.sellingPrice == "" ? 0.0 : (double.parse(widget.productsList.sellingPrice.toString()) *
-                          productsList.quantity!)- (0.0)).formatAmount();
+                      String finalAmount = (widget.productsList.sellingPrice ==
+                                  ""
+                              ? 0.0
+                              : (double.parse(widget.productsList.sellingPrice
+                                          .toString()) *
+                                      productsList.quantity!) -
+                                  (0.0))
+                          .formatAmount();
 
-                      String finalProfit = (widget.productsList.sellingPrice == "" ? 0.0 :
-                      ((double.parse(widget.productsList.sellingPrice.toString()) * productsList.quantity!) -
-                          (widget.productsList.costPrice == "" ? 0.0 : double.parse(widget.productsList.costPrice.toString()) * productsList.quantity!))
-                          - (discController.text == "" ? 0.0
-                          : double.parse(discController.text))).formatAmount();
+                      String finalProfit = (widget.productsList.sellingPrice ==
+                                  ""
+                              ? 0.0
+                              : ((double.parse(widget.productsList.sellingPrice
+                                              .toString()) *
+                                          productsList.quantity!) -
+                                      (widget.productsList.costPrice == ""
+                                          ? 0.0
+                                          : double.parse(widget
+                                                  .productsList.costPrice
+                                                  .toString()) *
+                                              productsList.quantity!)) -
+                                  (discController.text == ""
+                                      ? 0.0
+                                      : double.parse(discController.text)))
+                          .formatAmount();
 
-                      context.read<ProductListBloc>().add(
-                          UpdateProductToListEvent(
+                      context
+                          .read<ProductListBloc>()
+                          .add(UpdateProductToListEvent(
                               productsList: productsList.copyWith(
-                                  itemName: widget.productsList.itemName.toString(),
-                                  description: widget.productsList.description.toString(),
-                                  profit: finalProfit,
-                                  amountPrice: finalAmount,
-                                  costPrice: widget.productsList.costPrice.toString(),
-                                  sellingPrice: widget.productsList.sellingPrice.toString(),
-                                  quantity: widget.productsList.quantity,
-                                  discountPrice: discController.text,
-                                  selectLocation: (productsList.locationList ?? []).join('###'),
-                                titleLocation:(productsList.titleLocationList ?? []).join('###'),
-                              )));
-                     // Navigator.pop(context, double.parse(discController.text));
+                            itemName: widget.productsList.itemName.toString(),
+                            description:
+                                widget.productsList.description.toString(),
+                            profit: finalProfit,
+                            amountPrice: finalAmount,
+                            costPrice: widget.productsList.costPrice.toString(),
+                            sellingPrice:
+                                widget.productsList.sellingPrice.toString(),
+                            quantity: widget.productsList.quantity,
+                            discountPrice: discController.text,
+                            selectLocation:
+                                (productsList.locationList ?? []).join('###'),
+                            titleLocation:
+                                (productsList.titleLocationList ?? [])
+                                    .join('###'),
+                          )));
+                      // Navigator.pop(context, double.parse(discController.text));
                       Navigator.pop(context);
                     })),
             SizedBox(height: 3.h)
