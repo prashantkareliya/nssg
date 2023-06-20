@@ -17,6 +17,12 @@ class ProductLoadedState extends GetProductState {
   ProductLoadedState({this.productList});
 }
 
+class SubProductLoadedState extends GetProductState {
+  final List<SubProductResult>? subProductList;
+
+  SubProductLoadedState({this.subProductList});
+}
+
 class ProductLoadedFail extends GetProductState {
   final String? error;
 

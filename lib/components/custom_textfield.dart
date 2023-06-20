@@ -59,26 +59,6 @@ class CustomTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /* Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (titleText != null) ...[
-              Row(
-                children: [
-                  Text(
-                    titleText ?? "",
-                    style: CustomTextStyle.labelFontText,
-                  ),
-                  Text(
-                    star ?? "",
-                    style: TextStyle(color: AppColors.redColor),
-                  )
-                ],
-              ),
-            ],
-            copyWidget ?? Container(),
-          ],
-        ),*/
         SizedBox(height: 10.h),
         TextFormField(
           controller: controller,
@@ -99,33 +79,12 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
               suffixIcon: suffixWidget,
               prefixIcon: prefixIcon,
-
-              /* border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-              ),*/
-              /* enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                    width: 1, color: AppColors.primaryColor)
-              ),*/
-
               border: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               focusedBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               enabledBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(width: 1, color: AppColors.primaryColor)),
+                  borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               filled: true,
               fillColor: Colors.white,
               contentPadding: EdgeInsets.only(left: 12.sp),
@@ -133,7 +92,7 @@ class CustomTextField extends StatelessWidget {
               hintStyle: CustomTextStyle.labelFontHintText,
               counterText: "",
               labelStyle: CustomTextStyle.labelFontHintText,
-              labelText: titleText! + "${star ?? ""}"),
+              labelText: "${titleText!}${star ?? ""}"),
           validator: (validator != null)
               ? validator
               : (isRequired == true)
@@ -151,117 +110,3 @@ class CustomTextField extends StatelessWidget {
     );
   }
 }
-
-/*
-class MultiLineTextField extends StatelessWidget {
-  const MultiLineTextField(
-      {Key? key,
-      this.hint,
-      required this.controller,
-      required this.keyboardType,
-      this.errorText,
-      this.titleText,
-      this.onEditingComplete,
-      required this.readOnly,
-      this.onTap,
-      this.inputFormatters,
-      this.validator,
-      this.isRequired,
-      required this.obscureText,
-      this.suffixWidget})
-      : super(key: key);
-
-  final String? hint;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-  final String? errorText;
-  final String? titleText;
-  final Function()? onEditingComplete;
-  final bool readOnly;
-  final bool obscureText;
-  final Function()? onTap;
-  final List<TextInputFormatter>? inputFormatters;
-  final String? Function(String? val)? validator;
-  final bool? isRequired;
-  final Widget? suffixWidget;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-       */
-/* if (titleText != null) ...[
-          Text(titleText ?? "", style: CustomTextStyle.labelFontText),
-          const SizedBox(height: 10),
-        ],*//*
-
-        TextFormField(
-          controller: controller,
-          style: TextStyle(color: AppColors.blackColor),
-          textCapitalization: TextCapitalization.sentences,
-          inputFormatters: inputFormatters,
-          textInputAction: TextInputAction.next,
-          maxLines: 4,
-          readOnly: readOnly,
-          onTap: onTap,
-          obscureText: obscureText,
-          onEditingComplete: onEditingComplete,
-          keyboardType: keyboardType,
-          cursorColor: AppColors.blackColor,
-          decoration: InputDecoration(
-              suffixIcon: suffixWidget,
-              */
-/*border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(width: 2, color: AppColors.primaryColor),
-              ),*//*
-
-              border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)
-              ),
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)
-              ),
-              enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      width: 1, color: AppColors.primaryColor)
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding:
-                  EdgeInsets.only(left: 12.sp, top: 14.sp, right: 12),
-              hintText: hint,
-              hintStyle: CustomTextStyle.labelFontHintText,
-              counterText: "",
-              labelStyle: CustomTextStyle.labelFontHintText,
-              labelText: titleText!),
-          validator: (validator != null)
-              ? validator
-              : (isRequired == true)
-                  ? (String? val) {
-                      if (val?.isEmpty == true) {
-                        return "${titleText ?? 'Field'} can't empty";
-                      } else {
-                        return null;
-                      }
-                    }
-                  : null,
-        ),
-        SizedBox(height: 2.5.h),
-      ],
-    );
-  }
-}
-*/

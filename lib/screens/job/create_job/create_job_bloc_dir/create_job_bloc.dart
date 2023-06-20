@@ -27,10 +27,9 @@ class CreateJobBloc extends Bloc<CreateJobEvent, CreateJobState> {
 
     response.when(success: (success) {
       emit(LoadingCreateJob(false));
-      emit(LoadedCreateJob(
-          jobDetail: success.result,
-          jobId: success.result?.id));
-    }, failure: (failure) {
+      emit(LoadedCreateJob(jobDetail: success.result, jobId: success.result?.id));
+    },
+        failure: (failure) {
       emit(LoadingCreateJob(false));
       emit(FailCreateJob(error: failure.toString()));
     });

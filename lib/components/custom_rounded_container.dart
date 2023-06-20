@@ -28,23 +28,17 @@ class RoundedContainer extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isEnable!
-                  ? AppColors.primaryColor
-                  : AppColors.primaryColor.withOpacity(0.5)),
+              color: isEnable! ? AppColors.primaryColor : AppColors.primaryColor.withOpacity(0.5)),
           child: isDone!
               ? Padding(
                   padding: EdgeInsets.all(4.sp),
-                  child: Icon(Icons.done, color: AppColors.whiteColor),
-                )
+                  child: Icon(Icons.done, color: AppColors.whiteColor))
               : Padding(
                   padding: EdgeInsets.all(10.sp),
-                  child:
-                      Text(containerText!, style: CustomTextStyle.buttonText),
-                ),
+                  child: Text(containerText!, style: CustomTextStyle.buttonText)),
         ),
         SizedBox(width: 5.w),
-        Text("${LabelString.lblStep} ${stepText!}",
-            style: CustomTextStyle.commonText),
+        Text("${LabelString.lblStep} ${stepText!}", style: CustomTextStyle.commonText)
       ],
     );
   }

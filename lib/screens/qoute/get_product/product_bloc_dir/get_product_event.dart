@@ -9,3 +9,9 @@ class GetProductListEvent extends GetProductEvent {
 
   GetProductListEvent(this.queryParameters);
 }
+
+class GetSubProductListEvent extends GetProductEvent {
+  Map<String, dynamic> queryParameters;
+
+  GetSubProductListEvent(this.queryParameters);
+}

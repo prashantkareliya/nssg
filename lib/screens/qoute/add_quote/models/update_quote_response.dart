@@ -7,14 +7,14 @@ class UpdateQuoteResponse {
   UpdateQuoteResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     result =
-    json['result'] != null ? new Result.fromJson(json['result']) : null;
+    json['result'] != null ? Result.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.result != null) {
-      data['result'] = this.result!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    if (result != null) {
+      data['result'] = result!.toJson();
     }
     return data;
   }
@@ -309,108 +309,108 @@ class Result {
     if (json['LineItems'] != null) {
       lineItems = <LineItems>[];
       json['LineItems'].forEach((v) {
-        lineItems!.add(new LineItems.fromJson(v));
+        lineItems!.add(LineItems.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['quote_no'] = this.quoteNo;
-    data['subject'] = this.subject;
-    data['potential_id'] = this.potentialId;
-    data['quotestage'] = this.quotestage;
-    data['validtill'] = this.validtill;
-    data['contact_id'] = this.contactId;
-    data['carrier'] = this.carrier;
-    data['hdnSubTotal'] = this.hdnSubTotal;
-    data['shipping'] = this.shipping;
-    data['assigned_user_id1'] = this.assignedUserId1;
-    data['txtAdjustment'] = this.txtAdjustment;
-    data['hdnGrandTotal'] = this.hdnGrandTotal;
-    data['hdnTaxType'] = this.hdnTaxType;
-    data['hdnDiscountPercent'] = this.hdnDiscountPercent;
-    data['hdnDiscountAmount'] = this.hdnDiscountAmount;
-    data['hdnS_H_Amount'] = this.hdnSHAmount;
-    data['account_id'] = this.accountId;
-    data['assigned_user_id'] = this.assignedUserId;
-    data['createdtime'] = this.createdtime;
-    data['modifiedtime'] = this.modifiedtime;
-    data['modifiedby'] = this.modifiedby;
-    data['currency_id'] = this.currencyId;
-    data['conversion_rate'] = this.conversionRate;
-    data['bill_street'] = this.billStreet;
-    data['ship_street'] = this.shipStreet;
-    data['bill_city'] = this.billCity;
-    data['ship_city'] = this.shipCity;
-    data['bill_state'] = this.billState;
-    data['ship_state'] = this.shipState;
-    data['bill_code'] = this.billCode;
-    data['ship_code'] = this.shipCode;
-    data['bill_country'] = this.billCountry;
-    data['ship_country'] = this.shipCountry;
-    data['bill_pobox'] = this.billPobox;
-    data['ship_pobox'] = this.shipPobox;
-    data['description'] = this.description;
-    data['terms_conditions'] = this.termsConditions;
-    data['productid'] = this.productid;
-    data['quantity'] = this.quantity;
-    data['listprice'] = this.listprice;
-    data['comment'] = this.comment;
-    data['discount_amount'] = this.discountAmount;
-    data['discount_percent'] = this.discountPercent;
-    data['tax1'] = this.tax1;
-    data['tax2'] = this.tax2;
-    data['tax3'] = this.tax3;
-    data['pre_tax_total'] = this.preTaxTotal;
-    data['hdnS_H_Percent'] = this.hdnSHPercent;
-    data['site_address_id'] = this.siteAddressId;
-    data['quotes_terms'] = this.quotesTerms;
-    data['costprice'] = this.costprice;
-    data['hdnprofitTotal'] = this.hdnprofitTotal;
-    data['markup'] = this.markup;
-    data['issue_number'] = this.issueNumber;
-    data['grade_number'] = this.gradeNumber;
-    data['system_type'] = this.systemType;
-    data['signalling_type'] = this.signallingType;
-    data['premises_type'] = this.premisesType;
-    data['project_manager'] = this.projectManager;
-    data['quotes_email'] = this.quotesEmail;
-    data['quotes_template_options'] = this.quotesTemplateOptions;
-    data['quote_related_id'] = this.quoteRelatedId;
-    data['product_location_title'] = this.productLocationTitle;
-    data['floor_plan_docs'] = this.floorPlanDocs;
-    data['quotes_company'] = this.quotesCompany;
-    data['installationtype'] = this.installationtype;
-    data['installation'] = this.installation;
-    data['hdnsubTotal'] = this.hdnsubTotal;
-    data['hdndiscountTotal'] = this.hdndiscountTotal;
-    data['quote_telephone_number'] = this.quoteTelephoneNumber;
-    data['quote_mobile_number'] = this.quoteMobileNumber;
-    data['is_quotes_confirm'] = this.isQuotesConfirm;
-    data['quotes_payment'] = this.quotesPayment;
-    data['is_quotes_payment_confirm'] = this.isQuotesPaymentConfirm;
-    data['quotes_deposite_amount'] = this.quotesDepositeAmount;
-    data['quotes_depo_received_amount'] = this.quotesDepoReceivedAmount;
-    data['quote_email_reminder'] = this.quoteEmailReminder;
-    data['quote_reminder_email_sent_log'] = this.quoteReminderEmailSentLog;
-    data['is_keyholder_confirm'] = this.isKeyholderConfirm;
-    data['is_maintenance_con_confirm'] = this.isMaintenanceConConfirm;
-    data['is_police_appli_confirm'] = this.isPoliceAppliConfirm;
-    data['quote_correspondences_docs'] = this.quoteCorrespondencesDocs;
-    data['quote_quote_type'] = this.quoteQuoteType;
-    data['quotes_contract_id'] = this.quotesContractId;
-    data['quote_stop_email_doc_reminder'] = this.quoteStopEmailDocReminder;
-    data['quote_priority_level'] = this.quotePriorityLevel;
-    data['quote_works_schedule'] = this.quoteWorksSchedule;
-    data['quote_no_of_engineer'] = this.quoteNoOfEngineer;
-    data['quote_req_to_complete_work'] = this.quoteReqToCompleteWork;
-    data['id'] = this.id;
-    data['contact_name'] = this.contactName;
-    data['assigned_user_name'] = this.assignedUserName;
-    data['project_manager_name'] = this.projectManagerName;
-    if (this.lineItems != null) {
-      data['LineItems'] = this.lineItems!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['quote_no'] = quoteNo;
+    data['subject'] = subject;
+    data['potential_id'] = potentialId;
+    data['quotestage'] = quotestage;
+    data['validtill'] = validtill;
+    data['contact_id'] = contactId;
+    data['carrier'] = carrier;
+    data['hdnSubTotal'] = hdnSubTotal;
+    data['shipping'] = shipping;
+    data['assigned_user_id1'] = assignedUserId1;
+    data['txtAdjustment'] = txtAdjustment;
+    data['hdnGrandTotal'] = hdnGrandTotal;
+    data['hdnTaxType'] = hdnTaxType;
+    data['hdnDiscountPercent'] = hdnDiscountPercent;
+    data['hdnDiscountAmount'] = hdnDiscountAmount;
+    data['hdnS_H_Amount'] = hdnSHAmount;
+    data['account_id'] = accountId;
+    data['assigned_user_id'] = assignedUserId;
+    data['createdtime'] = createdtime;
+    data['modifiedtime'] = modifiedtime;
+    data['modifiedby'] = modifiedby;
+    data['currency_id'] = currencyId;
+    data['conversion_rate'] = conversionRate;
+    data['bill_street'] = billStreet;
+    data['ship_street'] = shipStreet;
+    data['bill_city'] = billCity;
+    data['ship_city'] = shipCity;
+    data['bill_state'] = billState;
+    data['ship_state'] = shipState;
+    data['bill_code'] = billCode;
+    data['ship_code'] = shipCode;
+    data['bill_country'] = billCountry;
+    data['ship_country'] = shipCountry;
+    data['bill_pobox'] = billPobox;
+    data['ship_pobox'] = shipPobox;
+    data['description'] = description;
+    data['terms_conditions'] = termsConditions;
+    data['productid'] = productid;
+    data['quantity'] = quantity;
+    data['listprice'] = listprice;
+    data['comment'] = comment;
+    data['discount_amount'] = discountAmount;
+    data['discount_percent'] = discountPercent;
+    data['tax1'] = tax1;
+    data['tax2'] = tax2;
+    data['tax3'] = tax3;
+    data['pre_tax_total'] = preTaxTotal;
+    data['hdnS_H_Percent'] = hdnSHPercent;
+    data['site_address_id'] = siteAddressId;
+    data['quotes_terms'] = quotesTerms;
+    data['costprice'] = costprice;
+    data['hdnprofitTotal'] = hdnprofitTotal;
+    data['markup'] = markup;
+    data['issue_number'] = issueNumber;
+    data['grade_number'] = gradeNumber;
+    data['system_type'] = systemType;
+    data['signalling_type'] = signallingType;
+    data['premises_type'] = premisesType;
+    data['project_manager'] = projectManager;
+    data['quotes_email'] = quotesEmail;
+    data['quotes_template_options'] = quotesTemplateOptions;
+    data['quote_related_id'] = quoteRelatedId;
+    data['product_location_title'] = productLocationTitle;
+    data['floor_plan_docs'] = floorPlanDocs;
+    data['quotes_company'] = quotesCompany;
+    data['installationtype'] = installationtype;
+    data['installation'] = installation;
+    data['hdnsubTotal'] = hdnsubTotal;
+    data['hdndiscountTotal'] = hdndiscountTotal;
+    data['quote_telephone_number'] = quoteTelephoneNumber;
+    data['quote_mobile_number'] = quoteMobileNumber;
+    data['is_quotes_confirm'] = isQuotesConfirm;
+    data['quotes_payment'] = quotesPayment;
+    data['is_quotes_payment_confirm'] = isQuotesPaymentConfirm;
+    data['quotes_deposite_amount'] = quotesDepositeAmount;
+    data['quotes_depo_received_amount'] = quotesDepoReceivedAmount;
+    data['quote_email_reminder'] = quoteEmailReminder;
+    data['quote_reminder_email_sent_log'] = quoteReminderEmailSentLog;
+    data['is_keyholder_confirm'] = isKeyholderConfirm;
+    data['is_maintenance_con_confirm'] = isMaintenanceConConfirm;
+    data['is_police_appli_confirm'] = isPoliceAppliConfirm;
+    data['quote_correspondences_docs'] = quoteCorrespondencesDocs;
+    data['quote_quote_type'] = quoteQuoteType;
+    data['quotes_contract_id'] = quotesContractId;
+    data['quote_stop_email_doc_reminder'] = quoteStopEmailDocReminder;
+    data['quote_priority_level'] = quotePriorityLevel;
+    data['quote_works_schedule'] = quoteWorksSchedule;
+    data['quote_no_of_engineer'] = quoteNoOfEngineer;
+    data['quote_req_to_complete_work'] = quoteReqToCompleteWork;
+    data['id'] = id;
+    data['contact_name'] = contactName;
+    data['assigned_user_name'] = assignedUserName;
+    data['project_manager_name'] = projectManagerName;
+    if (lineItems != null) {
+      data['LineItems'] = lineItems!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -487,28 +487,28 @@ class LineItems {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['parent_id'] = this.parentId;
-    data['productid'] = this.productid;
-    data['sequence_no'] = this.sequenceNo;
-    data['quantity'] = this.quantity;
-    data['listprice'] = this.listprice;
-    data['discount_percent'] = this.discountPercent;
-    data['discount_amount'] = this.discountAmount;
-    data['comment'] = this.comment;
-    data['description'] = this.description;
-    data['incrementondel'] = this.incrementondel;
-    data['tax1'] = this.tax1;
-    data['tax2'] = this.tax2;
-    data['tax3'] = this.tax3;
-    data['product_location'] = this.productLocation;
-    data['product_location_title'] = this.productLocationTitle;
-    data['costprice'] = this.costprice;
-    data['ext_qty'] = this.extQty;
-    data['required_document'] = this.requiredDocument;
-    data['pro_short_description'] = this.proShortDescription;
-    data['id'] = this.id;
-    data['prod_name'] = this.prodName;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['parent_id'] = parentId;
+    data['productid'] = productid;
+    data['sequence_no'] = sequenceNo;
+    data['quantity'] = quantity;
+    data['listprice'] = listprice;
+    data['discount_percent'] = discountPercent;
+    data['discount_amount'] = discountAmount;
+    data['comment'] = comment;
+    data['description'] = description;
+    data['incrementondel'] = incrementondel;
+    data['tax1'] = tax1;
+    data['tax2'] = tax2;
+    data['tax3'] = tax3;
+    data['product_location'] = productLocation;
+    data['product_location_title'] = productLocationTitle;
+    data['costprice'] = costprice;
+    data['ext_qty'] = extQty;
+    data['required_document'] = requiredDocument;
+    data['pro_short_description'] = proShortDescription;
+    data['id'] = id;
+    data['prod_name'] = prodName;
     return data;
   }
 }

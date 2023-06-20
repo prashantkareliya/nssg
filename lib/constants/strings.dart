@@ -11,37 +11,27 @@ class ErrorString {
   static const String selectPriorityLevel = "Please Select Priority Level";
   static const String selectWorkSchedule = "Please Select Work Schedule";
   static const String selectPaymentMethod = "Please Select Payment Method";
-  static const String selectInstructionToProceed =
-      "Please Select Instruction To Proceed";
-  static const String selectPaymentInstruction =
-      "Please Select Payment Instruction";
-  static const String selectEngineerInstruction =
-      "Please Enter Engineer Instruction";
+  static const String selectInstructionToProceed = "Please Select Instruction To Proceed";
+  static const String selectPaymentInstruction = "Please Select Payment Instruction";
+  static const String selectEngineerInstruction = "Please Enter Engineer Instruction";
   static const String selectEngineerNote = "Please Enter Engineer Note";
 }
 
 class Message {
-  static const String createQuote =
-      "Would you like to create a quote for this contact now?";
+  static const String createQuote = "Would you like to create a quote for this contact now?";
   static const String deleteContact = "Do you want to delete this contact?";
   static const String quoteExit = "Do you want to exit from this module?";
-  static const String enterYourPasscodeToUnlock =
-      "Enter your Passcode to unlock";
-
-  //static const String descriptionForQuote = "Our lead times are 2 to 3 weeks from the date of your order.";
+  static const String enterYourPasscodeToUnlock = "Enter your Passcode to unlock";
   static const String descriptionForQuote =
       "Lead times are 3 - 4 weeks on most orders due to parts";
   static const String termsCondition1 =
       "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 50% Deposit and Remaining balance upon completion.";
   static const String termsCondition2 =
       "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 30 Days credit terms upon completion.";
-  static const String addEngineerAndHours =
-      "Add the Number of Engineer & Hours";
+  static const String addEngineerAndHours = "Add the Number of Engineer & Hours";
   static const String quoteEstimation = "for quote estimation";
-  static const String quoteCreateSuccessfully =
-      "Your quote has been created successfully!";
-  static const String quoteEmailSentMessage =
-      "Quote has been sent successfully to";
+  static const String quoteCreateSuccessfully = "Your quote has been created successfully!";
+  static const String quoteEmailSentMessage = "Quote has been sent successfully to";
   static const String generateJobMessage =
       "This quote is being converted into the job, please verify in the CRM after few minutes.";
   static const String quoteUpdateMessage = "Quote update successfully";
@@ -74,16 +64,15 @@ class LabelString {
   static const String lblEngineerNote = "Engineer Note";
   static const String lblEngineerInstruction = "Engineer Instruction";
   static const String lblSpecialInstruction = "Special Instruction";
-  static const String lblQuestionsForProjectManagers =
-      "Questions for Project Managers";
+  static const String lblContractNumber = "Contract Number";
+  static const String lblQuestionsForProjectManagers = "Questions for Project Managers";
   static const String lblJobInstructions = "Job Instructions";
   static const String lblPriorityLevel = "Priority Level";
   static const String lblWorkSchedule = "Work Schedule";
   static const String lblPaymentMethod = "Payment Method";
   static const String lblPaymentInstructions = "Payment Instructions";
   static const String lblInstructionsToProceed = "Instructions to Proceed";
-  static const String lblInstallationTimeRequired =
-      "Installation Time required";
+  static const String lblInstallationTimeRequired = "Installation Time required";
 
   static const String lblFullName = "Full Name";
   static const String lblCompany = "Company";
@@ -129,8 +118,7 @@ class LabelString {
   static const String lblCountry = "Country";
   static const String lblPostalCode = "Postal Code";
 
-  static const String lblInstallationAddressDetails =
-      "Installation address details";
+  static const String lblInstallationAddressDetails = "Installation address details";
 
   static const String lblAddNewQuote = "Add New Quote";
   static const String lblEditQuote = "Edit Quote";
@@ -171,7 +159,6 @@ class LabelString {
   static const String lblLocation = "Location";
   static const String lblItemName = "Item Name : ";
   static const String lblQuantity = "Quantity";
-  //static const String lblDiscount = "Disc. Price : ";
   static const String lblDiscountFormal = "Discount";
   static const String lbItemName = "Item Name";
   static const String lbItemDescription = "Description";
@@ -193,6 +180,8 @@ class LabelString {
   static const String lblDepositAmount = "Deposit Amount";
   static const String lblGrandTotal = "Grand Total";
   static const String lblTotalProfit = "Total Profit";
+  static const String lblAttachment = "Attachments";
+  static const String lblLocations = "Locations";
   static const String lblSelectSiteAddress = "Select Site Address";
   static const String lblAddDiscount = "Add Discount";
   static const String lblQuoteEmail = "Quote Email";
@@ -233,8 +222,7 @@ class ImageString {
   static const String imgLogo = "assets/images/logo.png";
   static const String imgLogoSplash = "assets/images/logo_splash.png";
   static const String imgBack = "assets/images/background_grad.png";
-  static const String icImageInVisible =
-      "assets/images/ic_password_invisible.png";
+  static const String icImageInVisible = "assets/images/ic_password_invisible.png";
   static const String icImageVisible = "assets/images/ic_password_visible.png";
   static const String icSearch = "assets/images/ic_search.png";
   static const String icCopy = "assets/images/ic_copy.png";
@@ -260,8 +248,7 @@ class ImageString {
   static const String icEmail = "assets/images/email.svg";
   static const String icEngineer = "assets/images/engineer.svg";
   static const String icInstallation = "assets/images/installation.png";
-  static const String icCreateInstallation =
-      "assets/images/ic_create_installation.svg";
+  static const String icCreateInstallation = "assets/images/ic_create_installation.svg";
   static const String icCreateProcessed = "assets/images/ic_processed.svg";
   static const String icAccepted = "assets/images/ic_accepted.svg";
   static const String icInstallation2 = "assets/images/ic_installation.svg";
@@ -269,6 +256,7 @@ class ImageString {
   static const String icService = "assets/images/ic_services.svg";
 }
 
+//Shared Preference Strings(Save data in local DB)
 class PreferenceString {
   static const String userId = "userId";
   static const String sessionName = "sessionName";

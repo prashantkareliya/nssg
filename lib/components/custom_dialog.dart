@@ -35,8 +35,7 @@ class ValidationDialog extends StatelessWidget {
         width: 85.sw,
         padding: const EdgeInsets.all(0),
         decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8))),
+            color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Wrap(
           alignment: WrapAlignment.center,
           children: <Widget>[
@@ -57,8 +56,7 @@ class ValidationDialog extends StatelessWidget {
                                 color: Colors.black)))),
                 SizedBox(height: 10.h),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 15.sp, horizontal: 15.sp),
+                  padding: EdgeInsets.symmetric(vertical: 15.sp, horizontal: 15.sp),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -77,23 +75,20 @@ class ValidationDialog extends StatelessWidget {
                             onPressed: onClickYes,
                             clipBehavior: Clip.hardEdge,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  AppColors.primaryColor.withOpacity(0.20),
+                              backgroundColor: AppColors.primaryColor.withOpacity(0.20),
                               splashFactory: NoSplash.splashFactory,
                               shadowColor: AppColors.transparent,
                               elevation: 0,
                               shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0))),
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
                             ),
                             child: Text(LabelString.no,
                                 style: GoogleFonts.roboto(
-                                  textStyle: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: AppColors.primaryColor),
+                                  textStyle:
+                                      TextStyle(fontSize: 18.sp, color: AppColors.primaryColor),
                                 )),
                           )),
-                      SizedBox(height: 2.5.h),
+                      SizedBox(height: 2.5.h)
                     ],
                   ),
                 ),

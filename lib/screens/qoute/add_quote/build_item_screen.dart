@@ -71,6 +71,10 @@ class BuildItemScreen extends StatefulWidget {
   List<dynamic>? itemList = [];
   var dataQuote;
 
+  var contractList;
+
+  var quoteTypeContract;
+
   BuildItemScreen(
       this.eAmount,
       this.systemTypeSelect,
@@ -100,7 +104,9 @@ class BuildItemScreen extends StatefulWidget {
       this.operationType,
       {super.key,
       this.itemList,
-      this.dataQuote});
+      this.dataQuote,
+      this.contractList,
+      this.quoteTypeContract});
 
   @override
   State<BuildItemScreen> createState() => _BuildItemScreenState();
@@ -214,10 +220,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             }
 
             if (state is UpdateAddQuote) {
+              context.read<ProductListBloc>().add(ClearProductToListEvent());
               Helpers.showSnackBar(context, Message.quoteUpdateMessage);
               Navigator.pop(context);
               Navigator.pop(context);
-              Navigator.pop(context);
+              // Navigator.pop(context);
             }
           },
           child: BlocBuilder<AddQuoteBloc, AddQuoteState>(
@@ -279,7 +286,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                           templateOptionList[index]));
                                     }
                                     Provider.of<WidgetChange>(context).isSelectTemplateOption;
-
                                     return SizedBox(
                                       height: 6.h,
                                       child: InkWell(
@@ -315,9 +321,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                             ),
                             SizedBox(height: 2.0.h),
                             Padding(
-                              padding: const EdgeInsets.only(left: 12),
-                              child: Row(
-                                children: [
+                                padding: const EdgeInsets.only(left: 12),
+                                child: Row(children: [
                                   SizedBox(
                                       height: 20,
                                       width: 20,
@@ -337,9 +342,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     child: Text(LabelString.lblQuoteEmailReminder,
                                         style: CustomTextStyle.labelFontText),
                                   )
-                                ],
-                              ),
-                            ),
+                                ])),
                             SizedBox(height: 10.sp),
                             quoteEstimationWidget(query, state.productList),
                             SizedBox(height: 10.sp),
@@ -355,11 +358,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     .add(ChangeProductOrderEvent(oldIndex, newIndex));
                               },
                             ),
-                            // ...state.productList
-                            //     .map((e) =>
-                            //         buildDetailItemTile(e, context, state))
-                            //     .toList(),
-                            //item list
                             SizedBox(height: query.height * 0.08)
                           ],
                         );
@@ -382,9 +380,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton(
-              onPressed: () {
-                modelBottomSheetMenu(query);
-              },
+              onPressed: () => modelBottomSheetMenu(query),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1030,8 +1026,9 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     }
     //for create data in json format
     CreateQuoteRequest createQuoteRequest = CreateQuoteRequest(
-        subject:
-            "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}",
+        subject: widget.contactSelect!.contains("-")
+            ? "${widget.contactSelect!.substring(0, widget.contactSelect!.indexOf("-"))}-${widget.systemTypeSelect}"
+            : "${widget.contactSelect!}-${widget.systemTypeSelect}",
         quotestage: "Processed",
         contactId: widget.contactId,
         subtotal: subTotal.toString(),
@@ -1097,8 +1094,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         isMaintenanceConConfirm: "0",
         isPoliceAppliConfirm: "0",
         quoteCorrespondencesDocs: "",
-        quoteQuoteType: "Installation",
-        quotesContractId: "",
+        quoteQuoteType:
+            widget.operationType == "contract" ? widget.quoteTypeContract : "Installation",
+        quotesContractId: widget.operationType == "contract"
+            ? widget.contractList.id.toString().replaceAll("24x", "")
+            : "",
         quoteStopEmailDocReminder: "0",
         quotePriorityLevel: "",
         quoteWorksSchedule: "",
@@ -1129,14 +1129,6 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
             requiredDocument: e.requiredDocument,
             //"Keyholder form###Maintenance contract###Police application###Direct Debit",
             profit: e.profit ?? "",
-
-            /*
-            "product_nss_keyholder_form": "1",  Keyholder form
-            "product_security_agree_form": "0", Maintenance contract
-            "product_police_app_form": "0", Police application
-            "product_direct_debit_form": "0", Direct Debit
-           */
-
             proShortDescription: e.description,
             proName: e.itemName.toString(),
           );
@@ -1145,15 +1137,27 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
     String jsonQuoteDetail = jsonEncode(createQuoteRequest);
 
     debugPrint(" jsonQuoteDetail add ----- $jsonQuoteDetail");
-
-    Map<String, String> bodyData = {
-      'operation': "create",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
-      'element': jsonQuoteDetail,
-      'elementType': 'Quotes',
-      'appversion': Constants.of().appversion.toString(),
-    };
-    addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+    if (widget.operationType == "contract") {
+      Map<String, String> bodyData = {
+        'operation': "create",
+        'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+        'element': jsonQuoteDetail,
+        'elementType': 'Quotes',
+        'appversion': Constants.of().appversion.toString(),
+        'quotes_contract_id': widget.contractList.id.toString().replaceAll("24x", ""),
+        'system_type': widget.systemTypeSelect.toString()
+      };
+      addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+    } else {
+      Map<String, String> bodyData = {
+        'operation': "create",
+        'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+        'element': jsonQuoteDetail,
+        'elementType': 'Quotes',
+        'appversion': Constants.of().appversion.toString(),
+      };
+      addQuoteBloc.add(AddQuoteDetailEvent(bodyData));
+    }
   }
 
   Future<void> updateCreateQuoteAPI(
@@ -1243,7 +1247,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteMobileNumber: widget.mobileNumber,
         quoteTelephoneNumber: widget.telephoneNumber,
         isQuotesConfirm: "0",
-        quotesPayment: depositValue == "false" ? "No Deposit" : "Deposit",
+        quotesPayment: depositValue == "false" || depositValue == "" ? "No Deposit" : "Deposit",
         isQuotesPaymentConfirm: "0",
         quotesDepositeAmount: depositAmount,
         quotesDepoReceivedAmount: "0.00",
@@ -1258,8 +1262,12 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
         quotePriorityLevel: widget.dataQuote["quote_priority_level"],
         quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
-        quoteNoOfEngineer: widget.engineerNumbers,
-        quoteReqToCompleteWork: widget.timeType,
+        quoteNoOfEngineer: widget.engineerNumbers == "" || widget.engineerNumbers == null
+            ? widget.dataQuote["quote_no_of_engineer"]
+            : widget.engineerNumbers,
+        quoteReqToCompleteWork: widget.timeType == "" || widget.timeType == null
+            ? widget.dataQuote["quote_req_to_complete_work"]
+            : widget.timeType,
         quotePoNumber: widget.dataQuote["quote_po_number"],
         quoteGradeOfNoti: widget.dataQuote["quote_grade_of_noti"],
         id: widget.dataQuote["id"].toString(),
@@ -1401,13 +1409,17 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         isMaintenanceConConfirm: "0",
         isPoliceAppliConfirm: "0",
         quoteCorrespondencesDocs: "",
-        quoteQuoteType: "Installation",
+        quoteQuoteType: widget.dataQuote["quote_quote_type"],
         quotesContractId: "",
         quoteStopEmailDocReminder: widget.dataQuote["quote_stop_email_doc_reminder"],
         quotePriorityLevel: "",
         quoteWorksSchedule: widget.dataQuote["quote_works_schedule"],
-        quoteNoOfEngineer: widget.engineerNumbers,
-        quoteReqToCompleteWork: widget.timeType,
+        quoteNoOfEngineer: widget.engineerNumbers == "" || widget.engineerNumbers == null
+            ? widget.dataQuote["quote_no_of_engineer"]
+            : widget.engineerNumbers,
+        quoteReqToCompleteWork: widget.timeType == "" || widget.timeType == null
+            ? widget.dataQuote["quote_req_to_complete_work"]
+            : widget.timeType,
         quotePoNumber: "",
         quoteGradeOfNoti: "",
         lineItems: productList

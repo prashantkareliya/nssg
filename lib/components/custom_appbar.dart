@@ -26,39 +26,20 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title!, style: titleTextStyle),
-      backgroundColor: backgroundColor,
-      centerTitle: true,
-      elevation: elevation,
-      automaticallyImplyLeading: false,
-      actions: [searchWidget!],
-      leading: isBack!
-          ? IconButton(
-              highlightColor: AppColors.transparent,
-              splashColor: AppColors.transparent,
-              onPressed: () {
-                /*showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (ctx) => ValidationDialog(
-                    Message.quoteExit,
-
-                    //Yes button
-                    () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    //No   button
-                    () => Navigator.pop(context), //No button
-                  ),
-                );*/
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back_ios_outlined,
-                  color: AppColors.blackColor, size: 16.sp),
-            )
-          : Container(),
-    );
+        title: Text(title!, style: titleTextStyle),
+        backgroundColor: backgroundColor,
+        centerTitle: true,
+        elevation: elevation,
+        automaticallyImplyLeading: false,
+        actions: [searchWidget!],
+        leading: isBack!
+            ? IconButton(
+                highlightColor: AppColors.transparent,
+                splashColor: AppColors.transparent,
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back_ios_outlined, color: AppColors.blackColor, size: 16.sp),
+              )
+            : Container());
   }
 
   @override

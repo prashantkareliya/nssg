@@ -61,7 +61,6 @@ dependencies:
   flutter_shake_animated: ^0.0.5
   flutter_chips_input: ^2.0.0
 
-
   #Storage
   shared_preferences:
 
@@ -77,6 +76,7 @@ dependencies:
   flutter_bloc: ^8.1.1
   provider: ^6.0.5
   fluttertoast: ^8.2.1
+  restart_app: ^1.1.2
 
 
 dev_dependencies:

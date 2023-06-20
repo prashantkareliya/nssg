@@ -23,8 +23,7 @@ class RadioItem extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: 4.sp, bottom: 4.sp, right: 6.sp),
       decoration: BoxDecoration(
-          color:
-              item.isSelected ? AppColors.primaryColor : AppColors.transparent,
+          color: item.isSelected ? AppColors.primaryColor : AppColors.transparent,
           border: Border.all(width: 1.0, color: AppColors.primaryColor),
           borderRadius: BorderRadius.all(Radius.circular(5.sp))),
       child: Column(
@@ -43,9 +42,7 @@ class RadioItem extends StatelessWidget {
                             fontWeight: FontWeight.w400))
                     : GoogleFonts.roboto(
                         textStyle: TextStyle(
-                            fontSize: 16.sp,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400))),
+                            fontSize: 16.sp, color: Colors.black, fontWeight: FontWeight.w400))),
           ),
         ],
       ),

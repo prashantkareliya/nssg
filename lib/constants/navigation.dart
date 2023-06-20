@@ -5,18 +5,14 @@ import 'package:open_mail_app/open_mail_app.dart';
 
 //Navigation to next screen
 void callNextScreen(BuildContext context, StatefulWidget nextScreen) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => nextScreen),
-  );
+  Navigator.push(context,
+    MaterialPageRoute(builder: (context) => nextScreen));
 }
 
+//Remove previous screen and move to next screen
 void removeAndCallNextScreen(BuildContext context, StatefulWidget nextScreen) {
-
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => nextScreen),
-  );
+  Navigator.pushReplacement(context,
+    MaterialPageRoute(builder: (context) => nextScreen));
 }
 
 
@@ -40,26 +36,20 @@ void sendMail(String emailAddress, BuildContext context) async {
   }
 }
 
+//Open email from the application
 void showNoMailAppsDialog(BuildContext context) {
-  showDialog(
-    context: context,
+  showDialog(context: context,
     builder: (context) {
       return AlertDialog(
         title: const Text("Open Mail App"),
         content: const Text("No mail apps installed"),
         actions: <Widget>[
-          TextButton(
-            child: const Text("OK"),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          )
-        ],
-      );
+          TextButton(child: const Text("OK"), onPressed: () => Navigator.pop(context))]);
     },
   );
 }
 
+//Open calling screen from application
 void callFromApp(dataContact) {
   UrlLauncher.launch("tel://$dataContact");
 }

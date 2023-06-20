@@ -44,8 +44,7 @@ class MyApp extends StatelessWidget {
                       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
                     }),
                     colorScheme: ColorScheme.fromSwatch().copyWith(
-                        primary: AppColors.primaryColor,
-                        secondary: AppColors.primaryColor)),
+                        primary: AppColors.primaryColor, secondary: AppColors.primaryColor)),
                 home: const CheckingScreen(),
               ),
             ),
@@ -91,13 +90,11 @@ class _CheckingScreenState extends State<CheckingScreen> {
     if (preferences.getString(PreferenceString.sessionName) != null) {
       //callNextScreen(context, LoginScreen("isLogin"));
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (c) => const PinCodeScreen()),
-          (route) => false);
+          MaterialPageRoute(builder: (c) => const PinCodeScreen()), (route) => false);
     } else {
       // callNextScreen(context, LoginScreen("isNotLogin"));
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (c) => LoginScreen("isNotLogin")),
-          (route) => false);
+          MaterialPageRoute(builder: (c) => LoginScreen("isNotLogin")), (route) => false);
     }
   }
 }

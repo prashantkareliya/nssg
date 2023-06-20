@@ -14,8 +14,7 @@ class SelectLocation extends StatefulWidget {
   List<String>? titles;
 
   var productTitle;
-  SelectLocation(this.quantity, this.productName, this.locations, this.titles,
-      this.productTitle,
+  SelectLocation(this.quantity, this.productName, this.locations, this.titles, this.productTitle,
       {super.key});
 
   @override
@@ -66,12 +65,10 @@ class _SelectLocationState extends State<SelectLocation> {
                       highlightColor: AppColors.transparent,
                       splashColor: AppColors.transparent,
                       onPressed: () => Navigator.pop(context, "cancel"),
-                      icon: Icon(Icons.close_rounded,
-                          color: AppColors.blackColor))),
+                      icon: Icon(Icons.close_rounded, color: AppColors.blackColor))),
               Align(
                   alignment: Alignment.topLeft,
-                  child: Text(widget.productName,
-                      style: CustomTextStyle.labelMediumBoldFontText)),
+                  child: Text(widget.productName, style: CustomTextStyle.labelMediumBoldFontText)),
               SizedBox(height: 20.h),
               ListView.builder(
                   shrinkWrap: true,
