@@ -74,7 +74,8 @@ class _AddJobPageState extends State<AddJobPage> {
 
   Future<dynamic>? getDetail;
 
-  CreateJobBloc createJobBloc = CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
+  CreateJobBloc createJobBloc =
+      CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
   @override
   void initState() {
     super.initState();
@@ -99,8 +100,8 @@ class _AddJobPageState extends State<AddJobPage> {
       'contact_id': widget.quoteItem?.contactId
     };
 
-    final response =
-        await HttpActions().getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
+    final response = await HttpActions()
+        .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
 
     setState(() {
       contractNumberPass = response["result"].toString();
@@ -129,12 +130,15 @@ class _AddJobPageState extends State<AddJobPage> {
           onTap: () {
             Navigator.pop(context, "no");
           },
-          child: Icon(Icons.arrow_back_ios_outlined, color: AppColors.blackColor, size: 16.sp),
+          child: Icon(Icons.arrow_back_ios_outlined,
+              color: AppColors.blackColor, size: 16.sp),
         ),
         title: Text(LabelString.lblCreateJob,
             style: GoogleFonts.roboto(
-                textStyle:
-                    TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w500, color: Colors.black))),
+                textStyle: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black))),
       ),
       body: BlocListener<CreateJobBloc, CreateJobState>(
         bloc: createJobBloc,
@@ -172,16 +176,23 @@ class _AddJobPageState extends State<AddJobPage> {
                         future: getDetail,
                         builder: (context, snapshot1) {
                           if (snapshot1.hasData) {
-                            installationTime =
-                                snapshot1.data["result"]["quote_req_to_complete_work"] ?? "";
-                            numberOfEngineer =
-                                snapshot1.data["result"]["quote_no_of_engineer"] ?? "";
+                            installationTime = snapshot1.data["result"]
+                                    ["quote_req_to_complete_work"] ??
+                                "";
+                            numberOfEngineer = snapshot1.data["result"]
+                                    ["quote_no_of_engineer"] ??
+                                "";
 
-                            return snapshot1.data["result"]["quote_quote_type"] == "Installation"
-                                ? buildStepOne(query, jobFieldsData, snapshot1.data["result"])
-                                : buildStepTwo(query, jobFieldsData, snapshot1.data["result"]);
+                            return snapshot1.data["result"]
+                                        ["quote_quote_type"] ==
+                                    "Installation"
+                                ? buildStepOne(query, jobFieldsData,
+                                    snapshot1.data["result"])
+                                : buildStepTwo(query, jobFieldsData,
+                                    snapshot1.data["result"]);
                           } else if (snapshot1.hasError) {
-                            final message = HandleAPI.handleAPIError(snapshot.error);
+                            final message =
+                                HandleAPI.handleAPIError(snapshot.error);
                             return Text(message);
                           }
                           return SizedBox(height: 70.h, child: loadingView());
@@ -206,22 +217,26 @@ class _AddJobPageState extends State<AddJobPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 2.h),
+            SizedBox(height: 10.h),
             Text(LabelString.lblContractNumber,
-                style: GoogleFonts.roboto(fontSize: 13.sp, fontWeight: FontWeight.w700)),
-            SizedBox(height: 2.w),
+                style: GoogleFonts.roboto(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700)),
+            SizedBox(height: 5.h),
             TextFormField(
               controller: contractNumberController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                      borderSide:
+                          BorderSide(width: 2, color: AppColors.primaryColor)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                      borderSide:
+                          BorderSide(width: 2, color: AppColors.primaryColor)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                      borderSide:
+                          BorderSide(width: 2, color: AppColors.primaryColor)),
                   filled: true,
                   fillColor: Colors.white,
                   contentPadding: EdgeInsets.only(left: 12.sp),
@@ -230,10 +245,11 @@ class _AddJobPageState extends State<AddJobPage> {
                   counterText: "",
                   labelStyle: CustomTextStyle.labelFontHintText),
             ),
-            SizedBox(height: 2.5.h),
+            SizedBox(height: 10.h),
             Text(LabelString.lblPriorityLevel,
-                style: GoogleFonts.roboto(fontSize: 13.sp, fontWeight: FontWeight.w700)),
-            SizedBox(height: 1.0.h),
+                style: GoogleFonts.roboto(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700)),
+            SizedBox(height: 5.h),
             Wrap(
               spacing: 8.sp,
               direction: Axis.horizontal,
@@ -241,9 +257,11 @@ class _AddJobPageState extends State<AddJobPage> {
               children: List.generate(
                 jobFieldsData["priority_level"].length,
                 (index) {
-                  String priorityLevelLabel =
-                      jobFieldsData["priority_level"][index]["label"].toString();
-                  priorityLevel.add(RadioModel(priorityLevelLabel == "Medium" ? true : false,
+                  String priorityLevelLabel = jobFieldsData["priority_level"]
+                          [index]["label"]
+                      .toString();
+                  priorityLevel.add(RadioModel(
+                      priorityLevelLabel == "Medium" ? true : false,
                       jobFieldsData["priority_level"][index]["label"]));
 
                   return InkWell(
@@ -255,7 +273,8 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       priorityLevel[index].isSelected = true;
-                      priorityLevelSelect = jobFieldsData["priority_level"][index]["label"];
+                      priorityLevelSelect =
+                          jobFieldsData["priority_level"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -275,34 +294,40 @@ class _AddJobPageState extends State<AddJobPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (jobFieldsData["priority_level"][index]["label"].toString() ==
+                            if (jobFieldsData["priority_level"][index]["label"]
+                                    .toString() ==
                                 "High")
                               Container(
-                                height: 2.h,
-                                width: 4.w,
+                                height: 16.h,
+                                width: 17.w,
                                 decoration: BoxDecoration(
                                     color: const Color(0xFFFFC1C1),
                                     borderRadius: BorderRadius.circular(50.0),
-                                    border: Border.all(color: const Color(0xFFFF5757))),
+                                    border: Border.all(
+                                        color: const Color(0xFFFF5757))),
                               )
-                            else if (jobFieldsData["priority_level"][index]["label"].toString() ==
+                            else if (jobFieldsData["priority_level"][index]
+                                        ["label"]
+                                    .toString() ==
                                 "Medium")
                               Container(
-                                height: 2.h,
-                                width: 4.w,
+                                height: 16.h,
+                                width: 17.w,
                                 decoration: BoxDecoration(
                                     color: const Color(0xFFFEF0A6),
                                     borderRadius: BorderRadius.circular(50.0),
-                                    border: Border.all(color: const Color(0xFFFFC93D))),
+                                    border: Border.all(
+                                        color: const Color(0xFFFFC93D))),
                               )
                             else
                               Container(
-                                height: 2.h,
-                                width: 4.w,
+                                height: 16.h,
+                                width: 17.w,
                                 decoration: BoxDecoration(
                                     color: const Color(0xFFCBDAEA),
                                     borderRadius: BorderRadius.circular(50.0),
-                                    border: Border.all(color: const Color(0xFF58A8FE))),
+                                    border: Border.all(
+                                        color: const Color(0xFF58A8FE))),
                               ),
                             SizedBox(width: 2.w),
                             Text(priorityLevelLabel,
@@ -320,8 +345,9 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 10.h),
             Text(LabelString.lblWorkSchedule,
-                style: GoogleFonts.roboto(fontSize: 13.sp, fontWeight: FontWeight.w700)),
-            SizedBox(height: 1.0.h),
+                style: GoogleFonts.roboto(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700)),
+            SizedBox(height: 5.h),
             Wrap(
               spacing: 8.sp,
               direction: Axis.horizontal,
@@ -330,10 +356,11 @@ class _AddJobPageState extends State<AddJobPage> {
               children: List.generate(
                 jobFieldsData["works_schedule"].length,
                 (index) {
-                  String worksScheduleLabel =
-                      jobFieldsData["works_schedule"][index]["label"].toString();
-                  worksSchedule
-                      .add(RadioModel(false, jobFieldsData["works_schedule"][index]["label"]));
+                  String worksScheduleLabel = jobFieldsData["works_schedule"]
+                          [index]["label"]
+                      .toString();
+                  worksSchedule.add(RadioModel(
+                      false, jobFieldsData["works_schedule"][index]["label"]));
 
                   return InkWell(
                     splashColor: AppColors.transparent,
@@ -344,7 +371,8 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       worksSchedule[index].isSelected = true;
-                      workScheduleSelect = jobFieldsData["works_schedule"][index]["label"];
+                      workScheduleSelect =
+                          jobFieldsData["works_schedule"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -359,7 +387,8 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 10.sp),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
                         child: Text(worksScheduleLabel,
                             textAlign: TextAlign.center,
                             style: worksSchedule[index].isSelected
@@ -373,7 +402,8 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 10.h),
             Text(LabelString.lblPaymentMethod,
-                style: GoogleFonts.roboto(fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                style: GoogleFonts.roboto(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 5.h),
             Wrap(
               spacing: 8.sp,
@@ -383,10 +413,11 @@ class _AddJobPageState extends State<AddJobPage> {
               children: List.generate(
                 jobFieldsData["payment_method"].length,
                 (index) {
-                  String paymentMethodLabel =
-                      jobFieldsData["payment_method"][index]["label"].toString();
-                  paymentMethod
-                      .add(RadioModel(false, jobFieldsData["payment_method"][index]["label"]));
+                  String paymentMethodLabel = jobFieldsData["payment_method"]
+                          [index]["label"]
+                      .toString();
+                  paymentMethod.add(RadioModel(
+                      false, jobFieldsData["payment_method"][index]["label"]));
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -396,7 +427,8 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       //  Provider.of<WidgetChange>(context, listen: false).isSelectSystemType();
                       paymentMethod[index].isSelected = true;
-                      paymentMethodSelect = jobFieldsData["payment_method"][index]["label"];
+                      paymentMethodSelect =
+                          jobFieldsData["payment_method"][index]["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -411,7 +443,8 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 10.sp),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
                         child: Text(paymentMethodLabel,
                             textAlign: TextAlign.center,
                             style: paymentMethod[index].isSelected
@@ -425,7 +458,8 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 10.h),
             Text(LabelString.lblPaymentInstructions,
-                style: GoogleFonts.roboto(fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                style: GoogleFonts.roboto(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 5.h),
             Wrap(
               spacing: 8.sp,
@@ -436,9 +470,10 @@ class _AddJobPageState extends State<AddJobPage> {
                 jobFieldsData["payment_instructions"].length,
                 (index) {
                   String paymentInstructionsLabel =
-                      jobFieldsData["payment_instructions"][index]["label"].toString();
-                  paymentInstructions.add(
-                      RadioModel(false, jobFieldsData["payment_instructions"][index]["label"]));
+                      jobFieldsData["payment_instructions"][index]["label"]
+                          .toString();
+                  paymentInstructions.add(RadioModel(false,
+                      jobFieldsData["payment_instructions"][index]["label"]));
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -463,7 +498,8 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 5.sp),
                         child: Text(paymentInstructionsLabel,
                             textAlign: TextAlign.center,
                             style: paymentInstructions[index].isSelected
@@ -512,7 +548,8 @@ class _AddJobPageState extends State<AddJobPage> {
             ),
             SizedBox(height: 10.h),
             Text(LabelString.lblInstructionsToProceed,
-                style: GoogleFonts.roboto(fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                style: GoogleFonts.roboto(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 5.h),
             Wrap(
               spacing: 8.sp,
@@ -522,9 +559,12 @@ class _AddJobPageState extends State<AddJobPage> {
                 jobFieldsData["instructions_to_proceed"].length,
                 (index) {
                   String instructionsToProceedLabel =
-                      jobFieldsData["instructions_to_proceed"][index]["label"].toString();
-                  instructionsToProceed.add(
-                      RadioModel(false, jobFieldsData["instructions_to_proceed"][index]["label"]));
+                      jobFieldsData["instructions_to_proceed"][index]["label"]
+                          .toString();
+                  instructionsToProceed.add(RadioModel(
+                      false,
+                      jobFieldsData["instructions_to_proceed"][index]
+                          ["label"]));
                   return InkWell(
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
@@ -534,7 +574,8 @@ class _AddJobPageState extends State<AddJobPage> {
                       }
                       instructionsToProceed[index].isSelected = true;
                       instructionToProceedSelect =
-                          jobFieldsData["instructions_to_proceed"][index]["label"];
+                          jobFieldsData["instructions_to_proceed"][index]
+                              ["label"];
                       setState(() {});
                     },
                     child: Container(
@@ -550,7 +591,8 @@ class _AddJobPageState extends State<AddJobPage> {
                               width: 1),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 5.sp),
                         child: Text(instructionsToProceedLabel,
                             textAlign: TextAlign.center,
                             style: instructionsToProceed[index].isSelected
@@ -563,7 +605,8 @@ class _AddJobPageState extends State<AddJobPage> {
               ),
             ),
             Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
+                padding:
+                    EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
                 child: SizedBox(
                   width: query.width,
                   height: query.height * 0.06,
@@ -571,22 +614,28 @@ class _AddJobPageState extends State<AddJobPage> {
                     buttonColor: AppColors.primaryColor,
                     onClick: () {
                       if (priorityLevelSelect == "") {
-                        Helpers.showSnackBar(context, ErrorString.selectPriorityLevel,
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectPriorityLevel,
                             isError: true);
                       } else if (workScheduleSelect == "") {
-                        Helpers.showSnackBar(context, ErrorString.selectWorkSchedule,
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectWorkSchedule,
                             isError: true);
                       } else if (paymentMethodSelect == "") {
-                        Helpers.showSnackBar(context, ErrorString.selectPaymentMethod,
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectPaymentMethod,
                             isError: true);
                       } else if (instructionToProceedSelect == "") {
-                        Helpers.showSnackBar(context, ErrorString.selectInstructionToProceed,
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectInstructionToProceed,
                             isError: true);
                       } else if (paymentInstructionSelect == "") {
-                        Helpers.showSnackBar(context, ErrorString.selectPaymentInstruction,
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectPaymentInstruction,
                             isError: true);
                       } else if (engineerNoteController.text.isEmpty) {
-                        Helpers.showSnackBar(context, ErrorString.selectEngineerNote,
+                        Helpers.showSnackBar(
+                            context, ErrorString.selectEngineerNote,
                             isError: true);
                       } else {
                         if (installationTime == "" || numberOfEngineer == "") {
@@ -596,11 +645,14 @@ class _AddJobPageState extends State<AddJobPage> {
                                 ///Make new class for dialog
                                 return Dialog(
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
                                     elevation: 0,
                                     insetAnimationCurve: Curves.decelerate,
-                                    insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                    child: QuoteEstimation(dataQuote: dataForCreateJob, "job"));
+                                    insetPadding:
+                                        EdgeInsets.symmetric(horizontal: 12.sp),
+                                    child: QuoteEstimation(
+                                        dataQuote: dataForCreateJob, "job"));
                               }).then((value) {
                             print(value);
                             setState(() {
@@ -638,20 +690,24 @@ class _AddJobPageState extends State<AddJobPage> {
                 children: [
                   SizedBox(height: 2.h),
                   Text(LabelString.lblContractNumber,
-                      style: GoogleFonts.roboto(fontSize: 13.sp, fontWeight: FontWeight.w700)),
+                      style: GoogleFonts.roboto(
+                          fontSize: 13.sp, fontWeight: FontWeight.w700)),
                   SizedBox(height: 1.h),
                   TextFormField(
                     controller: contractNumberController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                            borderSide: BorderSide(
+                                width: 2, color: AppColors.primaryColor)),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                            borderSide: BorderSide(
+                                width: 2, color: AppColors.primaryColor)),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                            borderSide: BorderSide(
+                                width: 2, color: AppColors.primaryColor)),
                         filled: true,
                         fillColor: Colors.white,
                         contentPadding: EdgeInsets.only(left: 12.sp),
@@ -704,7 +760,8 @@ class _AddJobPageState extends State<AddJobPage> {
                           buttonColor: AppColors.primaryColor,
                           onClick: () {
                             if (engineerNoteController.text.isEmpty) {
-                              Helpers.showSnackBar(context, ErrorString.selectPaymentInstruction,
+                              Helpers.showSnackBar(
+                                  context, ErrorString.selectPaymentInstruction,
                                   isError: true);
                             } else {
                               if (installationTime == "") {
@@ -714,12 +771,16 @@ class _AddJobPageState extends State<AddJobPage> {
                                       ///Make new class for dialog
                                       return Dialog(
                                           shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10)),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
                                           elevation: 0,
-                                          insetAnimationCurve: Curves.decelerate,
-                                          insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                          child:
-                                              QuoteEstimation(dataQuote: dataForCreateJob, "job"));
+                                          insetAnimationCurve:
+                                              Curves.decelerate,
+                                          insetPadding: EdgeInsets.symmetric(
+                                              horizontal: 12.sp),
+                                          child: QuoteEstimation(
+                                              dataQuote: dataForCreateJob,
+                                              "job"));
                                     }).then((value) {
                                   print(value);
                                   setState(() {
@@ -747,7 +808,8 @@ class _AddJobPageState extends State<AddJobPage> {
                   child: Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0)),
                     child: loadingView(),
                   ),
                 )),
@@ -845,17 +907,21 @@ class _AddJobPageState extends State<AddJobPage> {
         officeNote: officeNoteController.text ?? "  ",
         specialInstructions: specialInstructionController.text ?? "  ",
         installationTimeRequired: installationTime,
-        preferredInstallationTeam:
-            dataForCreateJob["quote_quote_type"] == "Installation" ? numberOfEngineer : " ",
-        worksSchedule:
-            dataForCreateJob["quote_quote_type"] == "Installation" ? workScheduleSelect : " ",
+        preferredInstallationTeam: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? numberOfEngineer
+            : " ",
+        worksSchedule: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? workScheduleSelect
+            : " ",
         instructionsToProceed: dataForCreateJob["quote_quote_type"] == "Installation"
             ? instructionToProceedSelect
             : " ",
-        paymentInstructions:
-            dataForCreateJob["quote_quote_type"] == "Installation" ? paymentInstructionSelect : " ",
-        paymentMethod:
-            dataForCreateJob["quote_quote_type"] == "Installation" ? paymentMethodSelect : " ",
+        paymentInstructions: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? paymentInstructionSelect
+            : " ",
+        paymentMethod: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? paymentMethodSelect
+            : " ",
         isConfirm: "0",
         contractNotesJob: "",
         invoiceNumber: "",
@@ -888,43 +954,48 @@ class _AddJobPageState extends State<AddJobPage> {
         jobChecklistRaiseInvoiceNumber: "",
         jobChecklistPickListStock: "",
         jobChecklistObtCustFeedback:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
         jobChecklistPaymentOnComplet: "",
         jobChecklistExtraStockAllocate: "",
         jobChecklistExtraStockReturnFaulty: "",
         jobChecklistCommsAllocated:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
         jobChecklistCreateContract:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
-        jobChecklistOrderComms:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
-        jobChecklistUrnSentClient:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
+        jobChecklistOrderComms: dataForCreateJob["quote_quote_type"] != "Installation"
+            ? "Not select"
+            : "",
+        jobChecklistUrnSentClient: dataForCreateJob["quote_quote_type"] != "Installation"
+            ? "Not select"
+            : "",
         jobChecklistUrnReceivedClient:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
         jobChecklistUrnAppliPoliceForce:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
         jobChecklistUrnReceivedPoliceForce:
             dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
-        jobChecklistMaintenSentClient:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
-        jobChecklistMaintenReceived:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
-        jobChecklistKeyholderSentClient:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
-        jobChecklistKeyholderReceived:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistMaintenSentClient: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistMaintenReceived: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistKeyholderSentClient: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistKeyholderReceived: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
         jobChecklistCsDigiCheck: "",
         jobChecklistCsDigiNumber: "",
         jobChecklistIssueNsiCertCheck: "",
         jobChecklistIssueNsiCertNumber: "",
         jobChecklistReadyToClose: "",
-        jobChecklistPayRecived:
-            dataForCreateJob["quote_quote_type"] == "Installation" ? "Not select" : "",
-        jobChecklistStockRequire:
-            dataForCreateJob["quote_quote_type"] == "Installation" ? "Not select" : "",
-        jobChecklistDdRecSubSetup:
-            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistPayRecived: dataForCreateJob["quote_quote_type"] == "Installation" ? "Not select" : "",
+        jobChecklistStockRequire: dataForCreateJob["quote_quote_type"] == "Installation" ? "Not select" : "",
+        jobChecklistDdRecSubSetup: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
         lineItems: dataForCreateJob["LineItems"].map((e) {
           return LineItems(
             productid: e["productid"].toString().replaceAll("14x", ""),
@@ -954,7 +1025,8 @@ class _AddJobPageState extends State<AddJobPage> {
 
     Map<String, String> bodyData = {
       'operation': "create",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonEncode(createJobRequest),
       'elementType': "SalesOrder",
       'appversion': Constants.of().appversion.toString(),
@@ -964,10 +1036,12 @@ class _AddJobPageState extends State<AddJobPage> {
       'job_type': dataForCreateJob["quote_quote_type"].toString(),
       'contact_id_display': dataForCreateJob["contact_name"].toString(),
       'jobs_system_type': dataForCreateJob["system_type"].toString(),
-      'jobs_project_manager_display': dataForCreateJob["project_manager_name"].toString(),
+      'jobs_project_manager_display':
+          dataForCreateJob["project_manager_name"].toString(),
       'sourceModule': "ServiceContracts",
       'quotes_contract_id': contractNumberPass,
-      'is_item_available': dataForCreateJob["LineItems"].length >= 1 ? "1" : "0",
+      'is_item_available':
+          dataForCreateJob["LineItems"].length >= 1 ? "1" : "0",
       'field_tick_date_time': jsonStringMap
     };
     print(bodyData);

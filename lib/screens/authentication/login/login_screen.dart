@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/dashboard/root_screen.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../components/custom_textfield.dart';
@@ -19,7 +21,6 @@ import '../../../utils/widgets.dart';
 import 'login_bloc_dir/login_bloc.dart';
 import 'login_data_dir/login_datasource.dart';
 import 'login_data_dir/login_repository.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       SizedBox(height: 3.h),
                       Image.asset(ImageString.imgLogoSplash,
-                          height: query.height * 0.25),
+                          height: query.height * 0.20),
                       //email | password field visibility
                       Visibility(
                         visible: widget.isLogin == "isLogin" ? false : true,
@@ -162,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       //Login Button
                       SizedBox(
                           width: query.width,
-                          height: 7.h,
+                          height: 59.h,
                           child: isLoading
                               ? loadingView()
                               : widget.isLogin == "isLogin"
@@ -247,7 +248,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget buildPowerLabel() {
     return Text(LabelString.lblPoweredBy,
-        style: CustomTextStyle.labelFontHintText);
+        style: GoogleFonts.sen(
+            textStyle: TextStyle(
+          fontSize: 14.sp,
+          color: AppColors.hintFontColor,
+        )));
   }
 
   //login button validation for email login

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/screens/contracts/get_contract/contract_model_dir/get_contract_response_model.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/custom_appbar.dart';
 import '../../components/custom_text_styles.dart';
@@ -14,7 +15,6 @@ import '../qoute/add_quote/add_quote_screen.dart';
 class QuoteTypeSelection extends StatefulWidget {
   var contractList;
 
-
   QuoteTypeSelection(this.contractList, {Key? key}) : super(key: key);
 
   @override
@@ -22,7 +22,6 @@ class QuoteTypeSelection extends StatefulWidget {
 }
 
 class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
-
   _QuoteTypeSelectionState();
 
   @override
@@ -30,6 +29,7 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
     super.initState();
     print(widget.contractList);
   }
+
   @override
   Widget build(BuildContext context) {
     var query = MediaQuery.of(context).size;
@@ -37,12 +37,12 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
       backgroundColor: AppColors.backWhiteColor,
       appBar: BaseAppBar(
         appBar: AppBar(),
-            title: "Create a Quote",
-            titleTextStyle: CustomTextStyle.labelFontText,
-            isBack: true,
-            searchWidget: const Text(""),
-            backgroundColor: AppColors.backWhiteColor,
-          ),
+        title: "Create a Quote",
+        titleTextStyle: CustomTextStyle.labelMediumBoldFontText,
+        isBack: true,
+        searchWidget: const Text(""),
+        backgroundColor: AppColors.backWhiteColor,
+      ),
       body: SizedBox(
         width: query.width,
         child: Column(
@@ -50,23 +50,26 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
           children: [
             Column(
               children: [
-                SizedBox(height: 1.5.h),
-                Text(widget.contractList.subject.toString().contains("-") ?
-                    widget.contractList.subject.toString().substring(0, widget.contractList.subject.toString().indexOf("-")):
-                widget.contractList.subject.toString(),
+                SizedBox(height: 10.h),
+                Text(
+                    widget.contractList.subject.toString().contains("-")
+                        ? widget.contractList.subject.toString().substring(0,
+                            widget.contractList.subject.toString().indexOf("-"))
+                        : widget.contractList.subject.toString(),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.roboto(
                         textStyle: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 20.sp,
                             color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold))),
-                SizedBox(height: 1.5.h),
-                Text("Contract# ${widget.contractList.serConContractNumber}", style: GoogleFonts.roboto(
-                    textStyle: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppColors.primaryColor,
-                        fontWeight: FontWeight.bold))),
-                SizedBox(height: 3.h),
+                            fontWeight: FontWeight.w500))),
+                SizedBox(height: 10.h),
+                Text("Contract# ${widget.contractList.serConContractNumber}",
+                    style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                            fontSize: 15.sp,
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w500))),
+                SizedBox(height: 10.h),
               ],
             ),
             Column(
@@ -74,42 +77,49 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                 InkWell(
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
-                    callNextScreen(context,
+                    callNextScreen(
+                        context,
                         AddQuotePage(true, "installation", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
-                  child: quoteTypeWidget(query: query, text: ButtonString.btnInstallation,
+                  child: quoteTypeWidget(
+                      query: query,
+                      text: ButtonString.btnInstallation,
                       imageString: ImageString.icInstallation2),
                 ),
-
                 InkWell(
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
-                    callNextScreen(context,
+                    callNextScreen(
+                        context,
                         AddQuotePage(true, "breakdown", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
-                  child: quoteTypeWidget(query: query, text: ButtonString.btnBreakdown,
+                  child: quoteTypeWidget(
+                      query: query,
+                      text: ButtonString.btnBreakdown,
                       imageString: ImageString.icBreakdown),
                 ),
-
                 InkWell(
                   highlightColor: AppColors.transparent,
                   splashColor: AppColors.transparent,
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
-                    callNextScreen(context,
+                    callNextScreen(
+                        context,
                         AddQuotePage(true, "service", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
-                  child: quoteTypeWidget(query: query, text: ButtonString.btnService,
+                  child: quoteTypeWidget(
+                      query: query,
+                      text: ButtonString.btnService,
                       imageString: ImageString.icService),
                 ),
               ],
@@ -138,19 +148,29 @@ class quoteTypeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.sp,vertical: 8.sp),
-      child: Container(width: query.width, height: query.height * 0.18,
-        decoration: BoxDecoration(color: AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(10.sp)),
-        child: Padding(padding: EdgeInsets.symmetric(vertical: 12.sp),
+      padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 8.sp),
+      child: Container(
+        width: query.width,
+        height: query.height * 0.18,
+        decoration: BoxDecoration(
+            color: AppColors.whiteColor,
+            borderRadius: BorderRadius.circular(10.sp)),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.sp),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SvgPicture.asset(imageString, height: 7.5.h),
-              Text(text, style: GoogleFonts.roboto(
-                  textStyle: TextStyle(fontSize: 17.sp,
-                      color: AppColors.blackColor,
-                      fontWeight: FontWeight.w500))),
+              SvgPicture.asset(
+                imageString,
+                height: 46.h,
+                width: 46.w,
+              ),
+              Text(text,
+                  style: GoogleFonts.roboto(
+                      textStyle: TextStyle(
+                          fontSize: 18.sp,
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.w500))),
             ],
           ),
         ),
