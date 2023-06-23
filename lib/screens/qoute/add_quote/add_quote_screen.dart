@@ -47,11 +47,17 @@ class AddQuotePage extends StatefulWidget {
   var contractList;
 
   AddQuotePage(this.isBack, this.firstName, this.lastName,
-      {Key? key, this.contactId, this.contactDetail, this.dataQuote, this.itemList, this.contractList})
+      {Key? key,
+      this.contactId,
+      this.contactDetail,
+      this.dataQuote,
+      this.itemList,
+      this.contractList})
       : super(key: key);
 
   @override
-  State<AddQuotePage> createState() => _AddQuotePageState(dataQuote, itemList, contractList);
+  State<AddQuotePage> createState() =>
+      _AddQuotePageState(dataQuote, itemList, contractList);
 }
 
 class _AddQuotePageState extends State<AddQuotePage> {
@@ -115,15 +121,14 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
       invoiceAddress = widget.contactDetail.mailingstreet;
       invoiceCity = widget.contactDetail.mailingcity;
-      invoiceCountry = widget.contactDetail.mailingcountry ;
+      invoiceCountry = widget.contactDetail.mailingcountry;
       invoicePostal = widget.contactDetail.mailingzip;
 
       installationAddress = widget.contactDetail.otherstreet;
       installationCity = widget.contactDetail.othercity;
       installationCountry = widget.contactDetail.othercountry;
       installationPostal = widget.contactDetail.otherzip;
-
-    } else if (dataQuote != null){
+    } else if (dataQuote != null) {
       contactId = dataQuote["contact_id"];
       contactCompany = dataQuote["quotes_company"];
       mobileNumber = dataQuote["quote_mobile_number"];
@@ -139,8 +144,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
       installationCity = dataQuote["ship_city"];
       installationCountry = dataQuote["ship_country"];
       installationPostal = dataQuote["ship_pobox"];
-
-    } else if(contractList != null){
+    } else if (contractList != null) {
       contactId = contractList.scRelatedTo;
       contactCompany = contractList.serConCompany;
       mobileNumber = contractList.mobileNumber;
@@ -158,7 +162,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
       installationPostal = contractList.postcode;
     }
 
-    if(widget.lastName == "edit" || widget.lastName == "contract"){
+    if (widget.lastName == "edit" || widget.lastName == "contract") {
       getSiteAddressList();
       //dropdownvalue = dataQuote["quotestage"].toString().toMap();
     }
@@ -166,7 +170,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   GetContactBloc contactBloc =
-  GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
+      GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
   bool isLoading = false;
 
   //In this method Calling get contact API
@@ -175,7 +179,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': 'query',
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyContact, //2017
       'module_name': 'Contacts'
     };
@@ -196,10 +201,12 @@ class _AddQuotePageState extends State<AddQuotePage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "retrieve_related",
-      'id': widget.isBack ? contactId : widget.contactId.toString(),//"12x5558",
+      'id':
+          widget.isBack ? contactId : widget.contactId.toString(), //"12x5558",
       'relatedType': "SitesAddress",
       'relatedLabel': "Sites Address",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
     };
     final response = await HttpActions()
         .getMethod(ApiEndPoint.getContactListApi, queryParams: queryParameters);
@@ -211,7 +218,6 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   TextEditingController invoiceSearchController = TextEditingController();
-
 
   //Address information's textField controllers(invoice Address)
   String invoiceAddress = "";
@@ -252,7 +258,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
           highlightColor: AppColors.transparent,
           splashColor: AppColors.transparent,
           onTap: () {
-            if(page == "0"){
+            if (page == "0") {
               Navigator.pop(context);
             } else {
               pageController.previousPage(
@@ -263,14 +269,15 @@ class _AddQuotePageState extends State<AddQuotePage> {
           child: Icon(Icons.arrow_back_ios_outlined,
               color: AppColors.blackColor, size: 14.sp),
         ),
-        title: Text(widget.lastName == "edit" ? LabelString.lblEditQuote : LabelString.lblAddNewQuote,
+        title: Text(
+            widget.lastName == "edit"
+                ? LabelString.lblEditQuote
+                : LabelString.lblAddNewQuote,
             style: CustomTextStyle.labelBoldFontText),
       ),
-
       body: BlocListener<GetContactBloc, GetContactState>(
         bloc: contactBloc,
         listener: (context, state) {
-
           if (state is ContactLoadFail) {
             Helpers.showSnackBar(context, state.error.toString());
           }
@@ -289,7 +296,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
             return Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15.0, horizontal: 10),
                   child: StreamBuilder<int>(
                     initialData: 0,
                     stream: streamController.stream,
@@ -303,27 +311,36 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 snapshot.data! <= 0
                                     ? Container(width: 19.5.w)
                                     : InkWell(
-                                    onTap: () => pageController.jumpToPage(snapshot.data! - 1),
-                                    child: RoundedContainer(
-                                        containerText: "",
-                                        stepText: snapshot.data.toString(),
-                                        isEnable: false,
-                                        isDone: true)),
+                                        onTap: () => pageController
+                                            .jumpToPage(snapshot.data! - 1),
+                                        child: RoundedContainer(
+                                            containerText: "",
+                                            stepText: snapshot.data.toString(),
+                                            isEnable: false,
+                                            isDone: true)),
                                 InkWell(
-                                    onTap: () => pageController.jumpToPage(snapshot.data!),
+                                    onTap: () => pageController
+                                        .jumpToPage(snapshot.data!),
                                     child: RoundedContainer(
-                                        containerText: (snapshot.data! + 1).toString(),
-                                        stepText: (snapshot.data! + 1).toString(),
+                                        containerText:
+                                            (snapshot.data! + 1).toString(),
+                                        stepText:
+                                            (snapshot.data! + 1).toString(),
                                         isEnable: true,
                                         isDone: false)),
-                                snapshot.data! >= 2 ? Container()
+                                snapshot.data! >= 2
+                                    ? Container()
                                     : InkWell(
-                                    onTap: () => pageController.jumpToPage(snapshot.data! + 1),
-                                    child: RoundedContainer(
-                                        containerText: (snapshot.data! + 2).toString(),
-                                        stepText: (snapshot.data! + 2).toString(),
-                                        isEnable: false,
-                                        isDone: false))]),
+                                        onTap: () => pageController
+                                            .jumpToPage(snapshot.data! + 1),
+                                        child: RoundedContainer(
+                                            containerText:
+                                                (snapshot.data! + 2).toString(),
+                                            stepText:
+                                                (snapshot.data! + 2).toString(),
+                                            isEnable: false,
+                                            isDone: false))
+                              ]),
                           SizedBox(height: 2.h),
 
                           //Linear progress indicator which set below steps container
@@ -352,11 +369,14 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(LabelString.lblQuoteDetails,
-                                    style: CustomTextStyle.labelBoldFontTextSmall),
+                                    style:
+                                        CustomTextStyle.labelBoldFontTextSmall),
                                 Row(
                                   children: [
-                                    Text(LabelString.lblStep, style: CustomTextStyle.commonText),
-                                    Text(" ${snapshot.data! + 1}/3", style: CustomTextStyle.commonTextBlue),
+                                    Text(LabelString.lblStep,
+                                        style: CustomTextStyle.commonText),
+                                    Text(" ${snapshot.data! + 1}/3",
+                                        style: CustomTextStyle.commonTextBlue),
                                   ],
                                 )
                               ],
@@ -367,49 +387,57 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     },
                   ),
                 ),
-                FutureBuilder<dynamic>(
-                  //Call API for set quote fields
-                  future: getFields,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var fieldsData = snapshot.data["result"];
-                      return Expanded(
-                        child: InkWell(
-                          onTap: () => FocusScope.of(context).unfocus(),
-                          highlightColor: AppColors.transparent,
-                          splashColor: AppColors.transparent,
-                          focusColor: AppColors.transparent,
-                          child: PageView(
-                            scrollDirection: Axis.horizontal,
-                            pageSnapping: true,
-                            physics:  const BouncingScrollPhysics(),
-                            controller: pageController,
-                            onPageChanged: (number) {
-                              streamController.add(number);
-                              Provider.of<WidgetChange>(context, listen: false).pageNumber(number.toString());
-                              page = Provider.of<WidgetChange>(context, listen: false).pageNo;
-                            },
-                            children: [
-                              //Premises type and contact selection design
-                              buildStepOne(context, query, fieldsData),
+                if (state is ContactLoadingState) ...[
+                  SizedBox(height: 70.h, child: loadingView())
+                ] else ...[
+                  FutureBuilder<dynamic>(
+                    //Call API for set quote fields
+                    future: getFields,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var fieldsData = snapshot.data["result"];
+                        return Expanded(
+                          child: InkWell(
+                            onTap: () => FocusScope.of(context).unfocus(),
+                            highlightColor: AppColors.transparent,
+                            splashColor: AppColors.transparent,
+                            focusColor: AppColors.transparent,
+                            child: PageView(
+                              scrollDirection: Axis.horizontal,
+                              pageSnapping: true,
+                              physics: const BouncingScrollPhysics(),
+                              controller: pageController,
+                              onPageChanged: (number) {
+                                streamController.add(number);
+                                Provider.of<WidgetChange>(context,
+                                        listen: false)
+                                    .pageNumber(number.toString());
+                                page = Provider.of<WidgetChange>(context,
+                                        listen: false)
+                                    .pageNo;
+                              },
+                              children: [
+                                //Premises type and contact selection design
+                                buildStepOne(context, query, fieldsData),
 
-                              //System type selection design
-                              buildStepTwo(context, query, fieldsData),
+                                //System type selection design
+                                buildStepTwo(context, query, fieldsData),
 
-                              //Grade - Signalling type design
-                              buildStepThree(context, query, fieldsData),
-
-                            ],
+                                //Grade - Signalling type design
+                                buildStepThree(context, query, fieldsData),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      final message = HandleAPI.handleAPIError(snapshot.error);
-                      return Text(message);
-                    }
-                    return SizedBox(height: 70.h, child: loadingView());
-                  },
-                ),
+                        );
+                      } else if (snapshot.hasError) {
+                        final message =
+                            HandleAPI.handleAPIError(snapshot.error);
+                        return Text(message);
+                      }
+                      return SizedBox(height: 70.h, child: loadingView());
+                    },
+                  ),
+                ],
               ],
             );
           },
@@ -419,343 +447,401 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   ///step 1- Premises type and select contact
-  Padding buildStepOne(BuildContext context, Size query, stepOneData) {
+  Widget buildStepOne(BuildContext context, Size query, stepOneData) {
     ValueNotifier<bool> notifier = ValueNotifier(false);
     //Contact name shows in all different conditions.
     String contactName = "";
-    if(dataQuote != null){
+    if (dataQuote != null) {
       contactName = dataQuote["contact_name"];
-    }else if(contractList != null){
-      contactName = contractList.subject.toString().contains("-") ?
-      contractList.subject.toString().substring(0, contractList.subject.toString().indexOf("-")) :
-      contractList.subject.toString();
-    }else { contactName = "${widget.firstName}${widget.lastName}";}
+    } else if (contractList != null) {
+      contactName = contractList.subject.toString().contains("-")
+          ? contractList.subject
+              .toString()
+              .substring(0, contractList.subject.toString().indexOf("-"))
+          : contractList.subject.toString();
+    } else {
+      contactName = "${widget.firstName}${widget.lastName}";
+    }
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            //Design Auto filled contact
-            Autocomplete(
-              initialValue: TextEditingValue(text: contactName),
-              fieldViewBuilder: (context, textEditingController, focusNode, VoidCallback onFieldSubmitted) {
-                FocusNode focus = focusNode;
-                if(dataQuote != null){
-                  contactSelect = dataQuote["contact_name"];
-                }else if(contractList != null){
-                  contactSelect = contractList.subject.toString().contains("-") ?
-                      contractList.subject.toString().substring(0, contractList.subject.toString().indexOf("-")):
-                  contractList.subject.toString();
-                }
-                //dataQuote != null ? contactSelect = dataQuote["contact_name"] : "";
-                textEditingController.text = contactSelect;
-                return TextField(
-                  autofocus: widget.isBack || dataQuote != null || contractList != null ? false : true,
-                  style: TextStyle(color: AppColors.blackColor),
-                  textCapitalization: TextCapitalization.none,
-                  textInputAction: TextInputAction.next,
-                  maxLines: 1,
-                  keyboardType: TextInputType.name,
-                  cursorColor: AppColors.blackColor,
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
-
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.only(left: 12.sp),
-                    hintText: LabelString.lblTypeToSearch,
-                    hintStyle: CustomTextStyle.labelFontHintText,
-                    counterText: ""),
-                  controller: textEditingController,
-                  focusNode: focus,
-                  onEditingComplete: () {},
-                  onSubmitted: (String value) {},
-                  onChanged: (value) {
-                    focus = focusNode;
-                    focus.requestFocus();
-                  },
-                );
-              },
-              optionsBuilder: (TextEditingValue textEditingValue) async {
-                if (textEditingValue.text.isEmpty) {
-                  return const Iterable<String>.empty();
-                } else {
-                  List<String> matchesContact = <String>[];
-                  matchesContact.addAll(contactData.map((e) {
-                    return "${e["firstname"].trim()} ${e["lastname"].trim()} - ${e["otherstreet"]}";
-                  }));
-
-                  matchesContact = matchesContact
-                      .where((element) => element
-                      .toLowerCase()
-                      .contains(textEditingValue.text.toLowerCase().trim()))
-                      .toList();
-                  return matchesContact;
-                }
-              },
-              onSelected: (selection) async {
-
-                FocusScope.of(context).unfocus();
-                getSiteAddressList();
-                for (int i = 0; i < contactData.length; i++) {
-                  if (selection == "${contactData[i]["firstname"]} ${contactData[i]["lastname"]} - ${contactData[i]["otherstreet"]}") {
-                    contactId = contactData[i]["id"];
-                    contactCompany = contactData[i]["contact_company"];
-                    mobileNumber = contactData[i]["mobile"];
-                    telephoneNumber = contactData[i]["phone"];
-                    contactEmail = contactData[i]["email"];
-                    contactSelect = selection;
-
-                    //When select contact, set address in fields
-                    invoiceAddress = contactData[i]["mailingstreet"];
-                    invoiceCity = contactData[i]["mailingcity"];
-                    invoiceCountry = contactData[i]["mailingcountry"];
-                    invoicePostal = contactData[i]["mailingzip"];
-
-                    installationAddress = contactData[i]["otherstreet"];
-                    installationCity = contactData[i]["othercity"];
-                    installationCountry = contactData[i]["othercountry"];
-                    installationPostal = contactData[i]["otherzip"];
-                  }
-                }
-              },
-            ),
-
-            //View Contact Button
-            Align(
-              alignment: Alignment.topRight,
-              child: InkWell(
-                highlightColor: AppColors.transparent,
-                splashColor: AppColors.transparent,
-                onTap: () {
-                  if (contactId != null) {
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                            type: PageTransitionType.rightToLeft,
-                            child: ContactDetail(contactId, "quote", dropdownvalue ?? [], dataQuote: dataQuote, contactList: contractList)));
-                  } else {
-                    Helpers.showSnackBar(context, ErrorString.selectOneContact,
-                        isError: true);
-                  }
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.sp),
-                  child: Text(LabelString.lblViewContacts,
-                      style: CustomTextStyle.commonTextBlue),
-                ),
-              ),
-            ),
-            //if site will not empty then shows dropdown otherwise it will be hide.
-            if (siteAddressList.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.only(top: 10.sp, left: 3.sp, right: 3.sp),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButton<Map>(
-                          itemHeight: 60.0,
-                          style: CustomTextStyle.labelBoldFontText,
-                          elevation: 0,
-                          icon: Icon(Icons.arrow_drop_down_rounded, size: 24.sp),
-                          iconEnabledColor: AppColors.blackColor,
-                          iconDisabledColor: AppColors.hintFontColor,
-                          underline:
-                          Container(height: 1.0, color: AppColors.primaryColor),
-                          isDense: false,
-                          isExpanded: true,
-                          hint: Text(LabelString.lblSelectSiteAddress,
-                              style: CustomTextStyle.labelFontHintText),
-
-                          items: siteAddressList.map((item) {
-                            return DropdownMenuItem<Map>(
-                                value: item,
-                                child: Text("${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
-                                    style: CustomTextStyle.labelFontText));
-                          }).toList(),
-                          onChanged: (newVal) {
-                            setState(() {
-                              dropdownvalue = newVal;
-                            });
-                          },
-                          value: dropdownvalue),
-                    ),
-                    InkWell(
-                        highlightColor: AppColors.transparent,
-                        splashColor: AppColors.transparent,
-                      onTap: (){
-                        setState(() { dropdownvalue = null; });
-                      },
-                        child: Padding(
-                          padding: EdgeInsets.all(4.sp),
-                          child: Icon(Icons.close, color: AppColors.blackColor),
-                        ))
-                  ],
-                ),
-              ),
-            SizedBox(height: 2.0.h),
-            Text(LabelString.lblPremisesType,
-                style: CustomTextStyle.labelBoldFontTextSmall),
-            SizedBox(height: 2.5.h),
-            Wrap(
-              spacing: 15.sp,
-              direction: Axis.horizontal,
-              alignment: WrapAlignment.spaceBetween,
-              runSpacing: 15.sp,
-              children: List.generate(
-                stepOneData["premises_type"].length,
-                    (index) {
-                  if(dataQuote != null && dataQuote["premises_type"] != ""){
-                    premisesType.add(RadioModel(
-                        stepOneData["premises_type"][index]["label"].toString().contains(dataQuote["premises_type"]) ?
-                            true : false, stepOneData["premises_type"][index]["label"]));
-                    premisesTypeSelect = dataQuote["premises_type"];
-                  }else if(contractList != null && contractList.scPremisesType != ""){
-                    premisesType.add(RadioModel(
-                        stepOneData["premises_type"][index]["label"].toString().contains(contractList.scPremisesType) ?
-                        true : false, stepOneData["premises_type"][index]["label"]));
-                    premisesTypeSelect = contractList.scPremisesType;
-                  }
-                  else {
-                    premisesType.add(RadioModel(false, stepOneData["premises_type"][index]["label"]));
-                    premisesTypeSelect = stepOneData["premises_type"][index]["label"];
-                  }
-
-                 //dataQuote != null ? dataQuote["premises_type"] : ;
-                  return InkWell(
-                    splashColor: AppColors.transparent,
-                    highlightColor: AppColors.transparent,
-                    onTap: () {
-                      for (var element in premisesType) {
-                        element.isSelected = false;
+    return isLoading
+        ? loadingView()
+        : Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  //Design Auto filled contact
+                  Autocomplete(
+                    initialValue: TextEditingValue(text: contactName),
+                    fieldViewBuilder: (context, textEditingController,
+                        focusNode, VoidCallback onFieldSubmitted) {
+                      FocusNode focus = focusNode;
+                      if (dataQuote != null) {
+                        contactSelect = dataQuote["contact_name"];
+                      } else if (contractList != null) {
+                        contactSelect = contractList.subject
+                                .toString()
+                                .contains("-")
+                            ? contractList.subject.toString().substring(
+                                0, contractList.subject.toString().indexOf("-"))
+                            : contractList.subject.toString();
                       }
-                      // Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
+                      //dataQuote != null ? contactSelect = dataQuote["contact_name"] : "";
+                      textEditingController.text = contactSelect;
+                      return TextField(
+                        autofocus: widget.isBack ||
+                                dataQuote != null ||
+                                contractList != null
+                            ? false
+                            : true,
+                        style: TextStyle(color: AppColors.blackColor),
+                        textCapitalization: TextCapitalization.none,
+                        textInputAction: TextInputAction.next,
+                        maxLines: 1,
+                        keyboardType: TextInputType.name,
+                        cursorColor: AppColors.blackColor,
+                        decoration: InputDecoration(
+                            suffixIcon:
+                                Icon(Icons.search, color: AppColors.blackColor),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                    width: 2, color: AppColors.primaryColor)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                    width: 2, color: AppColors.primaryColor)),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                    width: 2, color: AppColors.primaryColor)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: EdgeInsets.only(left: 12.sp),
+                            hintText: LabelString.lblTypeToSearch,
+                            hintStyle: CustomTextStyle.labelFontHintText,
+                            counterText: ""),
+                        controller: textEditingController,
+                        focusNode: focus,
+                        onEditingComplete: () {},
+                        onSubmitted: (String value) {},
+                        onChanged: (value) {
+                          focus = focusNode;
+                          focus.requestFocus();
+                        },
+                      );
+                    },
+                    optionsBuilder: (TextEditingValue textEditingValue) async {
+                      if (textEditingValue.text.isEmpty) {
+                        return const Iterable<String>.empty();
+                      } else {
+                        List<String> matchesContact = <String>[];
+                        matchesContact.addAll(contactData.map((e) {
+                          return "${e["firstname"].trim()} ${e["lastname"].trim()} - ${e["otherstreet"]}";
+                        }));
 
-                      premisesType[index].isSelected = true;
-                      // Provider.of<WidgetChange>(context, listen: false).isSetPremises;
-
-
-                      notifier.value = !notifier.value;
-                      if (contactId != null) {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
+                        matchesContact = matchesContact
+                            .where((element) => element.toLowerCase().contains(
+                                textEditingValue.text.toLowerCase().trim()))
+                            .toList();
+                        return matchesContact;
                       }
                     },
-                    child: ValueListenableBuilder(
-                        valueListenable: notifier,
-                        builder: (BuildContext context, bool val, Widget? child) {
-                          return Container(
-                            height: 15.h,
-                            width: 42.w,
-                            decoration: BoxDecoration(
-                                color: premisesType[index].isSelected
-                                    ? AppColors.primaryColorLawOpacity
-                                    : AppColors.whiteColor,
-                                border: Border.all(
-                                    color: premisesType[index].isSelected
-                                        ? AppColors.primaryColor
-                                        : AppColors.borderColor,
-                                    width: 1),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(height: 1.h),
-                                      SvgExtension(iconColor: premisesType[index].isSelected
-                                              ? AppColors.primaryColor : AppColors.blackColor,
-                                          itemName: premisesType[index].buttonText),
-                                      SizedBox(height: 1.h),
-                                      Text(premisesType[index].buttonText,
-                                          style: premisesType[index].isSelected
-                                              ? CustomTextStyle.commonTextBlue : CustomTextStyle.commonText),
-                                      SizedBox(height: 1.h)]),
-                                Visibility(
-                                  visible: premisesType[index].isSelected ? true : false,
-                                  child: Positioned(
-                                    right: 10, top: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(80.0),
-                                          color: AppColors.greenColor),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Icon(Icons.done,
-                                            color: AppColors.whiteColor, size: 14.sp),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        }),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 2.0.h),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 3.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 42.w,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                      //cancel button
-                        title: ButtonString.btnCancel,
-                        onClick: () => Navigator.of(context).pop(),
-                        buttonColor: AppColors.redColor),
+                    onSelected: (selection) async {
+                      FocusScope.of(context).unfocus();
+                      getSiteAddressList();
+                      for (int i = 0; i < contactData.length; i++) {
+                        if (selection ==
+                            "${contactData[i]["firstname"]} ${contactData[i]["lastname"]} - ${contactData[i]["otherstreet"]}") {
+                          contactId = contactData[i]["id"];
+                          contactCompany = contactData[i]["contact_company"];
+                          mobileNumber = contactData[i]["mobile"];
+                          telephoneNumber = contactData[i]["phone"];
+                          contactEmail = contactData[i]["email"];
+                          contactSelect = selection;
+
+                          //When select contact, set address in fields
+                          invoiceAddress = contactData[i]["mailingstreet"];
+                          invoiceCity = contactData[i]["mailingcity"];
+                          invoiceCountry = contactData[i]["mailingcountry"];
+                          invoicePostal = contactData[i]["mailingzip"];
+
+                          installationAddress = contactData[i]["otherstreet"];
+                          installationCity = contactData[i]["othercity"];
+                          installationCountry = contactData[i]["othercountry"];
+                          installationPostal = contactData[i]["otherzip"];
+                        }
+                      }
+                    },
                   ),
-                  SizedBox(
-                    width: 42.w,
-                    height: query.height * 0.06,
-                    child: CustomButton(
-                      //next button
-                        title: ButtonString.btnNext,
-                        onClick: () {
-                          if (contactId != null) {
-                            FocusScope.of(context).unfocus();
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          } else {
-                            Helpers.showSnackBar(
-                                context, ErrorString.selectOneContact,
-                                isError: true);
-                          }
-                        },
-                        buttonColor: AppColors.primaryColor),
+
+                  //View Contact Button
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: InkWell(
+                      highlightColor: AppColors.transparent,
+                      splashColor: AppColors.transparent,
+                      onTap: () {
+                        if (contactId != null) {
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: ContactDetail(
+                                      contactId, "quote", dropdownvalue ?? [],
+                                      dataQuote: dataQuote,
+                                      contactList: contractList)));
+                        } else {
+                          Helpers.showSnackBar(
+                              context, ErrorString.selectOneContact,
+                              isError: true);
+                        }
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10.sp),
+                        child: Text(LabelString.lblViewContacts,
+                            style: CustomTextStyle.commonTextBlue),
+                      ),
+                    ),
+                  ),
+                  //if site will not empty then shows dropdown otherwise it will be hide.
+                  if (siteAddressList.isNotEmpty)
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: 10.sp, left: 3.sp, right: 3.sp),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButton<Map>(
+                                itemHeight: 60.0,
+                                style: CustomTextStyle.labelBoldFontText,
+                                elevation: 0,
+                                icon: Icon(Icons.arrow_drop_down_rounded,
+                                    size: 24.sp),
+                                iconEnabledColor: AppColors.blackColor,
+                                iconDisabledColor: AppColors.hintFontColor,
+                                underline: Container(
+                                    height: 1.0, color: AppColors.primaryColor),
+                                isDense: false,
+                                isExpanded: true,
+                                hint: Text(LabelString.lblSelectSiteAddress,
+                                    style: CustomTextStyle.labelFontHintText),
+                                items: siteAddressList.map((item) {
+                                  return DropdownMenuItem<Map>(
+                                      value: item,
+                                      child: Text(
+                                          "${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
+                                          style:
+                                              CustomTextStyle.labelFontText));
+                                }).toList(),
+                                onChanged: (newVal) {
+                                  setState(() {
+                                    dropdownvalue = newVal;
+                                  });
+                                },
+                                value: dropdownvalue),
+                          ),
+                          InkWell(
+                              highlightColor: AppColors.transparent,
+                              splashColor: AppColors.transparent,
+                              onTap: () {
+                                setState(() {
+                                  dropdownvalue = null;
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(4.sp),
+                                child: Icon(Icons.close,
+                                    color: AppColors.blackColor),
+                              ))
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 2.0.h),
+                  Text(LabelString.lblPremisesType,
+                      style: CustomTextStyle.labelBoldFontTextSmall),
+                  SizedBox(height: 2.5.h),
+                  Wrap(
+                    spacing: 15.sp,
+                    direction: Axis.horizontal,
+                    alignment: WrapAlignment.spaceBetween,
+                    runSpacing: 15.sp,
+                    children: List.generate(
+                      stepOneData["premises_type"].length,
+                      (index) {
+                        if (dataQuote != null &&
+                            dataQuote["premises_type"] != "") {
+                          premisesType.add(RadioModel(
+                              stepOneData["premises_type"][index]["label"]
+                                      .toString()
+                                      .contains(dataQuote["premises_type"])
+                                  ? true
+                                  : false,
+                              stepOneData["premises_type"][index]["label"]));
+                          premisesTypeSelect = dataQuote["premises_type"];
+                        } else if (contractList != null &&
+                            contractList.scPremisesType != "") {
+                          premisesType.add(RadioModel(
+                              stepOneData["premises_type"][index]["label"]
+                                      .toString()
+                                      .contains(contractList.scPremisesType)
+                                  ? true
+                                  : false,
+                              stepOneData["premises_type"][index]["label"]));
+                          premisesTypeSelect = contractList.scPremisesType;
+                        } else {
+                          premisesType.add(RadioModel(false,
+                              stepOneData["premises_type"][index]["label"]));
+                          premisesTypeSelect =
+                              stepOneData["premises_type"][index]["label"];
+                        }
+
+                        //dataQuote != null ? dataQuote["premises_type"] : ;
+                        return InkWell(
+                          splashColor: AppColors.transparent,
+                          highlightColor: AppColors.transparent,
+                          onTap: () {
+                            for (var element in premisesType) {
+                              element.isSelected = false;
+                            }
+                            // Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
+
+                            premisesType[index].isSelected = true;
+                            // Provider.of<WidgetChange>(context, listen: false).isSetPremises;
+
+                            notifier.value = !notifier.value;
+                            if (contactId != null) {
+                              pageController.nextPage(
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.decelerate);
+                            }
+                          },
+                          child: ValueListenableBuilder(
+                              valueListenable: notifier,
+                              builder: (BuildContext context, bool val,
+                                  Widget? child) {
+                                return Container(
+                                  height: 15.h,
+                                  width: 42.w,
+                                  decoration: BoxDecoration(
+                                      color: premisesType[index].isSelected
+                                          ? AppColors.primaryColorLawOpacity
+                                          : AppColors.whiteColor,
+                                      border: Border.all(
+                                          color: premisesType[index].isSelected
+                                              ? AppColors.primaryColor
+                                              : AppColors.borderColor,
+                                          width: 1),
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(height: 1.h),
+                                            SvgExtension(
+                                                iconColor: premisesType[index]
+                                                        .isSelected
+                                                    ? AppColors.primaryColor
+                                                    : AppColors.blackColor,
+                                                itemName: premisesType[index]
+                                                    .buttonText),
+                                            SizedBox(height: 1.h),
+                                            Text(premisesType[index].buttonText,
+                                                style: premisesType[index]
+                                                        .isSelected
+                                                    ? CustomTextStyle
+                                                        .commonTextBlue
+                                                    : CustomTextStyle
+                                                        .commonText),
+                                            SizedBox(height: 1.h)
+                                          ]),
+                                      Visibility(
+                                        visible: premisesType[index].isSelected
+                                            ? true
+                                            : false,
+                                        child: Positioned(
+                                          right: 10,
+                                          top: 5,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(80.0),
+                                                color: AppColors.greenColor),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Icon(Icons.done,
+                                                  color: AppColors.whiteColor,
+                                                  size: 14.sp),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 2.0.h),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.sp, horizontal: 3.sp),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 42.w,
+                          height: query.height * 0.06,
+                          child: CustomButton(
+                              //cancel button
+                              title: ButtonString.btnCancel,
+                              onClick: () => Navigator.of(context).pop(),
+                              buttonColor: AppColors.redColor),
+                        ),
+                        SizedBox(
+                          width: 42.w,
+                          height: query.height * 0.06,
+                          child: CustomButton(
+                              //next button
+                              title: ButtonString.btnNext,
+                              onClick: () {
+                                if (contactId != null) {
+                                  FocusScope.of(context).unfocus();
+                                  pageController.nextPage(
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.decelerate);
+                                } else {
+                                  Helpers.showSnackBar(
+                                      context, ErrorString.selectOneContact,
+                                      isError: true);
+                                }
+                              },
+                              buttonColor: AppColors.primaryColor),
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   ///step 2- system type
-  SingleChildScrollView buildStepTwo(BuildContext context, Size query, stepTwoData) {
+  SingleChildScrollView buildStepTwo(
+      BuildContext context, Size query, stepTwoData) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
@@ -774,21 +860,28 @@ class _AddQuotePageState extends State<AddQuotePage> {
               runSpacing: 15.sp,
               children: List.generate(
                 stepTwoData["system_type"].length - 9,
-                    (index) {
-                  String systemTypeLabel = stepTwoData["system_type"][index]["label"].toString();
-                  if(widget.lastName == "edit" && dataQuote["system_type"] != ""){
+                (index) {
+                  String systemTypeLabel =
+                      stepTwoData["system_type"][index]["label"].toString();
+                  if (widget.lastName == "edit" &&
+                      dataQuote["system_type"] != "") {
                     systemType.add(RadioModel(
-                        dataQuote["system_type"].toString().contains(stepTwoData["system_type"][index]["label"]) ?
-                        true : false,
+                        dataQuote["system_type"].toString().contains(
+                                stepTwoData["system_type"][index]["label"])
+                            ? true
+                            : false,
                         stepTwoData["system_type"][index]["label"]));
-                  }else if(widget.lastName == "contract" && contractList.scSystemType != ""){
+                  } else if (widget.lastName == "contract" &&
+                      contractList.scSystemType != "") {
                     systemType.add(RadioModel(
-                        contractList.scSystemType.toString().contains(stepTwoData["system_type"][index]["label"]) ?
-                        true : false,
+                        contractList.scSystemType.toString().contains(
+                                stepTwoData["system_type"][index]["label"])
+                            ? true
+                            : false,
                         stepTwoData["system_type"][index]["label"]));
-                  }
-                  else {
-                    systemType.add(RadioModel(false, stepTwoData["system_type"][index]["label"]));
+                  } else {
+                    systemType.add(RadioModel(
+                        false, stepTwoData["system_type"][index]["label"]));
                   }
 
                   return InkWell(
@@ -802,44 +895,52 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       systemType[index].isSelected = true;
                       setState(() {});
                       //  Provider.of<WidgetChange>(context, listen: false).isSetSystem;
-                      systemTypeSelect = stepTwoData["system_type"][index]["label"];
+                      systemTypeSelect =
+                          stepTwoData["system_type"][index]["label"];
 
                       print(systemTypeSelect);
-                      if (systemTypeSelect.contains("CCTV") ||
+                      if (systemTypeSelect.contains("CCTV System") ||
                           systemTypeSelect.contains("Access Control") ||
-                          systemTypeSelect.contains("Keyholding")) {
-                        if(dataQuote != null){
-                          callNextScreen(context, BuildItemScreen(
-                              eAmount,
-                              systemTypeSelect,
-                              quotePaymentSelection,
-                              contactSelect,
-                              premisesTypeSelect,
-                              termsItemSelection,
-                              gradeFireSelect,
-                              signallingTypeSelect,
-                              engineerNumbers,
-                              timeType,
-                              invoiceAddress,
-                              invoiceCity,
-                              invoiceCountry,
-                              invoicePostal,
-                              installationAddress,
-                              installationCity,
-                              installationCountry,
-                              installationPostal,
-                              contactId,
-                              contactCompany,
-                              mobileNumber,
-                              telephoneNumber,
-                              stepTwoData['quotes_terms'],
-                              contactEmail,
-                              (dropdownvalue ?? {}) as Map,
-                              itemList: itemList,
-                              dataQuote: dataQuote,
-                              widget.lastName));
-                        }else if(contractList != null){
-                          callNextScreen(context,
+                          systemTypeSelect.contains("Fire System") ||
+                          systemTypeSelect.contains("Panic Alarm System") ||
+                          systemTypeSelect
+                              .contains("External Detection Only") ||
+                          systemTypeSelect.contains("Keyholding Services")) {
+                        if (dataQuote != null) {
+                          callNextScreen(
+                              context,
+                              BuildItemScreen(
+                                  eAmount,
+                                  systemTypeSelect,
+                                  quotePaymentSelection,
+                                  contactSelect,
+                                  premisesTypeSelect,
+                                  termsItemSelection,
+                                  gradeFireSelect,
+                                  signallingTypeSelect,
+                                  engineerNumbers,
+                                  timeType,
+                                  invoiceAddress,
+                                  invoiceCity,
+                                  invoiceCountry,
+                                  invoicePostal,
+                                  installationAddress,
+                                  installationCity,
+                                  installationCountry,
+                                  installationPostal,
+                                  contactId,
+                                  contactCompany,
+                                  mobileNumber,
+                                  telephoneNumber,
+                                  stepTwoData['quotes_terms'],
+                                  contactEmail,
+                                  (dropdownvalue ?? {}) as Map,
+                                  itemList: itemList,
+                                  dataQuote: dataQuote,
+                                  widget.lastName));
+                        } else if (contractList != null) {
+                          callNextScreen(
+                              context,
                               AddItemDetail(
                                   eAmount,
                                   systemTypeSelect,
@@ -868,10 +969,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   (dropdownvalue ?? {}) as Map,
                                   widget.lastName,
                                   contractList: contractList,
-                                  quoteTypeContract: widget.firstName
-                              ));
-                        } else{
-                          callNextScreen(context,
+                                  quoteTypeContract: widget.firstName));
+                        } else {
+                          callNextScreen(
+                              context,
                               AddItemDetail(
                                   eAmount,
                                   systemTypeSelect,
@@ -898,10 +999,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   stepTwoData['quotes_terms'],
                                   contactEmail,
                                   (dropdownvalue ?? {}) as Map,
-                                  widget.lastName
-                              ));
+                                  widget.lastName));
                         }
-
                       } else {
                         pageController.nextPage(
                             duration: const Duration(milliseconds: 500),
@@ -930,7 +1029,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               children: [
                                 SizedBox(height: 1.h),
                                 SvgExtension(
-                                    itemName: stepTwoData["system_type"][index]["label"],
+                                    itemName: stepTwoData["system_type"][index]
+                                        ["label"],
                                     iconColor: systemType[index].isSelected
                                         ? AppColors.primaryColor
                                         : AppColors.blackColor),
@@ -939,8 +1039,12 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                   width: query.width * 0.3,
                                   child: Text(
                                       RegExp(":").hasMatch(systemTypeLabel)
-                                          ? systemTypeLabel.substring(0,
-                                          systemTypeLabel.indexOf(":") + 2).replaceAll(":", "")
+                                          ? systemTypeLabel
+                                              .substring(
+                                                  0,
+                                                  systemTypeLabel.indexOf(":") +
+                                                      2)
+                                              .replaceAll(":", "")
                                           : systemTypeLabel,
                                       textAlign: TextAlign.center,
                                       style: systemType[index].isSelected
@@ -951,7 +1055,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               ]),
                           Visibility(
                             visible:
-                            systemType[index].isSelected ? true : false,
+                                systemType[index].isSelected ? true : false,
                             child: Positioned(
                               right: 10,
                               top: 5,
@@ -1002,219 +1106,257 @@ class _AddQuotePageState extends State<AddQuotePage> {
           //show grade section only when system type contains "Intruder"
           systemTypeSelect.contains("Intruder")
               ? Column(
-            children: [
-              SizedBox(height: 1.h),
-              Text(LabelString.lblGradeNumber,
-                  textAlign: TextAlign.center,
-                  style: CustomTextStyle.labelBoldFontTextSmall),
-              SizedBox(height: 2.h),
-              Wrap(
-                spacing: 15.sp,
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.spaceBetween,
-                runSpacing: 15.sp,
-                children: List.generate(
-                  2, (index) {
-                    if(dataQuote != null && dataQuote["grade_number"] != null){
-                      gradeAndFire.add(RadioModel(
-                          dataQuote["grade_number"].toString().contains(stepThreeData["grade_number"][index]["label"]) ?
-                          true : false, dataGrade[index]["label"]));
-                    }else if(contractList != null && contractList.scSecurityGrade != null){
-                      gradeAndFire.add(RadioModel(
-                          contractList.scSecurityGrade.toString().contains(stepThreeData["grade_number"][index]["label"]) ?
-                          true : false, dataGrade[index]["label"]));
-                    }
-                    else {
-                      gradeAndFire.add(RadioModel(false, dataGrade[index]["label"]));
-                    }
-
-                    return InkWell(
-                      splashColor: AppColors.transparent,
-                      highlightColor: AppColors.transparent,
-                      onTap: () {
-                        for (var element in gradeAndFire) {
-                          element.isSelected = false;
-                        }
-
-                        // Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
-                        gradeAndFire[index].isSelected = true;
-                        notifier.value = !notifier.value;
-                        // Provider.of<WidgetChange>(context, listen: false).isSetGrade;
-
-                        gradeFireSelect = dataGrade[index]["label"];
-
-                        if (signallingTypeSelect.isNotEmpty && gradeFireSelect.isNotEmpty) {
-                          if(dataQuote != null){
-                            callNextScreen(
-                                context,
-                                BuildItemScreen(
-                                    eAmount,
-                                    systemTypeSelect,
-                                    quotePaymentSelection,
-                                    contactSelect,
-                                    premisesTypeSelect,
-                                    termsItemSelection,
-                                    gradeFireSelect,
-                                    signallingTypeSelect,
-                                    engineerNumbers,
-                                    timeType,
-                                    invoiceAddress,
-                                    invoiceCity,
-                                    invoiceCountry,
-                                    invoicePostal,
-                                    installationAddress,
-                                    installationCity,
-                                    installationCountry,
-                                    installationPostal,
-                                    contactId,
-                                    contactCompany,
-                                    mobileNumber,
-                                    telephoneNumber,
-                                    stepThreeData['quotes_terms'],
-                                    contactEmail,
-                                    (dropdownvalue ?? {}) as Map,
-                                    widget.lastName,
-                                    itemList: itemList,
-                                    dataQuote: dataQuote));
-                          }else if(contractList != null){
-                            callNextScreen(context,
-                                AddItemDetail(
-                                    eAmount,
-                                    systemTypeSelect,
-                                    quotePaymentSelection,
-                                    contactSelect,
-                                    premisesTypeSelect,
-                                    termsItemSelection,
-                                    gradeFireSelect,
-                                    signallingTypeSelect,
-                                    engineerNumbers,
-                                    timeType,
-                                    invoiceAddress,
-                                    invoiceCity,
-                                    invoiceCountry,
-                                    invoicePostal,
-                                    installationAddress,
-                                    installationCity,
-                                    installationCountry,
-                                    installationPostal,
-                                    contactId,
-                                    contactCompany,
-                                    mobileNumber,
-                                    telephoneNumber,
-                                    stepThreeData['quotes_terms'],
-                                    contactEmail,
-                                    (dropdownvalue ?? {}) as Map,
-                                  widget.lastName,
-                                  contractList: contractList,
-                                    quoteTypeContract: widget.firstName));
+                  children: [
+                    SizedBox(height: 1.h),
+                    Text(LabelString.lblGradeNumber,
+                        textAlign: TextAlign.center,
+                        style: CustomTextStyle.labelBoldFontTextSmall),
+                    SizedBox(height: 2.h),
+                    Wrap(
+                      spacing: 15.sp,
+                      direction: Axis.horizontal,
+                      alignment: WrapAlignment.spaceBetween,
+                      runSpacing: 15.sp,
+                      children: List.generate(
+                        2,
+                        (index) {
+                          if (dataQuote != null &&
+                              dataQuote["grade_number"] != null) {
+                            gradeAndFire.add(RadioModel(
+                                dataQuote["grade_number"].toString().contains(
+                                        stepThreeData["grade_number"][index]
+                                            ["label"])
+                                    ? true
+                                    : false,
+                                dataGrade[index]["label"]));
+                          } else if (contractList != null &&
+                              contractList.scSecurityGrade != null) {
+                            gradeAndFire.add(RadioModel(
+                                contractList.scSecurityGrade
+                                        .toString()
+                                        .contains(stepThreeData["grade_number"]
+                                            [index]["label"])
+                                    ? true
+                                    : false,
+                                dataGrade[index]["label"]));
+                          } else {
+                            gradeAndFire.add(
+                                RadioModel(false, dataGrade[index]["label"]));
                           }
-                          else {
-                            callNextScreen(context,
-                                AddItemDetail(
-                                    eAmount,
-                                    systemTypeSelect,
-                                    quotePaymentSelection,
-                                    contactSelect,
-                                    premisesTypeSelect,
-                                    termsItemSelection,
-                                    gradeFireSelect,
-                                    signallingTypeSelect,
-                                    engineerNumbers,
-                                    timeType,
-                                    invoiceAddress,
-                                    invoiceCity,
-                                    invoiceCountry,
-                                    invoicePostal,
-                                    installationAddress,
-                                    installationCity,
-                                    installationCountry,
-                                    installationPostal,
-                                    contactId,
-                                    contactCompany,
-                                    mobileNumber,
-                                    telephoneNumber,
-                                    stepThreeData['quotes_terms'],
-                                    contactEmail,
-                                    (dropdownvalue ?? {}) as Map, widget.lastName));
-                          }
-                        }
-                      },
-                      child: ValueListenableBuilder(
-                        valueListenable: notifier,
-                        builder:  (BuildContext context, bool val, Widget? child) {
-                          return Container(
-                            height: 15.h,
-                            width: 42.w,
-                            decoration: BoxDecoration(
-                                color: gradeAndFire[index].isSelected
-                                    ? AppColors.primaryColorLawOpacity
-                                    : AppColors.whiteColor,
-                                border: Border.all(
-                                    color: gradeAndFire[index].isSelected
-                                        ? AppColors.primaryColor
-                                        : AppColors.borderColor,
-                                    width: 1),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      //Condition for skip grade and signalling type
-                                      SizedBox(height: 1.h),
-                                      SvgExtension(
-                                          itemName: systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
-                                              ? dataGrade.getRange(2, 7).toList()[index]["label"]
-                                              : dataGrade[index]["label"],
-                                          iconColor: gradeAndFire[index].isSelected
-                                              ? AppColors.primaryColor
-                                              : AppColors.blackColor),
-                                      SizedBox(height: 1.h),
-                                      Text(systemTypeSelect == "Fire System: BS 5839-1: 2017 + SP203-1"
-                                              ? dataGrade.getRange(2, 7).toList()[index]["label"]
-                                              : dataGrade[index]["label"],
-                                          style: gradeAndFire[index].isSelected
-                                              ? CustomTextStyle.commonTextBlue
-                                              : CustomTextStyle.commonText),
-                                      SizedBox(height: 1.h),
-                                    ]),
-                                Visibility(
-                                  visible: gradeAndFire[index].isSelected
-                                      ? true
-                                      : false,
-                                  child: Positioned(
-                                    right: 10,
-                                    top: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(80.0),
-                                          color: AppColors.greenColor),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Icon(Icons.done,
-                                            color: AppColors.whiteColor,
-                                            size: 14.sp),
-                                      ),
+
+                          return InkWell(
+                              splashColor: AppColors.transparent,
+                              highlightColor: AppColors.transparent,
+                              onTap: () {
+                                for (var element in gradeAndFire) {
+                                  element.isSelected = false;
+                                }
+
+                                // Provider.of<WidgetChange>(context, listen: false).isSelectGrade();
+                                gradeAndFire[index].isSelected = true;
+                                notifier.value = !notifier.value;
+                                // Provider.of<WidgetChange>(context, listen: false).isSetGrade;
+
+                                gradeFireSelect = dataGrade[index]["label"];
+
+                                if (signallingTypeSelect.isNotEmpty &&
+                                    gradeFireSelect.isNotEmpty) {
+                                  if (dataQuote != null) {
+                                    callNextScreen(
+                                        context,
+                                        BuildItemScreen(
+                                            eAmount,
+                                            systemTypeSelect,
+                                            quotePaymentSelection,
+                                            contactSelect,
+                                            premisesTypeSelect,
+                                            termsItemSelection,
+                                            gradeFireSelect,
+                                            signallingTypeSelect,
+                                            engineerNumbers,
+                                            timeType,
+                                            invoiceAddress,
+                                            invoiceCity,
+                                            invoiceCountry,
+                                            invoicePostal,
+                                            installationAddress,
+                                            installationCity,
+                                            installationCountry,
+                                            installationPostal,
+                                            contactId,
+                                            contactCompany,
+                                            mobileNumber,
+                                            telephoneNumber,
+                                            stepThreeData['quotes_terms'],
+                                            contactEmail,
+                                            (dropdownvalue ?? {}) as Map,
+                                            widget.lastName,
+                                            itemList: itemList,
+                                            dataQuote: dataQuote));
+                                  } else if (contractList != null) {
+                                    callNextScreen(
+                                        context,
+                                        AddItemDetail(
+                                            eAmount,
+                                            systemTypeSelect,
+                                            quotePaymentSelection,
+                                            contactSelect,
+                                            premisesTypeSelect,
+                                            termsItemSelection,
+                                            gradeFireSelect,
+                                            signallingTypeSelect,
+                                            engineerNumbers,
+                                            timeType,
+                                            invoiceAddress,
+                                            invoiceCity,
+                                            invoiceCountry,
+                                            invoicePostal,
+                                            installationAddress,
+                                            installationCity,
+                                            installationCountry,
+                                            installationPostal,
+                                            contactId,
+                                            contactCompany,
+                                            mobileNumber,
+                                            telephoneNumber,
+                                            stepThreeData['quotes_terms'],
+                                            contactEmail,
+                                            (dropdownvalue ?? {}) as Map,
+                                            widget.lastName,
+                                            contractList: contractList,
+                                            quoteTypeContract:
+                                                widget.firstName));
+                                  } else {
+                                    callNextScreen(
+                                        context,
+                                        AddItemDetail(
+                                            eAmount,
+                                            systemTypeSelect,
+                                            quotePaymentSelection,
+                                            contactSelect,
+                                            premisesTypeSelect,
+                                            termsItemSelection,
+                                            gradeFireSelect,
+                                            signallingTypeSelect,
+                                            engineerNumbers,
+                                            timeType,
+                                            invoiceAddress,
+                                            invoiceCity,
+                                            invoiceCountry,
+                                            invoicePostal,
+                                            installationAddress,
+                                            installationCity,
+                                            installationCountry,
+                                            installationPostal,
+                                            contactId,
+                                            contactCompany,
+                                            mobileNumber,
+                                            telephoneNumber,
+                                            stepThreeData['quotes_terms'],
+                                            contactEmail,
+                                            (dropdownvalue ?? {}) as Map,
+                                            widget.lastName));
+                                  }
+                                }
+                              },
+                              child: ValueListenableBuilder(
+                                valueListenable: notifier,
+                                builder: (BuildContext context, bool val,
+                                    Widget? child) {
+                                  return Container(
+                                    height: 15.h,
+                                    width: 42.w,
+                                    decoration: BoxDecoration(
+                                        color: gradeAndFire[index].isSelected
+                                            ? AppColors.primaryColorLawOpacity
+                                            : AppColors.whiteColor,
+                                        border: Border.all(
+                                            color:
+                                                gradeAndFire[index].isSelected
+                                                    ? AppColors.primaryColor
+                                                    : AppColors.borderColor,
+                                            width: 1),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              //Condition for skip grade and signalling type
+                                              SizedBox(height: 1.h),
+                                              SvgExtension(
+                                                  itemName: systemTypeSelect ==
+                                                          "Fire System: BS 5839-1: 2017 + SP203-1"
+                                                      ? dataGrade
+                                                              .getRange(2, 7)
+                                                              .toList()[index]
+                                                          ["label"]
+                                                      : dataGrade[index]
+                                                          ["label"],
+                                                  iconColor: gradeAndFire[index]
+                                                          .isSelected
+                                                      ? AppColors.primaryColor
+                                                      : AppColors.blackColor),
+                                              SizedBox(height: 1.h),
+                                              Text(
+                                                  systemTypeSelect ==
+                                                          "Fire System: BS 5839-1: 2017 + SP203-1"
+                                                      ? dataGrade
+                                                              .getRange(2, 7)
+                                                              .toList()[index]
+                                                          ["label"]
+                                                      : dataGrade[index]
+                                                          ["label"],
+                                                  style: gradeAndFire[index]
+                                                          .isSelected
+                                                      ? CustomTextStyle
+                                                          .commonTextBlue
+                                                      : CustomTextStyle
+                                                          .commonText),
+                                              SizedBox(height: 1.h),
+                                            ]),
+                                        Visibility(
+                                          visible:
+                                              gradeAndFire[index].isSelected
+                                                  ? true
+                                                  : false,
+                                          child: Positioned(
+                                            right: 10,
+                                            top: 5,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          80.0),
+                                                  color: AppColors.greenColor),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Icon(Icons.done,
+                                                    color: AppColors.whiteColor,
+                                                    size: 14.sp),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
+                                  );
+                                },
+                              ));
                         },
-                      )
-                    );
-                  },
-                ),
-              ),
-            ],
-          )
+                      ),
+                    ),
+                  ],
+                )
               : Container(),
           SizedBox(height: 2.h),
-          Text(LabelString.lblSignallingType,
+          Text(LabelString.lblSignallingGrade,
               textAlign: TextAlign.center,
               style: CustomTextStyle.labelBoldFontTextSmall),
           SizedBox(height: 2.h),
@@ -1224,206 +1366,220 @@ class _AddQuotePageState extends State<AddQuotePage> {
             alignment: WrapAlignment.spaceBetween,
             runSpacing: 15.sp,
             children: List.generate(
-              // stepFourData["signalling_type"].length
-              12, (index) {
-                if(dataQuote != null && dataQuote["grade_number"] != null){
-                  signallingType.add(
-                      RadioModel(
-                          dataQuote["signalling_type"].toString().contains(stepThreeData["signalling_type"][index]["label"])
-                              ? true : false,
-                          stepThreeData["signalling_type"][index]["label"]));
-                }else if(contractList != null && contractList.scPrimarySignalType != null){
-                  signallingType.add(
-                      RadioModel(
-                          contractList.scPrimarySignalType.toString().contains(stepThreeData["signalling_type"][index]["label"])
-                              ? true : false,
-                          stepThreeData["signalling_type"][index]["label"]));
-                }
-                else {
-                  signallingType.add(
-                      RadioModel(false, stepThreeData["signalling_type"][index]["label"]));
+              //12
+              stepThreeData["signalling_grade_no"].length,
+              (index) {
+                if (dataQuote != null && dataQuote["grade_number"] != null) {
+                  signallingType.add(RadioModel(
+                      dataQuote["signalling_grade_no"].toString().contains(
+                              stepThreeData["signalling_grade_no"][index]
+                                  ["label"])
+                          ? true
+                          : false,
+                      stepThreeData["signalling_grade_no"][index]["label"]));
+                } else if (contractList != null &&
+                    contractList.scPrimarySignalType != null) {
+                  signallingType.add(RadioModel(
+                      contractList.scPrimarySignalType.toString().contains(
+                              stepThreeData["signalling_grade_no"][index]
+                                  ["label"])
+                          ? true
+                          : false,
+                      stepThreeData["signalling_grade_no"][index]["label"]));
+                } else {
+                  signallingType.add(RadioModel(false,
+                      stepThreeData["signalling_grade_no"][index]["label"]));
                 }
 
                 return InkWell(
-                  splashColor: AppColors.transparent,
-                  highlightColor: AppColors.transparent,
-                  onTap: () {
-                    for (var element in signallingType) {
-                      element.isSelected = false;
-                    }
-                    //Provider.of<WidgetChange>(context, listen: false).isSelectSignallingType();
-                    signallingType[index].isSelected = true;
-                    notifier.value = !notifier.value;
-                    //Provider.of<WidgetChange>(context, listen: false).isSetSignallingType;
-                    signallingTypeSelect = stepThreeData["signalling_type"][index]["label"];
-
-                    if (signallingTypeSelect.isNotEmpty) {
-
-                      if(dataQuote != null){
-                        callNextScreen(
-                            context,
-                            BuildItemScreen(
-                                eAmount,
-                                systemTypeSelect,
-                                quotePaymentSelection,
-                                contactSelect,
-                                premisesTypeSelect,
-                                termsItemSelection,
-                                gradeFireSelect,
-                                signallingTypeSelect,
-                                engineerNumbers,
-                                timeType,
-                                invoiceAddress,
-                                invoiceCity,
-                                invoiceCountry,
-                                invoicePostal,
-                                installationAddress,
-                                installationCity,
-                                installationCountry,
-                                installationPostal,
-                                contactId,
-                                contactCompany,
-                                mobileNumber,
-                                telephoneNumber,
-                                stepThreeData['quotes_terms'],
-                                contactEmail,
-                                (dropdownvalue ?? {}) as Map,
-                                widget.lastName,
-                                itemList: itemList, dataQuote: dataQuote));
-                      }else if(contractList != null){
-                        callNextScreen(
-                            context,
-                            AddItemDetail(
-                                eAmount,
-                                systemTypeSelect,
-                                quotePaymentSelection,
-                                contactSelect,
-                                premisesTypeSelect,
-                                termsItemSelection,
-                                gradeFireSelect,
-                                signallingTypeSelect,
-                                engineerNumbers,
-                                timeType,
-                                invoiceAddress,
-                                invoiceCity,
-                                invoiceCountry,
-                                invoicePostal,
-                                installationAddress,
-                                installationCity,
-                                installationCountry,
-                                installationPostal,
-                                contactId,
-                                contactCompany,
-                                mobileNumber,
-                                telephoneNumber,
-                                stepThreeData['quotes_terms'],
-                                contactEmail,
-                                (dropdownvalue ?? {}) as Map,
-                                widget.lastName,
-                                contractList: contractList,
-                                quoteTypeContract: widget.firstName));
+                    splashColor: AppColors.transparent,
+                    highlightColor: AppColors.transparent,
+                    onTap: () {
+                      for (var element in signallingType) {
+                        element.isSelected = false;
                       }
-                      else {
-                        callNextScreen(
-                            context,
-                            AddItemDetail(
-                                eAmount,
-                                systemTypeSelect,
-                                quotePaymentSelection,
-                                contactSelect,
-                                premisesTypeSelect,
-                                termsItemSelection,
-                                gradeFireSelect,
-                                signallingTypeSelect,
-                                engineerNumbers,
-                                timeType,
-                                invoiceAddress,
-                                invoiceCity,
-                                invoiceCountry,
-                                invoicePostal,
-                                installationAddress,
-                                installationCity,
-                                installationCountry,
-                                installationPostal,
-                                contactId,
-                                contactCompany,
-                                mobileNumber,
-                                telephoneNumber,
-                                stepThreeData['quotes_terms'],
-                                contactEmail,
-                                (dropdownvalue ?? {}) as Map, widget.lastName));
+                      //Provider.of<WidgetChange>(context, listen: false).isSelectSignallingType();
+                      signallingType[index].isSelected = true;
+                      notifier.value = !notifier.value;
+                      //Provider.of<WidgetChange>(context, listen: false).isSetSignallingType;
+                      signallingTypeSelect =
+                          stepThreeData["signalling_grade_no"][index]["label"];
+
+                      if (signallingTypeSelect.isNotEmpty) {
+                        if (dataQuote != null) {
+                          callNextScreen(
+                              context,
+                              BuildItemScreen(
+                                  eAmount,
+                                  systemTypeSelect,
+                                  quotePaymentSelection,
+                                  contactSelect,
+                                  premisesTypeSelect,
+                                  termsItemSelection,
+                                  gradeFireSelect,
+                                  signallingTypeSelect,
+                                  engineerNumbers,
+                                  timeType,
+                                  invoiceAddress,
+                                  invoiceCity,
+                                  invoiceCountry,
+                                  invoicePostal,
+                                  installationAddress,
+                                  installationCity,
+                                  installationCountry,
+                                  installationPostal,
+                                  contactId,
+                                  contactCompany,
+                                  mobileNumber,
+                                  telephoneNumber,
+                                  stepThreeData['quotes_terms'],
+                                  contactEmail,
+                                  (dropdownvalue ?? {}) as Map,
+                                  widget.lastName,
+                                  itemList: itemList,
+                                  dataQuote: dataQuote));
+                        } else if (contractList != null) {
+                          callNextScreen(
+                              context,
+                              AddItemDetail(
+                                  eAmount,
+                                  systemTypeSelect,
+                                  quotePaymentSelection,
+                                  contactSelect,
+                                  premisesTypeSelect,
+                                  termsItemSelection,
+                                  gradeFireSelect,
+                                  signallingTypeSelect,
+                                  engineerNumbers,
+                                  timeType,
+                                  invoiceAddress,
+                                  invoiceCity,
+                                  invoiceCountry,
+                                  invoicePostal,
+                                  installationAddress,
+                                  installationCity,
+                                  installationCountry,
+                                  installationPostal,
+                                  contactId,
+                                  contactCompany,
+                                  mobileNumber,
+                                  telephoneNumber,
+                                  stepThreeData['quotes_terms'],
+                                  contactEmail,
+                                  (dropdownvalue ?? {}) as Map,
+                                  widget.lastName,
+                                  contractList: contractList,
+                                  quoteTypeContract: widget.firstName));
+                        } else {
+                          callNextScreen(
+                              context,
+                              AddItemDetail(
+                                  eAmount,
+                                  systemTypeSelect,
+                                  quotePaymentSelection,
+                                  contactSelect,
+                                  premisesTypeSelect,
+                                  termsItemSelection,
+                                  gradeFireSelect,
+                                  signallingTypeSelect,
+                                  engineerNumbers,
+                                  timeType,
+                                  invoiceAddress,
+                                  invoiceCity,
+                                  invoiceCountry,
+                                  invoicePostal,
+                                  installationAddress,
+                                  installationCity,
+                                  installationCountry,
+                                  installationPostal,
+                                  contactId,
+                                  contactCompany,
+                                  mobileNumber,
+                                  telephoneNumber,
+                                  stepThreeData['quotes_terms'],
+                                  contactEmail,
+                                  (dropdownvalue ?? {}) as Map,
+                                  widget.lastName));
+                        }
                       }
-                    }
-                  },
-                  child: ValueListenableBuilder(
-                    valueListenable : notifier,
-                    builder: (BuildContext context, bool val, Widget? child){
-                      return Container(
-                        height: 15.h,
-                        width: 42.w,
-                        decoration: BoxDecoration(
-                            color: signallingType[index].isSelected
-                                ? AppColors.primaryColorLawOpacity
-                                : AppColors.whiteColor,
-                            border: Border.all(
-                                color: signallingType[index].isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.borderColor,
-                                width: 1),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(height: 1.h),
-                                    SvgExtension(
-                                        itemName: stepThreeData["signalling_type"][index]["label"],
-                                        iconColor: signallingType[index].isSelected
-                                            ? AppColors.primaryColor
-                                            : AppColors.blackColor),
-                                    SizedBox(height: 1.h),
-                                    SizedBox(
-                                      width: query.width * 0.35,
-                                      child: Text(
-                                          stepThreeData["signalling_type"][index]["label"],
-                                          textAlign: TextAlign.center,
-                                          style: signallingType[index].isSelected
-                                              ? CustomTextStyle.commonTextBlue
-                                              : CustomTextStyle.commonText),
+                    },
+                    child: ValueListenableBuilder(
+                      valueListenable: notifier,
+                      builder: (BuildContext context, bool val, Widget? child) {
+                        return Container(
+                          height: 15.h,
+                          width: 42.w,
+                          decoration: BoxDecoration(
+                              color: signallingType[index].isSelected
+                                  ? AppColors.primaryColorLawOpacity
+                                  : AppColors.whiteColor,
+                              border: Border.all(
+                                  color: signallingType[index].isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.borderColor,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(height: 1.h),
+                                      SvgExtension(
+                                          itemName: stepThreeData[
+                                                  "signalling_grade_no"][index]
+                                              ["label"],
+                                          iconColor:
+                                              signallingType[index].isSelected
+                                                  ? AppColors.primaryColor
+                                                  : AppColors.blackColor),
+                                      SizedBox(height: 1.h),
+                                      SizedBox(
+                                        width: query.width * 0.35,
+                                        child: Text(
+                                            stepThreeData["signalling_grade_no"]
+                                                [index]["label"],
+                                            textAlign: TextAlign.center,
+                                            style: signallingType[index]
+                                                    .isSelected
+                                                ? CustomTextStyle.commonTextBlue
+                                                : CustomTextStyle.commonText),
+                                      ),
+                                      SizedBox(height: 1.h),
+                                    ]),
+                              ),
+                              Visibility(
+                                visible: signallingType[index].isSelected
+                                    ? true
+                                    : false,
+                                child: Positioned(
+                                  right: 10,
+                                  top: 5,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(80.0),
+                                        color: AppColors.greenColor),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Icon(Icons.done,
+                                          color: AppColors.whiteColor,
+                                          size: 14.sp),
                                     ),
-                                    SizedBox(height: 1.h),
-                                  ]),
-                            ),
-                            Visibility(
-                              visible:
-                              signallingType[index].isSelected ? true : false,
-                              child: Positioned(
-                                right: 10,
-                                top: 5,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(80.0),
-                                      color: AppColors.greenColor),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: Icon(Icons.done,
-                                        color: AppColors.whiteColor, size: 14.sp),
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  )
-
-                );
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ));
               },
             ),
           ),

@@ -126,9 +126,10 @@ class LabelString {
   static const String lblQuoteEmailReminder = "Quote Email Reminder?";
   static const String lblPremisesType = "Premises Type";
   static const String lblSystemType = "System Type";
-  static const String lblGradeNumber = "Grade Number";
+  static const String lblGradeNumber = "Security Grade";
   static const String lblFireSystem = "Fire System";
   static const String lblSignallingType = "Signalling Type";
+  static const String lblSignallingGrade = "Signalling Grade";
   static const String lblQuotePayment = "Quote Payment";
   static const String lblTerms = "Terms";
   static const String lblItemDetail = "Item Detail";
@@ -139,7 +140,7 @@ class LabelString {
   static const String lblHideProduct = "Hide Products";
   static const String lblNone = "None";
   static const String lblCategory = "Category";
-  static const String lblManufacturing = "Manufacturing";
+  static const String lblManufacturing = "Manufacturer";
   static const String lblSubCategory = "Sub - Category";
   static const String lblAttachmentDocument = "Attachment Document";
   static const String lblAttachedDocument = "Attached Document";
@@ -211,6 +212,7 @@ class ButtonString {
   static const String btnInstallation = "Installation";
   static const String btnBreakdown = "Breakdown";
   static const String btnService = "Service";
+  static const String btnSeeAllProducts = "See All Products";
 }
 
 //Image path Strings

@@ -25,6 +25,7 @@ class HttpActions {
         });
       }
       log("URl -- $finalUrl");
+      log("URl -- $data");
 
       http.Response response = await http.post(Uri.parse(finalUrl), body: data/*, headers: headers*/);
       return jsonDecode(utf8.decode(response.bodyBytes));
@@ -139,6 +140,5 @@ class HttpActions {
     var connectivityResult = await (Connectivity().checkConnectivity());
     return connectivityResult;
   }
-
 }
 

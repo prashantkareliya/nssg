@@ -19,7 +19,11 @@ class QuoteEstimation extends StatefulWidget {
 
   String? type;
 
-  QuoteEstimation(this.type, {this.dataQuote});
+  var engineersNumber;
+  var timeType;
+  var eAmount;
+
+  QuoteEstimation(this.type, {this.dataQuote, this.engineersNumber, this.timeType, this.eAmount});
 
 
   @override
@@ -44,12 +48,21 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
     if(widget.dataQuote != null){
       if(widget.dataQuote["quote_no_of_engineer"].toString() != ""){
         engineerNumbers = widget.dataQuote["quote_no_of_engineer"].toString();
+      }else {
+        engineerNumbers = widget.engineersNumber;
       }
 
       if(widget.dataQuote["quote_req_to_complete_work"].toString() != ""){
         timeType = widget.dataQuote["quote_req_to_complete_work"].toString();
+      }else{
+        timeType = widget.timeType;
       }
       calculation();
+    }else{
+
+      engineerNumbers = widget.engineersNumber;
+      timeType = widget.timeType;
+      eAmount = widget.eAmount;
     }
   }
   @override
@@ -84,13 +97,22 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     children: List.generate(
                       fieldsData["quote_no_of_engineer"].length,
                           (index) {
-                        if(widget.dataQuote != null){
-                          numbersOfEng.add(RadioModel(
-                              widget.dataQuote["quote_no_of_engineer"].toString().contains(fieldsData["quote_no_of_engineer"][index]["label"]) ?
-                              true : false,
+                        if(widget.dataQuote != null) {
+                          if(widget.dataQuote["quote_no_of_engineer"].toString() != ""){
+                            numbersOfEng.add(RadioModel(
+                                widget.dataQuote["quote_no_of_engineer"].toString().contains(fieldsData["quote_no_of_engineer"][index]["label"]) ?
+                                true : false,
+                                fieldsData["quote_no_of_engineer"][index]["label"]));
+                          }else {
+                            numbersOfEng.add(RadioModel(widget.engineersNumber.toString().contains(fieldsData["quote_no_of_engineer"][index]["label"]) ?
+                            true : false,
+                                fieldsData["quote_no_of_engineer"][index]["label"]));
+                          }
+
+                        } else {
+                          numbersOfEng.add(RadioModel(widget.engineersNumber.toString().contains(fieldsData["quote_no_of_engineer"][index]["label"]) ?
+                          true : false,
                               fieldsData["quote_no_of_engineer"][index]["label"]));
-                        }else{
-                          numbersOfEng.add(RadioModel(false, fieldsData["quote_no_of_engineer"][index]["label"]));
                         }
                         return SizedBox(
                           height: 6.h,
@@ -125,13 +147,20 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     children: List.generate(
                       fieldsData["quote_req_to_complete_work"].length,
                           (index) {
-                            if(widget.dataQuote != null){
-                              installationTiming.add(RadioModel(
-                                  widget.dataQuote["quote_req_to_complete_work"].toString().contains(fieldsData["quote_req_to_complete_work"][index]["label"]) ?
-                                  true : false,
-                                  fieldsData["quote_req_to_complete_work"][index]["label"]));
-                            }else{
-                              installationTiming.add(RadioModel(false, fieldsData["quote_req_to_complete_work"][index]["label"]));
+                            if(widget.dataQuote != null) {
+                              if(widget.dataQuote["quote_req_to_complete_work"].toString() != ""){
+                                installationTiming.add(RadioModel(
+                                    widget.dataQuote["quote_req_to_complete_work"].toString().contains(fieldsData["quote_req_to_complete_work"][index]["label"]) ?
+                                    true : false,
+                                    fieldsData["quote_req_to_complete_work"][index]["label"]));
+                              } else {
+                                installationTiming.add(RadioModel(widget.timeType.toString().contains(fieldsData["quote_req_to_complete_work"][index]["label"]) ?
+                                true : false, fieldsData["quote_req_to_complete_work"][index]["label"]));
+                              }
+
+                            } else {
+                              installationTiming.add(RadioModel(widget.timeType.toString().contains(fieldsData["quote_req_to_complete_work"][index]["label"]) ?
+                              true : false, fieldsData["quote_req_to_complete_work"][index]["label"]));
                             }
                         return SizedBox(
                           height: 6.h,
@@ -173,9 +202,7 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 10.sp),
-                          child: Text("",
-                              style: CustomTextStyle.labelFontText),
-                        )
+                          child: Text("", style: CustomTextStyle.labelFontText))
                       ],
                     ),
                   ),
@@ -190,7 +217,8 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                               style: GoogleFonts.roboto(textStyle: TextStyle(
                                   fontSize: 18.sp,
                                   color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold)))
+                                  fontWeight: FontWeight.bold))
+                          )
                         ]),
                   ),
 
@@ -202,11 +230,11 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                     child: CustomButton(
                       //next button
                         title: ButtonString.btnSubmit,
-                        onClick: widget.type == "job" ?  (){
-                          if(eAmount != "0.0"){
+                        onClick: widget.type == "job" ? (){
+                          if(eAmount != "0.0") {
                             final data = {"keyEngineerNumbers" : engineerNumbers, "keyTimeType" : timeType};
                             Navigator.pop(context, data);
-                          }else{
+                          } else {
                             showToast("Please select required fields");
                           }
                         } :
@@ -214,7 +242,7 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
                           if(eAmount != "0.0"){
                             final data = { "keyAmount" : eAmount, "keyEngineerNumbers" : engineerNumbers, "keyTimeType" : timeType};
                             Navigator.pop(context, data);
-                          }else{
+                          } else {
                             showToast("Please select required fields");
                           }
                         },
@@ -230,8 +258,7 @@ class _QuoteEstimationState extends State<QuoteEstimation> {
             return Text(message);
           }
           return SizedBox(height: 70.h, child: loadingView());
-        }
-
+       }
     );
   }
 

@@ -100,7 +100,9 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
             IconButton(
               highlightColor: AppColors.transparent,
                 splashColor: AppColors.transparent,
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context, itemNumber);
+                },
                 icon: Icon(Icons.arrow_back_ios_outlined,
                     color: AppColors.blackColor, size: 14.sp)),
 //            SizedBox(width: 4.w),
@@ -178,6 +180,8 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
           if (state is ProductLoadedState) {
             isLoading = false;
             productItems = state.productList;
+            productItems!.removeWhere((item) => item.discontinued == '0');
+            searchItemList!.removeWhere((item) => item.discontinued == '0');
           }
           if (state is ProductLoadedState) {
             isLoading = false;
@@ -317,9 +321,9 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                           child: Padding(
                                             padding:  EdgeInsets.all(4.sp),
                                             child: searchKey.isNotEmpty ?
-                                            Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename}",
+                                            Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename!.replaceAll("&amp;", "&")}",
                                                 height: 10.h,width: 20.w)
-                                                :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename}",
+                                                :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename!.replaceAll("&amp;", "&")}",
                                                 height: 10.h,width: 20.w),
                                           ),
                                         ))
@@ -350,7 +354,9 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                         );
                       }
                     }else{
-                      return Padding(padding: EdgeInsets.symmetric(horizontal: 6.sp),
+
+                      return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 6.sp),
                           child: Card(
                             shadowColor: AppColors.primaryColor,
                             elevation: 2,
@@ -433,9 +439,9 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                         child: Padding(
                                           padding:  EdgeInsets.all(4.sp),
                                           child: searchKey.isNotEmpty ?
-                                          Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename}",
+                                          Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename!.replaceAll("&amp;", "&")}",
                                               height: 10.h,width: 20.w)
-                                              :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename}",
+                                              :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename!.replaceAll("&amp;", "&")}",
                                               height: 10.h,width: 20.w),
                                         ),
                                       ))

@@ -5,8 +5,7 @@ import '../../constants/constants.dart';
 
 class QuoteDatasource extends HttpActions {
   Future<dynamic> getQuoteList(Map<String, dynamic> parameters) async {
-    final response =
-        await getMethod(ApiEndPoint.getQuoteListApi, queryParams: parameters);
+    final response = await getMethod(ApiEndPoint.getQuoteListApi, queryParams: parameters);
     debugPrint("getQuoteListApi $response");
     return response;
   }

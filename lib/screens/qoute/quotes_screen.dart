@@ -158,7 +158,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
                     builder: (context, updateKey, search) {
                       return TextField( controller: searchCtrl,
                           onChanged: (value) async {
-                            if(searchCtrl.text.length >= 3){
+                            setState(() {});
+                            if(searchCtrl.text.isNotEmpty){
                               SharedPreferences preferences = await SharedPreferences.getInstance();
 
                               Map<String, dynamic> queryParameters = {
@@ -166,10 +167,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                 'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
                                 'query': Constants.of().apiKeyQuote, //2017
                                 'module_name': 'Quotes',
-                                'search_param': searchCtrl.text
-                              };
+                                'search_param': searchCtrl.text};
                               quoteBloc.add(GetQuoteListEvent(queryParameters));
-                            }else if(searchCtrl.text.length >= 2){
+                            } else {
                               firstTimeLoad();
                             }
                           },
@@ -291,10 +291,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                             Positioned.fill(
                                               child: Container(decoration: BoxDecoration(
                                                   color: AppColors.primaryColor,
-                                                  borderRadius: BorderRadius.circular(12.sp),
-                                                ),
-                                              ),
-                                            ),
+                                                  borderRadius: BorderRadius.circular(12.sp)))),
                                             Slidable(
                                               enabled: (quoteItems![index].quotestage.toString()) == "Accepted" ? false : true,
                                               endActionPane: ActionPane(
@@ -306,7 +303,6 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                     padding: EdgeInsets.zero,
                                                     autoClose: true,
                                                     onPressed: (value) {
-
                                                         Navigator.push(context, MaterialPageRoute(builder: (context) =>
                                                                         AddJobPage(quoteItem: quoteItems![index]))).then((value) {
                                                           if (value == "yes") {
@@ -377,9 +373,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                                 child: SizedBox(width: 70.w,
                                                                   child: Text.rich(overflow: TextOverflow.clip,
                                                                     TextSpan(
-                                                                      text: (quoteItems![index].contactName == null
-                                                                              ? quoteItems![index].subject!.replaceAll("&amp;", "&").substring(0, quoteItems![index].subject!.indexOf('-'))
-                                                                              : quoteItems![index].contactName.toString().replaceAll("&amp;", "&")),
+                                                                      text: (quoteItems![index].contactName.toString().replaceAll("&amp;", "&")),
                                                                       style: GoogleFonts.roboto(
                                                                           textStyle: TextStyle(fontSize: 13.sp,
                                                                               color: AppColors.fontColor,

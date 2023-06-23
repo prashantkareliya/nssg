@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
       return MultiProvider(
+
         providers: [ChangeNotifierProvider.value(value: WidgetChange())],
         child: BlocProvider(
           create: (context) => ProductListBloc(),

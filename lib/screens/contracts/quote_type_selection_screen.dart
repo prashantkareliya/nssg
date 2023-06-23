@@ -77,7 +77,7 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   onTap: (){
                     Navigator.pop(context);
                     callNextScreen(context,
-                        AddQuotePage(true, "installation", "contract",
+                        AddQuotePage(true, "Installation", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
@@ -91,7 +91,7 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   onTap: (){
                     Navigator.pop(context);
                     callNextScreen(context,
-                        AddQuotePage(true, "breakdown", "contract",
+                        AddQuotePage(true, "Breakdown", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
@@ -105,7 +105,7 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   onTap: (){
                     Navigator.pop(context);
                     callNextScreen(context,
-                        AddQuotePage(true, "service", "contract",
+                        AddQuotePage(true, "Service", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },

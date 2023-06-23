@@ -142,7 +142,7 @@ class _ContractListScreenState extends State<ContractListScreen> {
                     builder: (context, updateKey, search) {
                       return TextField(controller: searchCtrl,
                           onChanged: (value) async {
-                            if(searchCtrl.text.length >= 3){
+                            if(searchCtrl.text.isNotEmpty){
                               SharedPreferences preferences = await SharedPreferences.getInstance();
 
                               Map<String, dynamic> queryParameters = {
@@ -150,10 +150,9 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                 'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
                                 'query': Constants.of().apiKeyContract,
                                 'module_name': "ServiceContracts",
-                                'search_param' : searchCtrl.text,
-                              };
+                                'search_param' : searchCtrl.text};
                               contractBloc.add(GetContractListEvent(queryParameters));
-                            }else if(searchCtrl.text.length >= 2){
+                            }else {
                               firstTimeLoad();
                             }
                           },

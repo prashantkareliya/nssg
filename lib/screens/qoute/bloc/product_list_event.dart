@@ -5,8 +5,9 @@ abstract class ProductListEvent {}
 
 class AddProductToListEvent extends ProductListEvent {
   final ProductsList productsList;
+  final bool addToFirst;
 
-  AddProductToListEvent({required this.productsList});
+  AddProductToListEvent({required this.productsList, this.addToFirst = false});
 }
 
 class RemoveProductFromCardByIdEvent extends ProductListEvent {
@@ -50,7 +51,7 @@ class ChangeProductOrderEvent extends ProductListEvent {
   ChangeProductOrderEvent(this.oldIndex, this.newIndex);
 }
 
-class AddSubProductListEvent extends ProductListEvent{
+class AddSubProductListEvent extends ProductListEvent {
   final List<SubProductResult>? subProductList;
   AddSubProductListEvent({required this.subProductList});
 }

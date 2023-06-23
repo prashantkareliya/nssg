@@ -4,10 +4,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/cli_commands.dart';
 import 'package:nssg/screens/job/create_job/models/add_job_request_model.dart';
 import 'package:nssg/screens/job/job_datasource.dart';
 import 'package:nssg/screens/job/job_repository.dart';
 import 'package:nssg/screens/qoute/get_quote/quote_model_dir/get_quote_response_model.dart';
+import 'package:nssg/utils/extention_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
@@ -29,7 +31,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AddJobPage extends StatefulWidget {
   Result? quoteItem;
-  AddJobPage({this.quoteItem});
+
+  var quoteType;
+  AddJobPage({this.quoteItem, this.quoteType});
 
   @override
   State<AddJobPage> createState() => _AddJobPageState();
@@ -43,11 +47,8 @@ class _AddJobPageState extends State<AddJobPage> {
   StreamController<int> streamController = StreamController<int>.broadcast();
 
   TextEditingController officeNoteController = TextEditingController();
-  TextEditingController officeNote2Controller = TextEditingController();
   TextEditingController engineerNoteController = TextEditingController();
-  //TextEditingController engineerInstructionController = TextEditingController();
   TextEditingController specialInstructionController = TextEditingController();
-  TextEditingController specialInstructionController1 = TextEditingController();
   TextEditingController contractNumberController = TextEditingController();
 
   bool isLoading = false;
@@ -72,8 +73,8 @@ class _AddJobPageState extends State<AddJobPage> {
 
   Future<dynamic>? getDetail;
 
-  CreateJobBloc createJobBloc =
-      CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
+  CreateJobBloc createJobBloc = CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
+
   @override
   void initState() {
     super.initState();
@@ -88,13 +89,13 @@ class _AddJobPageState extends State<AddJobPage> {
       'operation': "retrive_contract_number_by_id",
       'sessionName': preferences.getString(PreferenceString.sessionName),
       'id': widget.quoteItem?.id,
-      'quotes_contract_id': "",
-      'quotes_system_type': widget.quoteItem?.systemType,
+      'quotes_contract_id': widget.quoteItem?.quotesContractId,
+      'quotes_system_type': widget.quoteItem?.systemType!.replaceAll("+", " "),
       'quotes_ship_street': widget.quoteItem?.shipStreet,
       'quotes_ship_city': widget.quoteItem?.shipCity,
       'quotes_ship_country': widget.quoteItem?.shipCountry,
       'quotes_ship_code': widget.quoteItem?.shipCode,
-      'quotes_quote_type': "Installation",
+      'quotes_quote_type': widget.quoteItem?.quoteType!.capitalizeText(),
       'contact_id': widget.quoteItem?.contactId};
 
     final response = await HttpActions().getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
@@ -169,7 +170,7 @@ class _AddJobPageState extends State<AddJobPage> {
                         builder: (context, snapshot1) {
                           if (snapshot1.hasData) {
                             installationTime = snapshot1.data["result"]["quote_req_to_complete_work"] ?? "";
-                            numberOfEngineer = snapshot1.data["result"]["quote_no_of_engineer"] ?? "";
+                            numberOfEngineer = snapshot1.data["result"]["quote_no_of_engineer"] ?? 'a'.replaceFirst('a', '');
 
                             return snapshot1.data["result"]["quote_quote_type"] == "Installation"
                                 ? buildStepOne(query, jobFieldsData, snapshot1.data["result"])
@@ -194,6 +195,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
   //stepOne design
   Widget buildStepOne(Size query, jobFieldsData, dataForCreateJob) {
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10.sp),
@@ -208,11 +210,9 @@ class _AddJobPageState extends State<AddJobPage> {
               decoration: InputDecoration(border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
                 borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
                       borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
                       borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
                   filled: true,
                   fillColor: Colors.white,
@@ -220,8 +220,7 @@ class _AddJobPageState extends State<AddJobPage> {
                   hintText: LabelString.lblContractNumber,
                   hintStyle: CustomTextStyle.labelFontHintText,
                   counterText: "",
-                  labelStyle: CustomTextStyle.labelFontHintText),
-            ),
+                  labelStyle: CustomTextStyle.labelFontHintText)),
             SizedBox(height: 2.5.h),
             Text(LabelString.lblPriorityLevel,
                 style: GoogleFonts.roboto(fontSize: 13.sp, fontWeight: FontWeight.w700)),
@@ -481,7 +480,7 @@ class _AddJobPageState extends State<AddJobPage> {
             CustomTextField(
               keyboardType: TextInputType.text,
               readOnly: false,
-              controller: specialInstructionController1,
+              controller: specialInstructionController,
               obscureText: false,
               hint: LabelString.lblSpecialInstruction,
               titleText: LabelString.lblSpecialInstruction,
@@ -618,6 +617,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
   //stepTwo design
   Widget buildStepTwo(Size query, jobFieldsData, dataForCreateJob) {
+
     return AbsorbPointer(
       absorbing: isLoading,
       child: Stack(
@@ -654,7 +654,7 @@ class _AddJobPageState extends State<AddJobPage> {
                   CustomTextField(
                     keyboardType: TextInputType.text,
                     readOnly: false,
-                    controller: officeNote2Controller,
+                    controller: officeNoteController,
                     obscureText: false,
                     hint: LabelString.lblOfficeNote,
                     titleText: LabelString.lblOfficeNote,
@@ -797,7 +797,7 @@ class _AddJobPageState extends State<AddJobPage> {
         jobsSignallingType : dataForCreateJob["signalling_type"] ?? "  ",
         jobsProjectManager : dataForCreateJob["project_manager"] ?? "  ",
         installation : dataForCreateJob["installation"] ?? "  ",
-        email : dataForCreateJob["quotes_email"] ?? "  ",
+        email : dataForCreateJob["quotes_email"].toString().toLowerCase() ?? "  ",
         telephoneNumber : dataForCreateJob["quote_telephone_number"] ?? "  ",
         mobileNumber : dataForCreateJob["quote_mobile_number"] ?? "  ",
         priorityLevel : priorityLevelSelect ?? "  ",
@@ -818,18 +818,18 @@ class _AddJobPageState extends State<AddJobPage> {
         hdnprofitTotal : dataForCreateJob["hdnprofitTotal"] ?? "",
         jobType : dataForCreateJob["quote_quote_type"] ?? "",
         soJobStatus : "",
-        isscheduledjob : "0 ",
-        isJobScheduleMailSent : "0 ",
+        isscheduledjob : "0",
+        isJobScheduleMailSent : "0",
         jobServiServiceMonth : " ",
         jobServiPerAnnum : "",
         jobServiServiceYear : " ",
         jobServiServiceType : " ",
-        salesorderRelatedId : "0 ",
-        isCustomerConfirm : "0 ",
+        salesorderRelatedId : "0",
+        isCustomerConfirm : "0",
         jobSchDateByCustomer : "",
         jobSchAltDateByCustomer : "",
         jobSchCustomerNotes : "",
-        isProjectTaskCreatedAsana : "0 ",
+        isProjectTaskCreatedAsana : "0",
         asanaCreatedProjectId : "",
         jobPartStatus : "",
         jotformWorkCarryOut : "",
@@ -904,10 +904,11 @@ class _AddJobPageState extends State<AddJobPage> {
       'jobs_system_type': dataForCreateJob["system_type"].toString(),
       'jobs_project_manager_display': dataForCreateJob["project_manager_name"].toString(),
       'sourceModule': "ServiceContracts",
-      'quotes_contract_id': contractNumberPass,
+      'quotes_contract_id': dataForCreateJob["quotes_contract_id"].toString(),
       'is_item_available': dataForCreateJob["LineItems"].length >= 1 ? "1" : "0",
       'field_tick_date_time': jsonStringMap
     };
+
     print(bodyData);
     createJobBloc.add(CreateJobDetailEvent(bodyData));
   }
