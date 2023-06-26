@@ -6,11 +6,15 @@ import 'package:sizer/sizer.dart';
 class CustomTextStyle {
   static TextStyle labelText = GoogleFonts.roboto(
       textStyle: TextStyle(fontSize: 12.sp,
-    color: AppColors.blackColor));
+          color: AppColors.blackColor));
+
+  static TextStyle labelTextBig = GoogleFonts.roboto(
+      textStyle: TextStyle(fontSize: 14.sp,
+          color: AppColors.blackColor));
 
   static TextStyle labelFontText = GoogleFonts.roboto(
       textStyle: TextStyle(fontSize: 12.sp,
-    color: AppColors.fontColor));
+          color: AppColors.fontColor));
 
   static TextStyle labelMediumBoldFontText = GoogleFonts.roboto(
       textStyle: TextStyle(fontSize: 16.sp,
@@ -41,7 +45,7 @@ class CustomTextStyle {
 
   static TextStyle labelFontHintText = GoogleFonts.roboto(
       textStyle: TextStyle(fontSize: 12.sp,
-    color: AppColors.hintFontColor));
+          color: AppColors.hintFontColor));
 
   static TextStyle buttonText = GoogleFonts.roboto(
       textStyle: TextStyle(fontSize: 14.sp,
@@ -60,8 +64,22 @@ class CustomTextStyle {
           color: AppColors.hintFontColor));
 
   static TextStyle commonStyle = GoogleFonts.roboto(
-    textStyle: TextStyle(fontSize: 10.sp,
-        fontWeight: FontWeight.normal,
-        fontStyle: FontStyle.normal,
-        color: AppColors.blackColor));
+      textStyle: TextStyle(fontSize: 10.sp,
+          fontWeight: FontWeight.normal,
+          fontStyle: FontStyle.normal,
+          color: AppColors.blackColor));
+
+  static TextStyle specialText = GoogleFonts.roboto(
+      textStyle: TextStyle(fontSize: 15.sp,
+          fontWeight: FontWeight.w600,
+          fontStyle: FontStyle.normal,
+          letterSpacing: 1,
+          color: AppColors.whiteColor));
+
+  static TextStyle engineerCommonText = GoogleFonts.roboto(
+      textStyle: TextStyle(fontSize: 10.sp,
+          fontWeight: FontWeight.normal,
+          fontStyle: FontStyle.normal,
+          letterSpacing: 1,
+          color: AppColors.blackColor));
 }

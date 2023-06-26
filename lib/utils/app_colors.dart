@@ -22,6 +22,8 @@ class AppColors {
   static Color greenColor = const Color(0xFF0B702D);
   static Color greenColorAccent = const Color(0xFF8BC24A);
   static Color greenColorAccept = const Color(0xFF00AC26);
+  static Color yellowIndicator = const Color(0xFFFFE600);
+  static Color blackIcon = const Color(0xFF636363);
 
   static int _hash(String value) {
     int hash = 0;

@@ -246,12 +246,31 @@ class ImageString {
   static const String icEmail = "assets/images/email.svg";
   static const String icEngineer = "assets/images/engineer.svg";
   static const String icInstallation = "assets/images/installation.png";
+  static const String imgBackground = "assets/images/img_back.png";
+  static const String imgRound = "assets/images/imgRound.jpg";
   static const String icCreateInstallation = "assets/images/ic_create_installation.svg";
   static const String icCreateProcessed = "assets/images/ic_processed.svg";
   static const String icAccepted = "assets/images/ic_accepted.svg";
   static const String icInstallation2 = "assets/images/ic_installation.svg";
   static const String icBreakdown = "assets/images/ic_breakdown.svg";
   static const String icService = "assets/images/ic_services.svg";
+  static const String icHome = "assets/images/ic_home.svg";
+  static const String icLogout = "assets/images/ic_logout.svg";
+  static const String icSetting = "assets/images/ic_setting.svg";
+  static const String icProfile = "assets/images/ic_profile.svg";
+  static const String icCalender = "assets/images/ic_calender.svg";
+  static const String icTime = "assets/images/ic_time.svg";
+  static const String icCompanyName = "assets/images/ic_company_name.svg";
+  static const String icSubject = "assets/images/ic_subject.svg";
+  static const String icAddressEngineer = "assets/images/ic_address_engineer.svg";
+  static const String icVolume = "assets/images/ic_volume.svg";
+  static const String icStar = "assets/images/ic_star.svg";
+  static const String icJobSpec = "assets/images/ic_job_spec.svg";
+  static const String icReject = "assets/images/ic_reject.svg";
+  static const String icArrived = "assets/images/ic_arrived.svg";
+  static const String icDeparted = "assets/images/ic_departed.svg";
+  static const String icArrowDown = "assets/images/ic_arrow_down.svg";
+  static const String icArrowRight = "assets/images/ic_arrow_right.svg";
 }
 
 //Shared Preference Strings(Save data in local DB)
@@ -260,4 +279,17 @@ class PreferenceString {
   static const String sessionName = "sessionName";
   static const String userName = "Username";
   static const String contactList = "ContactList";
+}
+
+//Engineers Label
+class EngineerString {
+  static const String lblHome = "Home";
+  static const String lblLogout = "Logout";
+  static const String lblJobSchedule = "Job Schedule";
+  static const String lblTodayJobs = "Today’s Jobs";
+  static const String lblPendingJobSheetList = "Pending Job Sheet List";
+  static const String lblUpcomingJobsList = "Upcoming Jobs List";
+  static const String lblCreateJob = "Create Job";
+  static const String lblJobDetail = "Job Detail";
+  static const String lblEngineerGeneralTaskDetails = "Engineer General Task Details";
 }
