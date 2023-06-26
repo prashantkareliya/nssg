@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nssg/utils/app_colors.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // ignore: must_be_immutable
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -25,20 +26,20 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title!, style: titleTextStyle),
-      backgroundColor: backgroundColor,
-      centerTitle: true,
-      elevation: elevation,
-      automaticallyImplyLeading: false,
-      actions: [searchWidget!],
-      leading: isBack!
-          ? IconButton(
-              highlightColor: AppColors.transparent,
-              splashColor: AppColors.transparent,
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.arrow_back_ios_outlined,
-                  color: AppColors.blackColor, size: 14.sp),
-            ) : Container());
+        title: Text(title!, style: titleTextStyle),
+        backgroundColor: backgroundColor,
+        centerTitle: true,
+        elevation: elevation,
+        automaticallyImplyLeading: false,
+        actions: [searchWidget!],
+        leading: isBack!
+            ? IconButton(
+                highlightColor: AppColors.transparent,
+                splashColor: AppColors.transparent,
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back_ios_outlined, color: AppColors.blackColor, size: 16.sp),
+              )
+            : Container());
   }
 
   @override

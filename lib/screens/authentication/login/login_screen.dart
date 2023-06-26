@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/dashboard/root_screen.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:nssg/utils/widgetChange.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../components/custom_button.dart';
 import '../../../components/custom_text_styles.dart';
 import '../../../components/custom_textfield.dart';
@@ -44,7 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
   //Variable for login with pin screen's username
   String? userName = "xxxx@gmail.com";
 
-  LoginBloc loginBloc = LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
+  LoginBloc loginBloc =
+      LoginBloc(LoginRepository(authDataSource: LoginDataSource()));
   bool isLoading = false;
 
   @override
@@ -75,8 +78,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (state is LoginLoaded) {
             preferences.setPreference(PreferenceString.userId, state.userId);
-            preferences.setPreference(PreferenceString.sessionName, state.sessionName);
-            preferences.setPreference(PreferenceString.userName, state.userName);
+            preferences.setPreference(
+                PreferenceString.sessionName, state.sessionName);
+            preferences.setPreference(
+                PreferenceString.userName, state.userName);
 
             //Helpers.showSnackBar(context, state.msg.toString());
             moveToNextScreen();
@@ -114,11 +119,13 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: query.height * 0.12, horizontal: query.width * 0.05),
+                  vertical: query.height * 0.12,
+                  horizontal: query.width * 0.05),
               child: Container(
                 decoration: BoxDecoration(
                     color: AppColors.whiteColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0))),
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(10.0))),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: query.width * 0.07),
                   child: Column(
@@ -126,7 +133,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       SizedBox(height: 3.h),
-                      Image.asset(ImageString.imgLogoSplash, height: query.height * 0.25),
+                      Image.asset(ImageString.imgLogoSplash,
+                          height: query.height * 0.20),
                       //email | password field visibility
                       Visibility(
                         visible: widget.isLogin == "isLogin" ? false : true,
@@ -142,9 +150,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         visible: widget.isLogin == "isLogin" ? true : false,
                         child: Column(
                           children: [
-                            Text(userName!, style: CustomTextStyle.labelFontHintText),
+                            Text(userName!,
+                                style: CustomTextStyle.labelFontHintText),
                             SizedBox(height: 3.h),
-                            Text(LabelString.lblEnterPinNumber, style: CustomTextStyle.labelText),
+                            Text(LabelString.lblEnterPinNumber,
+                                style: CustomTextStyle.labelText),
                             SizedBox(height: 3.h),
                             buildPinNumber(),
                           ],
@@ -153,12 +163,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       //Login Button
                       SizedBox(
                           width: query.width,
-                          height: 7.h,
+                          height: 59.h,
                           child: isLoading
                               ? loadingView()
                               : widget.isLogin == "isLogin"
                                   ? CustomButton(
-                                      title: ButtonString.btnLoginWithOtherAccount.toUpperCase(),
+                                      title: ButtonString
+                                          .btnLoginWithOtherAccount
+                                          .toUpperCase(),
                                       onClick: () {
                                         setState(() {
                                           widget.isLogin = "isNotLogin";
@@ -167,7 +179,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         });
                                       })
                                   : CustomButton(
-                                      title: ButtonString.btnLogin.toUpperCase(),
+                                      title:
+                                          ButtonString.btnLogin.toUpperCase(),
                                       onClick: () => validateAndDoLogin(),
                                     )),
                       buildPowerLabel(),
@@ -208,7 +221,8 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.text,
           readOnly: false,
           controller: passwordController,
-          obscureText: Provider.of<WidgetChange>(context, listen: false).isVisibleText,
+          obscureText:
+              Provider.of<WidgetChange>(context, listen: false).isVisibleText,
           hint: "* * * * * * *",
           titleText: LabelString.lblPassword,
           isRequired: true,
@@ -216,11 +230,13 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: EdgeInsets.only(right: 2.sp),
             child: IconButton(
               onPressed: () {
-                Provider.of<WidgetChange>(context, listen: false).textVisibility();
+                Provider.of<WidgetChange>(context, listen: false)
+                    .textVisibility();
               },
-              icon: Provider.of<WidgetChange>(context, listen: true).isVisibleText
-                  ? Image.asset(ImageString.icImageVisible)
-                  : Image.asset(ImageString.icImageInVisible),
+              icon:
+                  Provider.of<WidgetChange>(context, listen: true).isVisibleText
+                      ? Image.asset(ImageString.icImageVisible)
+                      : Image.asset(ImageString.icImageInVisible),
             ),
           ),
           maxLines: 1,
@@ -231,7 +247,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildPowerLabel() {
-    return Text(LabelString.lblPoweredBy, style: CustomTextStyle.labelFontHintText);
+    return Text(LabelString.lblPoweredBy,
+        style: GoogleFonts.sen(
+            textStyle: TextStyle(
+          fontSize: 14.sp,
+          color: AppColors.hintFontColor,
+        )));
   }
 
   //login button validation for email login
@@ -283,7 +304,8 @@ class _LoginScreenState extends State<LoginScreen> {
         obscureText: true,
         controller: newTextEditingController,
         focusNode: focusNode,
-        keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+        keyboardType:
+            const TextInputType.numberWithOptions(signed: true, decimal: true),
         animationCurve: Curves.easeInOut,
         switchInAnimationCurve: Curves.easeIn,
         switchOutAnimationCurve: Curves.easeOut,

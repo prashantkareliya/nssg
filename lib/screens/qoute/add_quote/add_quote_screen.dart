@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/components/svg_extension.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/constants/strings.dart';
@@ -10,7 +11,8 @@ import 'package:nssg/screens/contact/contact_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../../../components/custom_button.dart';
@@ -253,7 +255,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
         elevation: 1,
         centerTitle: true,
         automaticallyImplyLeading: false,
-        leadingWidth: 12.w,
+        leadingWidth: 50.w,
         leading: InkWell(
           highlightColor: AppColors.transparent,
           splashColor: AppColors.transparent,
@@ -267,13 +269,13 @@ class _AddQuotePageState extends State<AddQuotePage> {
             }
           },
           child: Icon(Icons.arrow_back_ios_outlined,
-              color: AppColors.blackColor, size: 14.sp),
+              color: AppColors.blackColor, size: 16.sp),
         ),
         title: Text(
             widget.lastName == "edit"
                 ? LabelString.lblEditQuote
                 : LabelString.lblAddNewQuote,
-            style: CustomTextStyle.labelBoldFontText),
+            style: CustomTextStyle.labelMediumBoldFontText),
       ),
       body: BlocListener<GetContactBloc, GetContactState>(
         bloc: contactBloc,
@@ -369,14 +371,19 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(LabelString.lblQuoteDetails,
-                                    style:
-                                        CustomTextStyle.labelBoldFontTextSmall),
+                                    style: GoogleFonts.roboto(
+                                        textStyle: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w700))),
                                 Row(
                                   children: [
                                     Text(LabelString.lblStep,
                                         style: CustomTextStyle.commonText),
                                     Text(" ${snapshot.data! + 1}/3",
-                                        style: CustomTextStyle.commonTextBlue),
+                                        style: GoogleFonts.roboto(
+                                            textStyle: TextStyle(
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w400))),
                                   ],
                                 )
                               ],
@@ -849,10 +856,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: 1.h),
+            SizedBox(height: 10.h),
             Text(LabelString.lblSystemType,
                 style: CustomTextStyle.labelBoldFontTextSmall),
-            SizedBox(height: 4.h),
+            SizedBox(height: 10.h),
             Wrap(
               spacing: 15.sp,
               direction: Axis.horizontal,
@@ -1008,8 +1015,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       }
                     },
                     child: Container(
-                      height: 15.h,
-                      width: 42.w,
+                      height: 0.15.sh,
+                      width: 0.42.sw,
                       decoration: BoxDecoration(
                           color: systemType[index].isSelected
                               ? AppColors.primaryColorLawOpacity
@@ -1078,7 +1085,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                 },
               ),
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 10.h),
             SizedBox(
                 width: query.width * 0.4,
                 height: query.height * 0.06,
@@ -1107,11 +1114,11 @@ class _AddQuotePageState extends State<AddQuotePage> {
           systemTypeSelect.contains("Intruder")
               ? Column(
                   children: [
-                    SizedBox(height: 1.h),
+                    SizedBox(height: 10.h),
                     Text(LabelString.lblGradeNumber,
                         textAlign: TextAlign.center,
                         style: CustomTextStyle.labelBoldFontTextSmall),
-                    SizedBox(height: 2.h),
+                    SizedBox(height: 10.h),
                     Wrap(
                       spacing: 15.sp,
                       direction: Axis.horizontal,
@@ -1264,8 +1271,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 builder: (BuildContext context, bool val,
                                     Widget? child) {
                                   return Container(
-                                    height: 15.h,
-                                    width: 42.w,
+                                    height: 0.15.sh,
+                                    width: 0.42.sw,
                                     decoration: BoxDecoration(
                                         color: gradeAndFire[index].isSelected
                                             ? AppColors.primaryColorLawOpacity
@@ -1288,7 +1295,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               //Condition for skip grade and signalling type
-                                              SizedBox(height: 1.h),
+                                              SizedBox(height: 10.h),
                                               SvgExtension(
                                                   itemName: systemTypeSelect ==
                                                           "Fire System: BS 5839-1: 2017 + SP203-1"
@@ -1302,7 +1309,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                                           .isSelected
                                                       ? AppColors.primaryColor
                                                       : AppColors.blackColor),
-                                              SizedBox(height: 1.h),
+                                              SizedBox(height: 10.h),
                                               Text(
                                                   systemTypeSelect ==
                                                           "Fire System: BS 5839-1: 2017 + SP203-1"
@@ -1318,7 +1325,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                                           .commonTextBlue
                                                       : CustomTextStyle
                                                           .commonText),
-                                              SizedBox(height: 1.h),
+                                              SizedBox(height: 10.h),
                                             ]),
                                         Visibility(
                                           visible:
@@ -1355,40 +1362,38 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   ],
                 )
               : Container(),
-          SizedBox(height: 2.h),
-          Text(LabelString.lblSignallingGrade,
+          SizedBox(height: 20.h),
+          Text(LabelString.lblSignallingType,
               textAlign: TextAlign.center,
-              style: CustomTextStyle.labelBoldFontTextSmall),
-          SizedBox(height: 2.h),
+              style: CustomTextStyle.labelMediumBoldFontText),
+          SizedBox(height: 20.h),
           Wrap(
             spacing: 15.sp,
             direction: Axis.horizontal,
             alignment: WrapAlignment.spaceBetween,
             runSpacing: 15.sp,
             children: List.generate(
-              //12
-              stepThreeData["signalling_grade_no"].length,
+              // stepFourData["signalling_type"].length
+              12,
               (index) {
                 if (dataQuote != null && dataQuote["grade_number"] != null) {
                   signallingType.add(RadioModel(
-                      dataQuote["signalling_grade_no"].toString().contains(
-                              stepThreeData["signalling_grade_no"][index]
-                                  ["label"])
+                      dataQuote["signalling_type"].toString().contains(
+                              stepThreeData["signalling_type"][index]["label"])
                           ? true
                           : false,
-                      stepThreeData["signalling_grade_no"][index]["label"]));
+                      stepThreeData["signalling_type"][index]["label"]));
                 } else if (contractList != null &&
                     contractList.scPrimarySignalType != null) {
                   signallingType.add(RadioModel(
                       contractList.scPrimarySignalType.toString().contains(
-                              stepThreeData["signalling_grade_no"][index]
-                                  ["label"])
+                              stepThreeData["signalling_type"][index]["label"])
                           ? true
                           : false,
-                      stepThreeData["signalling_grade_no"][index]["label"]));
+                      stepThreeData["signalling_type"][index]["label"]));
                 } else {
-                  signallingType.add(RadioModel(false,
-                      stepThreeData["signalling_grade_no"][index]["label"]));
+                  signallingType.add(RadioModel(
+                      false, stepThreeData["signalling_type"][index]["label"]));
                 }
 
                 return InkWell(
@@ -1507,8 +1512,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       valueListenable: notifier,
                       builder: (BuildContext context, bool val, Widget? child) {
                         return Container(
-                          height: 15.h,
-                          width: 42.w,
+                          height: 0.15.sh,
+                          width: 0.42.sw,
                           decoration: BoxDecoration(
                               color: signallingType[index].isSelected
                                   ? AppColors.primaryColorLawOpacity

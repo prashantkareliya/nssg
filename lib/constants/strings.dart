@@ -6,7 +6,8 @@ class ErrorString {
   static const String emailNotValid = "Email address is not valid";
   static const String selectOneContact = "Select at least one contact";
   static const String deletedItemError = "This item is delete already";
-  static const String reOpenTheApp = "Your session has timed out. please reopen the app login again.";
+  static const String reOpenTheApp =
+      "Your session has timed out. please reopen the app login again.";
   static const String selectPriorityLevel = "Please Select Priority Level";
   static const String selectWorkSchedule = "Please Select Work Schedule";
   static const String selectPaymentMethod = "Please Select Payment Method";
@@ -16,21 +17,24 @@ class ErrorString {
   static const String selectEngineerNote = "Please Enter Engineer Note";
 }
 
-
 class Message {
   static const String createQuote = "Would you like to create a quote for this contact now?";
   static const String deleteContact = "Do you want to delete this contact?";
   static const String quoteExit = "Do you want to exit from this module?";
   static const String enterYourPasscodeToUnlock = "Enter your Passcode to unlock";
-  static const String descriptionForQuote = "Lead times are 3 - 4 weeks on most orders due to parts";
-  static const String termsCondition1 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 50% Deposit and Remaining balance upon completion.";
-  static const String termsCondition2 = "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 30 Days credit terms upon completion.";
+  static const String descriptionForQuote =
+      "Lead times are 3 - 4 weeks on most orders due to parts";
+  static const String termsCondition1 =
+      "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 50% Deposit and Remaining balance upon completion.";
+  static const String termsCondition2 =
+      "This quote is guaranteed for 30 days, after this all prices may be subject to change. \n\nDeposit Payment Method: Bacs / Cheque / Debit Cards. \nPayment Terms : 30 Days credit terms upon completion.";
   static const String addEngineerAndHours = "Add the Number of Engineer & Hours";
   static const String quoteEstimation = "for quote estimation";
   static const String quoteCreateSuccessfully = "Your quote has been created successfully!";
-  static const String quoteEmailSentMessage= "Quote has been sent successfully to";
-  static const String generateJobMessage= "This quote is being converted into the job, please verify in the CRM after few minutes.";
-  static const String quoteUpdateMessage= "Quote update successfully";
+  static const String quoteEmailSentMessage = "Quote has been sent successfully to";
+  static const String generateJobMessage =
+      "This quote is being converted into the job, please verify in the CRM after few minutes.";
+  static const String quoteUpdateMessage = "Quote update successfully";
 }
 
 //Label Strings

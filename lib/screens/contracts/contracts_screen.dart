@@ -5,7 +5,10 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../components/custom_appbar.dart';
 import '../../components/custom_text_styles.dart';
 import '../../constants/constants.dart';
 import '../../constants/strings.dart';
@@ -62,7 +65,8 @@ class _ContractListScreenState extends State<ContractListScreen> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "query",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyContract,
       'module_name': "ServiceContracts",
       'page': _page
@@ -76,7 +80,6 @@ class _ContractListScreenState extends State<ContractListScreen> {
         _isFirstLoadRunning == false &&
         _isLoadMoreRunning == false &&
         _controller.position.extentAfter < 300) {
-
       setState(() {
         _isLoadMoreRunning = true; // Display a progress indicator at the bottom
       });
@@ -87,10 +90,12 @@ class _ContractListScreenState extends State<ContractListScreen> {
 
       Map<String, dynamic> queryParameters = {
         'operation': "query",
-        'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+        'sessionName':
+            preferences.getString(PreferenceString.sessionName).toString(),
         'query': Constants.of().apiKeyContract,
         'module_name': "ServiceContracts",
-        'page': _page};
+        'page': _page
+      };
       contractBloc.add(GetContractListEvent(queryParameters));
     }
   }
@@ -99,39 +104,43 @@ class _ContractListScreenState extends State<ContractListScreen> {
       ContractRepository(contractDataSource: ContractDataSource()));
   bool isLoading = false;
 
-  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.backWhiteColor,
-        body: Column(
-          children: [
+          backgroundColor: AppColors.backWhiteColor,
+          body: Column(
+            children: [
               buildAppbar(context),
               buildSearchBar(context),
-            buildContractList(context)
-          ],
-        )
-      ),
+              buildContractList(context)
+            ],
+          )),
     );
   }
 
   //Design appbar field
   AnimatedOpacity buildAppbar(BuildContext context) {
     return AnimatedOpacity(
-      opacity: Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 0,
-      duration: const Duration(milliseconds: 500));
+        opacity: Provider.of<WidgetChange>(context, listen: true).isAppbarShow
+            ? 0
+            : 0,
+        duration: const Duration(milliseconds: 500));
   }
 
   //Design search field
   AnimatedOpacity buildSearchBar(BuildContext context) {
     return AnimatedOpacity(
-      opacity: Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 1,
+      opacity:
+          Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 1,
       duration: const Duration(milliseconds: 500),
       child: Visibility(
-        visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? true : true,
+        visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow
+            ? true
+            : true,
         child: Padding(
-          padding: EdgeInsets.only(right: 15.sp, top: 8.sp, left: 0.sp, bottom: 8),
+          padding:
+              EdgeInsets.only(right: 18.sp, top: 9.sp, left: 13.sp, bottom: 7),
           child: Padding(
             padding: EdgeInsets.only(bottom: 0.sp),
             child: Row(
@@ -140,14 +149,16 @@ class _ContractListScreenState extends State<ContractListScreen> {
                 Expanded(
                   child: Consumer<WidgetChange>(
                     builder: (context, updateKey, search) {
-                      return TextField(controller: searchCtrl,
+                      return TextField(
+                          controller: searchCtrl,
                           onChanged: (value) async {
                             if(searchCtrl.text.isNotEmpty){
                               SharedPreferences preferences = await SharedPreferences.getInstance();
-
                               Map<String, dynamic> queryParameters = {
                                 'operation': "query",
-                                'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+                                'sessionName': preferences
+                                    .getString(PreferenceString.sessionName)
+                                    .toString(),
                                 'query': Constants.of().apiKeyContract,
                                 'module_name': "ServiceContracts",
                                 'search_param' : searchCtrl.text};
@@ -156,10 +167,12 @@ class _ContractListScreenState extends State<ContractListScreen> {
                               firstTimeLoad();
                             }
                           },
+                          style: TextStyle(fontSize: 16.sp),
                           keyboardType: TextInputType.text,
                           autofocus: false,
                           decoration: InputDecoration(
                               hintText: LabelString.lblSearch,
+                              hintStyle: TextStyle(fontSize: 16.sp),
                               suffixIcon: Container(
                                   decoration: BoxDecoration(
                                       color: AppColors.primaryColor,
@@ -168,17 +181,21 @@ class _ContractListScreenState extends State<ContractListScreen> {
                                           bottomRight: Radius.circular(5))),
                                   child: Icon(Icons.search,
                                       color: AppColors.whiteColor,
-                                      size: 15.sp)),
+                                      size: 20.sp)),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                                  borderSide: BorderSide(
+                                      width: 2, color: AppColors.primaryColor)),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
+                                  borderSide: BorderSide(
+                                      width: 2, color: AppColors.primaryColor)),
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                              contentPadding: EdgeInsets.only(left: 10.sp, top: 0, bottom: 0)));
+                                  borderSide: BorderSide(
+                                      width: 2, color: AppColors.primaryColor)),
+                              contentPadding: EdgeInsets.only(
+                                  left: 10.sp, top: 0, bottom: 0)));
                     },
                   ),
                 ),
@@ -190,9 +207,10 @@ class _ContractListScreenState extends State<ContractListScreen> {
     );
   }
 
-  BlocListener<GetContractBloc, GetContractState> buildContractList(BuildContext context) {
+  BlocListener<GetContractBloc, GetContractState> buildContractList(
+      BuildContext context) {
     return BlocListener<GetContractBloc, GetContractState>(
-        bloc: contractBloc,
+      bloc: contractBloc,
       listener: (context, state) {
         if (state is ContractsLoadFail) {
           Helpers.showSnackBar(context, state.error.toString());
@@ -216,10 +234,9 @@ class _ContractListScreenState extends State<ContractListScreen> {
           }
         }
       },
-    child: BlocBuilder<GetContractBloc, GetContractState>(
-      bloc: contractBloc,
-      builder: (context, state) {
-
+      child: BlocBuilder<GetContractBloc, GetContractState>(
+        bloc: contractBloc,
+        builder: (context, state) {
           if (state is ContractLoadingState) {
             isLoading = state.isBusy;
           }
@@ -229,158 +246,275 @@ class _ContractListScreenState extends State<ContractListScreen> {
           if (state is ContractsLoadFail) {
             isLoading = false;
           }
-    
-      return Expanded(
-        child: _isFirstLoadRunning && isLoading ? loadingView() : RefreshIndicator(
-        onRefresh: () => firstTimeLoad(),
-        child: Column(
-          children: [
-            Expanded(
-              child: AnimationLimiter(
-                child: ListView.separated(
-                  controller: _controller,
-                  padding: EdgeInsets.only(top: 10.sp),
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: contractItems!.length,
-                  itemBuilder: (context, index) {
-                    return AnimationConfiguration.staggeredList(
-                      position: index,
-                      child: SlideAnimation(
-                        verticalOffset: 50.0,
-                        curve: Curves.decelerate,
-                        child: FadeInAnimation(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 15.sp, right: 15.sp, bottom: 5.sp),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Container(decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: BorderRadius.circular(12.sp)))),
-                                Slidable(
-                                  enabled: contractItems![index].subject == "" ? false : true,
-                                  endActionPane: ActionPane(
-                                    extentRatio: 0.15,
-                                    motion: const ScrollMotion(),
-                                    children: [CustomSlidableAction(
-                                      borderRadius: const BorderRadius.only(
-                                        bottomRight: Radius.circular(20.0),
-                                        topRight: Radius.circular(20.0)),
-                                      padding: EdgeInsets.zero,
-                                      autoClose: true,
-                                      onPressed: (value) {
-                                        Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => QuoteTypeSelection(contractItems![index])));
-                                      },
-                                      backgroundColor: AppColors.primaryColor,
-                                      foregroundColor: AppColors.redColor,
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          RotatedBox(quarterTurns: -1,
-                                              child: Text(textAlign: TextAlign.center,
-                                                  ButtonString.btnCreateQuote,
-                                                  style: GoogleFonts.roboto(textStyle: const TextStyle(color: Colors.white)))),
-                                          SizedBox(height: 0.8.h),
-                                          const Icon(Icons.add_circle_outline, color: Colors.white),
-                                        ],
-                                      ),
-                                    ),
-                                    ],
-                                  ),
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.sp)),
-                                    margin: EdgeInsets.zero,
-                                    elevation: 2,
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Container(width: MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                            color: AppColors.whiteColor,
-                                            borderRadius: BorderRadius.circular(12.sp)),
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 15.sp),
-                                          child: Column(mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(height: 1.0.h),
-                                              //if Contact name of quote is null then we set subject from the list and remove text after the "-"
-                                              InkWell(
-                                                onTap: () {},
-                                                child: Text.rich(
-                                                  TextSpan(text: "",
-                                                    style: GoogleFonts.roboto(
-                                                        textStyle: TextStyle(
-                                                            fontSize: 15.sp,
-                                                            color: AppColors.fontColor,
-                                                            fontWeight: FontWeight.bold)),
+
+          return Expanded(
+            child: _isFirstLoadRunning && isLoading
+                ? loadingView()
+                : RefreshIndicator(
+                    onRefresh: () => firstTimeLoad(),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: AnimationLimiter(
+                              child: ListView.separated(
+                                  controller: _controller,
+                                  padding: EdgeInsets.only(top: 10.sp),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: contractItems!.length,
+                                  itemBuilder: (context, index) {
+                                    return AnimationConfiguration.staggeredList(
+                                      position: index,
+                                      child: SlideAnimation(
+                                        verticalOffset: 50.0,
+                                        curve: Curves.decelerate,
+                                        child: FadeInAnimation(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 19.sp,
+                                                right: 18.sp,
+                                                bottom: 5.sp),
+                                            child: Stack(
+                                              children: [
+                                                Positioned.fill(
+                                                    child: Container(
+                                                        decoration: BoxDecoration(
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(12
+                                                                        .sp)))),
+                                                Slidable(
+                                                  enabled: contractItems![index]
+                                                              .subject ==
+                                                          ""
+                                                      ? false
+                                                      : true,
+                                                  endActionPane: ActionPane(
+                                                    extentRatio: 0.10,
+                                                    motion:
+                                                        const ScrollMotion(),
                                                     children: [
-                                                      TextSpan(text: contractItems![index].subject,
-                                                          style: GoogleFonts.roboto(
-                                                              textStyle: TextStyle(fontSize: 13.sp,
-                                                                  color: AppColors.fontColor,
-                                                                  fontWeight: FontWeight.bold)))
+                                                      CustomSlidableAction(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                    .only(
+                                                                bottomRight: Radius
+                                                                    .circular(
+                                                                        20.0),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        20.0)),
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        autoClose: true,
+                                                        onPressed: (value) {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      QuoteTypeSelection(
+                                                                          contractItems![
+                                                                              index])));
+                                                        },
+                                                        backgroundColor:
+                                                            AppColors
+                                                                .primaryColor,
+                                                        foregroundColor:
+                                                            AppColors.redColor,
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            RotatedBox(
+                                                                quarterTurns:
+                                                                    -1,
+                                                                child: Text(
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    ButtonString
+                                                                        .btnCreateQuote,
+                                                                    style: GoogleFonts.roboto(
+                                                                        textStyle: const TextStyle(
+                                                                            fontSize:
+                                                                                15,
+                                                                            color:
+                                                                                Colors.white)))),
+                                                            SizedBox(
+                                                                height: 1.h),
+                                                            const Icon(
+                                                                Icons
+                                                                    .add_circle_outline,
+                                                                color: Colors
+                                                                    .white),
+                                                          ],
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
+                                                  child: Card(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.r)),
+                                                    margin: EdgeInsets.zero,
+                                                    elevation: 2,
+                                                    child: InkWell(
+                                                      onTap: () {},
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        decoration: BoxDecoration(
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.sp)),
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      20.sp,
+                                                                  horizontal:
+                                                                      16.sp),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              SizedBox(
+                                                                  height:
+                                                                      1.0.h),
+                                                              //if Contact name of quote is null then we set subject from the list and remove text after the "-"
+                                                              InkWell(
+                                                                onTap: () {},
+                                                                child:
+                                                                    Text.rich(
+                                                                  TextSpan(
+                                                                    text: "",
+                                                                    style: GoogleFonts.roboto(
+                                                                        textStyle: TextStyle(
+                                                                            fontSize:
+                                                                                18.sp,
+                                                                            color: AppColors.fontColor,
+                                                                            fontWeight: FontWeight.w500)),
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text: contractItems![index]
+                                                                            .subject,
+                                                                        style: GoogleFonts.roboto(
+                                                                            textStyle: TextStyle(
+                                                                                fontSize: 18.sp,
+                                                                                color: AppColors.fontColor,
+                                                                                fontWeight: FontWeight.w500)),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                              SizedBox(
+                                                                  height: 10.h),
+                                                              Text(
+                                                                  contractItems![
+                                                                          index]
+                                                                      .scStatus
+                                                                      .toString(),
+                                                                  style: CustomTextStyle
+                                                                      .labelText),
+                                                              SizedBox(
+                                                                  height: 5.h),
+                                                              Text.rich(
+                                                                TextSpan(
+                                                                  text: contractItems![
+                                                                              index]
+                                                                          .serConAddress ??
+                                                                      "",
+                                                                  style: CustomTextStyle
+                                                                      .labelText,
+                                                                  children: [
+                                                                    if (contractItems![index].serConAddress !=
+                                                                            "" &&
+                                                                        contractItems![index].serConAddress !=
+                                                                            null)
+                                                                      const TextSpan(
+                                                                          text:
+                                                                              ", "),
+                                                                    TextSpan(
+                                                                        text: contractItems![index].serConCity ??
+                                                                            "",
+                                                                        style: CustomTextStyle
+                                                                            .labelText),
+                                                                    if (contractItems![index].serConCity !=
+                                                                            "" &&
+                                                                        contractItems![index].serConCity !=
+                                                                            null)
+                                                                      const TextSpan(
+                                                                          text:
+                                                                              ", "),
+                                                                    TextSpan(
+                                                                        text: contractItems![index].serConCountry ??
+                                                                            "",
+                                                                        style: CustomTextStyle
+                                                                            .labelText),
+                                                                    if (contractItems![index].serConCountry !=
+                                                                            "" &&
+                                                                        contractItems![index].serConCountry !=
+                                                                            null)
+                                                                      const TextSpan(
+                                                                          text:
+                                                                              ", "),
+                                                                    TextSpan(
+                                                                        text: contractItems![index].postcode ??
+                                                                            "",
+                                                                        style: CustomTextStyle
+                                                                            .labelText)
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                  height:
+                                                                      0.5.h),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-
-                                                  SizedBox(height: 2.5.h),
-                                                  Text(contractItems![index].scStatus.toString(),
-                                                      style: CustomTextStyle.labelText),
-                                                  SizedBox(height: 1.0.h),
-                                                  Text.rich(TextSpan(text: contractItems![index].serConAddress ?? "",
-                                                      style: CustomTextStyle.labelText,
-                                                      children: [
-                                                        if (contractItems![index].serConAddress !="" &&
-                                                            contractItems![index].serConAddress != null)
-                                                          const TextSpan(text: ", "),
-
-                                                        TextSpan(text: contractItems![index].serConCity ?? "",
-                                                            style: CustomTextStyle.labelText),
-                                                        if (contractItems![index].serConCity != "" &&
-                                                            contractItems![index].serConCity != null)
-                                                          const TextSpan(text: ", "),
-
-                                                        TextSpan(text: contractItems![index].serConCountry ?? "",
-                                                            style: CustomTextStyle.labelText),
-                                                        if (contractItems![index].serConCountry != "" &&
-                                                            contractItems![index].serConCountry != null)
-                                                          const TextSpan(text: ", "),
-
-                                                    TextSpan(text: contractItems![index].postcode ?? "",
-                                                        style: CustomTextStyle.labelText)
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 0.5.h),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(height: 10.sp);
+                                  })),
                         ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Container(height: 10.sp);
-                  })),
-            ),
-            if (_isLoadMoreRunning == true)
-              Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 20),
-                  child: Center(child: loadingView())),
-          ],
-        ),
+                        if (_isLoadMoreRunning == true)
+                          Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 10, bottom: 20),
+                              child: Center(child: loadingView())),
+                      ],
+                    ),
+                  ),
+          );
+        },
       ),
     );
-  },
-),
-);
-  }}
+  }
+}

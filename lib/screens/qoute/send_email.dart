@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/custom_button.dart';
 import '../../components/custom_text_styles.dart';
@@ -18,13 +19,15 @@ class SendEmail extends StatefulWidget {
 
   String? create;
 
-  SendEmail(this.contactList, this.quoteId, this.contactEmail, this.create, {Key? key}) : super(key: key);
+  SendEmail(this.contactList, this.quoteId, this.contactEmail, this.create,
+      {Key? key})
+      : super(key: key);
   @override
-  State<SendEmail> createState() => _SendEmailState(contactList, quoteId, contactEmail);
+  State<SendEmail> createState() =>
+      _SendEmailState(contactList, quoteId, contactEmail);
 }
 
 class _SendEmailState extends State<SendEmail> {
-
   TextEditingController emailController = TextEditingController();
 
   List<String> contactList = <String>[];
@@ -51,18 +54,19 @@ class _SendEmailState extends State<SendEmail> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(height: 1.h),
+              SizedBox(height: 20.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(left: 12.sp),
                     child: Text(LabelString.lblQuoteEmail,
-                        style: CustomTextStyle.labelBoldFontText),
+                        style: CustomTextStyle.labelMediumBoldFontText),
                   ),
                   IconButton(
                     onPressed: null,
-                    icon: Icon(Icons.close_rounded, color: AppColors.transparent),
+                    icon:
+                        Icon(Icons.close_rounded, color: AppColors.transparent),
                     splashColor: AppColors.transparent,
                     highlightColor: AppColors.transparent,
                   )
@@ -70,63 +74,72 @@ class _SendEmailState extends State<SendEmail> {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 11.sp),
-                child: Text("Please add comma separated email addresses to send the quote to multiple people.",
-                textAlign: TextAlign.center,
-                style: CustomTextStyle.labelFontHintText),
+                child: Text(
+                    "Please add comma separated email addresses to send the quote to multiple people.",
+                    textAlign: TextAlign.center,
+                    style: CustomTextStyle.labelFontHintText),
               ),
-              SizedBox(height: 2.h),
+              SizedBox(height: 20.h),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                child: CustomTextField(
-                    keyboardType: TextInputType.emailAddress,
-                    readOnly: false,
-                    controller: emailController,
-                    obscureText: false,
-                    hint: LabelString.lblEmailAddress,
-                    titleText: LabelString.lblEmailAddress,
-                    maxLines: 2,
-                    minLines: 1,
-                    textInputAction: TextInputAction.done,
-                    onEditingComplete: () {},
-                    isRequired: true)),
-
-              SizedBox(height: 1.h),
-              isLoading ? Lottie.asset('assets/lottie/sending.json', height: 12.h, animate: true) :
-              SizedBox(
-                  width: query.width * 0.4,
-                  height: query.height * 0.06,
-                  child: CustomButton(
-                      title: ButtonString.btnSubmit,
-                      onClick: () {
-                        if(emailFormKey.currentState!.validate()){
-                          sendEmail();
-                        }
-                      })),
-              SizedBox(height: 3.h)
+                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                  child: CustomTextField(
+                      keyboardType: TextInputType.emailAddress,
+                      readOnly: false,
+                      controller: emailController,
+                      obscureText: false,
+                      hint: LabelString.lblEmailAddress,
+                      titleText: LabelString.lblEmailAddress,
+                      maxLines: 2,
+                      minLines: 1,
+                      textInputAction: TextInputAction.done,
+                      onEditingComplete: () {},
+                      isRequired: true)),
+              SizedBox(height: 20.h),
+              isLoading
+                  ? Lottie.asset('assets/lottie/sending.json',
+                      height: 60.h, animate: true)
+                  : SizedBox(
+                      width: query.width * 0.4,
+                      height: query.height * 0.06,
+                      child: CustomButton(
+                          title: ButtonString.btnSubmit,
+                          onClick: () {
+                            if (emailFormKey.currentState!.validate()) {
+                              sendEmail();
+                            }
+                          })),
+              SizedBox(height: 20.h)
             ],
           ),
-        )
-    );
+        ));
   }
 
   sendEmail() async {
-    if(contactList.isEmpty){
+    if (contactList.isEmpty) {
       contactList = emailController.text.split(", ");
     }
 
     FocusScope.of(context).unfocus();
-    setState(() { isLoading = true; });
+    setState(() {
+      isLoading = true;
+    });
     SharedPreferences preferences = await SharedPreferences.getInstance();
     Map<String, dynamic> queryParameters = {
       'operation': "mail_send_with_attch",
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
       'id': quoteId.toString(),
       'toEmail': /*contactList*/
-      contactList.toString().replaceAll("[", '["').replaceAll("]", '"]').replaceAll(",", '", "').replaceAll(" ", "")
+          contactList
+              .toString()
+              .replaceAll("[", '["')
+              .replaceAll("]", '"]')
+              .replaceAll(",", '", "')
+              .replaceAll(" ", "")
     };
 
-    final response = await HttpActions().getMethod(
-        ApiEndPoint.mainApiEnd, queryParams: queryParameters);
+    final response = await HttpActions()
+        .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
 
     debugPrint("send email response  --- $response");
     if (response["success"] == true) {
@@ -146,18 +159,20 @@ class _SendEmailState extends State<SendEmail> {
                   width: MediaQuery.of(context).size.width / 1.15,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.0),
-                      color: AppColors.primaryColorLawOpacityBack),
+                      color: Colors.white),
                   child: Padding(
                     padding: EdgeInsets.all(12.sp),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Lottie.asset('assets/lottie/done.json', height: 15.h, reverse: false, repeat: false),
-                        SizedBox(height: 1.h),
-                        Text("${Message.quoteEmailSentMessage}:\n\n${contactList.join(",\n")}",
+                        Lottie.asset('assets/lottie/done.json',
+                            height: 60.h, reverse: false, repeat: false),
+                        SizedBox(height: 10.h),
+                        Text(
+                            "${Message.quoteEmailSentMessage}:\n\n${contactList.join(",\n")}",
                             textAlign: TextAlign.center,
                             style: CustomTextStyle.labelMediumBoldFontText),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 20.h),
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.06,
                             width: MediaQuery.of(context).size.width,
@@ -168,19 +183,17 @@ class _SendEmailState extends State<SendEmail> {
                                   Navigator.pop(context);
                                   Navigator.pop(context);
 
-                                  if(widget.create == "create"){
+                                  if (widget.create == "create") {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                   }
                                   //removeAndCallNextScreen(context, const RootScreen());
-                                })
-                        ),
-                        SizedBox(height: 1.h),
+                                })),
+                        SizedBox(height: 10.h),
                       ],
                     ),
                   ),
-                )
-            );
+                ));
           });
     }
     return response;

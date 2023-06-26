@@ -10,9 +10,7 @@ part 'get_contract_event.dart';
 part 'get_contract_state.dart';
 
 class GetContractBloc extends Bloc<GetContractEvent, GetContractState> {
-
   final ContractRepository contractRepository;
-
 
   GetContractBloc(this.contractRepository) : super(GetContractInitial()) {
     on<GetContractEvent>((event, emit) {});

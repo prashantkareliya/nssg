@@ -9,7 +9,9 @@ import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/add_quote/add_quote_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/custom_appbar.dart';
 import '../../../components/custom_button.dart';
@@ -101,14 +103,13 @@ class _AddContactPageState extends State<AddContactPage> {
       appBar: BaseAppBar(
         appBar: AppBar(),
         //condition for set edit or add contact appbar title
-        title: widget.contactId == "NoId"
-            ? LabelString.lblAddNewContact
-            : LabelString.lblEditContact,
+        title:
+            widget.contactId == "NoId" ? LabelString.lblAddNewContact : LabelString.lblEditContact,
         isBack: true,
         elevation: 1,
         backgroundColor: AppColors.whiteColor,
         searchWidget: Container(),
-        titleTextStyle: CustomTextStyle.labelBoldFontText,
+        titleTextStyle: CustomTextStyle.labelMediumBoldFontText,
       ),
       body: Column(
         children: [
@@ -165,52 +166,33 @@ class _AddContactPageState extends State<AddContactPage> {
                   print(state.contactDetail);
                   removeAndCallNextScreen(
                       context,
-                      AddQuotePage(
-                        false,
-                        firstNameController.text,
-                        lastNameController.text,
-                        contactId: state.contactId,
-                        contactDetail: state.contactDetail
-                      ));
+                      AddQuotePage(false, firstNameController.text, lastNameController.text,
+                          contactId: state.contactId, contactDetail: state.contactDetail));
                 } else {
                   Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (c) => const RootScreen()),
-                      (route) => false);
+                      MaterialPageRoute(builder: (c) => const RootScreen()), (route) => false);
                 }
               }
               if (state is GetContactData) {
                 contactDetailData = state.contactData;
 
-                firstNameController.text =
-                    state.contactData.firstname.toString();
+                firstNameController.text = state.contactData.firstname.toString();
                 lastNameController.text = state.contactData.lastname.toString();
-                companyNameController.text =
-                    state.contactData.contactCompany.toString();
+                companyNameController.text = state.contactData.contactCompany.toString();
                 officePhoneController.text = state.contactData.phone.toString();
-                mobilePhoneController.text =
-                    state.contactData.mobile.toString();
-                primaryEmailController.text =
-                    state.contactData.email.toString();
-                secondaryEmailController.text =
-                    state.contactData.secondaryemail.toString();
+                mobilePhoneController.text = state.contactData.mobile.toString();
+                primaryEmailController.text = state.contactData.email.toString();
+                secondaryEmailController.text = state.contactData.secondaryemail.toString();
 
-                invoiceAddressController.text =
-                    state.contactData.mailingstreet.toString();
-                invoiceCityController.text =
-                    state.contactData.mailingcity.toString();
-                invoiceCountryController.text =
-                    state.contactData.mailingcountry.toString();
-                invoicePostalController.text =
-                    state.contactData.mailingzip.toString();
+                invoiceAddressController.text = state.contactData.mailingstreet.toString();
+                invoiceCityController.text = state.contactData.mailingcity.toString();
+                invoiceCountryController.text = state.contactData.mailingcountry.toString();
+                invoicePostalController.text = state.contactData.mailingzip.toString();
 
-                installationAddressController.text =
-                    state.contactData.otherstreet.toString();
-                installationCityController.text =
-                    state.contactData.othercity.toString();
-                installationCountryController.text =
-                    state.contactData.othercountry.toString();
-                installationPostalController.text =
-                    state.contactData.otherzip.toString();
+                installationAddressController.text = state.contactData.otherstreet.toString();
+                installationCityController.text = state.contactData.othercity.toString();
+                installationCountryController.text = state.contactData.othercountry.toString();
+                installationPostalController.text = state.contactData.otherzip.toString();
               }
             },
             child: BlocBuilder<AddContactBloc, AddContactState>(
@@ -279,7 +261,6 @@ class _AddContactPageState extends State<AddContactPage> {
                   maxLines: 1,
                   minLines: 1,
                   textInputAction: TextInputAction.next,
-
                 ),
               ),
               CustomTextField(
@@ -350,8 +331,7 @@ class _AddContactPageState extends State<AddContactPage> {
                   textInputAction: TextInputAction.next,
                   isRequired: false),
               Padding(
-                padding:
-                    EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
+                padding: EdgeInsets.symmetric(vertical: 15.sp, horizontal: 2.0.sp),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -373,7 +353,7 @@ class _AddContactPageState extends State<AddContactPage> {
                         buttonColor: AppColors.primaryColor,
                         onClick: () {
                           FocusScope.of(context).unfocus();
-                          if (contactBasicDetailFormKey.currentState?.validate() ==true) {
+                          if (contactBasicDetailFormKey.currentState?.validate() == true) {
                             /*if (primaryEmailController.text.isValidEmail &&
                                 secondaryEmailController.text.isValidEmail) {
                               pageController.nextPage(
@@ -412,7 +392,11 @@ class _AddContactPageState extends State<AddContactPage> {
           children: [
             Center(
                 child: Text(LabelString.lblInvoiceAddressDetails,
-                    style: CustomTextStyle.labelBoldFontTextBlue)),
+                    style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryColor)))),
             SizedBox(height: 2.0.h),
             /*Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,9 +460,13 @@ class _AddContactPageState extends State<AddContactPage> {
             SizedBox(height: 1.0.h),
             Center(
               child: Text(LabelString.lblInstallationAddressDetails,
-                  style: CustomTextStyle.labelBoldFontTextBlue),
+                  style: GoogleFonts.roboto(
+                      textStyle: TextStyle(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primaryColor))),
             ),
-            SizedBox(height: 2.0.h),
+            SizedBox(height: 10.h),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -499,7 +487,7 @@ class _AddContactPageState extends State<AddContactPage> {
                   padding: EdgeInsets.only(right: 8.sp),
                   child: InkWell(
                     onTap: () => copyAddressFields(),
-                    child: Image.asset(ImageString.icCopy, height: 3.h),
+                    child: Image.asset(ImageString.icCopy, height: 20.h),
                   ),
                 ),
                 SizedBox(height: 1.h),
@@ -577,8 +565,7 @@ class _AddContactPageState extends State<AddContactPage> {
               child: BorderButton(
                   btnString: ButtonString.btnPrevious,
                   onClick: () => pageController.previousPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.decelerate))),
+                      duration: const Duration(milliseconds: 500), curve: Curves.decelerate))),
           //submit or update button
           SizedBox(
             width: query.width * 0.4,
@@ -629,8 +616,7 @@ class _AddContactPageState extends State<AddContactPage> {
                       updateContact();
                       Navigator.pop(context);
                       Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (c) => const RootScreen()),
-                          (route) => false);
+                          MaterialPageRoute(builder: (c) => const RootScreen()), (route) => false);
                     },
                     buttonColor: AppColors.primaryColor),
           )
@@ -642,8 +628,7 @@ class _AddContactPageState extends State<AddContactPage> {
   //Autocomplete textField for fill address fields
   Widget autoComplete(String autoCompleteType) {
     return Autocomplete(
-      fieldViewBuilder: (context, textEditingController, focusNode,
-          VoidCallback onFieldSubmitted) {
+      fieldViewBuilder: (context, textEditingController, focusNode, VoidCallback onFieldSubmitted) {
         return TextField(
           style: TextStyle(color: AppColors.blackColor),
           textCapitalization: TextCapitalization.none,
@@ -651,7 +636,11 @@ class _AddContactPageState extends State<AddContactPage> {
           maxLines: 1,
           cursorColor: AppColors.blackColor,
           decoration: InputDecoration(
-              suffixIcon: Icon(Icons.search, color: AppColors.blackColor),
+              suffixIcon: Icon(
+                Icons.search,
+                color: AppColors.blackColor,
+                size: 25.sp,
+              ),
               border: UnderlineInputBorder(
                   borderSide: BorderSide(width: 1, color: AppColors.primaryColor)),
               focusedBorder: UnderlineInputBorder(
@@ -673,7 +662,6 @@ class _AddContactPageState extends State<AddContactPage> {
             FocusScope.of(context).unfocus();
           },
           onSubmitted: (String value) {},
-
         );
       },
       optionsBuilder: (TextEditingValue textEditingValue) async {
@@ -681,22 +669,19 @@ class _AddContactPageState extends State<AddContactPage> {
           return const Iterable<String>.empty();
         } else {
           //API call for get ID
-          var url = "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069&all=true";
+          var url =
+              "https://api.getAddress.io/autocomplete/${textEditingValue.text.toString()}?api-key=vyPYLl9QWkWvc5BsPwNl4g36069&all=true";
 
           final response = await http.get(Uri.parse(url),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8'
-              });
+              headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'});
           final responseJson = json.decode(response.body);
           if (responseJson["suggestions"] != null) {
             addressList = responseJson["suggestions"];
           } else {
-            if (mounted)
-              Helpers.showSnackBar(context, responseJson["Message"].toString());
+            if (mounted) Helpers.showSnackBar(context, responseJson["Message"].toString());
           }
           List<String> matchesAddress = <String>[];
-          matchesAddress
-              .addAll(addressList.map((e) => e["address"].toString()));
+          matchesAddress.addAll(addressList.map((e) => e["address"].toString()));
           return matchesAddress;
         }
       },
@@ -707,7 +692,8 @@ class _AddContactPageState extends State<AddContactPage> {
             String addressId = addressList[i]["id"].toString();
 
             //Call API for get address detail
-            var url = "https://api.getAddress.io/get/$addressId?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
+            var url =
+                "https://api.getAddress.io/get/$addressId?api-key=vyPYLl9QWkWvc5BsPwNl4g36069";
 
             final response = await http.get(Uri.parse(url));
             final responseJson = json.decode(response.body);
@@ -715,12 +701,14 @@ class _AddContactPageState extends State<AddContactPage> {
             //set address detail in field
             if (response.statusCode == 200) {
               if (autoCompleteType == "invoice") {
-                invoiceAddressController.text = "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                invoiceAddressController.text =
+                    "${responseJson["line_1"]}  ${responseJson["line_2"]}";
                 invoiceCityController.text = "${responseJson["town_or_city"]}";
                 invoiceCountryController.text = "${responseJson["county"]}";
                 invoicePostalController.text = "${responseJson["postcode"]}";
               } else {
-                installationAddressController.text = "${responseJson["line_1"]}  ${responseJson["line_2"]}";
+                installationAddressController.text =
+                    "${responseJson["line_1"]}  ${responseJson["line_2"]}";
                 installationCityController.text = "${responseJson["town_or_city"]}";
                 installationCountryController.text = "${responseJson["county"]}";
                 installationPostalController.text = "${responseJson["postcode"]}";
@@ -740,8 +728,7 @@ class _AddContactPageState extends State<AddContactPage> {
         .then((value) => Clipboard.getData(Clipboard.kTextPlain).then(
               (value) {
                 if (invoiceAddressController.text.isNotEmpty) {
-                  installationAddressController.text =
-                      invoiceAddressController.text;
+                  installationAddressController.text = invoiceAddressController.text;
                 }
               },
             ));
@@ -818,8 +805,7 @@ class _AddContactPageState extends State<AddContactPage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "retrieve",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'id': widget.contactId.toString(),
     };
 
@@ -881,8 +867,7 @@ class _AddContactPageState extends State<AddContactPage> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "update",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'element': jsonUpdateContactDetail,
       'appversion': Constants.of().appversion,
     };

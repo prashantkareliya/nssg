@@ -19,4 +19,3 @@ class ContractsLoadFail extends GetContractState {
   final String? error;
   ContractsLoadFail({this.error});
 }
-

@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../utils/app_colors.dart';
 import 'custom_text_styles.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RadioModel {
   bool isSelected;
@@ -30,11 +31,18 @@ class RadioItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(padding: EdgeInsets.symmetric(horizontal: 8.sp),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.sp),
             child: Text(item.buttonText,
                 style: item.isSelected
-                    ? GoogleFonts.roboto(textStyle: TextStyle(fontSize: 12.sp, color: AppColors.whiteColor))
-                    : CustomTextStyle.labelFontText),
+                    ? GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                            fontSize: 16.sp,
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w400))
+                    : GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                            fontSize: 16.sp, color: Colors.black, fontWeight: FontWeight.w400))),
           ),
         ],
       ),

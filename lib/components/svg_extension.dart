@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nssg/constants/strings.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/constants.dart';
 
@@ -24,7 +25,9 @@ class SvgExtension extends StatelessWidget {
   Widget build(BuildContext context) {
     itemName = itemNameText(itemName!);
     return SvgPicture.network(
-        "${ImageBaseUrl.imageBaseUrl}${itemName?.toLowerCase()}.svg", height: 4.5.h,
+        "${ImageBaseUrl.imageBaseUrl}${itemName?.toLowerCase()}.svg",
+        height: 32.h,
+        width: 36.w,
         color: iconColor,
         placeholderBuilder: (BuildContext context) => SvgPicture.asset(ImageString.imgPlaceHolder, height: 5.5.h));
   }

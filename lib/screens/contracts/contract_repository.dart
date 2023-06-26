@@ -11,8 +11,7 @@ class ContractRepository {
 
   final ContractDataSource _contractDataSource;
 
-  Future<ApiResult<GetContractData>> getContract(
-      Map<String, dynamic> paraMeters) async {
+  Future<ApiResult<GetContractData>> getContract(Map<String, dynamic> paraMeters) async {
     try {
       final result = await _contractDataSource.getContractList(paraMeters);
 

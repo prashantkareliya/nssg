@@ -13,7 +13,8 @@ import 'package:nssg/screens/qoute/get_product/product_datasource.dart';
 import 'package:nssg/utils/extention_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../components/custom_radio_button.dart';
 import '../../../components/custom_text_styles.dart';
@@ -272,10 +273,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
               }
             },
             child: Icon(Icons.arrow_back_ios_outlined,
-                color: AppColors.blackColor, size: 14.sp),
+                color: AppColors.blackColor, size: 16.sp),
           ),
           title: Text(LabelString.lblItemDetail,
-              style: CustomTextStyle.labelBoldFontText),
+              style: CustomTextStyle.labelMediumBoldFontText),
           actions: [
             InkWell(
               splashColor: AppColors.transparent,
@@ -289,7 +290,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     Padding(
                         padding: EdgeInsets.only(right: 12.sp),
                         child: SvgPicture.asset(ImageString.imgCart,
-                            width: 6.0.w)),
+                            width: 18.w,
+                          height: 18.h,)),
                     // itemNumber.isEmpty
                     //     ? Container()
                     //     :
@@ -301,8 +303,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               top: 10.sp,
                               right: 5.sp,
                               child: Container(
-                                  height: 2.h,
-                                  width: 4.w,
+                                 height: 15.h,
+                                width: 17.w,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20.0),
                                       color: AppColors.redColor),
@@ -380,10 +382,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 10.h),
                   Text(LabelString.lblManufacturing,
-                      style: CustomTextStyle.labelBoldFontText),
-                  SizedBox(height: 4.h),
+                      style: CustomTextStyle.labelMediumBoldFontText),
+                  SizedBox(height: 10.h),
                   Wrap(
                     spacing: 15.sp,
                     direction: Axis.horizontal,
@@ -420,8 +422,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                 curve: Curves.decelerate);
                           },
                           child: Container(
-                            height: 15.h,
-                            width: 42.w,
+                            height: 0.15.sh,
+                            width: 0.42.sw,
                             decoration: BoxDecoration(
                                 color: manufacturingType[index].isSelected
                                     ? AppColors.primaryColorLawOpacity
@@ -526,10 +528,10 @@ class _AddItemDetailState extends State<AddItemDetail> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 10.h),
                     Text(LabelString.lblCategory,
-                        style: CustomTextStyle.labelBoldFontText),
-                    SizedBox(height: 4.h),
+                        style: CustomTextStyle.labelMediumBoldFontText),
+                    SizedBox(height: 10.h),
                     stepThreeData["product_prod_category"].length == 0
                         ? Center(
                             child: Column(
@@ -594,8 +596,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                     }
                                   },
                                   child: Container(
-                                    height: 15.h,
-                                    width: 42.w,
+                                    height: 0.15.sh,
+                                    width: 0.42.sw,
                                     decoration: BoxDecoration(
                                         color: categoryType[index].isSelected
                                             ? AppColors.primaryColorLawOpacity
@@ -737,7 +739,6 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     .state
                     .productList
                     .firstWhereOrNull((ele) => ele.itemId == element.id);
-
                 if (productList == null) {
                   if (widget.contractList != null) {
                     if (widget.quoteTypeContract == "Installation") {
@@ -842,7 +843,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: filterList![index].imagename == ""
                                               ? SvgPicture.asset(ImageString.imgPlaceHolder,
-                                                  height: 8.h, width: 16.w)
+                                                  height: 90.sp,
+                                                  width: 90.sp)
                                               : ClipRRect(
                                                   borderRadius: BorderRadius.circular(8.0),
                                                   child: Container(
@@ -851,7 +853,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                         padding: EdgeInsets.all(4.sp),
                                                         child: Image.network(
                                                             "${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
-                                                            height: 9.h, width: 18.w),
+                                                            height: 90.sp,
+                                                  width: 90.sp),
                                                       )))),
                                       SizedBox(width: 5.w),
                                       Expanded(
@@ -862,46 +865,85 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             RichText(
                                               text: TextSpan(
                                                 children: [
-                                                  TextSpan(text: filterList![index].productname.toString(),
-                                                      style: CustomTextStyle.labelBoldFontText),
+                                                  TextSpan(
+                                                      text: filterList![index]
+                                                          .productname
+                                                          .toString(),
+                                                      style: GoogleFonts.roboto(
+                                                          textStyle: TextStyle(
+                                                              fontSize: 18.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: AppColors
+                                                                  .fontColor))),
                                                   WidgetSpan(
                                                     child: InkWell(
-                                                      splashColor: AppColors.transparent,
-                                                      highlightColor: AppColors.transparent,
+                                                      splashColor:
+                                                          AppColors.transparent,
+                                                      highlightColor:
+                                                          AppColors.transparent,
                                                       onTap: () {
                                                         showDialog(
                                                           context: context,
                                                           builder: (context) {
                                                             return Dialog(
                                                                 shape: RoundedRectangleBorder(
-                                                                    borderRadius:BorderRadius.circular(10)),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10)),
                                                                 elevation: 0,
-                                                                insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                                                insetPadding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal: 12
+                                                                            .sp),
                                                                 child: itemDescription(
-                                                                    filterList![index].productname.toString(),
-                                                                    filterList![index].description.toString()));
+                                                                    filterList![
+                                                                            index]
+                                                                        .productname
+                                                                        .toString(),
+                                                                    filterList![
+                                                                            index]
+                                                                        .description
+                                                                        .toString()));
                                                           },
                                                         );
                                                       },
-                                                      child: Icon(Icons.info_outline,
-                                                          color: AppColors.primaryColor,
-                                                          size: 14.sp),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 10),
+                                                        child: Icon(
+                                                            Icons.info_outline,
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            size: 20.sp),
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(height: 2.h),
+                                            SizedBox(height: 10.h),
                                             Row(
                                               children: [
                                                 Container(
-                                                  height: 5.h,
+                                                  width: query.width * 0.40,
+                                                  height: 32.sp,
                                                   decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      border: Border.all(color: AppColors.primaryColor, width: 1),
-                                                      color: AppColors.primaryColor),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      border: Border.all(
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                          width: 1),
+                                                      color: AppColors
+                                                          .primaryColor),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
                                                     children: [
                                                       IconButton(
                                                           onPressed: () {
@@ -927,52 +969,98 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                                   .whiteColor,
                                                               size: 12.sp)),
                                                       Container(
-                                                          color: AppColors.whiteColor,
-                                                          width: query.width * 0.15,
+                                                          color: AppColors
+                                                              .whiteColor,
+                                                          width: query.width *
+                                                              0.15,
                                                           height: query.height,
                                                           child: Center(
-                                                              child: Text("${filterList![index].quantity}",
-                                                                  style: CustomTextStyle.labelBoldFontText))),
+                                                              child: Text(
+                                                                  "${filterList![index].quantity}",
+                                                                  style: GoogleFonts.roboto(
+                                                                      textStyle: TextStyle(
+                                                                          fontSize: 14
+                                                                              .sp,
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color:
+                                                                              AppColors.fontColor))))),
                                                       IconButton(
                                                           onPressed: () {
                                                             if (isItemAdded) {
-                                                              context.read<ProductListBloc>()
+                                                              context
+                                                                  .read<
+                                                                      ProductListBloc>()
                                                                   .add(UpdateProductQuantityByIdEvent(
-                                                                      productId:filterList![index].id!,
-                                                                      quantity: filterList![index].quantity! + 1));
+                                                                      productId:
+                                                                          filterList![index]
+                                                                              .id!,
+                                                                      quantity:
+                                                                          filterList![index].quantity! +
+                                                                              1));
                                                             }
-                                                            filterList![index].isItemAdded = false;
-                                                            Provider.of<WidgetChange>(context, listen: false).incrementCounter();
-                                                            filterList![index].quantity = filterList![index].quantity! + 1;
+                                                            filterList![index]
+                                                                    .isItemAdded =
+                                                                false;
+                                                            Provider.of<WidgetChange>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .incrementCounter();
+                                                            filterList![index]
+                                                                    .quantity =
+                                                                filterList![index]
+                                                                        .quantity! +
+                                                                    1;
                                                             // itemNumber.add(filterList![index].id);
                                                           },
                                                           icon: Icon(Icons.add,
-                                                              color: AppColors.whiteColor,
+                                                              color: AppColors
+                                                                  .whiteColor,
                                                               size: 12.sp))
                                                     ],
                                                   ),
                                                 ),
-                                                SizedBox(width: 3.w),
+                                                SizedBox(width: 10.sp),
                                                 InkWell(
                                                   onTap: isItemAdded
                                                       ? () {
-                                                          context.read<ProductListBloc>().add(RemoveProductFromCardByIdEvent(
-                                                                  productId: filterList![index].id ?? ""));
+                                                          context
+                                                              .read<
+                                                                  ProductListBloc>()
+                                                              .add(RemoveProductFromCardByIdEvent(
+                                                                  productId:
+                                                                      filterList![index]
+                                                                              .id ??
+                                                                          ""));
                                                           setState(() {
-                                                            itemNumber.remove(filterList![index].id);
+                                                            itemNumber.remove(
+                                                                filterList![
+                                                                        index]
+                                                                    .id);
                                                           });
                                                         }
                                                       : () {
-                                                          getSubProduct(filterList![index].id.toString());
+                                                          getSubProduct(
+                                                              filterList![index]
+                                                                  .id
+                                                                  .toString());
 
-                                                          List<String> documentType = [];
+                                                          List<String>
+                                                              documentType = [];
 
-                                                          if (filterList![index].productNssKeyholderForm == "1") {
-                                                            documentType.add("Keyholder form");
+                                                          if (filterList![index]
+                                                                  .productNssKeyholderForm ==
+                                                              "1") {
+                                                            documentType.add(
+                                                                "Keyholder form");
                                                           }
 
-                                                          if (filterList![index].productSecurityAgreeForm == "1") {
-                                                            documentType.add("Maintenance contract");
+                                                          if (filterList![index]
+                                                                  .productSecurityAgreeForm ==
+                                                              "1") {
+                                                            documentType.add(
+                                                                "Maintenance contract");
                                                           }
 
                                                           if (filterList![index]
@@ -1045,8 +1133,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                         },
                                                   child: isItemAdded
                                                       ? Container(
-                                                          height: 5.h,
-                                                          width: 10.w,
+                                                          height: 32.sp,
+                                                          width: 40.sp,
                                                           decoration: BoxDecoration(
                                                               borderRadius:
                                                                   BorderRadius.circular(
@@ -1062,8 +1150,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                                   .icAddCartGreen,
                                                               fit: BoxFit.none))
                                                       : Container(
-                                                          height: 5.h,
-                                                          width: 10.w,
+                                                          height: 32.sp,
+                                                          width: 40.sp,
                                                           decoration: BoxDecoration(
                                                               borderRadius:
                                                                   BorderRadius.circular(8.0),

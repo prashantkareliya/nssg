@@ -18,7 +18,9 @@ import 'package:nssg/utils/widgets.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+// import 'package:sizer/sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../components/custom_appbar.dart';
 import '../../components/custom_dialog.dart';
 import '../../components/global_api_call.dart';
 import '../../constants/constants.dart';
@@ -42,7 +44,6 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreenState extends State<ContactScreen> {
-
   int _page = 0;
   bool _hasNextPage = true;
   int _totalSize = 0;
@@ -81,7 +82,8 @@ class _ContactScreenState extends State<ContactScreen> {
 
     Map<String, dynamic> queryParameters = {
       'operation': 'query',
-      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyContact, //2017
       'page': _page,
       'module_name': 'Contacts',
@@ -104,7 +106,8 @@ class _ContactScreenState extends State<ContactScreen> {
 
       Map<String, dynamic> queryParameters = {
         'operation': 'query',
-        'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
+        'sessionName':
+            preferences.getString(PreferenceString.sessionName).toString(),
         'query': Constants.of().apiKeyContact, //2017
         'page': _page,
         'module_name': 'Contacts',
@@ -112,7 +115,6 @@ class _ContactScreenState extends State<ContactScreen> {
       contactBloc.add(GetContactListEvent(queryParameters));
     }
   }
-
 
   GetContactBloc contactBloc =
       GetContactBloc(ContactRepository(contactDataSource: ContactDataSource()));
@@ -165,46 +167,64 @@ class _ContactScreenState extends State<ContactScreen> {
   //Design search field
   AnimatedOpacity buildSearchBar(BuildContext context) {
     return AnimatedOpacity(
-      opacity: Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 1,
+      opacity:
+          Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? 1 : 1,
       duration: const Duration(milliseconds: 500),
       child: Visibility(
-        visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow ? true : true,
+        visible: Provider.of<WidgetChange>(context, listen: true).isAppbarShow
+            ? true
+            : true,
         child: Padding(
-          padding: EdgeInsets.only(right: 15.sp, top: 8.sp, left: 0.sp, bottom: 8),
+          padding:
+              EdgeInsets.only(right: 18.sp, top: 9.sp, left: 18.sp, bottom: 7),
           child: Padding(
             padding: EdgeInsets.only(bottom: 0.sp),
             child: Row(
               children: [
-                SizedBox(width: 5.w),
                 Expanded(
                   child: Consumer<WidgetChange>(
                       builder: (context, updateKey, search) {
-                    return TextField(controller: searchCtrl, onTap: () {
-
-                     /*if(count == 0){
+                    return TextField(
+                        controller: searchCtrl,
+                        onTap: () {
+                          /*if(count == 0){
                        getContact();
                        setState(() { count = 1; });
                      }*/
-                    },
+                        },
                         onChanged: (value) async {
-                         /* Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
+                          /* Provider.of<WidgetChange>(context, listen: false).updateSearch(value);
                           searchKey = updateKey.updateSearchText.toString();
                           searchItemList = [];
 
                           for (var element in contactItems!) {
-                            if (element.contactName!.toLowerCase().contains(searchKey.toLowerCase())) {
+                            if (element.contactName!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if (element.contactCompany!.toLowerCase().contains(searchKey.toLowerCase())) {
+                            } else if (element.contactCompany!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if (element.firstname!.toLowerCase().contains(searchKey.toLowerCase())) {
+                            } else if (element.firstname!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase())) {
                               searchItemList!.add(element);
-                            } else if ((element.lastname!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.lastname!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.email!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.email!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.mailingzip!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.mailingzip!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
-                            } else if ((element.otherzip!.toLowerCase().contains(searchKey.toLowerCase()))) {
+                            } else if ((element.otherzip!
+                                .toLowerCase()
+                                .contains(searchKey.toLowerCase()))) {
                               searchItemList!.add(element);
                             }
                           }*/
@@ -222,32 +242,34 @@ class _ContactScreenState extends State<ContactScreen> {
                             firstTimeLoad();
                           }
                         },
+                        style: TextStyle(fontSize: 16.sp),
                         keyboardType: TextInputType.text,
                         autofocus: false,
                         decoration: InputDecoration(
-                            hintText: LabelString.lblSearch,
-                            suffixIcon: Container(
-                                decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: const BorderRadius.only(
-                                        topRight: Radius.circular(5),
-                                        bottomRight: Radius.circular(5))),
-                                child: Icon(Icons.search,
-                                    color: AppColors.whiteColor, size: 15.sp)),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                borderSide: BorderSide(
-                                    width: 2, color: AppColors.primaryColor)),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                borderSide: BorderSide(
-                                    width: 2, color: AppColors.primaryColor)),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                borderSide: BorderSide(
-                                    width: 2, color: AppColors.primaryColor)),
-                            contentPadding: EdgeInsets.only(
-                                left: 10.sp, top: 0, bottom: 0),
+                          hintText: LabelString.lblSearch,
+                          hintStyle: TextStyle(fontSize: 16.sp),
+                          suffixIcon: Container(
+                              decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(5),
+                                      bottomRight: Radius.circular(5))),
+                              child: Icon(Icons.search,
+                                  color: AppColors.whiteColor, size: 20.sp)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                  width: 2, color: AppColors.primaryColor)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                  width: 2, color: AppColors.primaryColor)),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              borderSide: BorderSide(
+                                  width: 2, color: AppColors.primaryColor)),
+                          contentPadding:
+                              EdgeInsets.only(left: 10.sp, top: 0, bottom: 0),
                         ));
                   }),
                 ),
@@ -282,7 +304,7 @@ class _ContactScreenState extends State<ContactScreen> {
             }
           }
           if (contactItems!.length == _totalSize) {
-           // _hasNextPage = false;
+            // _hasNextPage = false;
           }
 
           isDelete = false;
@@ -325,26 +347,44 @@ class _ContactScreenState extends State<ContactScreen> {
                                     curve: Curves.decelerate,
                                     child: FadeInAnimation(
                                       child: Padding(
-                                        padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
+                                        padding: EdgeInsets.only(
+                                            left: 15.sp, right: 15.sp),
                                         child: Card(
                                             shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(12.sp)),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        12.sp)),
                                             elevation: 2,
                                             child: Consumer<WidgetChange>(
-                                              builder: (context, contactId, updateBudget) {
+                                              builder: (context, contactId,
+                                                  updateBudget) {
                                                 return InkWell(
                                                   onTap: () {
                                                     //change string value with use of provider
-                                                   /* if (searchKey.isNotEmpty) {
+                                                    /* if (searchKey.isNotEmpty) {
                                                       Provider.of<WidgetChange>(context,listen: false).updateContact(searchItemList![index].id.toString());
                                                       setContactId = contactId.updateContactId.toString();
                                                     } else {*/
-                                                      Provider.of<WidgetChange>(context, listen: false).updateContact(contactItems![index].id.toString());
-                                                      setContactId = contactId.updateContactId.toString();
-                                                   // }
-                                                    Navigator.push(context,
-                                                            PageTransition(type: PageTransitionType.rightToLeft,
-                                                                child: ContactDetail(setContactId, "contact", "")))
+                                                    Provider.of<WidgetChange>(
+                                                            context,
+                                                            listen: false)
+                                                        .updateContact(
+                                                            contactItems![index]
+                                                                .id
+                                                                .toString());
+                                                    setContactId = contactId
+                                                        .updateContactId
+                                                        .toString();
+                                                    // }
+                                                    Navigator.push(
+                                                            context,
+                                                            PageTransition(
+                                                                type: PageTransitionType
+                                                                    .rightToLeft,
+                                                                child: ContactDetail(
+                                                                    setContactId,
+                                                                    "contact",
+                                                                    "")))
                                                         .then((value) {
                                                       if (value == "delete") {
                                                         firstTimeLoad();
@@ -353,24 +393,48 @@ class _ContactScreenState extends State<ContactScreen> {
                                                   },
                                                   child: Container(
                                                     decoration: BoxDecoration(
-                                                        color: AppColors.whiteColor,
-                                                        borderRadius: BorderRadius.circular(12.sp)),
+                                                        color: AppColors
+                                                            .whiteColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    12.r)),
                                                     child: Padding(
-                                                      padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 15.sp),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 10.sp,
+                                                              horizontal:
+                                                                  16.sp),
                                                       child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .end,
                                                         children: [
                                                           Expanded(
                                                             child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
                                                               children: [
                                                                 Text(
                                                                     /*searchKey.isNotEmpty
                                                                         ? searchItemList![index].contactName.toString()
-                                                                        : */contactItems![index].contactName.toString(),
-                                                                    style: CustomTextStyle.labelMediumBoldFontText),
-                                                                SizedBox(height: 1.3.h),
+                                                                        : */
+                                                                    contactItems![index]
+                                                                        .contactName
+                                                                        .toString(),
+                                                                    style: GoogleFonts.roboto(
+                                                                        textStyle: TextStyle(
+                                                                            fontSize:
+                                                                                18.sp,
+                                                                            fontWeight: FontWeight.w500,
+                                                                            color: Colors.black))),
+                                                                SizedBox(
+                                                                    height:
+                                                                        4.h),
                                                                 InkWell(
                                                                   onTap: () {
                                                                     /*if (searchKey
@@ -382,28 +446,44 @@ class _ContactScreenState extends State<ContactScreen> {
                                                                               .toString(),
                                                                           context);
                                                                     } else {*/
-                                                                      sendMail(contactItems![index].email.toString(),context);
-                                                                    },
-                                                                 // },
+                                                                    sendMail(
+                                                                        contactItems![index]
+                                                                            .email
+                                                                            .toString(),
+                                                                        context);
+                                                                  },
+                                                                  // },
                                                                   child: Text(
                                                                       /*searchKey
                                                                               .isNotEmpty
                                                                           ? searchItemList![index]
                                                                               .email
                                                                               .toString()
-                                                                          :*/ contactItems![index].email.toString(),
+                                                                          :*/
+                                                                      contactItems![index]
+                                                                          .email
+                                                                          .toString(),
                                                                       style: GoogleFonts.roboto(
-                                                                          textStyle: TextStyle(fontSize: 12.sp,
+                                                                          textStyle: TextStyle(
+                                                                              fontSize: 12.sp,
                                                                               color: AppColors.primaryColor))),
                                                                 ),
-                                                                SizedBox(height: 0.7.h),
-                                                                InkWell(onTap: () => callFromApp(/*searchKey
+                                                                SizedBox(
+                                                                    height:
+                                                                        2.h),
+                                                                InkWell(
+                                                                  onTap: () =>
+                                                                      callFromApp(
+                                                                          /*searchKey
                                                                           .isNotEmpty
                                                                       ? searchItemList![
                                                                               index]
                                                                           .mobile
                                                                           .toString()
-                                                                      : */contactItems![index].mobile.toString()),
+                                                                      : */
+                                                                          contactItems![index]
+                                                                              .mobile
+                                                                              .toString()),
                                                                   child: Text(
                                                                       /*searchKey
                                                                               .isNotEmpty
@@ -411,19 +491,29 @@ class _ContactScreenState extends State<ContactScreen> {
                                                                                   index]
                                                                               .mobile
                                                                               .toString()
-                                                                          : */contactItems![index].mobile.toString(),
-                                                                      style: CustomTextStyle.labelText),
+                                                                          : */
+                                                                      contactItems![
+                                                                              index]
+                                                                          .mobile
+                                                                          .toString(),
+                                                                      style: CustomTextStyle
+                                                                          .labelText),
                                                                 )
                                                               ],
                                                             ),
                                                           ),
                                                           Row(
                                                             children: [
-                                                              Text(LabelString.lblViewMore,
-                                                                  style: CustomTextStyle.commonText),
-                                                              SizedBox(width: 2.w),
-                                                              Image.asset(ImageString.imgViewMore,
-                                                                  height: 2.h)
+                                                              // Text(LabelString.lblViewMore,
+                                                              //     style:
+                                                              //         CustomTextStyle.commonText),
+                                                              // SizedBox(width: 2.w),
+                                                              Image.asset(
+                                                                ImageString
+                                                                    .imgViewMore,
+                                                                height: 15.h,
+                                                                width: 15.w,
+                                                              )
                                                             ],
                                                           )
                                                         ],
@@ -438,7 +528,8 @@ class _ContactScreenState extends State<ContactScreen> {
                                   ),
                                 );
                               },
-                              separatorBuilder: (BuildContext context, int index) {
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
                                 return Container(height: 10.sp);
                               },
                             ),
@@ -446,7 +537,8 @@ class _ContactScreenState extends State<ContactScreen> {
                         ),
                         if (_isLoadMoreRunning == true)
                           Padding(
-                              padding: const EdgeInsets.only(top: 10, bottom: 20),
+                              padding:
+                                  const EdgeInsets.only(top: 10, bottom: 20),
                               child: Center(child: loadingView())),
                       ],
                     ),
@@ -460,7 +552,7 @@ class _ContactScreenState extends State<ContactScreen> {
   //Add contact button
   SizedBox buildAddContactButton(BuildContext context) {
     return SizedBox(
-      height: 8.h,
+      height: 55.h,
       child: FittedBox(
           child: FloatingActionButton.small(
               elevation: 0,
@@ -541,7 +633,8 @@ class ContactDetail extends StatelessWidget {
 
   var contactList;
 
-  ContactDetail(this.id, this.quote, this.dropdownvalue, {Key? key, this.dataQuote, this.contactList})
+  ContactDetail(this.id, this.quote, this.dropdownvalue,
+      {Key? key, this.dataQuote, this.contactList})
       : super(key: key);
 
   Future<dynamic>? getDetail;
@@ -581,128 +674,200 @@ class ContactDetail extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
                                           IconButton(
-                                              onPressed: () => callNextScreen(context,AddContactPage(id.toString())),
-                                              icon: Image.asset(ImageString.icEdit,
-                                                  height: 2.5.h)),
+                                              onPressed: () => callNextScreen(
+                                                  context,
+                                                  AddContactPage(
+                                                      id.toString())),
+                                              icon: Image.asset(
+                                                ImageString.icEdit,
+                                                height: 14.h,
+                                                width: 14.w,
+                                              )),
                                           SizedBox(height: 2.h),
                                           if (quote != "quote")
                                             InkWell(
                                               onTap: () {
                                                 //Dialog to confirm delete contact or not
-                                                showDialog(context: context,
+                                                showDialog(
+                                                  context: context,
                                                   barrierDismissible: false,
-                                                  builder: (ctx) => ValidationDialog(
+                                                  builder: (ctx) =>
+                                                      ValidationDialog(
                                                     Message.deleteContact,
                                                     //Yes button
                                                     () {
                                                       isDelete = true;
-                                                      deleteContact(id.toString());
+                                                      deleteContact(
+                                                          id.toString());
                                                       Navigator.pop(context);
-                                                      Navigator.pop(context, "delete");
+                                                      Navigator.pop(
+                                                          context, "delete");
                                                     },
-                                                    () => Navigator.pop(context), //No button
+                                                    () => Navigator.pop(
+                                                        context), //No button
                                                   ),
                                                 );
                                               },
                                               child: Image.asset(
-                                                  ImageString.icDelete,
-                                                  height: 2.5.h),
+                                                ImageString.icDelete,
+                                                height: 14.h,
+                                                width: 14.w,
+                                              ),
                                             ),
                                           IconButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              icon: Icon(Icons.close_rounded, color: AppColors.blackColor),
-                                              highlightColor: AppColors.transparent,
-                                              splashColor: AppColors.transparent)
+                                              icon: Icon(Icons.close_rounded,
+                                                  size: 20.sp,
+                                                  color: AppColors.blackColor),
+                                              highlightColor:
+                                                  AppColors.transparent,
+                                              splashColor:
+                                                  AppColors.transparent)
                                         ],
                                       ),
                                       Text(
                                           "${dataContact["firstname"].toString().isNotEmpty ? dataContact["firstname"].toString().capitalize() : dataContact["firstname"]} "
                                           "${dataContact["lastname"].toString().isNotEmpty ? dataContact["lastname"].toString().capitalize() : dataContact["lastname"]}",
                                           style: GoogleFonts.roboto(
-                                              textStyle: TextStyle(fontSize: 20.sp,
+                                              textStyle: TextStyle(
+                                                  fontSize: 24.sp,
                                                   color: AppColors.fontColor,
-                                                  fontWeight: FontWeight.w500))),
-                                      SizedBox(height: 3.h),
+                                                  fontWeight:
+                                                      FontWeight.w500))),
+                                      SizedBox(height: 15.h),
                                       Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          SvgPicture.asset(ImageString.icCompany,
-                                              height: 2.h,
+                                          SvgPicture.asset(
+                                              ImageString.icCompany,
+                                              height: 16.h,
+                                              width: 16.w,
                                               color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 5.w),
                                           Expanded(
-                                              child: (dropdownvalue != "" && dropdownvalue.isNotEmpty)
-                                                  ? Text(dropdownvalue["name"] == "" ? "" : dropdownvalue["name"],
-                                                      style: CustomTextStyle.labelText) : dataQuote != null ?
-                                              Text(dataQuote["quotes_company"] ?? "",style: CustomTextStyle.labelText,)
-                                                  : Text(dataContact["contact_company"] == "" ? " " :
-                                                      dataContact["contact_company"],
-                                                      style: CustomTextStyle.labelText))
+                                              child: (dropdownvalue != "" &&
+                                                      dropdownvalue.isNotEmpty)
+                                                  ? Text(
+                                                      dropdownvalue["name"] ==
+                                                              ""
+                                                          ? ""
+                                                          : dropdownvalue[
+                                                              "name"],
+                                                      style: CustomTextStyle
+                                                          .labelText)
+                                                  : dataQuote != null
+                                                      ? Text(
+                                                          dataQuote[
+                                                                  "quotes_company"] ??
+                                                              "",
+                                                          style: CustomTextStyle
+                                                              .labelText,
+                                                        )
+                                                      : Text(
+                                                          dataContact["contact_company"] ==
+                                                                  ""
+                                                              ? " "
+                                                              : dataContact[
+                                                                  "contact_company"],
+                                                          style: CustomTextStyle
+                                                              .labelText))
                                         ],
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           SvgPicture.asset(ImageString.icPhone,
-                                              height: 2.h,
+                                              height: 16.h,
+                                              width: 16.w,
                                               color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 5.w),
                                           Expanded(
                                             child: RichText(
                                               text: TextSpan(children: [
                                                 TextSpan(
                                                     text: dataContact["mobile"],
-                                                    style: CustomTextStyle.labelText,
+                                                    style: CustomTextStyle
+                                                        .labelText,
                                                     recognizer: TapGestureRecognizer()
-                                                      ..onTap = () => callFromApp(dataContact["mobile"].toString())),
+                                                      ..onTap = () =>
+                                                          callFromApp(
+                                                              dataContact[
+                                                                      "mobile"]
+                                                                  .toString())),
                                                 WidgetSpan(
-                                                    child: dataContact["phone"] == "" ||
-                                                            dataContact["mobile"] == ""
+                                                    child: dataContact[
+                                                                    "phone"] ==
+                                                                "" ||
+                                                            dataContact[
+                                                                    "mobile"] ==
+                                                                ""
                                                         ? Container()
                                                         : Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                                            child: Container(height: 2.5.h,
-                                                                width: 0.3.w,
-                                                                color: AppColors.blackColor),
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        8.sp),
+                                                            child: Container(
+                                                                height: 15.h,
+                                                                width: 1.w,
+                                                                color: AppColors
+                                                                    .blackColor),
                                                           )),
                                                 TextSpan(
                                                     text: dataContact["phone"],
-                                                    style: CustomTextStyle.labelText,
+                                                    style: CustomTextStyle
+                                                        .labelText,
                                                     recognizer:
                                                         TapGestureRecognizer()
                                                           ..onTap = () =>
-                                                              callFromApp(dataContact["phone"].toString()))
+                                                              callFromApp(
+                                                                  dataContact[
+                                                                          "phone"]
+                                                                      .toString()))
                                               ]),
                                             ),
                                           )
                                         ],
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       Text.rich(
                                         TextSpan(
                                           children: [
                                             WidgetSpan(
                                                 child: Icon(
-                                                    Icons.email_outlined,
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                    size: 13.sp)),
+                                              Icons.email_outlined,
+                                              color: AppColors.primaryColor,
+                                              size: 18.sp,
+                                            )),
                                             WidgetSpan(
-                                                child: SizedBox(width: 2.w)),
+                                                child: SizedBox(width: 5.w)),
                                             TextSpan(
                                                 text: dataContact["email"]
                                                     .toString(),
                                                 style: GoogleFonts.roboto(
                                                     textStyle: TextStyle(
-                                                        fontSize: 12.sp,
+                                                        fontSize: 14.sp,
                                                         color: AppColors
                                                             .primaryColor)),
                                                 recognizer:
@@ -719,30 +884,38 @@ class ContactDetail extends StatelessWidget {
                                                     "${dataContact["secondaryemail"]}",
                                                 style: GoogleFonts.roboto(
                                                     textStyle: TextStyle(
-                                                        fontSize: 12.sp,
+                                                        fontSize: 14.sp,
                                                         color: AppColors
                                                             .primaryColor)),
                                                 recognizer:
                                                     TapGestureRecognizer()
                                                       ..onTap = () {
                                                         sendMail(
-                                                            dataContact["secondaryemail"]
+                                                            dataContact[
+                                                                    "secondaryemail"]
                                                                 .toString(),
                                                             context);
                                                       })
                                           ],
                                         ),
                                       ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                       Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           SvgPicture.asset(
                                               ImageString.icAddress,
-                                              height: 2.h,
+                                              height: 16.h,
+                                              width: 16.w,
                                               color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 5.w),
                                           Expanded(
                                             child: RichText(
                                               text: TextSpan(
@@ -754,11 +927,71 @@ class ContactDetail extends StatelessWidget {
                                                           color: AppColors
                                                               .primaryColor,
                                                           fontWeight:
-                                                              FontWeight.bold)),
+                                                              FontWeight.w500)),
                                                   children: [
                                                     TextSpan(
                                                         text:
                                                             "\n${dataContact["mailingstreet"]}, ${dataContact["mailingcity"]}, ${dataContact["mailingcountry"]}, ${dataContact["mailingzip"]}",
+                                                        style: GoogleFonts.roboto(
+                                                            textStyle: TextStyle(
+                                                                height: 1.5,
+                                                                fontSize: 14.sp,
+                                                                color: AppColors
+                                                                    .blackColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal)))
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
+                                      divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                              ImageString.icAddress,
+                                              height: 16.h,
+                                              width: 16.w,
+                                              color: AppColors.primaryColor),
+                                          SizedBox(width: 5.w),
+                                          Expanded(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  text: LabelString
+                                                      .lblInstallationAddress,
+                                                  style: GoogleFonts.roboto(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 14.sp,
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                          fontWeight:
+                                                              FontWeight.w500)),
+                                                  children: [
+                                                    TextSpan(
+                                                        text: (dropdownvalue !=
+                                                                    "" &&
+                                                                dropdownvalue
+                                                                    .isNotEmpty)
+                                                            ? "\n${dropdownvalue["address"]}, ${dropdownvalue["city"]}, "
+                                                                "${dropdownvalue["country"]}, ${dropdownvalue["postcode"]}"
+                                                            : dataQuote != null
+                                                                ? "\n${dataQuote["ship_street"]}, "
+                                                                    "${dataQuote["ship_city"]}, ${dataQuote["ship_country"]}, ${dataQuote["ship_pobox"]}"
+                                                                : contactList !=
+                                                                        null
+                                                                    ? "\n${contactList.serConAddress}, ${contactList.serConCity}, "
+                                                                        "${contactList.serConCountry}, ${contactList.postcode}"
+                                                                    : "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, "
+                                                                        "${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
                                                         style: GoogleFonts.roboto(
                                                             textStyle: TextStyle(
                                                                 height: 1.5,
@@ -773,41 +1006,13 @@ class ContactDetail extends StatelessWidget {
                                           )
                                         ],
                                       ),
-                                      divider(),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SvgPicture.asset(ImageString.icAddress,
-                                              height: 2.h,
-                                              color: AppColors.primaryColor),
-                                          SizedBox(width: 2.w),
-                                          Expanded(
-                                            child: RichText(
-                                              text: TextSpan(
-                                                  text: LabelString.lblInstallationAddress,
-                                                  style: GoogleFonts.roboto(
-                                                      textStyle: TextStyle(fontSize: 14.sp,
-                                                          color: AppColors.primaryColor,
-                                                          fontWeight:FontWeight.bold)),
-                                                  children: [
-                                                    TextSpan(
-                                                        text:
-                                                        (dropdownvalue != "" && dropdownvalue.isNotEmpty)
-                                                            ? "\n${dropdownvalue["address"]}, ${dropdownvalue["city"]}, " "${dropdownvalue["country"]}, ${dropdownvalue["postcode"]}"
-                                                            : dataQuote != null ? "\n${dataQuote["ship_street"]}, " "${dataQuote["ship_city"]}, ${dataQuote["ship_country"]}, ${dataQuote["ship_pobox"]}"
-                                                            : contactList != null ? "\n${contactList.serConAddress}, ${contactList.serConCity}, ""${contactList.serConCountry}, ${contactList.postcode}"
-                                                            : "\n${dataContact["otherstreet"]}, ${dataContact["othercity"]}, " "${dataContact["othercountry"]}, ${dataContact["otherzip"]}",
-                                                        style: GoogleFonts.roboto(
-                                                            textStyle: TextStyle(height: 1.5,
-                                                                fontSize: 12.sp,
-                                                                color: AppColors.blackColor,
-                                                                fontWeight: FontWeight.normal)))
-                                                  ]),
-                                            ),
-                                          )
-                                        ],
+                                      SizedBox(
+                                        height: 10.h,
                                       ),
                                       divider(),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
                                     ],
                                   ),
                                 ),
