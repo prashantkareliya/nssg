@@ -79,9 +79,8 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   splashColor: AppColors.transparent,
                   onTap: () {
                     Navigator.pop(context);
-                    callNextScreen(
-                        context,
-                        AddQuotePage(true, "installation", "contract",
+                    callNextScreen(context,
+                        AddQuotePage(true, "Installation", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
@@ -95,9 +94,8 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   splashColor: AppColors.transparent,
                   onTap: () {
                     Navigator.pop(context);
-                    callNextScreen(
-                        context,
-                        AddQuotePage(true, "breakdown", "contract",
+                    callNextScreen(context,
+                        AddQuotePage(true, "Breakdown", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },
@@ -111,9 +109,8 @@ class _QuoteTypeSelectionState extends State<QuoteTypeSelection> {
                   splashColor: AppColors.transparent,
                   onTap: () {
                     Navigator.pop(context);
-                    callNextScreen(
-                        context,
-                        AddQuotePage(true, "service", "contract",
+                    callNextScreen(context,
+                        AddQuotePage(true, "Service", "contract",
                             contactId: widget.contractList.scRelatedTo,
                             contractList: widget.contractList));
                   },

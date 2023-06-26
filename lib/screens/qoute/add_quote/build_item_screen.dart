@@ -353,9 +353,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                   .map((e) => buildDetailItemTile(e, context, state))
                                   .toList(),
                               onReorder: (oldIndex, newIndex) {
-                                context
-                                    .read<ProductListBloc>()
-                                    .add(ChangeProductOrderEvent(oldIndex, newIndex));
+                                context.read<ProductListBloc>().add(ChangeProductOrderEvent(oldIndex, newIndex));
                               },
                             ),
                             SizedBox(height: query.height * 0.08)
@@ -413,13 +411,11 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
               onPressed: () {
                 callNextScreen(context, const SearchAndAddProduct());
               },
-              child: Lottie.asset('assets/lottie/adding.json')),
-        ),
-      ),
-    );
+              child: Lottie.asset('assets/lottie/adding.json')))));
   }
 
   Padding quoteEstimationWidget(Size query, List<ProductsList> productList) {
+
     return Padding(
       padding: EdgeInsets.only(left: 6.sp, right: 6.sp, top: 5, bottom: 5),
       child: Container(
@@ -462,31 +458,32 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                     elevation: 0,
                                     insetAnimationCurve: Curves.decelerate,
                                     insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                    child: QuoteEstimation(
-                                        dataQuote: widget.dataQuote, "createQuote"));
+                                    child: QuoteEstimation(dataQuote: widget.dataQuote, "createQuote",
+                                        engineersNumber: widget.engineerNumbers, timeType: widget.timeType, eAmount: widget.eAmount));
                               }).then((value) {
                             if (value != null) {
-                              setState(() {
-                                widget.eAmount = value["keyAmount"];
+                              //setState(() {
+                               /* widget.eAmount = value["keyAmount"];
                                 widget.engineerNumbers = value["keyEngineerNumbers"];
-                                widget.timeType = value["keyTimeType"];
-                              });
+                                widget.timeType = value["keyTimeType"];*/
+                              //});
+                              List<ProductsList> listTest = context.read<ProductListBloc>().state.productList;
+                              print(listTest);
                               var profit = (double.parse(value["keyAmount"]) -
-                                      double.parse(productList.first.costPrice.toString()))
-                                  .formatAmount();
+                                      double.parse(listTest.first.costPrice.toString())).formatAmount();
                               context.read<ProductListBloc>().add(
                                     UpdateProductToListEvent(
                                         productsList: ProductsList(
-                                            itemId: productList.first.itemId,
-                                            productId: productList.first.productId,
-                                            itemName: productList.first.itemName,
-                                            costPrice: productList.first.costPrice,
+                                            itemId: listTest.first.itemId,
+                                            productId: listTest.first.productId,
+                                            itemName: listTest.first.itemName,
+                                            costPrice: listTest.first.costPrice,
                                             sellingPrice: value["keyAmount"],
-                                            quantity: productList.first.quantity,
-                                            discountPrice: productList.first.discountPrice,
+                                            quantity: listTest.first.quantity,
+                                            discountPrice: listTest.first.discountPrice,
                                             amountPrice: value["keyAmount"].toString(),
                                             profit: profit.toString(),
-                                            description: productList.first.description,
+                                            description: listTest.first.description,
                                             productImage: "")),
                                   );
                             }
@@ -658,10 +655,7 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                       Expanded(
                           flex: 1,
                           child: products.itemName!.contains("Installation")
-                              ? Lottie.asset(
-                                  'assets/lottie/gear.json',
-                                  height: 60.h,
-                                )
+                              ? Lottie.asset('assets/lottie/gear.json', height: 60.h)
                               : products.productImage == null || products.productImage == ""
                                   ? SvgPicture.asset(ImageString.imgPlaceHolder, height: 8.h)
                                   : Padding(
@@ -1069,7 +1063,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         issueNumber: "1",
         gradeNumber: widget.gradeFireSelect,
         systemType: widget.systemTypeSelect,
-        signallingType: widget.signallingTypeSelect,
+        signallingType: "",
+        signallingGradeNo: widget.signallingTypeSelect, //this is as signalling grade number
         premisesType: widget.premisesTypeSelect,
         projectManager: preferences.getString(PreferenceString.userId).toString(),
         quotesEmail: widget.contactEmail,
@@ -1232,7 +1227,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         issueNumber: "1",
         gradeNumber: widget.gradeFireSelect,
         systemType: widget.systemTypeSelect,
-        signallingType: widget.signallingTypeSelect,
+        signallingType: widget.dataQuote["signalling_type"],
+        signallingGradeNo: widget.signallingTypeSelect, //this is as signalling grade number
         premisesType: widget.premisesTypeSelect,
         projectManager: projectManager.toString(),
         quotesEmail: widget.contactEmail,
@@ -1384,7 +1380,8 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
         issueNumber: "1",
         gradeNumber: widget.gradeFireSelect,
         systemType: widget.systemTypeSelect,
-        signallingType: widget.signallingTypeSelect,
+        signallingType: widget.dataQuote["signalling_type"],
+        signallingGradeNo: widget.signallingTypeSelect, //this is as signalling grade number
         premisesType: widget.premisesTypeSelect,
         projectManager: projectManager.toString(),
         quotesEmail: widget.contactEmail,

@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nssg/pincode_screen.dart';
+import 'package:nssg/screens/engineersApp/engineer_dashboard/job_schedule.dart';
+import 'package:nssg/screens/engineersApp/engineer_dashboard/engineer_root_screen.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
 import 'package:nssg/utils/app_colors.dart';
 import 'package:nssg/utils/widgetChange.dart';
@@ -11,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:sizer/sizer.dart';
 import 'constants/strings.dart';
+import 'pincode_screen.dart';
 import 'screens/authentication/login/login_screen.dart';
 
 void main() {
@@ -90,7 +93,8 @@ class _CheckingScreenState extends State<CheckingScreen> {
     if (preferences.getString(PreferenceString.sessionName) != null) {
       //callNextScreen(context, LoginScreen("isLogin"));
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (c) => const PinCodeScreen()), (route) => false);
+          MaterialPageRoute(builder: (c) => const PinCodeScreen() /*const EngineerRootScreen()*/),
+          (route) => false);
     } else {
       // callNextScreen(context, LoginScreen("isNotLogin"));
       Navigator.of(context).pushAndRemoveUntil(

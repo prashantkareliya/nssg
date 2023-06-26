@@ -5,7 +5,6 @@ import '../../contact_repository.dart';
 import '../contact_model_dir/get_contact_response_model.dart';
 
 part 'get_contact_event.dart';
-
 part 'get_contact_state.dart';
 
 class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
@@ -21,7 +20,6 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
     on<DeleteContactEvent>((event, emit) {
       return deleteContactEvent(event, emit);
     });
-
   }
 
   //get contact list bloc method
@@ -32,10 +30,8 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
     final response = await contactRepository.getContact(event.queryParameters);
 
     response.when(success: (success) {
-      emit(ContactLoadingState(false));
       emit(ContactsLoaded(contactList: success.result));
     }, failure: (failure) {
-      emit(ContactLoadingState(false));
       emit(ContactLoadFail(error: failure.toString()));
     });
   }
@@ -44,7 +40,8 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
   deleteContactEvent(
       DeleteContactEvent event, Emitter<GetContactState> emit) async {
     emit(ContactLoadingState(true));
-    final response = await contactRepository.contactDelete(event.queryParameters);
+    final response =
+        await contactRepository.contactDelete(event.queryParameters);
 
     response.when(success: (success) {
       emit(ContactLoadingState(false));
@@ -54,5 +51,4 @@ class GetContactBloc extends Bloc<GetContactEvent, GetContactState> {
       emit(ContactLoadFail(error: failure.toString()));
     });
   }
-
 }

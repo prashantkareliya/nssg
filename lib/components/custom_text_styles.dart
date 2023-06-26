@@ -61,9 +61,22 @@ class CustomTextStyle {
           color: AppColors.hintFontColor));
 
   static TextStyle commonStyle = GoogleFonts.roboto(
-      textStyle: TextStyle(
-          fontSize: 10.sp,
+      textStyle: TextStyle(fontSize: 10.sp,
           fontWeight: FontWeight.normal,
           fontStyle: FontStyle.normal,
+          color: AppColors.blackColor));
+
+  static TextStyle specialText = GoogleFonts.roboto(
+      textStyle: TextStyle(fontSize: 15.sp,
+          fontWeight: FontWeight.w600,
+          fontStyle: FontStyle.normal,
+          letterSpacing: 1,
+          color: AppColors.whiteColor));
+
+  static TextStyle engineerCommonText = GoogleFonts.roboto(
+      textStyle: TextStyle(fontSize: 10.sp,
+          fontWeight: FontWeight.normal,
+          fontStyle: FontStyle.normal,
+          letterSpacing: 1,
           color: AppColors.blackColor));
 }

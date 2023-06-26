@@ -32,10 +32,10 @@ class _SelectLocationState extends State<SelectLocation> {
     for (int i = 0; i < widget.quantity; i++) {
       try {
         textControllers.add(TextEditingController(text: widget.locations?[i]));
-        titleControllers.add(widget.productTitle);
-      } catch (e) {
+        titleControllers.add(widget.productTitle ?? "");
+      }catch(e) {
         textControllers.add(TextEditingController());
-        titleControllers.add(widget.productTitle);
+        titleControllers.add(widget.productTitle ?? "");
       }
     }
   }

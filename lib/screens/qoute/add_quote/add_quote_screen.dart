@@ -394,51 +394,57 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     },
                   ),
                 ),
-                FutureBuilder<dynamic>(
-                  //Call API for set quote fields
-                  future: getFields,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var fieldsData = snapshot.data["result"];
-                      return Expanded(
-                        child: InkWell(
-                          onTap: () => FocusScope.of(context).unfocus(),
-                          highlightColor: AppColors.transparent,
-                          splashColor: AppColors.transparent,
-                          focusColor: AppColors.transparent,
-                          child: PageView(
-                            scrollDirection: Axis.horizontal,
-                            pageSnapping: true,
-                            physics: const BouncingScrollPhysics(),
-                            controller: pageController,
-                            onPageChanged: (number) {
-                              streamController.add(number);
-                              Provider.of<WidgetChange>(context, listen: false)
-                                  .pageNumber(number.toString());
-                              page = Provider.of<WidgetChange>(context,
-                                      listen: false)
-                                  .pageNo;
-                            },
-                            children: [
-                              //Premises type and contact selection design
-                              buildStepOne(context, query, fieldsData),
+                if (state is ContactLoadingState) ...[
+                  SizedBox(height: 70.h, child: loadingView())
+                ] else ...[
+                  FutureBuilder<dynamic>(
+                    //Call API for set quote fields
+                    future: getFields,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var fieldsData = snapshot.data["result"];
+                        return Expanded(
+                          child: InkWell(
+                            onTap: () => FocusScope.of(context).unfocus(),
+                            highlightColor: AppColors.transparent,
+                            splashColor: AppColors.transparent,
+                            focusColor: AppColors.transparent,
+                            child: PageView(
+                              scrollDirection: Axis.horizontal,
+                              pageSnapping: true,
+                              physics: const BouncingScrollPhysics(),
+                              controller: pageController,
+                              onPageChanged: (number) {
+                                streamController.add(number);
+                                Provider.of<WidgetChange>(context,
+                                        listen: false)
+                                    .pageNumber(number.toString());
+                                page = Provider.of<WidgetChange>(context,
+                                        listen: false)
+                                    .pageNo;
+                              },
+                              children: [
+                                //Premises type and contact selection design
+                                buildStepOne(context, query, fieldsData),
 
-                              //System type selection design
-                              buildStepTwo(context, query, fieldsData),
+                                //System type selection design
+                                buildStepTwo(context, query, fieldsData),
 
-                              //Grade - Signalling type design
-                              buildStepThree(context, query, fieldsData),
-                            ],
+                                //Grade - Signalling type design
+                                buildStepThree(context, query, fieldsData),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      final message = HandleAPI.handleAPIError(snapshot.error);
-                      return Text(message);
-                    }
-                    return SizedBox(height: 70.h, child: loadingView());
-                  },
-                ),
+                        );
+                      } else if (snapshot.hasError) {
+                        final message =
+                            HandleAPI.handleAPIError(snapshot.error);
+                        return Text(message);
+                      }
+                      return SizedBox(height: 70.h, child: loadingView());
+                    },
+                  ),
+                ],
               ],
             );
           },
@@ -448,7 +454,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
   }
 
   ///step 1- Premises type and select contact
-  Padding buildStepOne(BuildContext context, Size query, stepOneData) {
+  Widget buildStepOne(BuildContext context, Size query, stepOneData) {
     ValueNotifier<bool> notifier = ValueNotifier(false);
     //Contact name shows in all different conditions.
     String contactName = "";
@@ -464,367 +470,380 @@ class _AddQuotePageState extends State<AddQuotePage> {
       contactName = "${widget.firstName}${widget.lastName}";
     }
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            //Design Auto filled contact
-            Autocomplete(
-              initialValue: TextEditingValue(text: contactName),
-              fieldViewBuilder: (context, textEditingController, focusNode,
-                  VoidCallback onFieldSubmitted) {
-                FocusNode focus = focusNode;
-                if (dataQuote != null) {
-                  contactSelect = dataQuote["contact_name"];
-                } else if (contractList != null) {
-                  contactSelect = contractList.subject.toString().contains("-")
-                      ? contractList.subject.toString().substring(
-                          0, contractList.subject.toString().indexOf("-"))
-                      : contractList.subject.toString();
-                }
-                //dataQuote != null ? contactSelect = dataQuote["contact_name"] : "";
-                textEditingController.text = contactSelect;
-                return TextField(
-                  autofocus:
-                      widget.isBack || dataQuote != null || contractList != null
-                          ? false
-                          : true,
-                  style:
-                      TextStyle(color: AppColors.blackColor, fontSize: 16.sp),
-                  textCapitalization: TextCapitalization.none,
-                  textInputAction: TextInputAction.next,
-                  maxLines: 1,
-                  keyboardType: TextInputType.name,
-                  cursorColor: AppColors.blackColor,
-                  decoration: InputDecoration(
-                      suffixIcon:
-                          Icon(Icons.search, color: AppColors.blackColor),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                              width: 2, color: AppColors.primaryColor)),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                              width: 2, color: AppColors.primaryColor)),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                              width: 2, color: AppColors.primaryColor)),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.only(left: 12.sp),
-                      hintText: LabelString.lblTypeToSearch,
-                      hintStyle: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                              fontSize: 16.sp, color: AppColors.hintFontColor)),
-                      counterText: ""),
-                  controller: textEditingController,
-                  focusNode: focus,
-                  onEditingComplete: () {},
-                  onSubmitted: (String value) {},
-                  onChanged: (value) {
-                    focus = focusNode;
-                    focus.requestFocus();
-                  },
-                );
-              },
-              optionsBuilder: (TextEditingValue textEditingValue) async {
-                if (textEditingValue.text.isEmpty) {
-                  return const Iterable<String>.empty();
-                } else {
-                  List<String> matchesContact = <String>[];
-                  matchesContact.addAll(contactData.map((e) {
-                    return "${e["firstname"].trim()} ${e["lastname"].trim()} - ${e["otherstreet"]}";
-                  }));
-
-                  matchesContact = matchesContact
-                      .where((element) => element
-                          .toLowerCase()
-                          .contains(textEditingValue.text.toLowerCase().trim()))
-                      .toList();
-                  return matchesContact;
-                }
-              },
-              onSelected: (selection) async {
-                FocusScope.of(context).unfocus();
-                getSiteAddressList();
-                for (int i = 0; i < contactData.length; i++) {
-                  if (selection ==
-                      "${contactData[i]["firstname"]} ${contactData[i]["lastname"]} - ${contactData[i]["otherstreet"]}") {
-                    contactId = contactData[i]["id"];
-                    contactCompany = contactData[i]["contact_company"];
-                    mobileNumber = contactData[i]["mobile"];
-                    telephoneNumber = contactData[i]["phone"];
-                    contactEmail = contactData[i]["email"];
-                    contactSelect = selection;
-
-                    //When select contact, set address in fields
-                    invoiceAddress = contactData[i]["mailingstreet"];
-                    invoiceCity = contactData[i]["mailingcity"];
-                    invoiceCountry = contactData[i]["mailingcountry"];
-                    invoicePostal = contactData[i]["mailingzip"];
-
-                    installationAddress = contactData[i]["otherstreet"];
-                    installationCity = contactData[i]["othercity"];
-                    installationCountry = contactData[i]["othercountry"];
-                    installationPostal = contactData[i]["otherzip"];
-                  }
-                }
-              },
-            ),
-
-            //View Contact Button
-            Align(
-              alignment: Alignment.topRight,
-              child: InkWell(
-                highlightColor: AppColors.transparent,
-                splashColor: AppColors.transparent,
-                onTap: () {
-                  if (contactId != null) {
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                            type: PageTransitionType.rightToLeft,
-                            child: ContactDetail(
-                                contactId, "quote", dropdownvalue ?? [],
-                                dataQuote: dataQuote,
-                                contactList: contractList)));
-                  } else {
-                    Helpers.showSnackBar(context, ErrorString.selectOneContact,
-                        isError: true);
-                  }
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(top: 9.sp),
-                  child: Text(LabelString.lblViewContacts,
-                      style: CustomTextStyle.commonTextBlue),
-                ),
-              ),
-            ),
-            //if site will not empty then shows dropdown otherwise it will be hide.
-            if (siteAddressList.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.only(top: 9.sp, left: 3.sp, right: 3.sp),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButton<Map>(
-                          itemHeight: 60.0,
-                          style: CustomTextStyle.labelBoldFontText,
-                          elevation: 0,
-                          icon:
-                              Icon(Icons.arrow_drop_down_rounded, size: 24.sp),
-                          iconEnabledColor: AppColors.blackColor,
-                          iconDisabledColor: AppColors.hintFontColor,
-                          underline: Container(
-                              height: 1.0, color: AppColors.primaryColor),
-                          isDense: false,
-                          isExpanded: true,
-                          hint: Text(LabelString.lblSelectSiteAddress,
-                              style: CustomTextStyle.labelFontHintText),
-                          items: siteAddressList.map((item) {
-                            return DropdownMenuItem<Map>(
-                                value: item,
-                                child: Text(
-                                    "${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
-                                    style: CustomTextStyle.labelFontText));
-                          }).toList(),
-                          onChanged: (newVal) {
-                            setState(() {
-                              dropdownvalue = newVal;
-                            });
-                          },
-                          value: dropdownvalue),
-                    ),
-                    InkWell(
-                        highlightColor: AppColors.transparent,
-                        splashColor: AppColors.transparent,
-                        onTap: () {
-                          setState(() {
-                            dropdownvalue = null;
-                          });
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(4.sp),
-                          child: Icon(Icons.close, color: AppColors.blackColor),
-                        ))
-                  ],
-                ),
-              ),
-            SizedBox(height: 10.h),
-            Text(LabelString.lblPremisesType,
-                style: CustomTextStyle.labelMediumBoldFontText),
-            SizedBox(height: 10.h),
-            Wrap(
-              spacing: 15.sp,
-              direction: Axis.horizontal,
-              alignment: WrapAlignment.spaceBetween,
-              runSpacing: 15.sp,
-              children: List.generate(
-                stepOneData["premises_type"].length,
-                (index) {
-                  if (dataQuote != null && dataQuote["premises_type"] != "") {
-                    premisesType.add(RadioModel(
-                        stepOneData["premises_type"][index]["label"]
+    return isLoading
+        ? loadingView()
+        : Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  //Design Auto filled contact
+                  Autocomplete(
+                    initialValue: TextEditingValue(text: contactName),
+                    fieldViewBuilder: (context, textEditingController,
+                        focusNode, VoidCallback onFieldSubmitted) {
+                      FocusNode focus = focusNode;
+                      if (dataQuote != null) {
+                        contactSelect = dataQuote["contact_name"];
+                      } else if (contractList != null) {
+                        contactSelect = contractList.subject
                                 .toString()
-                                .contains(dataQuote["premises_type"])
-                            ? true
-                            : false,
-                        stepOneData["premises_type"][index]["label"]));
-                    premisesTypeSelect = dataQuote["premises_type"];
-                  } else if (contractList != null &&
-                      contractList.scPremisesType != "") {
-                    premisesType.add(RadioModel(
-                        stepOneData["premises_type"][index]["label"]
-                                .toString()
-                                .contains(contractList.scPremisesType)
-                            ? true
-                            : false,
-                        stepOneData["premises_type"][index]["label"]));
-                    premisesTypeSelect = contractList.scPremisesType;
-                  } else {
-                    premisesType.add(RadioModel(
-                        false, stepOneData["premises_type"][index]["label"]));
-                    premisesTypeSelect =
-                        stepOneData["premises_type"][index]["label"];
-                  }
-
-                  //dataQuote != null ? dataQuote["premises_type"] : ;
-                  return InkWell(
-                    splashColor: AppColors.transparent,
-                    highlightColor: AppColors.transparent,
-                    onTap: () {
-                      for (var element in premisesType) {
-                        element.isSelected = false;
+                                .contains("-")
+                            ? contractList.subject.toString().substring(
+                                0, contractList.subject.toString().indexOf("-"))
+                            : contractList.subject.toString();
                       }
-                      // Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
+                      //dataQuote != null ? contactSelect = dataQuote["contact_name"] : "";
+                      textEditingController.text = contactSelect;
+                      return TextField(
+                        autofocus: widget.isBack ||
+                                dataQuote != null ||
+                                contractList != null
+                            ? false
+                            : true,
+                        style: TextStyle(color: AppColors.blackColor),
+                        textCapitalization: TextCapitalization.none,
+                        textInputAction: TextInputAction.next,
+                        maxLines: 1,
+                        keyboardType: TextInputType.name,
+                        cursorColor: AppColors.blackColor,
+                        decoration: InputDecoration(
+                            suffixIcon:
+                                Icon(Icons.search, color: AppColors.blackColor),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                    width: 2, color: AppColors.primaryColor)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                    width: 2, color: AppColors.primaryColor)),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                    width: 2, color: AppColors.primaryColor)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: EdgeInsets.only(left: 12.sp),
+                            hintText: LabelString.lblTypeToSearch,
+                            hintStyle: CustomTextStyle.labelFontHintText,
+                            counterText: ""),
+                        controller: textEditingController,
+                        focusNode: focus,
+                        onEditingComplete: () {},
+                        onSubmitted: (String value) {},
+                        onChanged: (value) {
+                          focus = focusNode;
+                          focus.requestFocus();
+                        },
+                      );
+                    },
+                    optionsBuilder: (TextEditingValue textEditingValue) async {
+                      if (textEditingValue.text.isEmpty) {
+                        return const Iterable<String>.empty();
+                      } else {
+                        List<String> matchesContact = <String>[];
+                        matchesContact.addAll(contactData.map((e) {
+                          return "${e["firstname"].trim()} ${e["lastname"].trim()} - ${e["otherstreet"]}";
+                        }));
 
-                      premisesType[index].isSelected = true;
-                      // Provider.of<WidgetChange>(context, listen: false).isSetPremises;
-
-                      notifier.value = !notifier.value;
-                      if (contactId != null) {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate);
+                        matchesContact = matchesContact
+                            .where((element) => element.toLowerCase().contains(
+                                textEditingValue.text.toLowerCase().trim()))
+                            .toList();
+                        return matchesContact;
                       }
                     },
-                    child: ValueListenableBuilder(
-                        valueListenable: notifier,
-                        builder:
-                            (BuildContext context, bool val, Widget? child) {
-                          return Container(
-                            height: 0.15.sh,
-                            width: 0.42.sw,
-                            decoration: BoxDecoration(
-                                color: premisesType[index].isSelected
-                                    ? AppColors.primaryColorLawOpacity
-                                    : AppColors.whiteColor,
-                                border: Border.all(
-                                    color: premisesType[index].isSelected
-                                        ? AppColors.primaryColor
-                                        : AppColors.borderColor,
-                                    width: 1),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(height: 1.h),
-                                      SvgExtension(
-                                          iconColor:
-                                              premisesType[index].isSelected
-                                                  ? AppColors.primaryColor
-                                                  : AppColors.blackColor,
-                                          itemName:
-                                              premisesType[index].buttonText),
-                                      SizedBox(height: 1.h),
-                                      Text(premisesType[index].buttonText,
-                                          style: premisesType[index].isSelected
-                                              ? CustomTextStyle.commonTextBlue
-                                              : CustomTextStyle.commonText),
-                                      SizedBox(height: 1.h)
-                                    ]),
-                                Visibility(
-                                  visible: premisesType[index].isSelected
-                                      ? true
-                                      : false,
-                                  child: Positioned(
-                                    right: 10,
-                                    top: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(80.0),
-                                          color: AppColors.greenColor),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Icon(Icons.done,
-                                            color: AppColors.whiteColor,
-                                            size: 14.sp),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        }),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 2.0.h),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 11.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 140.w,
-                    height: 44.h,
-                    child: CustomButton(
-                        //cancel button
-                        title: ButtonString.btnCancel,
-                        onClick: () => Navigator.of(context).pop(),
-                        buttonColor: AppColors.redColor),
+                    onSelected: (selection) async {
+                      FocusScope.of(context).unfocus();
+                      getSiteAddressList();
+                      for (int i = 0; i < contactData.length; i++) {
+                        if (selection ==
+                            "${contactData[i]["firstname"]} ${contactData[i]["lastname"]} - ${contactData[i]["otherstreet"]}") {
+                          contactId = contactData[i]["id"];
+                          contactCompany = contactData[i]["contact_company"];
+                          mobileNumber = contactData[i]["mobile"];
+                          telephoneNumber = contactData[i]["phone"];
+                          contactEmail = contactData[i]["email"];
+                          contactSelect = selection;
+
+                          //When select contact, set address in fields
+                          invoiceAddress = contactData[i]["mailingstreet"];
+                          invoiceCity = contactData[i]["mailingcity"];
+                          invoiceCountry = contactData[i]["mailingcountry"];
+                          invoicePostal = contactData[i]["mailingzip"];
+
+                          installationAddress = contactData[i]["otherstreet"];
+                          installationCity = contactData[i]["othercity"];
+                          installationCountry = contactData[i]["othercountry"];
+                          installationPostal = contactData[i]["otherzip"];
+                        }
+                      }
+                    },
                   ),
-                  SizedBox(
-                    width: 140.w,
-                    height: 44.h,
-                    child: CustomButton(
-                        //next button
-                        title: ButtonString.btnNext,
-                        onClick: () {
-                          if (contactId != null) {
-                            FocusScope.of(context).unfocus();
-                            pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate);
-                          } else {
-                            Helpers.showSnackBar(
-                                context, ErrorString.selectOneContact,
-                                isError: true);
-                          }
-                        },
-                        buttonColor: AppColors.primaryColor),
+
+                  //View Contact Button
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: InkWell(
+                      highlightColor: AppColors.transparent,
+                      splashColor: AppColors.transparent,
+                      onTap: () {
+                        if (contactId != null) {
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: ContactDetail(
+                                      contactId, "quote", dropdownvalue ?? [],
+                                      dataQuote: dataQuote,
+                                      contactList: contractList)));
+                        } else {
+                          Helpers.showSnackBar(
+                              context, ErrorString.selectOneContact,
+                              isError: true);
+                        }
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10.sp),
+                        child: Text(LabelString.lblViewContacts,
+                            style: CustomTextStyle.commonTextBlue),
+                      ),
+                    ),
+                  ),
+                  //if site will not empty then shows dropdown otherwise it will be hide.
+                  if (siteAddressList.isNotEmpty)
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: 10.sp, left: 3.sp, right: 3.sp),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButton<Map>(
+                                itemHeight: 60.0,
+                                style: CustomTextStyle.labelBoldFontText,
+                                elevation: 0,
+                                icon: Icon(Icons.arrow_drop_down_rounded,
+                                    size: 24.sp),
+                                iconEnabledColor: AppColors.blackColor,
+                                iconDisabledColor: AppColors.hintFontColor,
+                                underline: Container(
+                                    height: 1.0, color: AppColors.primaryColor),
+                                isDense: false,
+                                isExpanded: true,
+                                hint: Text(LabelString.lblSelectSiteAddress,
+                                    style: CustomTextStyle.labelFontHintText),
+                                items: siteAddressList.map((item) {
+                                  return DropdownMenuItem<Map>(
+                                      value: item,
+                                      child: Text(
+                                          "${item['name']}-${item['address'].toString().replaceAll("\n", ", ")}",
+                                          style:
+                                              CustomTextStyle.labelFontText));
+                                }).toList(),
+                                onChanged: (newVal) {
+                                  setState(() {
+                                    dropdownvalue = newVal;
+                                  });
+                                },
+                                value: dropdownvalue),
+                          ),
+                          InkWell(
+                              highlightColor: AppColors.transparent,
+                              splashColor: AppColors.transparent,
+                              onTap: () {
+                                setState(() {
+                                  dropdownvalue = null;
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(4.sp),
+                                child: Icon(Icons.close,
+                                    color: AppColors.blackColor),
+                              ))
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 2.0.h),
+                  Text(LabelString.lblPremisesType,
+                      style: CustomTextStyle.labelBoldFontTextSmall),
+                  SizedBox(height: 2.5.h),
+                  Wrap(
+                    spacing: 15.sp,
+                    direction: Axis.horizontal,
+                    alignment: WrapAlignment.spaceBetween,
+                    runSpacing: 15.sp,
+                    children: List.generate(
+                      stepOneData["premises_type"].length,
+                      (index) {
+                        if (dataQuote != null &&
+                            dataQuote["premises_type"] != "") {
+                          premisesType.add(RadioModel(
+                              stepOneData["premises_type"][index]["label"]
+                                      .toString()
+                                      .contains(dataQuote["premises_type"])
+                                  ? true
+                                  : false,
+                              stepOneData["premises_type"][index]["label"]));
+                          premisesTypeSelect = dataQuote["premises_type"];
+                        } else if (contractList != null &&
+                            contractList.scPremisesType != "") {
+                          premisesType.add(RadioModel(
+                              stepOneData["premises_type"][index]["label"]
+                                      .toString()
+                                      .contains(contractList.scPremisesType)
+                                  ? true
+                                  : false,
+                              stepOneData["premises_type"][index]["label"]));
+                          premisesTypeSelect = contractList.scPremisesType;
+                        } else {
+                          premisesType.add(RadioModel(false,
+                              stepOneData["premises_type"][index]["label"]));
+                          premisesTypeSelect =
+                              stepOneData["premises_type"][index]["label"];
+                        }
+
+                        //dataQuote != null ? dataQuote["premises_type"] : ;
+                        return InkWell(
+                          splashColor: AppColors.transparent,
+                          highlightColor: AppColors.transparent,
+                          onTap: () {
+                            for (var element in premisesType) {
+                              element.isSelected = false;
+                            }
+                            // Provider.of<WidgetChange>(context, listen: false).isSelectPremisesType();
+
+                            premisesType[index].isSelected = true;
+                            // Provider.of<WidgetChange>(context, listen: false).isSetPremises;
+
+                            notifier.value = !notifier.value;
+                            if (contactId != null) {
+                              pageController.nextPage(
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.decelerate);
+                            }
+                          },
+                          child: ValueListenableBuilder(
+                              valueListenable: notifier,
+                              builder: (BuildContext context, bool val,
+                                  Widget? child) {
+                                return Container(
+                                  height: 15.h,
+                                  width: 42.w,
+                                  decoration: BoxDecoration(
+                                      color: premisesType[index].isSelected
+                                          ? AppColors.primaryColorLawOpacity
+                                          : AppColors.whiteColor,
+                                      border: Border.all(
+                                          color: premisesType[index].isSelected
+                                              ? AppColors.primaryColor
+                                              : AppColors.borderColor,
+                                          width: 1),
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(height: 1.h),
+                                            SvgExtension(
+                                                iconColor: premisesType[index]
+                                                        .isSelected
+                                                    ? AppColors.primaryColor
+                                                    : AppColors.blackColor,
+                                                itemName: premisesType[index]
+                                                    .buttonText),
+                                            SizedBox(height: 1.h),
+                                            Text(premisesType[index].buttonText,
+                                                style: premisesType[index]
+                                                        .isSelected
+                                                    ? CustomTextStyle
+                                                        .commonTextBlue
+                                                    : CustomTextStyle
+                                                        .commonText),
+                                            SizedBox(height: 1.h)
+                                          ]),
+                                      Visibility(
+                                        visible: premisesType[index].isSelected
+                                            ? true
+                                            : false,
+                                        child: Positioned(
+                                          right: 10,
+                                          top: 5,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(80.0),
+                                                color: AppColors.greenColor),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Icon(Icons.done,
+                                                  color: AppColors.whiteColor,
+                                                  size: 14.sp),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 2.0.h),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.sp, horizontal: 3.sp),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 42.w,
+                          height: query.height * 0.06,
+                          child: CustomButton(
+                              //cancel button
+                              title: ButtonString.btnCancel,
+                              onClick: () => Navigator.of(context).pop(),
+                              buttonColor: AppColors.redColor),
+                        ),
+                        SizedBox(
+                          width: 42.w,
+                          height: query.height * 0.06,
+                          child: CustomButton(
+                              //next button
+                              title: ButtonString.btnNext,
+                              onClick: () {
+                                if (contactId != null) {
+                                  FocusScope.of(context).unfocus();
+                                  pageController.nextPage(
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.decelerate);
+                                } else {
+                                  Helpers.showSnackBar(
+                                      context, ErrorString.selectOneContact,
+                                      isError: true);
+                                }
+                              },
+                              buttonColor: AppColors.primaryColor),
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   ///step 2- system type
@@ -887,9 +906,13 @@ class _AddQuotePageState extends State<AddQuotePage> {
                           stepTwoData["system_type"][index]["label"];
 
                       print(systemTypeSelect);
-                      if (systemTypeSelect.contains("CCTV") ||
+                      if (systemTypeSelect.contains("CCTV System") ||
                           systemTypeSelect.contains("Access Control") ||
-                          systemTypeSelect.contains("Keyholding")) {
+                          systemTypeSelect.contains("Fire System") ||
+                          systemTypeSelect.contains("Panic Alarm System") ||
+                          systemTypeSelect
+                              .contains("External Detection Only") ||
+                          systemTypeSelect.contains("Keyholding Services")) {
                         if (dataQuote != null) {
                           callNextScreen(
                               context,
@@ -1385,7 +1408,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                       notifier.value = !notifier.value;
                       //Provider.of<WidgetChange>(context, listen: false).isSetSignallingType;
                       signallingTypeSelect =
-                          stepThreeData["signalling_type"][index]["label"];
+                          stepThreeData["signalling_grade_no"][index]["label"];
 
                       if (signallingTypeSelect.isNotEmpty) {
                         if (dataQuote != null) {
@@ -1514,9 +1537,9 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                     children: [
                                       SizedBox(height: 1.h),
                                       SvgExtension(
-                                          itemName:
-                                              stepThreeData["signalling_type"]
-                                                  [index]["label"],
+                                          itemName: stepThreeData[
+                                                  "signalling_grade_no"][index]
+                                              ["label"],
                                           iconColor:
                                               signallingType[index].isSelected
                                                   ? AppColors.primaryColor
@@ -1525,7 +1548,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                       SizedBox(
                                         width: query.width * 0.35,
                                         child: Text(
-                                            stepThreeData["signalling_type"]
+                                            stepThreeData["signalling_grade_no"]
                                                 [index]["label"],
                                             textAlign: TextAlign.center,
                                             style: signallingType[index]

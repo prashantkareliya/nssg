@@ -78,15 +78,22 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     List<ProductsList> products = state.productList
         .map((e) => ProductsList.fromJson(e.toJson()))
         .toList();
-    products.add(event.productsList);
+    if (event.addToFirst) {
+      products.insert(0, event.productsList);
+    } else {
+      products.add(event.productsList);
+    }
     emit(state.copyWith(productList: products));
   }
 
   FutureOr<void> _updateProductToList(
       UpdateProductToListEvent event, Emitter<ProductListState> emit) {
     List<ProductsList> products = state.productList
-        .map((e) => ProductsList.fromJson(e.toJson())).toList();
-    final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId);
+        .map((e) => ProductsList.fromJson(e.toJson()))
+        .toList();
+    final int index = products
+        .indexWhere((element) => element.itemId == event.productsList.itemId);
+
     ///products.length-1;
     print(index);
     if (index == -1) {
@@ -105,37 +112,43 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   }
 
   FutureOr<void> _deleteProductToList(
-    DeleteProductToListEvent event, Emitter<ProductListState> emit) {
-    List<ProductsList> products = state.productList.map((e) => ProductsList.fromJson(e.toJson())).toList();
-    final int index = products.indexWhere((element) => element.itemId == event.productsList.itemId);
+      DeleteProductToListEvent event, Emitter<ProductListState> emit) {
+    List<ProductsList> products = state.productList
+        .map((e) => ProductsList.fromJson(e.toJson()))
+        .toList();
+    final int index = products
+        .indexWhere((element) => element.itemId == event.productsList.itemId);
     products.removeAt(index);
     emit(state.copyWith(productList: products));
   }
 
   _addSubProductToList(
       AddSubProductListEvent event, Emitter<ProductListState> emit) {
-    List<ProductsList> products = state.productList.map((e) =>
-        ProductsList.fromJson(e.toJson())).toList();
-    products.addAll(event.subProductList!.map((e) => ProductsList(
-        itemId: DateTime.now().millisecondsSinceEpoch.toString(),
-        productId: e.id.toString(),
-        itemName: e.productname.toString(),
-        costPrice: e.costPrice.toString(),
-        sellingPrice: e.unitPrice,
-        discountPrice:  "0",
-        amountPrice: (double.parse(e.unitPrice.toString()) * double.parse("1.0")).toString(),
-        profit: (double.parse(e.unitPrice!) - double.parse(e.costPrice!)).formatAmount(),
-
-
-        quantity: 1,
-        description: e.description,
-        //selectLocation: (filterList![index].locationList ?? []).join('###'),
-        //titleLocation: (filterList![index].titleLocationList ?? []).join("###"),
-        //itemAdd: e.isItemAdded,
-        //productImage: filterList![index].imagename,
-        //requiredDocument: (documentType).join('###'),
-        productTitle: e.productsTitle)).toList()
-    );
+    List<ProductsList> products = state.productList
+        .map((e) => ProductsList.fromJson(e.toJson()))
+        .toList();
+    products.addAll(event.subProductList!
+        .map((e) => ProductsList(
+            itemId: DateTime.now().millisecondsSinceEpoch.toString(),
+            productId: e.id.toString(),
+            itemName: e.productname.toString(),
+            costPrice: e.costPrice.toString(),
+            sellingPrice: e.unitPrice,
+            discountPrice: "0",
+            amountPrice:
+                (double.parse(e.unitPrice.toString()) * double.parse("1.0"))
+                    .toString(),
+            profit: (double.parse(e.unitPrice!) - double.parse(e.costPrice!))
+                .formatAmount(),
+            quantity: 1,
+            description: e.description,
+            //selectLocation: (filterList![index].locationList ?? []).join('###'),
+            //titleLocation: (filterList![index].titleLocationList ?? []).join("###"),
+            //itemAdd: e.isItemAdded,
+            //productImage: filterList![index].imagename,
+            //requiredDocument: (documentType).join('###'),
+            productTitle: e.productsTitle))
+        .toList());
     emit(state.copyWith(productList: products));
   }
 }

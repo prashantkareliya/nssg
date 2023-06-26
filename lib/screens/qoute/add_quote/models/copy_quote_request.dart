@@ -32,6 +32,7 @@ class CopyQuoteRequest {
   String? gradeNumber;
   String? systemType;
   String? signallingType;
+  String? signallingGradeNo;
   String? premisesType;
   String? projectManager;
   String? quotesEmail;
@@ -100,6 +101,7 @@ class CopyQuoteRequest {
         this.gradeNumber,
         this.systemType,
         this.signallingType,
+        this.signallingGradeNo,
         this.premisesType,
         this.projectManager,
         this.quotesEmail,
@@ -168,6 +170,7 @@ class CopyQuoteRequest {
     gradeNumber = json['grade_number'];
     systemType = json['system_type'];
     signallingType = json['signalling_type'];
+    signallingGradeNo = json['signalling_grade_no'];
     premisesType = json['premises_type'];
     projectManager = json['project_manager'];
     quotesEmail = json['quotes_email'];
@@ -242,6 +245,7 @@ class CopyQuoteRequest {
     data['grade_number'] = gradeNumber;
     data['system_type'] = systemType;
     data['signalling_type'] = signallingType;
+    data['signalling_grade_no'] = signallingGradeNo;
     data['premises_type'] = premisesType;
     data['project_manager'] = projectManager;
     data['quotes_email'] = quotesEmail;

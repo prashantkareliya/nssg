@@ -228,23 +228,17 @@ class _ContactScreenState extends State<ContactScreen> {
                               searchItemList!.add(element);
                             }
                           }*/
-                          if (searchCtrl.text.length >= 3) {
-                            SharedPreferences preferences =
-                                await SharedPreferences.getInstance();
+                          if(searchCtrl.text.isNotEmpty){
+                            SharedPreferences preferences = await SharedPreferences.getInstance();
 
                             Map<String, dynamic> queryParameters = {
                               'operation': 'query',
-                              'sessionName': preferences
-                                  .getString(PreferenceString.sessionName)
-                                  .toString(),
+                              'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
                               'query': Constants.of().apiKeyContact, //2017
-                              'search_param': searchCtrl.text,
-                              //'page': _page,
-                              'module_name': 'Contacts',
-                            };
-                            contactBloc
-                                .add(GetContactListEvent(queryParameters));
-                          } else if (searchCtrl.text.length >= 2) {
+                              'search_param' : searchCtrl.text,
+                              'module_name': 'Contacts'};
+                            contactBloc.add(GetContactListEvent(queryParameters));
+                          }else {
                             firstTimeLoad();
                           }
                         },

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nssg/components/custom_button.dart';
 import 'package:nssg/constants/navigation.dart';
 import 'package:nssg/screens/qoute/bloc/product_list_bloc.dart';
@@ -31,6 +32,7 @@ import '../get_product/product_model_dir/get_product_response_model.dart';
 import '../get_product/product_repository.dart';
 import '../models/products_list.dart';
 import 'build_item_screen.dart';
+import 'search_add_product_screen.dart';
 import 'select_location_dialog.dart';
 
 ///Second step to create quote
@@ -287,29 +289,40 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   children: [
                     Padding(
                         padding: EdgeInsets.only(right: 12.sp),
-                        child: SvgPicture.asset(
-                          ImageString.imgCart,
-                          width: 18.w,
-                          height: 18.h,
-                        )),
-                    itemNumber.isEmpty
-                        ? Container()
-                        : Positioned(
-                            top: 10.sp,
-                            right: 5.sp,
-                            child: Container(
-                                height: 15.h,
+                        child: SvgPicture.asset(ImageString.imgCart,
+                            width: 18.w,
+                          height: 18.h,)),
+                    // itemNumber.isEmpty
+                    //     ? Container()
+                    //     :
+                    BlocConsumer<ProductListBloc, ProductListState>(
+                      listener: (context, state) {},
+                      builder: (context, state) {
+                        if (state.productList.isNotEmpty) {
+                          return Positioned(
+                              top: 10.sp,
+                              right: 5.sp,
+                              child: Container(
+                                 height: 15.h,
                                 width: 17.w,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: AppColors.redColor),
-                                child: Center(
-                                    child: Text(itemNumber.length.toString(),
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.roboto(
-                                            textStyle: TextStyle(
-                                                color: AppColors.whiteColor,
-                                                fontSize: 8.sp)))))),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      color: AppColors.redColor),
+                                  child: Center(
+                                      child: Text(
+                                          state.productList.length.toString(),
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.roboto(
+                                              textStyle: TextStyle(
+                                                  color: AppColors.whiteColor,
+                                                  fontSize: 8.sp))))));
+                        }
+                        return SizedBox(
+                          height: 0,
+                          width: 0,
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -332,16 +345,21 @@ class _AddItemDetailState extends State<AddItemDetail> {
             // manufacturing view
             buildStepZeroItem(context, query),
 
-            // systemType view
-            //buildStepOneItem(context, query, fieldsData),
-
             // category view
             buildStepTwoItem(context, query),
 
             //products view
             buildStepThreeItem(context, query)
           ],
-        ));
+        ),
+        floatingActionButton: SizedBox(
+            height: 8.h,
+            child: FittedBox(
+                child: FloatingActionButton.small(
+                    onPressed: () {
+                      callNextScreen(context, const SearchAndAddProduct());
+                    },
+                    child: Lottie.asset('assets/lottie/adding.json')))));
   }
 
   ///step 1
@@ -689,12 +707,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
             isLoading = state.isBusy;
           }
           if (state is ProductLoadedState) {
-            isLoading = false;
             productItems = state.productList;
             filterList!.clear();
             for (var element in productItems!) {
               if (categorySelect.isEmpty) {
                 if (element.productManufacturer!.contains(manufactureSelect) &&
+                    widget.premisesTypeSelect!
+                        .contains(systemTypeItemProductSelect) &&
                     widget.systemTypeSelect!
                         .contains(systemTypeItemProductSelect)) {
                   filterList!.add(element);
@@ -702,6 +721,8 @@ class _AddItemDetailState extends State<AddItemDetail> {
               } else {
                 if (element.productManufacturer!.contains(manufactureSelect) &&
                     widget.systemTypeSelect!
+                        .contains(systemTypeItemProductSelect) &&
+                    widget.premisesTypeSelect!
                         .contains(systemTypeItemProductSelect) &&
                     element.productProdCategory!.contains(categorySelect) !=
                         false) {
@@ -717,13 +738,29 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     .read<ProductListBloc>()
                     .state
                     .productList
-                    .firstWhereOrNull(
-                        (element) => element.itemId == element.itemId);
+                    .firstWhereOrNull((ele) => ele.itemId == element.id);
                 if (productList == null) {
                   if (widget.contractList != null) {
-                    if (widget.quoteTypeContract == "installation") {
+                    if (widget.quoteTypeContract == "Installation") {
                       context.read<ProductListBloc>().add(AddProductToListEvent(
-                              productsList: ProductsList(
+                          addToFirst: true,
+                          productsList: ProductsList(
+                              itemId: element.id,
+                              productId: element.id,
+                              itemName: element.productname,
+                              costPrice: element.costPrice,
+                              sellingPrice: element.unitPrice,
+                              quantity: 1,
+                              discountPrice: "0",
+                              amountPrice: element.unitPrice,
+                              profit: profit,
+                              description: element.description,
+                              productImage: ImageString.imgDemo)));
+                    }
+                  } else {
+                    context.read<ProductListBloc>().add(AddProductToListEvent(
+                        addToFirst: true,
+                        productsList: ProductsList(
                             itemId: element.id,
                             productId: element.id,
                             itemName: element.productname,
@@ -734,37 +771,39 @@ class _AddItemDetailState extends State<AddItemDetail> {
                             amountPrice: element.unitPrice,
                             profit: profit,
                             description: element.description,
-                            productImage: ImageString.imgDemo,
-                          )));
-                    }
-                  } else {
-                    context.read<ProductListBloc>().add(AddProductToListEvent(
-                            productsList: ProductsList(
-                          itemId: element.id,
-                          productId: element.id,
-                          itemName: element.productname,
-                          costPrice: element.costPrice,
-                          sellingPrice: element.unitPrice,
-                          quantity: 1,
-                          discountPrice: "0",
-                          amountPrice: element.unitPrice,
-                          profit: profit,
-                          description: element.description,
-                          productImage: ImageString.imgDemo,
-                        )));
+                            productImage: ImageString.imgDemo)));
                   }
                 }
               }
             }
+            isLoading = false;
           }
           if (state is ProductLoadedFail) {
             isLoading = false;
           }
-          if (state is SubProductLoadedState) {}
+          if (state is SubProductLoadedState) {
+            isLoading = false;
+          }
           if (filterList!.isEmpty) {
             return Center(
-                child: Text(LabelString.lblNoData,
-                    style: CustomTextStyle.labelBoldFontText));
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(LabelString.lblNoData,
+                    style: CustomTextStyle.labelBoldFontText),
+                SizedBox(height: 3.h),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: CustomButton(
+                      //next button
+                      title: ButtonString.btnSeeAllProducts,
+                      onClick: () {
+                        callNextScreen(context, const SearchAndAddProduct());
+                      },
+                      buttonColor: AppColors.primaryColor),
+                ),
+              ],
+            ));
           } else {
             return ListView(
               physics: const BouncingScrollPhysics(),
@@ -776,80 +815,51 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   itemCount: filterList!.length,
                   itemBuilder: (context, index) {
                     discountPriceController.add(TextEditingController());
+                    double amount = (double.parse(filterList![index].unitPrice.toString()) * double.parse(filterList![index].quantity.toString()) -
+                            double.parse(discountPriceController[index].text == "" ? "0" : discountPriceController[index].text));
 
-                    double amount =
-                        (double.parse(filterList![index].unitPrice.toString()) *
-                                double.parse(
-                                    filterList![index].quantity.toString()) -
-                            double.parse(
-                                discountPriceController[index].text == ""
-                                    ? "0"
-                                    : discountPriceController[index].text));
+                    double profit = ((double.parse(filterList![index].unitPrice!) - double.parse(filterList![index].costPrice.toString())) *
+                            (filterList![index].quantity!) - double.parse(discountPriceController[index].text == "" ? "0" : discountPriceController[index].text));
 
-                    double profit = ((double.parse(
-                                    filterList![index].unitPrice!) -
-                                double.parse(
-                                    filterList![index].costPrice.toString())) *
-                            (filterList![index].quantity!) -
-                        double.parse(discountPriceController[index].text == ""
-                            ? "0"
-                            : discountPriceController[index].text));
                     return BlocConsumer<ProductListBloc, ProductListState>(
                       listener: (context, state) {},
                       builder: (context, productState) {
-                        final bool isItemAdded = productState.productList
-                                .firstWhereOrNull((element) =>
-                                    element.productId ==
-                                    filterList![index].id) !=
-                            null;
-                        print(
-                            "@@@@@@@@@@@@@@@@@ ${filterList![index].imagename!.replaceAll("&ndash;", "–")}");
-                        return filterList![index].discontinued == "1"
-                            ? Padding(
-                                padding:
-                                    EdgeInsets.only(left: 12.sp, right: 12.sp),
+                        final bool isItemAdded = productState.productList.firstWhereOrNull((element) =>
+                                    element.productId == filterList![index].id) != null;
+
+                        return filterList![index].discontinued == "1" ? Padding(
+                                padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                                 child: Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.sp),
-                                      border: Border.all(
-                                          color: AppColors.borderColor,
-                                          width: 1),
+                                      border: Border.all(color: AppColors.borderColor, width: 1),
                                       color: AppColors.whiteColor),
                                   child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
                                       SizedBox(width: 2.w),
                                       Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: filterList![index].imagename ==
-                                                  ""
-                                              ? SvgPicture.asset(
-                                                  ImageString.imgPlaceHolder,
+                                          child: filterList![index].imagename == ""
+                                              ? SvgPicture.asset(ImageString.imgPlaceHolder,
                                                   height: 90.sp,
                                                   width: 90.sp)
                                               : ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
+                                                  borderRadius: BorderRadius.circular(8.0),
                                                   child: Container(
-                                                      color: AppColors
-                                                          .backWhiteColor,
+                                                      color: AppColors.backWhiteColor,
                                                       child: Padding(
-                                                        padding: EdgeInsets.all(
-                                                            4.sp),
+                                                        padding: EdgeInsets.all(4.sp),
                                                         child: Image.network(
                                                             "${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
                                                             height: 90.sp,
-                                                            width: 90.sp),
+                                                  width: 90.sp),
                                                       )))),
                                       SizedBox(width: 5.w),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             SizedBox(height: 1.5.h),
                                             RichText(
@@ -938,29 +948,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                       IconButton(
                                                           onPressed: () {
                                                             if (isItemAdded) {
-                                                              context
-                                                                  .read<
-                                                                      ProductListBloc>()
-                                                                  .add(UpdateProductQuantityByIdEvent(
-                                                                      productId:
-                                                                          filterList![index]
-                                                                              .id!,
-                                                                      quantity:
-                                                                          filterList![index].quantity! -
-                                                                              1));
+                                                              context.read<ProductListBloc>().add(UpdateProductQuantityByIdEvent(
+                                                                      productId:filterList![index].id!,
+                                                                      quantity:filterList![index].quantity! -1));
                                                             }
-                                                            filterList![index]
-                                                                    .isItemAdded =
-                                                                false;
-                                                            if (filterList![
-                                                                        index]
-                                                                    .quantity! >=
-                                                                2) {
-                                                              Provider.of<WidgetChange>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .incrementCounter();
+                                                            filterList![index].isItemAdded = false;
+                                                            if (filterList![index] .quantity! >=2) {
+                                                              Provider.of<WidgetChange>(context,listen:false).incrementCounter();
                                                               filterList![index]
                                                                       .quantity =
                                                                   filterList![index]

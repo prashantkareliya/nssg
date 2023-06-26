@@ -44,6 +44,8 @@ class Result {
   String? contactName;
   String? createdDate;
   String? assignedUserName;
+  String? quoteType;
+  String? quotesContractId;
 
   Result({
     this.quoteNo,
@@ -62,6 +64,8 @@ class Result {
     this.contactName,
     this.createdDate,
     this.assignedUserName,
+    this.quoteType,
+    this.quotesContractId
   });
 
   Result.fromJson(Map<String, dynamic> json) {
@@ -81,6 +85,8 @@ class Result {
     contactName = json['contact_name'];
     createdDate = json['createdtime'];
     assignedUserName = json['assigned_user_name'];
+    quoteType = json['quote_quote_type'];
+    quotesContractId = json['quotes_contract_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -101,6 +107,8 @@ class Result {
     data['contact_name'] = contactName;
     data['createdtime'] = createdDate;
     data['assigned_user_name'] = assignedUserName;
+    data['quote_quote_type'] = quoteType;
+    data['quotes_contract_id'] = quotesContractId;
     return data;
   }
 }
