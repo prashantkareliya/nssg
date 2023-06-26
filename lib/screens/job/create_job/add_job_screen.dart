@@ -75,7 +75,8 @@ class _AddJobPageState extends State<AddJobPage> {
 
   Future<dynamic>? getDetail;
 
-  CreateJobBloc createJobBloc = CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
+  CreateJobBloc createJobBloc =
+      CreateJobBloc(JobRepository(jobDataSource: JobDataSource()));
 
   @override
   void initState() {
@@ -98,7 +99,8 @@ class _AddJobPageState extends State<AddJobPage> {
       'quotes_ship_country': widget.quoteItem?.shipCountry,
       'quotes_ship_code': widget.quoteItem?.shipCode,
       'quotes_quote_type': widget.quoteItem?.quoteType!.capitalizeText(),
-      'contact_id': widget.quoteItem?.contactId};
+      'contact_id': widget.quoteItem?.contactId
+    };
 
     final response = await HttpActions()
         .getMethod(ApiEndPoint.mainApiEnd, queryParams: queryParameters);
@@ -176,8 +178,12 @@ class _AddJobPageState extends State<AddJobPage> {
                         future: getDetail,
                         builder: (context, snapshot1) {
                           if (snapshot1.hasData) {
-                            installationTime = snapshot1.data["result"]["quote_req_to_complete_work"] ?? "";
-                            numberOfEngineer = snapshot1.data["result"]["quote_no_of_engineer"] ?? 'a'.replaceFirst('a', '');
+                            installationTime = snapshot1.data["result"]
+                                    ["quote_req_to_complete_work"] ??
+                                "";
+                            numberOfEngineer = snapshot1.data["result"]
+                                    ["quote_no_of_engineer"] ??
+                                'a'.replaceFirst('a', '');
 
                             return snapshot1.data["result"]
                                         ["quote_quote_type"] ==
@@ -207,7 +213,6 @@ class _AddJobPageState extends State<AddJobPage> {
 
   //stepOne design
   Widget buildStepOne(Size query, jobFieldsData, dataForCreateJob) {
-
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10.sp),
@@ -216,25 +221,31 @@ class _AddJobPageState extends State<AddJobPage> {
           children: [
             SizedBox(height: 10.h),
             Text(LabelString.lblContractNumber,
-                 style: GoogleFonts.roboto(
+                style: GoogleFonts.roboto(
                     fontSize: 14.sp, fontWeight: FontWeight.w700)),
             SizedBox(height: 5.h),
-            TextFormField(controller: contractNumberController,
-              decoration: InputDecoration(border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5),
-                borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(width: 2, color: AppColors.primaryColor)),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.only(left: 12.sp),
-                  hintText: LabelString.lblContractNumber,
-                  hintStyle: CustomTextStyle.labelFontHintText,
-                  counterText: "",
-
-                  labelStyle: CustomTextStyle.labelFontHintText)),
+            TextFormField(
+                controller: contractNumberController,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                            width: 2, color: AppColors.primaryColor)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                            width: 2, color: AppColors.primaryColor)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                            width: 2, color: AppColors.primaryColor)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.only(left: 12.sp),
+                    hintText: LabelString.lblContractNumber,
+                    hintStyle: CustomTextStyle.labelFontHintText,
+                    counterText: "",
+                    labelStyle: CustomTextStyle.labelFontHintText)),
             SizedBox(height: 10.h),
             Text(LabelString.lblPriorityLevel,
                 style: GoogleFonts.roboto(
@@ -668,7 +679,6 @@ class _AddJobPageState extends State<AddJobPage> {
 
   //stepTwo design
   Widget buildStepTwo(Size query, jobFieldsData, dataForCreateJob) {
-
     return AbsorbPointer(
       absorbing: isLoading,
       child: Stack(
@@ -679,11 +689,11 @@ class _AddJobPageState extends State<AddJobPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 2.h),
+                  SizedBox(height: 10.h),
                   Text(LabelString.lblContractNumber,
                       style: GoogleFonts.roboto(
                           fontSize: 13.sp, fontWeight: FontWeight.w700)),
-                  SizedBox(height: 1.h),
+                  SizedBox(height: 5.h),
                   TextFormField(
                     controller: contractNumberController,
                     decoration: InputDecoration(
@@ -855,131 +865,161 @@ class _AddJobPageState extends State<AddJobPage> {
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     CreateJobRequest createJobRequest = CreateJobRequest(
-        subject : dataForCreateJob["subject"] ?? " ",
-        quoteId : dataForCreateJob["id"] ?? " ",
-        contactId : dataForCreateJob["contact_id"] ?? " ",
-        sostatus : "Created",
-        hdnGrandTotal : dataForCreateJob["hdnGrandTotal"] ?? " ",
-        hdnSubTotal : dataForCreateJob["hdnSubTotal"] ?? " ",
-        hdnTaxType : dataForCreateJob["hdnTaxType"] ?? " ",
-        hdnDiscountPercent : dataForCreateJob["hdnDiscountPercent"] ?? " ",
-        hdnDiscountAmount : dataForCreateJob["hdnDiscountAmount"] ?? " ",
-        hdnSHAmount : dataForCreateJob["hdnS_H_Amount"] ?? " ",
-        assignedUserId : dataForCreateJob["assigned_user_id"] ?? " ",
-        currencyId : dataForCreateJob["currency_id"] ?? " ",
-        conversionRate : dataForCreateJob["conversion_rate"] ?? " ",
-        billStreet : dataForCreateJob["bill_street"] ?? " ",
-        shipStreet : dataForCreateJob["ship_street"] ?? " ",
-        billCity : dataForCreateJob["bill_city"] ?? " ",
-        shipCity : dataForCreateJob["ship_city"] ?? " ",
-        billCountry : dataForCreateJob["bill_country"] ?? " ",
-        shipCountry : dataForCreateJob["ship_country"] ?? " ",
-        billCode : dataForCreateJob["bill_code"] ?? " ",
-        shipCode : dataForCreateJob["ship_code"] ?? " ",
-        startPeriod : " ",
-        endPeriod : " ",
-        paymentDuration : " ",
-        invoicestatus : "Created",
-        preTaxTotal : dataForCreateJob["pre_tax_total"] ?? "  ",
-        hdnSHPercent : dataForCreateJob["hdnS_H_Percent"] ?? "  ",
-        jobCompany : dataForCreateJob["quotes_company"] ?? "  ",
-        contractNumber : contractNumberPass ?? "  ",
-        jobsSystemType : dataForCreateJob["system_type"] ?? "  ",
-        jobsTerms : dataForCreateJob["terms_conditions"] ?? "  ",
-        jobsGradeNumber : dataForCreateJob["grade_number"] ?? "  ",
-        jobsSignallingType : dataForCreateJob["signalling_type"] ?? "  ",
-        jobsProjectManager : dataForCreateJob["project_manager"] ?? "  ",
-        installation : dataForCreateJob["installation"] ?? "  ",
-        email : dataForCreateJob["quotes_email"].toString().toLowerCase() ?? "  ",
-        telephoneNumber : dataForCreateJob["quote_telephone_number"] ?? "  ",
-        mobileNumber : dataForCreateJob["quote_mobile_number"] ?? "  ",
-        priorityLevel : priorityLevelSelect ?? "  ",
-        engineersNote : engineerNoteController.text ?? "  ",
-        officeNote : officeNoteController.text ?? "  ",
-        specialInstructions : specialInstructionController.text ?? "  ",
-        installationTimeRequired : installationTime,
-        preferredInstallationTeam : dataForCreateJob["quote_quote_type"] ==  "Installation" ? numberOfEngineer : " ",
-        worksSchedule : dataForCreateJob["quote_quote_type"] ==  "Installation" ? workScheduleSelect : " ",
-        instructionsToProceed : dataForCreateJob["quote_quote_type"] ==  "Installation" ? instructionToProceedSelect : " ",
-        paymentInstructions : dataForCreateJob["quote_quote_type"] ==  "Installation" ? paymentInstructionSelect : " ",
-        paymentMethod : dataForCreateJob["quote_quote_type"] ==  "Installation" ? paymentMethodSelect : " ",
-        isConfirm : "0",
-        contractNotesJob : "",
-        invoiceNumber : "",
-        jobPremisesType : dataForCreateJob["premises_type"] ?? "",
-        jobTaskTimestamp : "",
-        hdnprofitTotal : dataForCreateJob["hdnprofitTotal"] ?? "",
-        jobType : dataForCreateJob["quote_quote_type"] ?? "",
-        soJobStatus : "",
-        isscheduledjob : "0",
-        isJobScheduleMailSent : "0",
-        jobServiServiceMonth : " ",
-        jobServiPerAnnum : "",
-        jobServiServiceYear : " ",
-        jobServiServiceType : " ",
-        salesorderRelatedId : "0",
-        isCustomerConfirm : "0",
-        jobSchDateByCustomer : "",
-        jobSchAltDateByCustomer : "",
-        jobSchCustomerNotes : "",
-        isProjectTaskCreatedAsana : "0",
-        asanaCreatedProjectId : "",
-        jobPartStatus : "",
-        jotformWorkCarryOut : "",
-        jotformOutStandWork : "",
-        jotformPartReqNextVisit : "",
-        jotformAddWorkToQuote : "",
-        jotformPartUsed : "",
-        jobChecklistBooked : "",
-        jobChecklistRaiseInvoice : "",
-        jobChecklistRaiseInvoiceNumber : "",
-        jobChecklistPickListStock : "",
-        jobChecklistObtCustFeedback : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistPaymentOnComplet : "",
-        jobChecklistExtraStockAllocate : "",
-        jobChecklistExtraStockReturnFaulty : "",
-        jobChecklistCommsAllocated : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistCreateContract : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistOrderComms : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistUrnSentClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistUrnReceivedClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistUrnAppliPoliceForce : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistUrnReceivedPoliceForce : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistMaintenSentClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistMaintenReceived : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistKeyholderSentClient : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistKeyholderReceived : dataForCreateJob["quote_quote_type"] !=  "Installation" ? "Not select" : "",
-        jobChecklistCsDigiCheck : "",
-        jobChecklistCsDigiNumber : "",
-        jobChecklistIssueNsiCertCheck : "",
-        jobChecklistIssueNsiCertNumber : "",
-        jobChecklistReadyToClose : "",
-      jobChecklistPayRecived: dataForCreateJob["quote_quote_type"] ==  "Installation" ? "Not select" : "",
-      jobChecklistStockRequire: dataForCreateJob["quote_quote_type"] ==  "Installation" ?  "Not select" : "",
-      jobChecklistDdRecSubSetup: dataForCreateJob["quote_quote_type"] !=  "Installation" ?  "Not select" : "",
-      lineItems: dataForCreateJob["LineItems"].map((e) {
-        return LineItems(
-          productid: e["productid"].toString().replaceAll("14x", ""),
-          sequenceNo: e["sequence_no"],
-          quantity: e["quantity"],
-          listprice: e["listprice"],
-          discountPercent: e["discount_percent"],
-          discountAmount: e["discount_amount"],
-          comment: e["comment"],
-          description: e["description"],
-          incrementondel: e["incrementonde"],
-          tax1: e["tax1"],
-          tax2: e["tax2"],
-          tax3: e["tax3"],
-          productLocation: e["product_location"],
-          productLocationTitle: e["product_location_title"],
-          costprice: e["costprice"],
-          extQty: e["ext_qty"],
-          requiredDocument: e["required_document"],
-          proShortDescription: e["pro_short_description"],
-        );
-      }).toList()
-    );
+        subject: dataForCreateJob["subject"] ?? " ",
+        quoteId: dataForCreateJob["id"] ?? " ",
+        contactId: dataForCreateJob["contact_id"] ?? " ",
+        sostatus: "Created",
+        hdnGrandTotal: dataForCreateJob["hdnGrandTotal"] ?? " ",
+        hdnSubTotal: dataForCreateJob["hdnSubTotal"] ?? " ",
+        hdnTaxType: dataForCreateJob["hdnTaxType"] ?? " ",
+        hdnDiscountPercent: dataForCreateJob["hdnDiscountPercent"] ?? " ",
+        hdnDiscountAmount: dataForCreateJob["hdnDiscountAmount"] ?? " ",
+        hdnSHAmount: dataForCreateJob["hdnS_H_Amount"] ?? " ",
+        assignedUserId: dataForCreateJob["assigned_user_id"] ?? " ",
+        currencyId: dataForCreateJob["currency_id"] ?? " ",
+        conversionRate: dataForCreateJob["conversion_rate"] ?? " ",
+        billStreet: dataForCreateJob["bill_street"] ?? " ",
+        shipStreet: dataForCreateJob["ship_street"] ?? " ",
+        billCity: dataForCreateJob["bill_city"] ?? " ",
+        shipCity: dataForCreateJob["ship_city"] ?? " ",
+        billCountry: dataForCreateJob["bill_country"] ?? " ",
+        shipCountry: dataForCreateJob["ship_country"] ?? " ",
+        billCode: dataForCreateJob["bill_code"] ?? " ",
+        shipCode: dataForCreateJob["ship_code"] ?? " ",
+        startPeriod: " ",
+        endPeriod: " ",
+        paymentDuration: " ",
+        invoicestatus: "Created",
+        preTaxTotal: dataForCreateJob["pre_tax_total"] ?? "  ",
+        hdnSHPercent: dataForCreateJob["hdnS_H_Percent"] ?? "  ",
+        jobCompany: dataForCreateJob["quotes_company"] ?? "  ",
+        contractNumber: contractNumberPass ?? "  ",
+        jobsSystemType: dataForCreateJob["system_type"] ?? "  ",
+        jobsTerms: dataForCreateJob["terms_conditions"] ?? "  ",
+        jobsGradeNumber: dataForCreateJob["grade_number"] ?? "  ",
+        jobsSignallingType: dataForCreateJob["signalling_type"] ?? "  ",
+        jobsProjectManager: dataForCreateJob["project_manager"] ?? "  ",
+        installation: dataForCreateJob["installation"] ?? "  ",
+        email:
+            dataForCreateJob["quotes_email"].toString().toLowerCase() ?? "  ",
+        telephoneNumber: dataForCreateJob["quote_telephone_number"] ?? "  ",
+        mobileNumber: dataForCreateJob["quote_mobile_number"] ?? "  ",
+        priorityLevel: priorityLevelSelect ?? "  ",
+        engineersNote: engineerNoteController.text ?? "  ",
+        officeNote: officeNoteController.text ?? "  ",
+        specialInstructions: specialInstructionController.text ?? "  ",
+        installationTimeRequired: installationTime,
+        preferredInstallationTeam: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? numberOfEngineer
+            : " ",
+        worksSchedule: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? workScheduleSelect
+            : " ",
+        instructionsToProceed: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? instructionToProceedSelect
+            : " ",
+        paymentInstructions: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? paymentInstructionSelect
+            : " ",
+        paymentMethod: dataForCreateJob["quote_quote_type"] == "Installation"
+            ? paymentMethodSelect
+            : " ",
+        isConfirm: "0",
+        contractNotesJob: "",
+        invoiceNumber: "",
+        jobPremisesType: dataForCreateJob["premises_type"] ?? "",
+        jobTaskTimestamp: "",
+        hdnprofitTotal: dataForCreateJob["hdnprofitTotal"] ?? "",
+        jobType: dataForCreateJob["quote_quote_type"] ?? "",
+        soJobStatus: "",
+        isscheduledjob: "0",
+        isJobScheduleMailSent: "0",
+        jobServiServiceMonth: " ",
+        jobServiPerAnnum: "",
+        jobServiServiceYear: " ",
+        jobServiServiceType: " ",
+        salesorderRelatedId: "0",
+        isCustomerConfirm: "0",
+        jobSchDateByCustomer: "",
+        jobSchAltDateByCustomer: "",
+        jobSchCustomerNotes: "",
+        isProjectTaskCreatedAsana: "0",
+        asanaCreatedProjectId: "",
+        jobPartStatus: "",
+        jotformWorkCarryOut: "",
+        jotformOutStandWork: "",
+        jotformPartReqNextVisit: "",
+        jotformAddWorkToQuote: "",
+        jotformPartUsed: "",
+        jobChecklistBooked: "",
+        jobChecklistRaiseInvoice: "",
+        jobChecklistRaiseInvoiceNumber: "",
+        jobChecklistPickListStock: "",
+        jobChecklistObtCustFeedback:
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
+        jobChecklistPaymentOnComplet: "",
+        jobChecklistExtraStockAllocate: "",
+        jobChecklistExtraStockReturnFaulty: "",
+        jobChecklistCommsAllocated:
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
+        jobChecklistCreateContract:
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
+        jobChecklistOrderComms: dataForCreateJob["quote_quote_type"] != "Installation"
+            ? "Not select"
+            : "",
+        jobChecklistUrnSentClient: dataForCreateJob["quote_quote_type"] != "Installation"
+            ? "Not select"
+            : "",
+        jobChecklistUrnReceivedClient:
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
+        jobChecklistUrnAppliPoliceForce:
+            dataForCreateJob["quote_quote_type"] != "Installation"
+                ? "Not select"
+                : "",
+        jobChecklistUrnReceivedPoliceForce:
+            dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistMaintenSentClient: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistMaintenReceived: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistKeyholderSentClient: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistKeyholderReceived: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        jobChecklistCsDigiCheck: "",
+        jobChecklistCsDigiNumber: "",
+        jobChecklistIssueNsiCertCheck: "",
+        jobChecklistIssueNsiCertNumber: "",
+        jobChecklistReadyToClose: "",
+        jobChecklistPayRecived: dataForCreateJob["quote_quote_type"] == "Installation" ? "Not select" : "",
+        jobChecklistStockRequire: dataForCreateJob["quote_quote_type"] == "Installation" ? "Not select" : "",
+        jobChecklistDdRecSubSetup: dataForCreateJob["quote_quote_type"] != "Installation" ? "Not select" : "",
+        lineItems: dataForCreateJob["LineItems"].map((e) {
+          return LineItems(
+            productid: e["productid"].toString().replaceAll("14x", ""),
+            sequenceNo: e["sequence_no"],
+            quantity: e["quantity"],
+            listprice: e["listprice"],
+            discountPercent: e["discount_percent"],
+            discountAmount: e["discount_amount"],
+            comment: e["comment"],
+            description: e["description"],
+            incrementondel: e["incrementonde"],
+            tax1: e["tax1"],
+            tax2: e["tax2"],
+            tax3: e["tax3"],
+            productLocation: e["product_location"],
+            productLocationTitle: e["product_location_title"],
+            costprice: e["costprice"],
+            extQty: e["ext_qty"],
+            requiredDocument: e["required_document"],
+            proShortDescription: e["pro_short_description"],
+          );
+        }).toList());
 
     String jsonJobDetail = jsonEncode(createJobRequest);
 
@@ -1002,7 +1042,8 @@ class _AddJobPageState extends State<AddJobPage> {
           dataForCreateJob["project_manager_name"].toString(),
       'sourceModule': "ServiceContracts",
       'quotes_contract_id': dataForCreateJob["quotes_contract_id"].toString(),
-      'is_item_available': dataForCreateJob["LineItems"].length >= 1 ? "1" : "0",
+      'is_item_available':
+          dataForCreateJob["LineItems"].length >= 1 ? "1" : "0",
       'field_tick_date_time': jsonStringMap
     };
 

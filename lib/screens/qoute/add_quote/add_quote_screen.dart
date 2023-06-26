@@ -503,7 +503,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                                 contractList != null
                             ? false
                             : true,
-                        style: TextStyle(color: AppColors.blackColor),
+                        style: TextStyle(
+                            color: AppColors.blackColor, fontSize: 16.sp),
                         textCapitalization: TextCapitalization.none,
                         textInputAction: TextInputAction.next,
                         maxLines: 1,
@@ -528,7 +529,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                             fillColor: Colors.white,
                             contentPadding: EdgeInsets.only(left: 12.sp),
                             hintText: LabelString.lblTypeToSearch,
-                            hintStyle: CustomTextStyle.labelFontHintText,
+                            hintStyle: GoogleFonts.roboto(
+                                textStyle: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: AppColors.hintFontColor)),
                             counterText: ""),
                         controller: textEditingController,
                         focusNode: focus,
@@ -607,7 +611,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         }
                       },
                       child: Padding(
-                        padding: EdgeInsets.only(top: 10.sp),
+                        padding: EdgeInsets.only(top: 9.sp),
                         child: Text(LabelString.lblViewContacts,
                             style: CustomTextStyle.commonTextBlue),
                       ),
@@ -617,7 +621,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   if (siteAddressList.isNotEmpty)
                     Padding(
                       padding:
-                          EdgeInsets.only(top: 10.sp, left: 3.sp, right: 3.sp),
+                          EdgeInsets.only(top: 9.sp, left: 3.sp, right: 3.sp),
                       child: Row(
                         children: [
                           Expanded(
@@ -666,10 +670,10 @@ class _AddQuotePageState extends State<AddQuotePage> {
                         ],
                       ),
                     ),
-                  SizedBox(height: 2.0.h),
+                  SizedBox(height: 10.h),
                   Text(LabelString.lblPremisesType,
-                      style: CustomTextStyle.labelBoldFontTextSmall),
-                  SizedBox(height: 2.5.h),
+                      style: CustomTextStyle.labelMediumBoldFontText),
+                  SizedBox(height: 10.h),
                   Wrap(
                     spacing: 15.sp,
                     direction: Axis.horizontal,
@@ -730,8 +734,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               builder: (BuildContext context, bool val,
                                   Widget? child) {
                                 return Container(
-                                  height: 15.h,
-                                  width: 42.w,
+                                  height: 0.15.sh,
+                                  width: 0.42.sw,
                                   decoration: BoxDecoration(
                                       color: premisesType[index].isSelected
                                           ? AppColors.primaryColorLawOpacity
@@ -802,14 +806,14 @@ class _AddQuotePageState extends State<AddQuotePage> {
                   ),
                   SizedBox(height: 2.0.h),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 12.sp, horizontal: 3.sp),
+                    padding: EdgeInsets.symmetric(
+                        vertical: 12.sp, horizontal: 11.sp),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
-                          width: 42.w,
-                          height: query.height * 0.06,
+                          width: 140.w,
+                          height: 44.h,
                           child: CustomButton(
                               //cancel button
                               title: ButtonString.btnCancel,
@@ -817,8 +821,8 @@ class _AddQuotePageState extends State<AddQuotePage> {
                               buttonColor: AppColors.redColor),
                         ),
                         SizedBox(
-                          width: 42.w,
-                          height: query.height * 0.06,
+                          width: 140.w,
+                          height: 44.h,
                           child: CustomButton(
                               //next button
                               title: ButtonString.btnNext,
@@ -1117,7 +1121,7 @@ class _AddQuotePageState extends State<AddQuotePage> {
                     SizedBox(height: 10.h),
                     Text(LabelString.lblGradeNumber,
                         textAlign: TextAlign.center,
-                        style: CustomTextStyle.labelBoldFontTextSmall),
+                        style: CustomTextStyle.labelMediumBoldFontText),
                     SizedBox(height: 10.h),
                     Wrap(
                       spacing: 15.sp,

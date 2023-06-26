@@ -229,8 +229,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
 
     Map<String, dynamic> queryParameters = {
       'operation': "query",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
       'query': Constants.of().apiKeyProduct
     };
     productBloc.add(GetProductListEvent(queryParameters));
@@ -244,8 +243,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
       'id': productID,
       'relatedType': "Products",
       'relatedLabel': "Product Bundles",
-      'sessionName':
-          preferences.getString(PreferenceString.sessionName).toString(),
+      'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
     };
     productBloc.add(GetSubProductListEvent(queryParameters));
   }
@@ -268,15 +266,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
                 Navigator.pop(context);
               } else {
                 pageController.previousPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.decelerate);
+                    duration: const Duration(milliseconds: 500), curve: Curves.decelerate);
               }
             },
-            child: Icon(Icons.arrow_back_ios_outlined,
-                color: AppColors.blackColor, size: 16.sp),
+            child: Icon(Icons.arrow_back_ios_outlined, color: AppColors.blackColor, size: 16.sp),
           ),
-          title: Text(LabelString.lblItemDetail,
-              style: CustomTextStyle.labelMediumBoldFontText),
+          title: Text(LabelString.lblItemDetail, style: CustomTextStyle.labelMediumBoldFontText),
           actions: [
             InkWell(
               splashColor: AppColors.transparent,
@@ -289,9 +284,11 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   children: [
                     Padding(
                         padding: EdgeInsets.only(right: 12.sp),
-                        child: SvgPicture.asset(ImageString.imgCart,
-                            width: 18.w,
-                          height: 18.h,)),
+                        child: SvgPicture.asset(
+                          ImageString.imgCart,
+                          width: 18.w,
+                          height: 18.h,
+                        )),
                     // itemNumber.isEmpty
                     //     ? Container()
                     //     :
@@ -303,19 +300,17 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               top: 10.sp,
                               right: 5.sp,
                               child: Container(
-                                 height: 15.h,
-                                width: 17.w,
+                                  height: 15.h,
+                                  width: 17.w,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20.0),
                                       color: AppColors.redColor),
                                   child: Center(
-                                      child: Text(
-                                          state.productList.length.toString(),
+                                      child: Text(state.productList.length.toString(),
                                           textAlign: TextAlign.center,
                                           style: GoogleFonts.roboto(
                                               textStyle: TextStyle(
-                                                  color: AppColors.whiteColor,
-                                                  fontSize: 8.sp))))));
+                                                  color: AppColors.whiteColor, fontSize: 8.sp))))));
                         }
                         return SizedBox(
                           height: 0,
@@ -337,8 +332,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
               : const BouncingScrollPhysics(),
           controller: pageController,
           onPageChanged: (number) {
-            Provider.of<WidgetChange>(context, listen: false)
-                .pageNumber(number.toString());
+            Provider.of<WidgetChange>(context, listen: false).pageNumber(number.toString());
             page = Provider.of<WidgetChange>(context, listen: false).pageNo;
           },
           children: [
@@ -353,7 +347,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           ],
         ),
         floatingActionButton: SizedBox(
-            height: 8.h,
+            height: 55.h,
             child: FittedBox(
                 child: FloatingActionButton.small(
                     onPressed: () {
@@ -377,8 +371,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding:
-                  EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
+              padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -394,28 +387,23 @@ class _AddItemDetailState extends State<AddItemDetail> {
                     children: List.generate(
                       fieldsData["product_manufacturer"].length,
                       (index) {
-                        manufacturingType.add(RadioModel(
-                            false,
-                            fieldsData["product_manufacturer"][index]
-                                ["label"]));
+                        manufacturingType.add(
+                            RadioModel(false, fieldsData["product_manufacturer"][index]["label"]));
                         return InkWell(
                           onTap: () {
                             for (var element in manufacturingType) {
                               element.isSelected = false;
                             }
-                            Provider.of<WidgetChange>(context, listen: false)
-                                .isManufacture();
+                            Provider.of<WidgetChange>(context, listen: false).isManufacture();
                             manufacturingType[index].isSelected = true;
 
                             if (manufactureSelect.isEmpty) {
                               manufactureSelect =
-                                  fieldsData["product_manufacturer"][index]
-                                      ["label"];
+                                  fieldsData["product_manufacturer"][index]["label"];
                             } else {
                               manufactureSelect = "";
                               manufactureSelect =
-                                  fieldsData["product_manufacturer"][index]
-                                      ["label"];
+                                  fieldsData["product_manufacturer"][index]["label"];
                             }
                             pageController.nextPage(
                                 duration: const Duration(milliseconds: 500),
@@ -438,52 +426,42 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               alignment: Alignment.center,
                               children: [
                                 Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(height: 1.h),
                                       SvgExtension(
-                                          iconColor: manufacturingType[index]
-                                                  .isSelected
+                                          iconColor: manufacturingType[index].isSelected
                                               ? AppColors.primaryColor
                                               : AppColors.blackColor,
-                                          itemName:
-                                              fieldsData["product_manufacturer"]
-                                                      [index]["label"]
-                                                  .toString()),
+                                          itemName: fieldsData["product_manufacturer"][index]
+                                                  ["label"]
+                                              .toString()),
                                       SizedBox(height: 1.h),
                                       SizedBox(
                                         width: query.width * 0.3,
                                         child: Text(
-                                            fieldsData["product_manufacturer"]
-                                                [index]["label"],
+                                            fieldsData["product_manufacturer"][index]["label"],
                                             textAlign: TextAlign.center,
-                                            style: manufacturingType[index]
-                                                    .isSelected
+                                            style: manufacturingType[index].isSelected
                                                 ? CustomTextStyle.commonTextBlue
                                                 : CustomTextStyle.commonText),
                                       ),
                                       SizedBox(height: 1.h),
                                     ]),
                                 Visibility(
-                                  visible: manufacturingType[index].isSelected
-                                      ? true
-                                      : false,
+                                  visible: manufacturingType[index].isSelected ? true : false,
                                   child: Positioned(
                                     right: 10,
                                     top: 5,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(80.0),
+                                          borderRadius: BorderRadius.circular(80.0),
                                           color: AppColors.greenColor),
                                       child: Padding(
                                         padding: const EdgeInsets.all(2.0),
                                         child: Icon(Icons.done,
-                                            color: AppColors.whiteColor,
-                                            size: 14.sp),
+                                            color: AppColors.whiteColor, size: 14.sp),
                                       ),
                                     ),
                                   ),
@@ -523,21 +501,18 @@ class _AddItemDetailState extends State<AddItemDetail> {
             var stepThreeData = snapshot.data["result"];
             return SingleChildScrollView(
               child: Padding(
-                padding:
-                    EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
+                padding: EdgeInsets.only(right: 12.sp, left: 12.sp, bottom: 12.sp),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(height: 10.h),
-                    Text(LabelString.lblCategory,
-                        style: CustomTextStyle.labelMediumBoldFontText),
+                    Text(LabelString.lblCategory, style: CustomTextStyle.labelMediumBoldFontText),
                     SizedBox(height: 10.h),
                     stepThreeData["product_prod_category"].length == 0
                         ? Center(
                             child: Column(
                             children: [
-                              Text(LabelString.lblNoData,
-                                  style: CustomTextStyle.labelBoldFontText),
+                              Text(LabelString.lblNoData, style: CustomTextStyle.labelBoldFontText),
                               SizedBox(height: 2.h),
                               SizedBox(
                                 height: query.height * 0.06,
@@ -546,8 +521,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                   buttonColor: AppColors.primaryColor,
                                   onClick: () {
                                     pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 500),
+                                        duration: const Duration(milliseconds: 500),
                                         curve: Curves.decelerate);
                                   },
                                 ),
@@ -563,35 +537,29 @@ class _AddItemDetailState extends State<AddItemDetail> {
                               stepThreeData["product_prod_category"].length,
                               (index) {
                                 categoryType.add(RadioModel(
-                                    false,
-                                    stepThreeData["product_prod_category"]
-                                        [index]["label"]));
+                                    false, stepThreeData["product_prod_category"][index]["label"]));
                                 return InkWell(
                                   onTap: () {
                                     for (var element in categoryType) {
                                       element.isSelected = false;
                                     }
-                                    Provider.of<WidgetChange>(context,
-                                            listen: false)
+                                    Provider.of<WidgetChange>(context, listen: false)
                                         .isCategoryItemDetail();
                                     categoryType[index].isSelected = true;
 
                                     filterList!.clear();
                                     if (categorySelect.isEmpty) {
                                       categorySelect =
-                                          stepThreeData["product_prod_category"]
-                                              [index]["label"];
+                                          stepThreeData["product_prod_category"][index]["label"];
                                     } else {
                                       categorySelect = "";
                                       categorySelect =
-                                          stepThreeData["product_prod_category"]
-                                              [index]["label"];
+                                          stepThreeData["product_prod_category"][index]["label"];
                                     }
 
                                     if (categoryType.isNotEmpty) {
                                       pageController.nextPage(
-                                          duration:
-                                              const Duration(milliseconds: 500),
+                                          duration: const Duration(milliseconds: 500),
                                           curve: Curves.decelerate);
                                     }
                                   },
@@ -603,67 +571,47 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                             ? AppColors.primaryColorLawOpacity
                                             : AppColors.whiteColor,
                                         border: Border.all(
-                                            color:
-                                                categoryType[index].isSelected
-                                                    ? AppColors.primaryColor
-                                                    : AppColors.borderColor,
+                                            color: categoryType[index].isSelected
+                                                ? AppColors.primaryColor
+                                                : AppColors.borderColor,
                                             width: 1),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
+                                        borderRadius: BorderRadius.circular(10.0)),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
                                         Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               SizedBox(height: 1.h),
                                               SvgExtension(
-                                                  iconColor: categoryType[index]
-                                                          .isSelected
+                                                  iconColor: categoryType[index].isSelected
                                                       ? AppColors.primaryColor
                                                       : AppColors.blackColor,
-                                                  itemName: categoryType[index]
-                                                      .buttonText),
+                                                  itemName: categoryType[index].buttonText),
                                               SizedBox(height: 1.h),
                                               SizedBox(
                                                   width: query.width * 0.3,
-                                                  child: Text(
-                                                      categoryType[index]
-                                                          .buttonText,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: categoryType[index]
-                                                              .isSelected
-                                                          ? CustomTextStyle
-                                                              .commonTextBlue
-                                                          : CustomTextStyle
-                                                              .commonText)),
+                                                  child: Text(categoryType[index].buttonText,
+                                                      textAlign: TextAlign.center,
+                                                      style: categoryType[index].isSelected
+                                                          ? CustomTextStyle.commonTextBlue
+                                                          : CustomTextStyle.commonText)),
                                               SizedBox(height: 1.h)
                                             ]),
                                         Visibility(
-                                          visible:
-                                              categoryType[index].isSelected
-                                                  ? true
-                                                  : false,
+                                          visible: categoryType[index].isSelected ? true : false,
                                           child: Positioned(
                                             right: 10,
                                             top: 5,
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          80.0),
+                                                  borderRadius: BorderRadius.circular(80.0),
                                                   color: AppColors.greenColor),
                                               child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
+                                                  padding: const EdgeInsets.all(2.0),
                                                   child: Icon(Icons.done,
-                                                      color:
-                                                          AppColors.whiteColor,
-                                                      size: 14.sp)),
+                                                      color: AppColors.whiteColor, size: 14.sp)),
                                             ),
                                           ),
                                         )
@@ -696,8 +644,9 @@ class _AddItemDetailState extends State<AddItemDetail> {
           Helpers.showSnackBar(context, state.error.toString());
         }
         if (state is SubProductLoadedState) {
-          context.read<ProductListBloc>().add(
-              AddSubProductListEvent(subProductList: state.subProductList));
+          context
+              .read<ProductListBloc>()
+              .add(AddSubProductListEvent(subProductList: state.subProductList));
         }
       },
       child: BlocBuilder<GetProductBloc, GetProductState>(
@@ -712,27 +661,20 @@ class _AddItemDetailState extends State<AddItemDetail> {
             for (var element in productItems!) {
               if (categorySelect.isEmpty) {
                 if (element.productManufacturer!.contains(manufactureSelect) &&
-                    widget.premisesTypeSelect!
-                        .contains(systemTypeItemProductSelect) &&
-                    widget.systemTypeSelect!
-                        .contains(systemTypeItemProductSelect)) {
+                    widget.premisesTypeSelect!.contains(systemTypeItemProductSelect) &&
+                    widget.systemTypeSelect!.contains(systemTypeItemProductSelect)) {
                   filterList!.add(element);
                 }
               } else {
                 if (element.productManufacturer!.contains(manufactureSelect) &&
-                    widget.systemTypeSelect!
-                        .contains(systemTypeItemProductSelect) &&
-                    widget.premisesTypeSelect!
-                        .contains(systemTypeItemProductSelect) &&
-                    element.productProdCategory!.contains(categorySelect) !=
-                        false) {
+                    widget.systemTypeSelect!.contains(systemTypeItemProductSelect) &&
+                    widget.premisesTypeSelect!.contains(systemTypeItemProductSelect) &&
+                    element.productProdCategory!.contains(categorySelect) != false) {
                   filterList!.add(element);
                 }
               }
-              if (element.productname!
-                  .contains("Installation (1st & 2nd fix)")) {
-                var profit = (double.parse(element.unitPrice!) -
-                        double.parse(element.costPrice!))
+              if (element.productname!.contains("Installation (1st & 2nd fix)")) {
+                var profit = (double.parse(element.unitPrice!) - double.parse(element.costPrice!))
                     .formatAmount();
                 var productList = context
                     .read<ProductListBloc>()
@@ -789,8 +731,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(LabelString.lblNoData,
-                    style: CustomTextStyle.labelBoldFontText),
+                Text(LabelString.lblNoData, style: CustomTextStyle.labelMediumBoldFontText),
                 SizedBox(height: 3.h),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.06,
@@ -815,19 +756,28 @@ class _AddItemDetailState extends State<AddItemDetail> {
                   itemCount: filterList!.length,
                   itemBuilder: (context, index) {
                     discountPriceController.add(TextEditingController());
-                    double amount = (double.parse(filterList![index].unitPrice.toString()) * double.parse(filterList![index].quantity.toString()) -
-                            double.parse(discountPriceController[index].text == "" ? "0" : discountPriceController[index].text));
+                    double amount = (double.parse(filterList![index].unitPrice.toString()) *
+                            double.parse(filterList![index].quantity.toString()) -
+                        double.parse(discountPriceController[index].text == ""
+                            ? "0"
+                            : discountPriceController[index].text));
 
-                    double profit = ((double.parse(filterList![index].unitPrice!) - double.parse(filterList![index].costPrice.toString())) *
-                            (filterList![index].quantity!) - double.parse(discountPriceController[index].text == "" ? "0" : discountPriceController[index].text));
+                    double profit = ((double.parse(filterList![index].unitPrice!) -
+                                double.parse(filterList![index].costPrice.toString())) *
+                            (filterList![index].quantity!) -
+                        double.parse(discountPriceController[index].text == ""
+                            ? "0"
+                            : discountPriceController[index].text));
 
                     return BlocConsumer<ProductListBloc, ProductListState>(
                       listener: (context, state) {},
                       builder: (context, productState) {
-                        final bool isItemAdded = productState.productList.firstWhereOrNull((element) =>
-                                    element.productId == filterList![index].id) != null;
+                        final bool isItemAdded = productState.productList.firstWhereOrNull(
+                                (element) => element.productId == filterList![index].id) !=
+                            null;
 
-                        return filterList![index].discontinued == "1" ? Padding(
+                        return filterList![index].discontinued == "1"
+                            ? Padding(
                                 padding: EdgeInsets.only(left: 12.sp, right: 12.sp),
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -843,8 +793,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: filterList![index].imagename == ""
                                               ? SvgPicture.asset(ImageString.imgPlaceHolder,
-                                                  height: 90.sp,
-                                                  width: 90.sp)
+                                                  height: 90.sp, width: 90.sp)
                                               : ClipRRect(
                                                   borderRadius: BorderRadius.circular(8.0),
                                                   child: Container(
@@ -854,7 +803,7 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                         child: Image.network(
                                                             "${ImageBaseUrl.productImageBaseUrl}${filterList![index].imagename!.replaceAll("&ndash;", "–")}",
                                                             height: 90.sp,
-                                                  width: 90.sp),
+                                                            width: 90.sp),
                                                       )))),
                                       SizedBox(width: 5.w),
                                       Expanded(
@@ -866,23 +815,17 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                               text: TextSpan(
                                                 children: [
                                                   TextSpan(
-                                                      text: filterList![index]
-                                                          .productname
-                                                          .toString(),
+                                                      text:
+                                                          filterList![index].productname.toString(),
                                                       style: GoogleFonts.roboto(
                                                           textStyle: TextStyle(
                                                               fontSize: 18.sp,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: AppColors
-                                                                  .fontColor))),
+                                                              fontWeight: FontWeight.w500,
+                                                              color: AppColors.fontColor))),
                                                   WidgetSpan(
                                                     child: InkWell(
-                                                      splashColor:
-                                                          AppColors.transparent,
-                                                      highlightColor:
-                                                          AppColors.transparent,
+                                                      splashColor: AppColors.transparent,
+                                                      highlightColor: AppColors.transparent,
                                                       onTap: () {
                                                         showDialog(
                                                           context: context,
@@ -890,33 +833,24 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                             return Dialog(
                                                                 shape: RoundedRectangleBorder(
                                                                     borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10)),
+                                                                        BorderRadius.circular(10)),
                                                                 elevation: 0,
-                                                                insetPadding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal: 12
-                                                                            .sp),
+                                                                insetPadding: EdgeInsets.symmetric(
+                                                                    horizontal: 12.sp),
                                                                 child: itemDescription(
-                                                                    filterList![
-                                                                            index]
+                                                                    filterList![index]
                                                                         .productname
                                                                         .toString(),
-                                                                    filterList![
-                                                                            index]
+                                                                    filterList![index]
                                                                         .description
                                                                         .toString()));
                                                           },
                                                         );
                                                       },
                                                       child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 10),
-                                                        child: Icon(
-                                                            Icons.info_outline,
-                                                            color: AppColors
-                                                                .primaryColor,
+                                                        padding: const EdgeInsets.only(left: 10),
+                                                        child: Icon(Icons.info_outline,
+                                                            color: AppColors.primaryColor,
                                                             size: 20.sp),
                                                       ),
                                                     ),
@@ -931,92 +865,73 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                   width: query.width * 0.40,
                                                   height: 32.sp,
                                                   decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
+                                                      borderRadius: BorderRadius.circular(8.0),
                                                       border: Border.all(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          width: 1),
-                                                      color: AppColors
-                                                          .primaryColor),
+                                                          color: AppColors.primaryColor, width: 1),
+                                                      color: AppColors.primaryColor),
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
+                                                        MainAxisAlignment.spaceEvenly,
                                                     children: [
                                                       IconButton(
                                                           onPressed: () {
                                                             if (isItemAdded) {
-                                                              context.read<ProductListBloc>().add(UpdateProductQuantityByIdEvent(
-                                                                      productId:filterList![index].id!,
-                                                                      quantity:filterList![index].quantity! -1));
+                                                              context.read<ProductListBloc>().add(
+                                                                  UpdateProductQuantityByIdEvent(
+                                                                      productId:
+                                                                          filterList![index].id!,
+                                                                      quantity: filterList![index]
+                                                                              .quantity! -
+                                                                          1));
                                                             }
                                                             filterList![index].isItemAdded = false;
-                                                            if (filterList![index] .quantity! >=2) {
-                                                              Provider.of<WidgetChange>(context,listen:false).incrementCounter();
-                                                              filterList![index]
-                                                                      .quantity =
-                                                                  filterList![index]
-                                                                          .quantity! -
-                                                                      1;
+                                                            if (filterList![index].quantity! >= 2) {
+                                                              Provider.of<WidgetChange>(context,
+                                                                      listen: false)
+                                                                  .incrementCounter();
+                                                              filterList![index].quantity =
+                                                                  filterList![index].quantity! - 1;
                                                             }
                                                             //itemNumber.remove(filterList![index].id);
                                                           },
-                                                          icon: Icon(
-                                                              Icons.remove,
-                                                              color: AppColors
-                                                                  .whiteColor,
+                                                          icon: Icon(Icons.remove,
+                                                              color: AppColors.whiteColor,
                                                               size: 12.sp)),
                                                       Container(
-                                                          color: AppColors
-                                                              .whiteColor,
-                                                          width: query.width *
-                                                              0.15,
+                                                          color: AppColors.whiteColor,
+                                                          width: query.width * 0.15,
                                                           height: query.height,
                                                           child: Center(
                                                               child: Text(
                                                                   "${filterList![index].quantity}",
                                                                   style: GoogleFonts.roboto(
                                                                       textStyle: TextStyle(
-                                                                          fontSize: 14
-                                                                              .sp,
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
-                                                                          color:
-                                                                              AppColors.fontColor))))),
+                                                                          fontSize: 14.sp,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          color: AppColors
+                                                                              .fontColor))))),
                                                       IconButton(
                                                           onPressed: () {
                                                             if (isItemAdded) {
-                                                              context
-                                                                  .read<
-                                                                      ProductListBloc>()
-                                                                  .add(UpdateProductQuantityByIdEvent(
+                                                              context.read<ProductListBloc>().add(
+                                                                  UpdateProductQuantityByIdEvent(
                                                                       productId:
-                                                                          filterList![index]
-                                                                              .id!,
-                                                                      quantity:
-                                                                          filterList![index].quantity! +
-                                                                              1));
+                                                                          filterList![index].id!,
+                                                                      quantity: filterList![index]
+                                                                              .quantity! +
+                                                                          1));
                                                             }
-                                                            filterList![index]
-                                                                    .isItemAdded =
-                                                                false;
-                                                            Provider.of<WidgetChange>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
+                                                            filterList![index].isItemAdded = false;
+                                                            Provider.of<WidgetChange>(context,
+                                                                    listen: false)
                                                                 .incrementCounter();
-                                                            filterList![index]
-                                                                    .quantity =
-                                                                filterList![index]
-                                                                        .quantity! +
-                                                                    1;
+                                                            filterList![index].quantity =
+                                                                filterList![index].quantity! + 1;
                                                             // itemNumber.add(filterList![index].id);
                                                           },
                                                           icon: Icon(Icons.add,
-                                                              color: AppColors
-                                                                  .whiteColor,
+                                                              color: AppColors.whiteColor,
                                                               size: 12.sp))
                                                     ],
                                                   ),
@@ -1025,110 +940,92 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                 InkWell(
                                                   onTap: isItemAdded
                                                       ? () {
-                                                          context
-                                                              .read<
-                                                                  ProductListBloc>()
-                                                              .add(RemoveProductFromCardByIdEvent(
+                                                          context.read<ProductListBloc>().add(
+                                                              RemoveProductFromCardByIdEvent(
                                                                   productId:
-                                                                      filterList![index]
-                                                                              .id ??
-                                                                          ""));
+                                                                      filterList![index].id ?? ""));
                                                           setState(() {
-                                                            itemNumber.remove(
-                                                                filterList![
-                                                                        index]
-                                                                    .id);
+                                                            itemNumber
+                                                                .remove(filterList![index].id);
                                                           });
                                                         }
                                                       : () {
                                                           getSubProduct(
-                                                              filterList![index]
-                                                                  .id
-                                                                  .toString());
+                                                              filterList![index].id.toString());
 
-                                                          List<String>
-                                                              documentType = [];
+                                                          List<String> documentType = [];
 
                                                           if (filterList![index]
                                                                   .productNssKeyholderForm ==
                                                               "1") {
-                                                            documentType.add(
-                                                                "Keyholder form");
+                                                            documentType.add("Keyholder form");
                                                           }
 
                                                           if (filterList![index]
                                                                   .productSecurityAgreeForm ==
                                                               "1") {
-                                                            documentType.add(
-                                                                "Maintenance contract");
+                                                            documentType
+                                                                .add("Maintenance contract");
                                                           }
 
                                                           if (filterList![index]
                                                                   .productPoliceAppForm ==
                                                               "1") {
-                                                            documentType.add(
-                                                                "Maintenance contract");
+                                                            documentType
+                                                                .add("Maintenance contract");
                                                           }
 
                                                           if (filterList![index]
                                                                   .productDirectDebitForm ==
                                                               "1") {
-                                                            documentType.add(
-                                                                "Direct Debit");
+                                                            documentType.add("Direct Debit");
                                                           }
 
-                                                          print((documentType)
-                                                              .join('###'));
+                                                          print((documentType).join('###'));
                                                           ProductsList productsList = ProductsList(
                                                               itemId: DateTime.now()
                                                                   .millisecondsSinceEpoch
                                                                   .toString(),
-                                                              productId: filterList![index]
-                                                                  .id
-                                                                  .toString(),
+                                                              productId:
+                                                                  filterList![index].id.toString(),
                                                               itemName: filterList![index]
                                                                   .productname
                                                                   .toString(),
                                                               costPrice: filterList![index]
                                                                   .costPrice
                                                                   .toString(),
-                                                              sellingPrice: sellingPriceController
-                                                                      .text
-                                                                      .isEmpty
-                                                                  ? filterList![index]
-                                                                      .unitPrice
-                                                                  : sellingPriceController
-                                                                      .text,
+                                                              sellingPrice:
+                                                                  sellingPriceController.text.isEmpty
+                                                                      ? filterList![index].unitPrice
+                                                                      : sellingPriceController.text,
                                                               discountPrice:
                                                                   discountPriceController[index]
                                                                       .text
                                                                       .toString(),
-                                                              amountPrice: amount
-                                                                  .toString(),
-                                                              profit: profit
-                                                                  .toString(),
-                                                              quantity: filterList![index]
-                                                                  .quantity,
-                                                              description: filterList![index]
-                                                                  .description,
+                                                              amountPrice: amount.toString(),
+                                                              profit: profit.toString(),
+                                                              quantity: filterList![index].quantity,
+                                                              description:
+                                                                  filterList![index].description,
                                                               selectLocation:
-                                                                  (filterList![index].locationList ?? []).join('###'),
-                                                              titleLocation: (filterList![index].titleLocationList ?? []).join("###"),
-                                                              itemAdd: filterList![index].isItemAdded,
-                                                              productImage: filterList![index].imagename,
-                                                              requiredDocument: (documentType).join('###'),
-                                                              productTitle: filterList![index].productsTitle);
-                                                          context
-                                                              .read<
-                                                                  ProductListBloc>()
-                                                              .add(AddProductToListEvent(
-                                                                  productsList:
-                                                                      productsList));
+                                                                  (filterList![index].locationList ?? [])
+                                                                      .join('###'),
+                                                              titleLocation:
+                                                                  (filterList![index].titleLocationList ?? [])
+                                                                      .join("###"),
+                                                              itemAdd:
+                                                                  filterList![index].isItemAdded,
+                                                              productImage:
+                                                                  filterList![index].imagename,
+                                                              requiredDocument:
+                                                                  (documentType).join('###'),
+                                                              productTitle:
+                                                                  filterList![index].productsTitle);
+                                                          context.read<ProductListBloc>().add(
+                                                              AddProductToListEvent(
+                                                                  productsList: productsList));
                                                           setState(() {
-                                                            itemNumber.add(
-                                                                filterList![
-                                                                        index]
-                                                                    .id);
+                                                            itemNumber.add(filterList![index].id);
                                                           });
                                                         },
                                                   child: isItemAdded
@@ -1137,17 +1034,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                           width: 40.sp,
                                                           decoration: BoxDecoration(
                                                               borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      8.0),
+                                                                  BorderRadius.circular(8.0),
                                                               border: Border.all(
-                                                                  color: AppColors
-                                                                      .greenColorAccent,
+                                                                  color: AppColors.greenColorAccent,
                                                                   width: 1),
-                                                              color: AppColors
-                                                                  .greenColorAccent),
+                                                              color: AppColors.greenColorAccent),
                                                           child: SvgPicture.asset(
-                                                              ImageString
-                                                                  .icAddCartGreen,
+                                                              ImageString.icAddCartGreen,
                                                               fit: BoxFit.none))
                                                       : Container(
                                                           height: 32.sp,
@@ -1155,9 +1048,13 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                           decoration: BoxDecoration(
                                                               borderRadius:
                                                                   BorderRadius.circular(8.0),
-                                                              border: Border.all(color: AppColors.primaryColor, width: 1),
+                                                              border: Border.all(
+                                                                  color: AppColors.primaryColor,
+                                                                  width: 1),
                                                               color: AppColors.primaryColor),
-                                                          child: SvgPicture.asset(ImageString.icAddCart, fit: BoxFit.none)),
+                                                          child: SvgPicture.asset(
+                                                              ImageString.icAddCart,
+                                                              fit: BoxFit.none)),
                                                 )
                                               ],
                                             ),
@@ -1171,78 +1068,51 @@ class _AddItemDetailState extends State<AddItemDetail> {
                                                     return Dialog(
                                                         shape: RoundedRectangleBorder(
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                        insetPadding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 8
-                                                                    .sp),
+                                                                BorderRadius.circular(10)),
+                                                        insetPadding:
+                                                            EdgeInsets.symmetric(horizontal: 8.sp),
                                                         child: SelectLocation(
-                                                            filterList![index]
-                                                                .quantity,
-                                                            filterList![index]
-                                                                .productname,
-                                                            filterList![index]
-                                                                .locationList,
-                                                            filterList![index]
-                                                                .titleLocationList,
-                                                            filterList![index]
-                                                                .productsTitle));
+                                                            filterList![index].quantity,
+                                                            filterList![index].productname,
+                                                            filterList![index].locationList,
+                                                            filterList![index].titleLocationList,
+                                                            filterList![index].productsTitle));
                                                   },
                                                 ).then((value) {
                                                   if (value != null) {
                                                     if (value is List) {
-                                                      Result r =
-                                                          filterList![index];
-                                                      r.locationList = value[0]
-                                                          as List<String>?;
+                                                      Result r = filterList![index];
+                                                      r.locationList = value[0] as List<String>?;
                                                       r.titleLocationList =
-                                                          value[1]
-                                                              as List<String>?;
+                                                          value[1] as List<String>?;
                                                       filterList![index] = r;
 
                                                       ProductsList? p = context
-                                                          .read<
-                                                              ProductListBloc>()
+                                                          .read<ProductListBloc>()
                                                           .state
                                                           .productList
-                                                          .firstWhereOrNull(
-                                                              (element) =>
-                                                                  element
-                                                                      .productId ==
-                                                                  r.id);
+                                                          .firstWhereOrNull((element) =>
+                                                              element.productId == r.id);
 
                                                       if (p != null) {
-                                                        p.locationList =
-                                                            r.locationList;
-                                                        p.selectLocation = r
-                                                            .locationList!
-                                                            .join("###");
-                                                        p.titleLocationList =
-                                                            r.titleLocationList;
-                                                        p.titleLocation = r
-                                                            .titleLocationList!
-                                                            .join("###");
-                                                        context
-                                                            .read<
-                                                                ProductListBloc>()
-                                                            .add(UpdateProductToListEvent(
-                                                                productsList:
-                                                                    p));
+                                                        p.locationList = r.locationList;
+                                                        p.selectLocation =
+                                                            r.locationList!.join("###");
+                                                        p.titleLocationList = r.titleLocationList;
+                                                        p.titleLocation =
+                                                            r.titleLocationList!.join("###");
+                                                        context.read<ProductListBloc>().add(
+                                                            UpdateProductToListEvent(
+                                                                productsList: p));
                                                       }
                                                     }
                                                   }
                                                 });
                                               },
                                               child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 10.sp, bottom: 10.sp),
-                                                child: Text(
-                                                    LabelString
-                                                        .lblSelectLocation,
-                                                    style: CustomTextStyle
-                                                        .commonTextBlue),
+                                                padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
+                                                child: Text(LabelString.lblSelectLocation,
+                                                    style: CustomTextStyle.commonTextBlue),
                                               ),
                                             ),
                                           ],
@@ -1289,14 +1159,12 @@ class _AddItemDetailState extends State<AddItemDetail> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(LabelString.lblDescription,
-                    style: CustomTextStyle.labelBoldFontText),
+                Text(LabelString.lblDescription, style: CustomTextStyle.labelBoldFontText),
                 IconButton(
                     highlightColor: AppColors.transparent,
                     splashColor: AppColors.transparent,
                     onPressed: () => Navigator.pop(context),
-                    icon:
-                        Icon(Icons.close_rounded, color: AppColors.blackColor)),
+                    icon: Icon(Icons.close_rounded, color: AppColors.blackColor)),
               ],
             ),
             SizedBox(height: 2.h),
