@@ -172,8 +172,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
                           controller: searchCtrl,
                           onChanged: (value) async {
                             setState(() {});
-                            if(searchCtrl.text.isNotEmpty){
-                              SharedPreferences preferences = await SharedPreferences.getInstance();
+                            if (searchCtrl.text.isNotEmpty) {
+                              SharedPreferences preferences =
+                                  await SharedPreferences.getInstance();
 
                               Map<String, dynamic> queryParameters = {
                                 'operation': 'query',
@@ -182,7 +183,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                     .toString(),
                                 'query': Constants.of().apiKeyQuote, //2017
                                 'module_name': 'Quotes',
-                                'search_param': searchCtrl.text};
+                                'search_param': searchCtrl.text
+                              };
                               quoteBloc.add(GetQuoteListEvent(queryParameters));
                             } else {
                               firstTimeLoad();
@@ -342,10 +344,14 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                         child: Stack(
                                           children: [
                                             Positioned.fill(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.primaryColor,
-                                                  borderRadius: BorderRadius.circular(12.sp)))),
+                                                child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    12.sp)))),
                                             Slidable(
                                               enabled: (quoteItems![index]
                                                           .quotestage
@@ -369,25 +375,45 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                     padding: EdgeInsets.zero,
                                                     autoClose: true,
                                                     onPressed: (value) {
-                                                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                                                        AddJobPage(quoteItem: quoteItems![index]))).then((value) {
-                                                          if (value == "yes") {
-                                                            ScaffoldMessenger.of(context)
-                                                              ..hideCurrentSnackBar()
-                                                              ..showSnackBar(
-                                                                SnackBar(
-                                                                  duration: const Duration(milliseconds: 5000),
-                                                                  backgroundColor: Colors.green,
-                                                                  content: Text(Message.generateJobMessage,
-                                                                      style: TextStyle(color: AppColors.whiteColor)),
-                                                                  behavior: SnackBarBehavior.floating,
-                                                                ),
-                                                              );
-                                                          }
-                                                        });
-                                                      },
-                                                    backgroundColor: AppColors.primaryColor,
-                                                    foregroundColor: AppColors.redColor,
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  AddJobPage(
+                                                                      quoteItem:
+                                                                          quoteItems![
+                                                                              index]))).then(
+                                                          (value) {
+                                                        if (value == "yes") {
+                                                          ScaffoldMessenger.of(
+                                                              context)
+                                                            ..hideCurrentSnackBar()
+                                                            ..showSnackBar(
+                                                              SnackBar(
+                                                                duration: const Duration(
+                                                                    milliseconds:
+                                                                        5000),
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .green,
+                                                                content: Text(
+                                                                    Message
+                                                                        .generateJobMessage,
+                                                                    style: TextStyle(
+                                                                        color: AppColors
+                                                                            .whiteColor)),
+                                                                behavior:
+                                                                    SnackBarBehavior
+                                                                        .floating,
+                                                              ),
+                                                            );
+                                                        }
+                                                      });
+                                                    },
+                                                    backgroundColor:
+                                                        AppColors.primaryColor,
+                                                    foregroundColor:
+                                                        AppColors.redColor,
                                                     child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -470,29 +496,36 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                                                     .spaceBetween,
                                                             children: [
                                                               InkWell(
-                                                                onTap: () {
-                                                                 Navigator.push(context,
-                                                                        PageTransition(type: PageTransitionType.rightToLeft,
-                                                                            child: ContactDetail(quoteItems![index].contactId, "quote", [])));
-
-                                                                },
-                                                                child: SizedBox(width: 255.w,
-                                                                  child: Text.rich(overflow: TextOverflow.clip,
-                                                                    TextSpan(
-                                                                      text: (quoteItems![index].contactName.toString().replaceAll("&amp;", "&")),
-                                                                      style: GoogleFonts.roboto(
-                                                                          textStyle: TextStyle(fontSize: 18.sp,
-                                                                              color: AppColors.fontColor,
-                                                                              fontWeight: FontWeight.w500)),
-                                                                      children: [
-                                                                        TextSpan(text: " - ${quoteItems![index].quoteNo}",
-                                                                            style: GoogleFonts.roboto(
-                                                                                textStyle: TextStyle(fontSize: 18.sp,
-                                                                                    color: AppColors.fontColor,
-                                                                                    fontWeight: FontWeight.w500))),
-                                                                      ],
-                                                                    ),
-                                                                  )),
+                                                                  onTap: () {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        PageTransition(
+                                                                            type: PageTransitionType
+                                                                                .rightToLeft,
+                                                                            child: ContactDetail(
+                                                                                quoteItems![index].contactId,
+                                                                                "quote",
+                                                                                [])));
+                                                                  },
+                                                                  child: SizedBox(
+                                                                      width: 255.w,
+                                                                      child: Text.rich(
+                                                                        overflow:
+                                                                            TextOverflow.clip,
+                                                                        TextSpan(
+                                                                          text: (quoteItems![index]
+                                                                              .contactName
+                                                                              .toString()
+                                                                              .replaceAll("&amp;", "&")),
+                                                                          style:
+                                                                              GoogleFonts.roboto(textStyle: TextStyle(fontSize: 18.sp, color: AppColors.fontColor, fontWeight: FontWeight.w500)),
+                                                                          children: [
+                                                                            TextSpan(
+                                                                                text: " - ${quoteItems![index].quoteNo}",
+                                                                                style: GoogleFonts.roboto(textStyle: TextStyle(fontSize: 18.sp, color: AppColors.fontColor, fontWeight: FontWeight.w500))),
+                                                                          ],
+                                                                        ),
+                                                                      ))),
                                                               Container(
                                                                 height: 35.sp,
                                                                 width: 35.sp,

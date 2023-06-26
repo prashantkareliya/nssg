@@ -63,6 +63,20 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
     productBloc.add(GetProductListEvent(queryParameters));
   }
 
+  Future<void> getSubProduct(String productID) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    Map<String, dynamic> queryParameters = {
+      'operation': "retrieve_related",
+      'id': productID,
+      'relatedType': "Products",
+      'relatedLabel': "Product Bundles",
+      'sessionName':
+          preferences.getString(PreferenceString.sessionName).toString(),
+    };
+    productBloc.add(GetSubProductListEvent(queryParameters));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -99,7 +113,7 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
               child:
                   Consumer<WidgetChange>(builder: (context, updateKey, search) {
                 return TextField(
-                    autofocus: false,
+                    autofocus: true,
                     onChanged: (value) {
                       setState(() {});
                       Provider.of<WidgetChange>(context, listen: false)
@@ -160,6 +174,11 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
         if (state is ProductLoadedFail) {
           Helpers.showSnackBar(context, state.error.toString());
         }
+
+        if (state is SubProductLoadedState) {
+          context.read<ProductListBloc>().add(
+              AddSubProductListEvent(subProductList: state.subProductList));
+        }
       },
       child: BlocBuilder<GetProductBloc, GetProductState>(
         bloc: productBloc,
@@ -192,7 +211,6 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                         : productItems!.length,
                     itemBuilder: (context, index) {
                       discountPriceController.add(TextEditingController());
-
                       double amount = searchKey.isNotEmpty
                           ? (double.parse(searchItemList![index].unitPrice.toString()) *
                                   double.parse(searchItemList![index]
@@ -279,6 +297,14 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                                             .id);
                                               }
                                             : () {
+                                                getSubProduct(
+                                                    searchKey.isNotEmpty
+                                                        ? searchItemList![index]
+                                                            .id
+                                                            .toString()
+                                                        : productItems![index]
+                                                            .id
+                                                            .toString());
                                                 List<String> documentType = [];
 
                                                 if (searchKey.isNotEmpty) {
@@ -399,115 +425,105 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                                         productsList:
                                                             productsList));
                                               },
-                                        title: Row(
-                                          children: [
-                                            Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 5.sp),
-                                                child: ClipRRect(
+                                        leading: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 5.sp),
+                                            child: (searchKey.isNotEmpty
+                                                    ? searchItemList![index]
+                                                            .imagename ==
+                                                        ""
+                                                    : productItems![index]
+                                                            .imagename ==
+                                                        "")
+                                                ? ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             8.0),
                                                     child: Container(
-                                                      height: 95.h,
-                                                      width: 70.w,
+                                                        height: 95.h,
+                                                        width: 70.w,
+                                                        color: AppColors
+                                                            .backWhiteColor,
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  5.sp),
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            ImageString
+                                                                .imgPlaceHolder,
+                                                            // height: 10.h,
+                                                            // width: 20.w,
+                                                          ),
+                                                        )))
+                                                : ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                    child: Container(
                                                       color: AppColors
                                                           .backWhiteColor,
                                                       child: Padding(
                                                         padding: EdgeInsets.all(
-                                                            5.sp),
-                                                        child: (searchKey
-                                                                    .isNotEmpty
-                                                                ? searchItemList![
-                                                                            index]
-                                                                        .imagename ==
-                                                                    ""
-                                                                : productItems![
-                                                                            index]
-                                                                        .imagename ==
-                                                                    "")
-                                                            ? SvgPicture.asset(
-                                                                ImageString
-                                                                    .imgPlaceHolder,
-                                                              )
-                                                            : searchKey
-                                                                    .isNotEmpty
+                                                            4.sp),
+                                                        child:
+                                                            searchKey.isNotEmpty
                                                                 ? Image.network(
-                                                                    "${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename}",
+                                                                    "${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename!.replaceAll("&amp;", "&")}",
+                                                                    // height: 10.h,
+                                                                    // width: 20.w
                                                                   )
                                                                 : Image.network(
-                                                                    "${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename}",
+                                                                    "${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename!.replaceAll("&amp;", "&")}",
+                                                                    // height: 10.h,
+                                                                    // width: 20.w
                                                                   ),
                                                       ),
                                                     ))),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                      searchKey.isNotEmpty
-                                                          ? searchItemList![
-                                                                  index]
-                                                              .productname
-                                                              .toString()
-                                                          : productItems![index]
-                                                              .productname
-                                                              .toString(),
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: CustomTextStyle
-                                                          .labelBoldFontText),
-                                                  Text(
-                                                      searchKey.isNotEmpty
-                                                          ? "£${searchItemList![index].unitPrice.formatAmount()}"
-                                                          : "£${productItems![index].unitPrice.formatAmount()}",
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: CustomTextStyle
-                                                          .labelText),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            isItemAdded
-                                                ? Container(
-                                                    height: 32.sp,
-                                                    width: 40.sp,
-                                                    padding:
-                                                        EdgeInsets.all(8.sp),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                8.0),
-                                                        border: Border.all(
-                                                            color: AppColors
-                                                                .greenColorAccent,
-                                                            width: 1),
+                                        title: Text(
+                                            searchKey.isNotEmpty
+                                                ? searchItemList![index]
+                                                    .productname
+                                                    .toString()
+                                                : productItems![index]
+                                                    .productname
+                                                    .toString(),
+                                            textAlign: TextAlign.start,
+                                            style: CustomTextStyle
+                                                .labelBoldFontText),
+                                        subtitle: Text(
+                                            searchKey.isNotEmpty
+                                                ? "£${searchItemList![index].unitPrice.formatAmount()}"
+                                                : "£${productItems![index].unitPrice.formatAmount()}",
+                                            textAlign: TextAlign.start,
+                                            style: CustomTextStyle.labelText),
+                                        trailing: isItemAdded
+                                            ? Container(
+                                                height: 32.sp,
+                                                width: 40.sp,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(
+                                                        8.0),
+                                                    border: Border.all(
                                                         color: AppColors
-                                                            .greenColorAccent),
-                                                    child: SvgPicture.asset(
-                                                        ImageString
-                                                            .icAddCartGreen,
-                                                        fit: BoxFit.fitHeight))
-                                                : Container(
-                                                    height: 32.sp,
-                                                    width: 40.sp,
-                                                    padding:
-                                                        EdgeInsets.all(8.sp),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(8.0),
-                                                        border: Border.all(color: AppColors.primaryColor, width: 1),
-                                                        color: AppColors.primaryColor),
-                                                    child: SvgPicture.asset(ImageString.icAddCart, fit: BoxFit.fitHeight)),
-                                          ],
-                                        ),
+                                                            .greenColorAccent,
+                                                        width: 1),
+                                                    color: AppColors
+                                                        .greenColorAccent),
+                                                child: SvgPicture.asset(
+                                                    ImageString.icAddCartGreen,
+                                                    fit: BoxFit.none))
+                                            : Container(
+                                                height: 32.sp,
+                                                width: 40.sp,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(
+                                                        8.0),
+                                                    border: Border.all(
+                                                        color: AppColors.primaryColor,
+                                                        width: 1),
+                                                    color: AppColors.primaryColor),
+                                                child: SvgPicture.asset(ImageString.icAddCart, fit: BoxFit.fitHeight)),
                                       ),
                                     ));
                               }
@@ -545,6 +561,13 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                                       productItems![index].id);
                                             }
                                           : () {
+                                              getSubProduct(searchKey.isNotEmpty
+                                                  ? searchItemList![index]
+                                                      .id
+                                                      .toString()
+                                                  : productItems![index]
+                                                      .id
+                                                      .toString());
                                               List<String> documentType = [];
 
                                               if (searchKey.isNotEmpty) {
@@ -603,182 +626,236 @@ class _SearchAndAddProductState extends State<SearchAndAddProduct> {
                                                 }
                                               }
 
-                                leading: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                    child:(searchKey.isNotEmpty ? searchItemList![index].imagename == "" : productItems![index].imagename == "") ?
-                                    ClipRRect(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        child: Container(
-                                            color: AppColors.backWhiteColor,
-                                            child: Padding(
-                                              padding:  EdgeInsets.all(4.sp),
-                                              child: SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h, width: 20.w,),
-                                            ))) :
-                                    ClipRRect(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        child: Container(
-                                          color: AppColors.backWhiteColor,
-                                          child: Padding(
-                                            padding:  EdgeInsets.all(4.sp),
-                                            child: searchKey.isNotEmpty ?
-                                            Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename!.replaceAll("&amp;", "&")}",
-                                                height: 10.h,width: 20.w)
-                                                :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename!.replaceAll("&amp;", "&")}",
-                                                height: 10.h,width: 20.w),
+                                              ProductsList productsList =
+                                                  ProductsList(
+                                                itemId: DateTime.now()
+                                                    .millisecondsSinceEpoch
+                                                    .toString(),
+                                                productId: searchKey.isNotEmpty
+                                                    ? searchItemList![index]
+                                                        .id
+                                                        .toString()
+                                                    : productItems![index]
+                                                        .id
+                                                        .toString(),
+                                                itemName: searchKey.isNotEmpty
+                                                    ? searchItemList![index]
+                                                        .productname
+                                                        .toString()
+                                                    : productItems![index]
+                                                        .productname
+                                                        .toString(),
+                                                costPrice: searchKey.isNotEmpty
+                                                    ? searchItemList![index]
+                                                        .costPrice
+                                                        .toString()
+                                                    : productItems![index]
+                                                        .costPrice
+                                                        .toString(),
+                                                sellingPrice: searchKey
+                                                        .isNotEmpty
+                                                    ? (sellingPriceController.text
+                                                            .isEmpty
+                                                        ? searchItemList![index]
+                                                            .unitPrice
+                                                        : sellingPriceController
+                                                            .text)
+                                                    : (sellingPriceController.text
+                                                            .isEmpty
+                                                        ? productItems![index]
+                                                            .unitPrice
+                                                        : sellingPriceController
+                                                            .text),
+                                                discountPrice:
+                                                    discountPriceController[
+                                                            index]
+                                                        .text
+                                                        .toString(),
+                                                amountPrice: amount.toString(),
+                                                profit: profit.toString(),
+                                                quantity: searchKey.isNotEmpty
+                                                    ? searchItemList![index]
+                                                        .quantity
+                                                    : productItems![index]
+                                                        .quantity,
+                                                description:
+                                                    searchKey.isNotEmpty
+                                                        ? searchItemList![index]
+                                                            .description
+                                                        : productItems![index]
+                                                            .description,
+                                                selectLocation: searchKey
+                                                        .isNotEmpty
+                                                    ? (searchItemList![index]
+                                                                .locationList ??
+                                                            [])
+                                                        .join('###')
+                                                    : (productItems![index]
+                                                                .locationList ??
+                                                            [])
+                                                        .join('###'),
+                                                titleLocation: searchKey
+                                                        .isNotEmpty
+                                                    ? (searchItemList![index]
+                                                                .titleLocationList ??
+                                                            [])
+                                                        .join("###")
+                                                    : (productItems![index]
+                                                                .titleLocationList ??
+                                                            [])
+                                                        .join("###"),
+                                                itemAdd: searchKey.isNotEmpty
+                                                    ? searchItemList![index]
+                                                        .isItemAdded
+                                                    : productItems![index]
+                                                        .isItemAdded,
+                                                productImage:
+                                                    searchKey.isNotEmpty
+                                                        ? searchItemList![index]
+                                                            .imagename
+                                                        : productItems![index]
+                                                            .imagename,
+                                                requiredDocument:
+                                                    (documentType).join('###'),
+                                              );
+                                              setState(() {
+                                                searchKey.isNotEmpty
+                                                    ? itemNumber.add(
+                                                        searchItemList![index]
+                                                            .id)
+                                                    : itemNumber.add(
+                                                        productItems![index]
+                                                            .id);
+                                              });
+                                              context
+                                                  .read<ProductListBloc>()
+                                                  .add(AddProductToListEvent(
+                                                      productsList:
+                                                          productsList));
+                                            },
+                                      title: Row(
+                                        children: [
+                                          Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 5.sp,
+                                              ),
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  child: Container(
+                                                    height: 95.h,
+                                                    width: 75.w,
+                                                    color: AppColors
+                                                        .backWhiteColor,
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 5.sp,
+                                                              vertical: 5.sp),
+                                                      child: (searchKey
+                                                                  .isNotEmpty
+                                                              ? searchItemList![
+                                                                          index]
+                                                                      .imagename ==
+                                                                  ""
+                                                              : productItems![
+                                                                          index]
+                                                                      .imagename ==
+                                                                  "")
+                                                          ? SvgPicture.asset(
+                                                              ImageString
+                                                                  .imgPlaceHolder,
+                                                            )
+                                                          : searchKey.isNotEmpty
+                                                              ? Image.network(
+                                                                  "${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename}",
+                                                                )
+                                                              : Image.network(
+                                                                  "${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename}",
+                                                                ),
+                                                    ),
+                                                  ))),
+                                          SizedBox(
+                                            width: 5.w,
                                           ),
-                                        ))
-                                ),
-                                title: Text(searchKey.isNotEmpty ? searchItemList![index].productname.toString()
-                                    : productItems![index].productname.toString(),textAlign: TextAlign.start,
-                                    style: CustomTextStyle.labelBoldFontText),
-                                subtitle: Text(searchKey.isNotEmpty ? "£${searchItemList![index].unitPrice.formatAmount()}"
-                                    : "£${productItems![index].unitPrice.formatAmount()}",textAlign: TextAlign.start,
-                                    style: CustomTextStyle.labelText),
-                                trailing: isItemAdded
-                                    ? Container(
-                                    height: 5.h, width: 10.w,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        border: Border.all(color: AppColors.greenColorAccent, width: 1),
-                                        color: AppColors.greenColorAccent),
-                                    child: SvgPicture.asset(ImageString.icAddCartGreen, fit: BoxFit.none))
-                                    : Container(
-                                    height: 5.h, width: 10.w,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        border: Border.all(color: AppColors.primaryColor, width: 1),
-                                        color: AppColors.primaryColor),
-                                    child: SvgPicture.asset(ImageString.icAddCart, fit: BoxFit.none)),
-                              ),
-                            )
-                        );
-                      }
-                    }else{
-
-                      return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 6.sp),
-                          child: Card(
-                            shadowColor: AppColors.primaryColor,
-                            elevation: 2,
-                            child: ListTile(
-                              onTap: isItemAdded ? () {
-                                searchKey.isNotEmpty ?
-                                context.read<ProductListBloc>().add(RemoveProductFromCardByIdEvent(productId: searchItemList![index].id ?? "")):
-                                context.read<ProductListBloc>().add(RemoveProductFromCardByIdEvent(productId: productItems![index].id ?? ""));
-                                searchKey.isNotEmpty ? itemNumber.remove(searchItemList![index].id) : itemNumber.remove(productItems![index].id);
-                              } :
-                                  () {
-                                    getSubProduct(searchKey.isNotEmpty ? searchItemList![index].id.toString() : productItems![index].id.toString());
-                                List<String> documentType = [];
-
-                                if(searchKey.isNotEmpty){
-                                  if (searchItemList![index].productNssKeyholderForm == "1") {
-                                    documentType.add("Keyholder form");
-                                    if (searchItemList![index].productSecurityAgreeForm == "1") {
-                                      documentType.add("Maintenance contract");
-                                      if (searchItemList![index].productPoliceAppForm == "1") {
-                                        documentType.add("Maintenance contract");
-                                        if (searchItemList![index].productDirectDebitForm == "1") {
-                                          documentType.add("Direct Debit");
-                                        }
-                                      }
-                                    }
-                                    print((documentType).join('###'));
-                                  }
-                                }else {
-                                  if (productItems![index].productNssKeyholderForm == "1") {
-                                    documentType.add("Keyholder form");
-                                    if (productItems![index].productSecurityAgreeForm == "1") {
-                                      documentType.add("Maintenance contract");
-                                      if (productItems![index].productPoliceAppForm == "1") {
-                                        documentType.add("Maintenance contract");
-                                        if (productItems![index].productDirectDebitForm == "1") {
-                                          documentType.add("Direct Debit");
-                                        }
-                                      }
-                                    }
-                                    print((documentType).join('###'));
-                                  }
-                                }
-
-                                ProductsList productsList = ProductsList(
-                                  itemId: DateTime.now().millisecondsSinceEpoch.toString(),
-                                  productId: searchKey.isNotEmpty? searchItemList![index].id.toString()  : productItems![index].id.toString(),
-                                  itemName: searchKey.isNotEmpty? searchItemList![index].productname.toString() :productItems![index].productname.toString(),
-                                  costPrice: searchKey.isNotEmpty? searchItemList![index].costPrice.toString() :productItems![index].costPrice.toString(),
-                                  sellingPrice: searchKey.isNotEmpty ?
-                                  (sellingPriceController.text.isEmpty? searchItemList![index].unitPrice : sellingPriceController.text) :
-                                  (sellingPriceController.text.isEmpty? productItems![index].unitPrice : sellingPriceController.text),
-                                  discountPrice: discountPriceController[index].text.toString(),
-                                  amountPrice: amount.toString(),
-                                  profit: profit.toString(),
-                                  quantity: searchKey.isNotEmpty ? searchItemList![index].quantity : productItems![index].quantity,
-                                  description: searchKey.isNotEmpty? searchItemList![index] .description: productItems![index] .description,
-                                  selectLocation: searchKey.isNotEmpty ? (searchItemList![index].locationList ?? []).join('###') :(productItems![index].locationList ?? []).join('###'),
-                                  titleLocation: searchKey.isNotEmpty ? (searchItemList![index].titleLocationList ?? []).join("###"):(productItems![index].titleLocationList ?? []).join("###"),
-                                  itemAdd: searchKey.isNotEmpty? searchItemList![index].isItemAdded : productItems![index].isItemAdded,
-                                  productImage: searchKey.isNotEmpty? searchItemList![index].imagename : productItems![index].imagename,
-                                  requiredDocument: (documentType).join('###'),
-                                );
-                                setState(() {
-                                  searchKey.isNotEmpty ?
-                                  itemNumber.add(searchItemList![index].id) :
-                                  itemNumber.add(productItems![index].id);
-                                });
-                                context.read<ProductListBloc>().add(AddProductToListEvent(productsList: productsList));
-                              },
-
-                              leading: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                  child:(searchKey.isNotEmpty ? searchItemList![index].imagename == "" : productItems![index].imagename == "") ?
-                                  SvgPicture.asset(ImageString.imgPlaceHolder, height: 10.h, width: 20.w,) :
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      child: Container(
-                                        color: AppColors.backWhiteColor,
-                                        child: Padding(
-                                          padding:  EdgeInsets.all(4.sp),
-                                          child: searchKey.isNotEmpty ?
-                                          Image.network("${ImageBaseUrl.productImageBaseUrl}${searchItemList![index].imagename!.replaceAll("&amp;", "&")}",
-                                              height: 10.h,width: 20.w)
-                                              :Image.network("${ImageBaseUrl.productImageBaseUrl}${productItems![index].imagename!.replaceAll("&amp;", "&")}",
-                                              height: 10.h,width: 20.w),
-                                        ),
-                                      ))
-                              ),
-                              title: Text(searchKey.isNotEmpty ? searchItemList![index].productname.toString()
-                                  : productItems![index].productname.toString(),textAlign: TextAlign.start,
-                                  style: CustomTextStyle.labelBoldFontText),
-                              subtitle: Text(searchKey.isNotEmpty ? "£${searchItemList![index].unitPrice.formatAmount()}"
-                                  : "£${productItems![index].unitPrice.formatAmount()}",textAlign: TextAlign.start,
-                                  style: CustomTextStyle.labelText),
-                              trailing: isItemAdded
-                                  ? Container(
-                                  height: 5.h, width: 10.w,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      border: Border.all(color: AppColors.greenColorAccent, width: 1),
-                                      color: AppColors.greenColorAccent),
-                                  child: SvgPicture.asset(ImageString.icAddCartGreen, fit: BoxFit.none))
-                                  : Container(
-                                  height: 5.h, width: 10.w,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      border: Border.all(color: AppColors.primaryColor, width: 1),
-                                      color: AppColors.primaryColor),
-                                  child: SvgPicture.asset(ImageString.icAddCart, fit: BoxFit.none)),
-                            ),
-                          )
-                      );
-                    }
-                      return Container();
-                    }
-                    );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return Container(height: 1.h);
-              },
-            ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    searchKey.isNotEmpty
+                                                        ? searchItemList![index]
+                                                            .productname
+                                                            .toString()
+                                                        : productItems![index]
+                                                            .productname
+                                                            .toString(),
+                                                    textAlign: TextAlign.start,
+                                                    style: GoogleFonts.roboto(
+                                                        textStyle: TextStyle(
+                                                            fontSize: 18.sp,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                Colors.black))),
+                                                Text(
+                                                    searchKey.isNotEmpty
+                                                        ? "£${searchItemList![index].unitPrice.formatAmount()}"
+                                                        : "£${productItems![index].unitPrice.formatAmount()}",
+                                                    textAlign: TextAlign.start,
+                                                    style: CustomTextStyle
+                                                        .labelText),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 5.w,
+                                          ),
+                                          isItemAdded
+                                              ? Container(
+                                                  height: 32.sp,
+                                                  width: 40.sp,
+                                                  padding: EdgeInsets.all(8.sp),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      border: Border.all(
+                                                          color: AppColors
+                                                              .greenColorAccent,
+                                                          width: 1),
+                                                      color: AppColors
+                                                          .greenColorAccent),
+                                                  child: SvgPicture.asset(ImageString.icAddCartGreen,
+                                                      fit: BoxFit.fitHeight))
+                                              : Container(
+                                                  height: 32.sp,
+                                                  width: 40.sp,
+                                                  padding: EdgeInsets.all(8.sp),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      border: Border.all(
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                          width: 1),
+                                                      color: AppColors.primaryColor),
+                                                  child: SvgPicture.asset(ImageString.icAddCart, fit: BoxFit.fitHeight)),
+                                        ],
+                                      ),
+                                    ),
+                                  ));
+                            }
+                            return Container();
+                          });
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(height: 1.h);
+                    },
+                  ),
           );
         },
       ),
