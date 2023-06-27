@@ -5,10 +5,8 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:sizer/sizer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../components/custom_appbar.dart';
 import '../../components/custom_text_styles.dart';
 import '../../constants/constants.dart';
 import '../../constants/strings.dart';
@@ -152,16 +150,15 @@ class _ContractListScreenState extends State<ContractListScreen> {
                       return TextField(
                           controller: searchCtrl,
                           onChanged: (value) async {
+                            setState(() {});
                             if(searchCtrl.text.isNotEmpty){
                               SharedPreferences preferences = await SharedPreferences.getInstance();
                               Map<String, dynamic> queryParameters = {
                                 'operation': "query",
-                                'sessionName': preferences
-                                    .getString(PreferenceString.sessionName)
-                                    .toString(),
+                                'sessionName': preferences.getString(PreferenceString.sessionName).toString(),
                                 'query': Constants.of().apiKeyContract,
                                 'module_name': "ServiceContracts",
-                                'search_param' : searchCtrl.text};
+                                'search_param' : searchCtrl.text.toLowerCase()};
                               contractBloc.add(GetContractListEvent(queryParameters));
                             }else {
                               firstTimeLoad();

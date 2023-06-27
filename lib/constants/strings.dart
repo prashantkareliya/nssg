@@ -294,6 +294,6 @@ class EngineerString {
   static const String lblPendingJobSheetList = "Pending Job Sheet List";
   static const String lblUpcomingJobsList = "Upcoming Jobs List";
   static const String lblCreateJob = "Create Job";
-  static const String lblJobDetail = "Job Detail";
+  static const String lblJobDetail = "Job Details";
   static const String lblEngineerGeneralTaskDetails = "Engineer General Task Details";
 }

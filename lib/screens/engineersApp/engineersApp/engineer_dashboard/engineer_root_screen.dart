@@ -3,9 +3,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nssg/utils/app_colors.dart';
-import 'package:sizer/sizer.dart';
-import '../../../components/custom_text_styles.dart';
-import '../../../constants/strings.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../constants/strings.dart';
 import 'engineer_bottom_navbar_bloc.dart';
 import 'job_schedule.dart';
 
@@ -63,7 +62,8 @@ class _EngineerRootScreenState extends State<EngineerRootScreen> {
             decoration: BoxDecoration(
               color: AppColors.whiteColor,
               borderRadius: const BorderRadius.only(
-                  topLeft: (Radius.circular(20.0)), topRight: (Radius.circular(20.0))),
+                  topLeft: (Radius.circular(20.0)),
+                  topRight: (Radius.circular(20.0))),
             ),
             child: BottomNavigationBar(
               currentIndex: snapshot.data!.index,
@@ -71,44 +71,44 @@ class _EngineerRootScreenState extends State<EngineerRootScreen> {
               showUnselectedLabels: true,
               elevation: 0,
               selectedLabelStyle: GoogleFonts.roboto(
-                  textStyle: TextStyle(fontSize: 12.sp,
+                  textStyle: TextStyle(
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal)),
               unselectedLabelStyle: GoogleFonts.roboto(
-                  textStyle: TextStyle(fontSize: 12.sp,
+                  textStyle: TextStyle(
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal)),
               unselectedItemColor: AppColors.primaryColor,
               onTap: bottomNavBarBloc?.pickItem,
-
               type: BottomNavigationBarType.fixed,
               items: [
                 BottomNavigationBarItem(
                     icon: Padding(
                       padding: EdgeInsets.all(5.sp),
-                      child: SvgPicture.asset(ImageString.icHome, height: 3.h),
-                    ), label: EngineerString.lblHome),
+                      child: SvgPicture.asset(ImageString.icHome, height: 16.h)),
+                    label: EngineerString.lblHome),
                 BottomNavigationBarItem(
                     icon: Padding(
                       padding: EdgeInsets.all(0.sp),
-                      child: null,
-                    ), label: ""),
+                      child: null),
+                    label: ""),
                 BottomNavigationBarItem(
                     icon: Padding(
                       padding: EdgeInsets.all(0.sp),
-                      child: null,
-                    ), label: ""),
+                      child: null),
+                    label: ""),
                 BottomNavigationBarItem(
                     icon: Padding(
                       padding: EdgeInsets.all(0.sp),
-                      child: null,
-                    ), label: ""),
+                      child: null),
+                    label: ""),
                 BottomNavigationBarItem(
                     icon: Padding(
                       padding: EdgeInsets.all(5.sp),
-                      child: SvgPicture.asset(ImageString.icLogout, height: 3.h),
-                    ), label: EngineerString.lblLogout),
-
+                      child: SvgPicture.asset(ImageString.icLogout, height: 16.h)),
+                    label: EngineerString.lblLogout),
               ],
             ),
           );

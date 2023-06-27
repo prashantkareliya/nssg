@@ -275,19 +275,16 @@ class _BuildItemScreenState extends State<BuildItemScreen> {
                                                   .contains(templateOptionList[index]
                                                       .toString()
                                                       .replaceAll(" ", "_"))
-                                              ? true
-                                              : false,
+                                              ? true : false,
                                           templateOptionList[index]));
                                     } else {
                                       templateOption.add(RadioModel(
-                                          templateOptionList[index] == "Hide Product Price"
-                                              ? true
-                                              : false,
+                                          templateOptionList[index] == "Hide Product Price" ? true : false,
                                           templateOptionList[index]));
                                     }
                                     Provider.of<WidgetChange>(context).isSelectTemplateOption;
                                     return SizedBox(
-                                      height: 6.h,
+                                      height: 45.h,
                                       child: InkWell(
                                         splashColor: AppColors.transparent,
                                         highlightColor: AppColors.transparent,
